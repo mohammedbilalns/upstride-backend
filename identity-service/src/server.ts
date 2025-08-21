@@ -5,10 +5,10 @@ import { configDotenv } from "dotenv"
 import cookieParser from "cookie-parser"
 import { requestLogger } from "./interfaces/http/middlewares"
 import { errorHandler } from "./interfaces/http/middlewares"
-import { connectToDb } from "./infra/config/db"
-import logger from "./utils/logger"
-import env from "./infra/config/env"
-
+import { connectToDb } from "./infrastructure/config/connectDb"
+import logger from "./common/utils/logger"
+import env from "./infrastructure/config/env"
+import authRoutes from "./interfaces/http/routes/auth.routes"
 configDotenv()
 const app  = express()
 const PORT = env.PORT
@@ -19,11 +19,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(requestLogger)
 
-
-app.get('/test',(_req,res)=>{
-  res.json({message:"test from identity service"})
-})
-
+app.use("/api/auth", authRoutes)
 
 app.use(errorHandler)
 

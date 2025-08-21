@@ -7,6 +7,13 @@ const envSchema = z.object({
   PORT: z.string(),
   NODE_ENV: z.string(),
   MONGODB_URI: z.string(),
+  CLIENT_URL: z.string(),
+  IDENTITY_SERVICE_URL: z.string(),
+  ARTICLE_SERVICE_URL: z.string(),
+  CHAT_SERVICE_URL: z.string(),
+  MEDIA_SERVICE_URL: z.string(),
+  NOTIFICATION_SERVICE_URL: z.string(),
+  SESSIONS_SERVICE_URL: z.string(),
 });
 
 const env = envSchema.parse(process.env);
