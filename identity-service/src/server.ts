@@ -4,12 +4,11 @@ import helmet from "helmet";
 import { configDotenv } from "dotenv";
 import cookieParser from "cookie-parser";
 import { requestLogger, errorHandler } from "./interfaces/http/middlewares";
-import { connectToDb } from "./infrastructure/config/connectDb";
 import logger from "./common/utils/logger";
-import env from "./infrastructure/config/env";
-import createAuthRouter from "./interfaces/http/routes/auth.routes";
+import { connectToDb,connectRedis } from "./infrastructure/config";
+import { createAuthRouter, createExpertiseRouter } from "./interfaces/http/routes";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
-import { connectRedis } from "./infrastructure/config/connectRedis";
+import env from "./infrastructure/config/env";
 
 configDotenv();
 const app = express();
@@ -28,6 +27,7 @@ async function startServer() {
   await connectRedis(); 
 
   app.use("/api/auth", createAuthRouter());
+	app.use("/api/expertise", createExpertiseRouter())
   app.use(errorHandler);
 
   app.listen(PORT, () => {

@@ -1,7 +1,5 @@
 import { IOtpService } from "../../domain/services/otp.service.interface";
 
-
-
 export class OtpService implements IOtpService {
 
   async generateOtp(): Promise<string> {

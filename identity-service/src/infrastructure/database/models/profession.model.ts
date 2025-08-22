@@ -29,8 +29,7 @@ const professionSchema = new Schema({
       }
     }
   ],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+	isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
 export const professionModel = model<IProfessionDocument>("Profession", professionSchema);

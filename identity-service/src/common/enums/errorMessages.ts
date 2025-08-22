@@ -11,5 +11,7 @@ export enum ErrorMessage {
   INVALID_TOKEN_TYPE = "Invalid token type",
   INVALID_TOKEN  = "Invalid token",
   TOO_MANY_REQUESTS = "Too many requests, please try again later",
+	OTP_NOT_FOUND = "OTP not found",
+	INVALID_OTP = "Invalid OTP",
 
-}
+} 

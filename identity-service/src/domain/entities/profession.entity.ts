@@ -28,7 +28,6 @@ export interface Profession {
   id: string
   name: string
   description?: string
-  fields: FieldDefinition[]
-  createdAt: Date
-  updatedAt: Date
+  fields: FieldDefinition[],
+	isActive: boolean
 }
