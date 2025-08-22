@@ -1,14 +1,18 @@
 import { IUserRepository } from "../../domain/repositories/user.repository.interface";
-import { ICryptoService, IAuthService, ITokenService } from "../../domain/services";
+import { ICryptoService, IAuthService, ITokenService, IOtpService,ICacheService } from "../../domain/services";
 import { UserDTO } from "../../application/dtos/userDto";
 import { AppError } from "../errors/AppError";
 import { HttpStatus, ErrorMessage } from "../../common/enums";
+import { IEventBus } from "../../domain/events/IEventBus";
 
 export class AuthService implements IAuthService {
   constructor(
     private _userRepository: IUserRepository,
     private _cryptoService: ICryptoService,
-    private _tokenService: ITokenService
+    private _tokenService: ITokenService,
+    private _otpService: IOtpService,
+    private _cacheService: ICacheService,
+    private _eventBus: IEventBus
   ) { }
 
 
@@ -21,12 +25,14 @@ export class AuthService implements IAuthService {
 
   }
 
-  async registerUser(email: string, password: string, roles: ("user" | "professional" | "admin")[]): Promise<UserDTO> {
-
-    // handle otp sending 
-    const hashedPassword = await this._cryptoService.hash(password);
-    const user = await this._userRepository.create({ email, passwordHash: hashedPassword, roles });
-    return user;
+  async registerUser(name: string, email: string, password: string): Promise<void> {
+   
+		console.log(name, password)
+    const otp = await this._otpService.generateOtp();
+    const otpKey = `otp:${email}`;
+    await this._cacheService.set(otpKey,otp,300)
+    const message = {to: email, subject: "Skillsphere - OTP", text: `Your OTP is ${otp}. It is valid for 5 minutes.`};
+    await this._eventBus.publish('send.otp', message)
   }
 
   async loginUser(email: string, password: string): Promise<{ accessToken: string; refreshToken: string, user: UserDTO }> {

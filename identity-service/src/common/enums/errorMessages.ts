@@ -10,4 +10,6 @@ export enum ErrorMessage {
   SERVER_ERROR = "Internal server error",
   INVALID_TOKEN_TYPE = "Invalid token type",
   INVALID_TOKEN  = "Invalid token",
+  TOO_MANY_REQUESTS = "Too many requests, please try again later",
+
 }

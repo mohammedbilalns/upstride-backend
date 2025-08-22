@@ -1,14 +1,17 @@
 import { Router } from "express"
 import { createAuthController } from "../compositions/auth.composition"
-const router = Router()
+import { rateLimiter } from "../middlewares/rateLimiter.middleware"
 
-const authController = createAuthController()
+export default function createAuthRouter() {
+  const router = Router()
+  const authController = createAuthController()
 
-router.get('/test', (_req, res) => {
-  res.json({ message: "test from identity service" })
-})
-router.post('/login', authController.login)
+  router.get('/test', (_req, res) => {
+    res.json({ message: "test from identity service" })
+  })
+  router.post('/login', authController.login)
 
+  router.post('/register', rateLimiter(5,60,["ip","route"]), authController.register)
 
-
-export default router
+  return router
+}

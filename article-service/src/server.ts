@@ -5,9 +5,9 @@ import { configDotenv } from "dotenv"
 import cookieParser from "cookie-parser"
 import { requestLogger } from "./interfaces/http/middlewares"
 import { errorHandler } from "./interfaces/http/middlewares"
-import { connectToDb } from "./infra/config/db"
+import { connectToDb } from "./infrastructure/config/db"
 import logger from "./utils/logger"
-import env from "./infra/config/env"
+import env from "./infrastructure/config/env"
 
 configDotenv()
 const app  = express()
