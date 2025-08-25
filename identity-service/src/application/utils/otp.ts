@@ -1,7 +1,9 @@
-
 export const OTP_SUBJECT = "Skillsphere - OTP";
 
-export type  otpType = "register" | "reset";
+export enum otpType {
+  register = "register",
+  reset = "reset",
+}
 
 export function buildOtpEmailHtml(otp: string, type: otpType) {
   return `
@@ -69,4 +71,3 @@ export function buildOtpEmailHtml(otp: string, type: otpType) {
 </body>
 </html>`;
 }
-

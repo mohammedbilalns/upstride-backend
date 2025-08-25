@@ -17,6 +17,4 @@ router.use("/auth", proxy(env.IDENTITY_SERVICE_URL, {
   }
 }));
 
-
-
 export default router;

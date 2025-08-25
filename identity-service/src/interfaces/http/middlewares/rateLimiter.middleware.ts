@@ -1,6 +1,6 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { Request, Response, NextFunction } from "express";
-import { getCacheService } from "../../../infrastructure/config/connectRedis";
+import { redisClient } from "../../../infrastructure/config";
 
 export type RateLimitStrategy = "ip" | "user" | "route" | "global";
 
@@ -11,14 +11,12 @@ export function rateLimiter(
 ) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const cacheService = getCacheService(); 
-
       let keyParts: string[] = ["ratelimit"];
 
       if (strategy.includes("ip")) {
         keyParts.push(req.ip!);
       }
- 
+
       // if (strategy.includes("user") && req.user?.id) {
       //   keyParts.push(`user:${req.user.id}`);
       // }
@@ -33,16 +31,11 @@ export function rateLimiter(
 
       const key = keyParts.join(":");
 
-      // Get current count
-      let current = await cacheService.get(key);
-      let count = current ? parseInt(current, 10) : 0;
+      // Atomic increment with expiry in Redis (prevents race conditions)
+      const count = await redisClient.incr(key);
 
-      if (count === 0) {
-        await cacheService.set(key, "1", windowSec);
-        count = 1;
-      } else {
-        count++;
-        await cacheService.set(key, count.toString(), windowSec); 
+      if (count === 1) {
+        await redisClient.expire(key, windowSec);
       }
 
       if (count > limit) {
@@ -62,4 +55,3 @@ export function rateLimiter(
     }
   };
 }
-
