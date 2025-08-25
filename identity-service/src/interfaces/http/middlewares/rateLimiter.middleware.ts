@@ -30,8 +30,6 @@ export function rateLimiter(
       }
 
       const key = keyParts.join(":");
-
-      // Atomic increment with expiry in Redis (prevents race conditions)
       const count = await redisClient.incr(key);
 
       if (count === 1) {

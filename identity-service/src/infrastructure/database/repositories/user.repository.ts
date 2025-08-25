@@ -4,7 +4,10 @@ import { BaseRepository } from "./base.repository";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { IUserRepository } from "../../../domain/repositories/user.repository.interface";
 
-export class UserRepository extends BaseRepository<User, IUser> implements IUserRepository {
+export class UserRepository
+  extends BaseRepository<User, IUser>
+  implements IUserRepository
+{
   constructor() {
     super(userModel);
   }
@@ -16,13 +19,11 @@ export class UserRepository extends BaseRepository<User, IUser> implements IUser
       name: mapped.name,
       email: mapped.email,
       profilePicture: mapped.profilePicture,
+      passwordHash: mapped.passwordHash,
       isBlocked: mapped.isBlocked,
       googleId: mapped.googleId,
-      passwordHash: mapped.passwordHash,
       roles: mapped.roles,
       isVerified: mapped.isVerified,
-      createdAt: mapped.createdAt,
-      updatedAt: mapped.updatedAt,
     };
   }
 

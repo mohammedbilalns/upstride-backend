@@ -9,9 +9,10 @@ export enum ErrorMessage {
   INVALID_INPUT = "Invalid input data",
   SERVER_ERROR = "Internal server error",
   INVALID_TOKEN_TYPE = "Invalid token type",
-  INVALID_TOKEN  = "Invalid token",
+  INVALID_TOKEN = "Invalid token",
   TOO_MANY_REQUESTS = "Too many requests, please try again later",
-	OTP_NOT_FOUND = "OTP not found",
-	INVALID_OTP = "Invalid OTP",
-
-} 
+  OTP_NOT_FOUND = "OTP not found",
+  INVALID_OTP = "Invalid OTP",
+  VALIDATION_FAILED = "Validation failed",
+  INTERNAL_SERVER_ERROR = "Internal server error",
+}

@@ -19,11 +19,11 @@ export class AuthService implements IAuthService {
     private _cryptoService: ICryptoService,
     private _tokenService: ITokenService,
     private _otpService: IOtpService,
-    private _eventBus: IEventBus
+    private _eventBus: IEventBus,
   ) {}
 
   private async generateTokens(
-    user: UserDTO
+    user: UserDTO,
   ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
     const [newAccessToken, newRefreshToken] = await Promise.all([
       this._tokenService.generateAccessToken(user),
@@ -35,13 +35,13 @@ export class AuthService implements IAuthService {
   async registerUser(
     name: string,
     email: string,
-    password: string
+    password: string,
   ): Promise<void> {
     const existingUser = await this._userRepository.findByEmail(email);
     if (existingUser && existingUser?.isVerified)
       throw new AppError(
-        ErrorMessage.ALERADY_WITH_GOOGLE_ID,
-        HttpStatus.BAD_REQUEST
+        ErrorMessage.EMAIL_ALREADY_EXISTS,
+        HttpStatus.BAD_REQUEST,
       );
     if (existingUser && !existingUser?.isVerified)
       await this._userRepository.delete(existingUser.id);
@@ -64,7 +64,7 @@ export class AuthService implements IAuthService {
 
   async verifyOtp(
     email: string,
-    otp: string
+    otp: string,
   ): Promise<{ user: UserDTO; accessToken: string; refreshToken: string }> {
     const savedOtp = await this._otpRepository.getOtp(email, otpType.register);
     if (!savedOtp)
@@ -79,8 +79,9 @@ export class AuthService implements IAuthService {
 
     await this._userRepository.update(user.id, { isVerified: true });
     const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
+    const { passwordHash, isBlocked, isVerified, ...publicUser } = user;
     return {
-      user: user,
+      user: publicUser,
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
     };
@@ -88,7 +89,7 @@ export class AuthService implements IAuthService {
 
   async loginUser(
     email: string,
-    password: string
+    password: string,
   ): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
     const user = await this._userRepository.findByEmail(email);
     if (!user || !user.isVerified)
@@ -96,33 +97,48 @@ export class AuthService implements IAuthService {
     if (!user.passwordHash)
       throw new AppError(
         ErrorMessage.INVALID_CREDENTIALS,
-        HttpStatus.UNAUTHORIZED
+        HttpStatus.UNAUTHORIZED,
       );
     if (user.isBlocked)
       throw new AppError(
         ErrorMessage.BLOCKED_FROM_PLATFORM,
-        HttpStatus.FORBIDDEN
+        HttpStatus.FORBIDDEN,
       );
-
     const isPasswordValid = await this._cryptoService.compare(
       password,
-      user.passwordHash
+      user.passwordHash,
     );
     if (!isPasswordValid)
       throw new AppError(
         ErrorMessage.INVALID_CREDENTIALS,
-        HttpStatus.UNAUTHORIZED
+        HttpStatus.UNAUTHORIZED,
       );
-
+    const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
+      user;
     return {
       accessToken: this._tokenService.generateAccessToken(user),
       refreshToken: this._tokenService.generateRefreshToken(user),
-      user,
+      user: publicUser,
     };
   }
 
+  async resendRegisterOtp(email: string): Promise<void> {
+    const user = await this._userRepository.findByEmail(email);
+    if (!user)
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    await this._otpRepository.deleteOtp(email, otpType.register);
+    const otp = await this._otpService.generateOtp();
+    await this._otpRepository.saveOtp(otp, email, otpType.register, 300);
+    const message = {
+      to: email,
+      subject: OTP_SUBJECT,
+      text: buildOtpEmailHtml(otp, otpType.register),
+    };
+    await this._eventBus.publish("send.otp", message);
+  }
+
   async refreshAccessToken(
-    refreshToken: string
+    refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const decoded = this._tokenService.verifyRefreshToken(refreshToken);
     const { id } = decoded;
@@ -138,7 +154,7 @@ export class AuthService implements IAuthService {
   }
 
   async googleAuthenticate(
-    token: string
+    token: string,
   ): Promise<{ user: UserDTO; accessToken: string; refreshToken: string }> {
     const decodedToken = this._tokenService.decodeGoogleToken(token);
     if (!decodedToken)
@@ -194,6 +210,21 @@ export class AuthService implements IAuthService {
       await this._otpRepository.incrementCount(email, otpType.reset);
       throw new AppError(ErrorMessage.INVALID_OTP, HttpStatus.UNAUTHORIZED);
     }
+  }
+
+  async resendResetOtp(email: string): Promise<void> {
+    const user = await this._userRepository.findByEmail(email);
+    if (!user)
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    await this._otpRepository.deleteOtp(email, otpType.reset);
+    const otp = await this._otpService.generateOtp();
+    await this._otpRepository.saveOtp(otp, email, otpType.reset, 300);
+    const message = {
+      to: email,
+      subject: OTP_SUBJECT,
+      text: buildOtpEmailHtml(otp, otpType.reset),
+    };
+    await this._eventBus.publish("send.otp", message);
   }
 
   async updatePassword(email: string, newPassword: string): Promise<void> {

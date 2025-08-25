@@ -26,8 +26,8 @@ app.use(requestLogger);
 async function startServer() {
   await connectRabbitMq();
   await connectToDb();
-  await redisClient.ping()
-  
+  await redisClient.ping();
+
   app.use("/api/auth", createAuthRouter());
   app.use("/api/expertise", createExpertiseRouter());
   app.use(errorHandler);
