@@ -42,13 +42,15 @@ export class AuthController {
     this.setAuthCookies(res, accessToken, refreshToken);
     res
       .status(HttpStatus.OK)
-      .json({ message: ResponseMessage.LOGIN_SUCCESS, user });
+      .json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
   });
 
   register = asyncHandler(async (req, res) => {
     const { name, email, password } = registerSchema.parse(req.body);
     await this._authService.registerUser(name, email, password);
-    res.status(HttpStatus.OK).json({ messsage: ResponseMessage.OTP_SENT });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, messsage: ResponseMessage.OTP_SENT });
   });
 
   googleAuth = asyncHandler(async (req, res) => {
@@ -58,7 +60,7 @@ export class AuthController {
     this.setAuthCookies(res, accessToken, refreshToken);
     res
       .status(HttpStatus.OK)
-      .json({ messsage: ResponseMessage.LOGIN_SUCCESS, user });
+      .json({ success: true, messsage: ResponseMessage.LOGIN_SUCCESS, user });
   });
 
   verifyOtp = asyncHandler(async (req, res) => {
@@ -68,26 +70,30 @@ export class AuthController {
     this.setAuthCookies(res, accessToken, refreshToken);
     res
       .status(HttpStatus.OK)
-      .json({ messsage: ResponseMessage.OTP_VERIFIED, user });
+      .json({ success: true, messsage: ResponseMessage.OTP_VERIFIED, user });
   });
 
   logout = asyncHandler(async (_req, res) => {
     this.clearAuthCookies(res);
     res
       .status(HttpStatus.OK)
-      .json({ messsage: ResponseMessage.LOGOUT_SUCCESS });
+      .json({ success: true, messsage: ResponseMessage.LOGOUT_SUCCESS });
   });
 
   reset = asyncHandler(async (req, res) => {
     const { email } = resetSchema.parse(req.body);
     await this._authService.initiatePasswordReset(email);
-    res.status(HttpStatus.OK).json({ messsage: ResponseMessage.OTP_SENT });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, messsage: ResponseMessage.OTP_SENT });
   });
 
   verifyResetOtp = asyncHandler(async (req, res) => {
     const { email, otp } = verifyOtpSchema.parse(req.body);
     await this._authService.verifyResetOtp(email, otp);
-    res.status(HttpStatus.OK).json({ messsage: ResponseMessage.OTP_VERIFIED });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, messsage: ResponseMessage.OTP_VERIFIED });
   });
 
   updatePassword = asyncHandler(async (req, res) => {
@@ -95,6 +101,6 @@ export class AuthController {
     await this._authService.updatePassword(email, newPassword);
     res
       .status(HttpStatus.OK)
-      .json({ messsage: ResponseMessage.PASSWORD_UPDATED });
+      .json({ success: true, messsage: ResponseMessage.PASSWORD_UPDATED });
   });
 }
