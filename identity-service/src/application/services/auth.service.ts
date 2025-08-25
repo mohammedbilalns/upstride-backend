@@ -77,7 +77,11 @@ export class AuthService implements IAuthService {
     if (!user)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    await this._userRepository.update(user.id, { isVerified: true });
+    await Promise.all([
+      this._userRepository.update(user.id, { isVerified: true }),
+      this._otpRepository.deleteOtp(email, otpType.register),
+    ]);
+
     const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
     const { passwordHash, isBlocked, isVerified, ...publicUser } = user;
     return {
@@ -210,6 +214,7 @@ export class AuthService implements IAuthService {
       await this._otpRepository.incrementCount(email, otpType.reset);
       throw new AppError(ErrorMessage.INVALID_OTP, HttpStatus.UNAUTHORIZED);
     }
+    await this._otpRepository.deleteOtp(email, otpType.reset);
   }
 
   async resendResetOtp(email: string): Promise<void> {
