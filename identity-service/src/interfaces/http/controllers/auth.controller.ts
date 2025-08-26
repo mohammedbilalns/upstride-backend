@@ -1,5 +1,9 @@
 import { COOKIE_OPTIONS } from "../../../common/constants/cookieOptions";
-import { HttpStatus, ResponseMessage } from "../../../common/enums";
+import {
+  ErrorMessage,
+  HttpStatus,
+  ResponseMessage,
+} from "../../../common/enums";
 import { IAuthService } from "../../../domain/services";
 import asyncHandler from "../utils/asyncHandler";
 import {
@@ -46,8 +50,8 @@ export class AuthController {
   });
 
   register = asyncHandler(async (req, res) => {
-    const { name, email, password } = registerSchema.parse(req.body);
-    await this._authService.registerUser(name, email, password);
+    const { name, email, phone, password } = registerSchema.parse(req.body);
+    await this._authService.registerUser(name, email, phone, password);
     res
       .status(HttpStatus.OK)
       .json({ success: true, messsage: ResponseMessage.OTP_SENT });
@@ -102,5 +106,23 @@ export class AuthController {
     res
       .status(HttpStatus.OK)
       .json({ success: true, messsage: ResponseMessage.PASSWORD_UPDATED });
+  });
+
+  refreshToken = asyncHandler(async (req, res) => {
+    const refreshTokenFromCookie = req.cookies.refreshToken;
+    if (!refreshTokenFromCookie) {
+      res.status(HttpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: ErrorMessage.INVALID_REFRESH_TOKEN,
+      });
+    }
+
+    const { accessToken, refreshToken } =
+      await this._authService.refreshAccessToken(refreshTokenFromCookie);
+    this.setAuthCookies(res, accessToken, refreshToken);
+    res.status(HttpStatus.OK).json({
+      success: true,
+      message: ResponseMessage.REFRESH_TOKEN_SUCCESS,
+    });
   });
 }

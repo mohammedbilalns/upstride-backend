@@ -2,6 +2,6 @@ export interface UserDTO {
   id: string;
   name: string;
   email: string;
-  roles: ("user" | "professional" | "admin")[];
+  role: "user" | "expert" | "admin" | "superadmin";
   profilePicture?: string;
 }

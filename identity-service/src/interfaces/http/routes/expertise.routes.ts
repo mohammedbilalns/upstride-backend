@@ -1,9 +1,9 @@
 import { Router } from "express"
 
 export function createExpertiseRouter() {
-  const router = Router()
+  const router = Router();
 
-	// create Profession by admin 
+	// create Profession by admin
 	router.post('/professions', (_req, res)=>{
 		res.json({message:"hello world"})
 	})
@@ -32,6 +32,5 @@ export function createExpertiseRouter() {
 		res.json({message:"hello world"})
 	})
 
-	
-  return router
+  return router;
 }

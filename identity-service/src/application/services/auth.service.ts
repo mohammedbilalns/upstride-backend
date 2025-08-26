@@ -35,6 +35,7 @@ export class AuthService implements IAuthService {
   async registerUser(
     name: string,
     email: string,
+    phone: string,
     password: string,
   ): Promise<void> {
     const existingUser = await this._userRepository.findByEmail(email);
@@ -48,7 +49,7 @@ export class AuthService implements IAuthService {
     const hashedPassword = await this._cryptoService.hash(password);
     await this._userRepository.create({
       email,
-      roles: ["user"],
+      phone,
       name,
       passwordHash: hashedPassword,
     });
@@ -149,6 +150,11 @@ export class AuthService implements IAuthService {
     const user = await this._userRepository.findById(id);
     if (!user)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    if (user && user.isBlocked)
+      throw new AppError(
+        ErrorMessage.BLOCKED_FROM_PLATFORM,
+        HttpStatus.FORBIDDEN,
+      );
 
     const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
     return {
@@ -168,7 +174,6 @@ export class AuthService implements IAuthService {
     if (!user) {
       user = await this._userRepository.create({
         email: decodedToken.email,
-        roles: ["user"],
         name: decodedToken.name,
         isVerified: true,
         googleId: decodedToken.sub,
@@ -240,5 +245,10 @@ export class AuthService implements IAuthService {
     await this._userRepository.update(user.id, {
       passwordHash: hashedPassword,
     });
+  }
+
+  async isUserBlocked(userId: string): Promise<boolean> {
+    const user = await this._userRepository.findById(userId);
+    return user?.isBlocked || false;
   }
 }

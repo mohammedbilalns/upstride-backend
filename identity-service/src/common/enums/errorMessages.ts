@@ -15,4 +15,8 @@ export enum ErrorMessage {
   INVALID_OTP = "Invalid OTP",
   VALIDATION_FAILED = "Validation failed",
   INTERNAL_SERVER_ERROR = "Internal server error",
+  TOKEN_NOT_FOUND = "Token not found",
+  INVALID_REFRESH_TOKEN = "Invalid refresh token",
+  TOKEN_EXPIRED = "Token expired",
+  FORBIDDEN_RESOURCE = "Forbidden resource",
 }

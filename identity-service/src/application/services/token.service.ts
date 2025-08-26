@@ -17,7 +17,7 @@ export class TokenService implements ITokenService {
 
   generateAccessToken(user: UserDTO): string {
     return jwt.sign(
-      { id: user.id, email: user.email, role: user.roles, type: "access" },
+      { id: user.id, email: user.email, role: user.role, type: "access" },
       this.jwtSecret,
       { expiresIn: parseInt(env.ACCESS_TOKEN_EXPIRY) },
     );
@@ -25,7 +25,7 @@ export class TokenService implements ITokenService {
 
   generateRefreshToken(user: UserDTO): string {
     return jwt.sign(
-      { id: user.id, email: user.email, role: user.roles, type: "refresh" },
+      { id: user.id, email: user.email, role: user.role, type: "refresh" },
       this.jwtSecret,
       { expiresIn: parseInt(env.REFRESH_TOKEN_EXPIRY) },
     );

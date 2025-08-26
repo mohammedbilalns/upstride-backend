@@ -18,11 +18,12 @@ export class UserRepository
       id: mapped.id,
       name: mapped.name,
       email: mapped.email,
+      phone: mapped.phone,
       profilePicture: mapped.profilePicture,
       passwordHash: mapped.passwordHash,
       isBlocked: mapped.isBlocked,
       googleId: mapped.googleId,
-      roles: mapped.roles,
+      role: mapped.role,
       isVerified: mapped.isVerified,
     };
   }
