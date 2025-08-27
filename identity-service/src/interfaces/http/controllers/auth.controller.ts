@@ -65,7 +65,7 @@ export class AuthController {
     this.setAuthCookies(res, accessToken, refreshToken);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.LOGIN_SUCCESS, user });
+      .json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
   });
 
   verifyOtp = asyncHandler(async (req, res) => {
@@ -90,7 +90,7 @@ export class AuthController {
     this.clearAuthCookies(res);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.LOGOUT_SUCCESS });
+      .json({ success: true, message: ResponseMessage.LOGOUT_SUCCESS });
   });
 
   reset = asyncHandler(async (req, res) => {
@@ -98,7 +98,7 @@ export class AuthController {
     await this._authService.initiatePasswordReset(email);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.OTP_SENT });
+      .json({ success: true, message: ResponseMessage.OTP_SENT });
   });
 
   verifyResetOtp = asyncHandler(async (req, res) => {
@@ -106,7 +106,7 @@ export class AuthController {
     await this._authService.verifyResetOtp(email, otp);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.OTP_VERIFIED });
+      .json({ success: true, message: ResponseMessage.OTP_VERIFIED });
   });
 
   resendResetOtp = asyncHandler(async (req, res) => {
@@ -114,7 +114,7 @@ export class AuthController {
     await this._authService.resendResetOtp(email);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.OTP_SENT });
+      .json({ success: true, message: ResponseMessage.OTP_SENT });
   });
 
   updatePassword = asyncHandler(async (req, res) => {
@@ -122,7 +122,7 @@ export class AuthController {
     await this._authService.updatePassword(email, newPassword);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.PASSWORD_UPDATED });
+      .json({ success: true, message: ResponseMessage.PASSWORD_UPDATED });
   });
 
   refreshToken = asyncHandler(async (req, res) => {

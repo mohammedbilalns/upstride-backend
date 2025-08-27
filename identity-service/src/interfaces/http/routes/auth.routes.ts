@@ -46,5 +46,6 @@ export function createAuthRouter() {
     authController.updatePassword,
   );
   router.post("/logout", authController.logout);
+  router.post("/google", authController.googleAuth);
   return router;
 }

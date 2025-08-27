@@ -6,6 +6,6 @@ export enum ResponseMessage {
   OTP_RESENT = "OTP resent to your email, please check your inbox",
   OTP_VERIFIED = "OTP verified successfully",
   PASSWORD_UPDATED = "Password updated successfully",
-  LOGOUT_SUCCESS = "Logout successful",
+  LOGOUT_SUCCESS = "Logged out successfully",
   REFRESH_TOKEN_SUCCESS = "Refresh token refreshed successfully",
 }

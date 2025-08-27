@@ -7,12 +7,12 @@ const userSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true },
+    phone: { type: String },
     profilePicture: { type: String },
     isBlocked: { type: Boolean, default: false },
     googleId: { type: String },
     isVerified: { type: Boolean, default: false },
-    passwordHash: { type: String, required: true },
+    passwordHash: { type: String },
     role: {
       type: String,
       enum: ["user", "expert", "admin", "superadmin"],

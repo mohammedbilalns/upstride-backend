@@ -111,6 +111,12 @@ export class AuthService implements IAuthService {
     const user = await this._userRepository.findByEmail(email);
     if (!user || !user.isVerified)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
+    if (user.googleId && !user.passwordHash) {
+      throw new AppError(
+        ErrorMessage.ALERADY_WITH_GOOGLE_ID,
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     if (!user.passwordHash)
       throw new AppError(
         ErrorMessage.INVALID_CREDENTIALS,
