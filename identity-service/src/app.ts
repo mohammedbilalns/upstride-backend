@@ -1,7 +1,6 @@
 import { Application } from "express";
 import express from "express";
 import helmet from "helmet";
-import cors from "cors";
 import cookieParser from "cookie-parser";
 import { requestLogger, errorHandler } from "./interfaces/http/middlewares";
 import {
@@ -22,7 +21,6 @@ class App {
   private _setupMiddlewares() {
     this._app.use(express.json());
     this._app.use(helmet());
-    this._app.use(cors());
     this._app.use(cookieParser());
     this._app.use(requestLogger);
   }

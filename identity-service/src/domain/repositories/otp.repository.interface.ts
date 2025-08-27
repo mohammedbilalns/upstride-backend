@@ -3,7 +3,7 @@ export interface IOtpRepository {
     otp: string,
     email: string,
     type: string,
-    expiryInSeconds: number
+    expiryInSeconds: number,
   ): Promise<void>;
   getOtp(email: string, type: string): Promise<string | null>;
   deleteOtp(email: string, type: string): Promise<void>;
@@ -12,8 +12,9 @@ export interface IOtpRepository {
     otp: string,
     email: string,
     type: string,
-    expiryInSeconds: number
+    expiryInSeconds: number,
   ): Promise<void>;
   getResendCount(email: string, type: string): Promise<number>;
-  incrementCount(email: string, type:string): Promise<void>;
+  incrementCount(email: string, type: string): Promise<void>;
+  updateOtp(otp: string, email: string, type: string): Promise<void>;
 }

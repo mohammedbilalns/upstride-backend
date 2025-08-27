@@ -12,6 +12,7 @@ import {
   verifyOtpSchema,
   updatePasswordSchema,
   resetSchema,
+  resendOtpSchema,
 } from "../validations/auth.validation";
 import env from "../../../infrastructure/config/env";
 import { Response } from "express";
@@ -54,7 +55,7 @@ export class AuthController {
     await this._authService.registerUser(name, email, phone, password);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.OTP_SENT });
+      .json({ success: true, message: ResponseMessage.OTP_SENT });
   });
 
   googleAuth = asyncHandler(async (req, res) => {
@@ -74,7 +75,15 @@ export class AuthController {
     this.setAuthCookies(res, accessToken, refreshToken);
     res
       .status(HttpStatus.OK)
-      .json({ success: true, messsage: ResponseMessage.OTP_VERIFIED, user });
+      .json({ success: true, message: ResponseMessage.OTP_VERIFIED, user });
+  });
+
+  resendOtp = asyncHandler(async (req, res) => {
+    const { email } = resendOtpSchema.parse(req.body);
+    await this._authService.resendRegisterOtp(email);
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.OTP_RESENT });
   });
 
   logout = asyncHandler(async (_req, res) => {
@@ -98,6 +107,14 @@ export class AuthController {
     res
       .status(HttpStatus.OK)
       .json({ success: true, messsage: ResponseMessage.OTP_VERIFIED });
+  });
+
+  resendResetOtp = asyncHandler(async (req, res) => {
+    const { email } = resendOtpSchema.parse(req.body);
+    await this._authService.resendResetOtp(email);
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, messsage: ResponseMessage.OTP_SENT });
   });
 
   updatePassword = asyncHandler(async (req, res) => {

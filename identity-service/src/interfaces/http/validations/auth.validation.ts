@@ -43,3 +43,7 @@ export const updatePasswordSchema = z.object({
       "Password must contain at least one special character (!@#$%^&* etc.)",
     ),
 });
+
+export const resendOtpSchema = z.object({
+  email: z.email(),
+});

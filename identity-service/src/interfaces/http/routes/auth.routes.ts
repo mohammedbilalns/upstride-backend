@@ -15,10 +15,20 @@ export function createAuthRouter() {
   router.post("/google-auth", authController.googleAuth);
   router.post(
     "/verify-otp",
-    rateLimiter(5, 60, ["ip", "route"]),
+    rateLimiter(10, 60, ["ip", "route"]),
     authController.verifyOtp,
   );
-  // router.post('/resend-otp', rateLimiter(5,60,["ip","route"]),)
+
+  router.post(
+    "/resend-otp",
+    rateLimiter(5, 60, ["ip", "route"]),
+    authController.resendOtp,
+  );
+  router.post(
+    "/refresh-token",
+    rateLimiter(5, 60, ["ip", "route"]),
+    authController.refreshToken,
+  );
   router.post(
     "/reset-password",
     rateLimiter(5, 60, ["ip", "route"]),
@@ -29,7 +39,7 @@ export function createAuthRouter() {
     rateLimiter(5, 60, ["ip", "route"]),
     authController.verifyResetOtp,
   );
-  // router.post('/resend  reset-otp', rateLimiter(5,60,["ip","route"]), authController.resendResetOtp)
+  router.post("/resend-reset-otp", authController.resendResetOtp);
   router.post(
     "/update-password",
     rateLimiter(5, 60, ["ip", "route"]),

@@ -67,16 +67,28 @@ export class AuthService implements IAuthService {
     email: string,
     otp: string,
   ): Promise<{ user: UserDTO; accessToken: string; refreshToken: string }> {
+    const count =
+      (await this._otpRepository.getResendCount(email, otpType.register)) ?? 0;
+
+    if (count > 3) {
+      await this._otpRepository.deleteOtp(email, otpType.register);
+      throw new AppError(
+        ErrorMessage.TOO_MANY_OTP_ATTEMPTS,
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
     const savedOtp = await this._otpRepository.getOtp(email, otpType.register);
     if (!savedOtp)
       throw new AppError(ErrorMessage.OTP_NOT_FOUND, HttpStatus.NOT_FOUND);
+
     if (savedOtp !== otp) {
       await this._otpRepository.incrementCount(email, otpType.register);
       throw new AppError(ErrorMessage.INVALID_OTP, HttpStatus.UNAUTHORIZED);
     }
     const user = await this._userRepository.findByEmail(email)!;
     if (!user)
-      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
 
     await Promise.all([
       this._userRepository.update(user.id, { isVerified: true }),
@@ -98,7 +110,7 @@ export class AuthService implements IAuthService {
   ): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
     const user = await this._userRepository.findByEmail(email);
     if (!user || !user.isVerified)
-      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
     if (!user.passwordHash)
       throw new AppError(
         ErrorMessage.INVALID_CREDENTIALS,
@@ -130,10 +142,19 @@ export class AuthService implements IAuthService {
   async resendRegisterOtp(email: string): Promise<void> {
     const user = await this._userRepository.findByEmail(email);
     if (!user)
-      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-    await this._otpRepository.deleteOtp(email, otpType.register);
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
+    const count =
+      (await this._otpRepository.getResendCount(email, otpType.register)) ?? 0;
+    if (count > 3) {
+      await this._otpRepository.deleteOtp(email, otpType.register);
+      throw new AppError(
+        ErrorMessage.TOO_MANY_OTP_ATTEMPTS,
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
     const otp = await this._otpService.generateOtp();
-    await this._otpRepository.saveOtp(otp, email, otpType.register, 300);
+    await this._otpRepository.updateOtp(otp, email, otpType.register);
     const message = {
       to: email,
       subject: OTP_SUBJECT,
@@ -149,7 +170,7 @@ export class AuthService implements IAuthService {
     const { id } = decoded;
     const user = await this._userRepository.findById(id);
     if (!user)
-      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
     if (user && user.isBlocked)
       throw new AppError(
         ErrorMessage.BLOCKED_FROM_PLATFORM,
@@ -185,7 +206,10 @@ export class AuthService implements IAuthService {
         googleId: decodedToken.sub,
       });
       if (!user) {
-        throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+        throw new AppError(
+          ErrorMessage.USER_NOT_FOUND,
+          HttpStatus.UNAUTHORIZED,
+        );
       }
     }
 
@@ -200,7 +224,7 @@ export class AuthService implements IAuthService {
   async initiatePasswordReset(email: string): Promise<void> {
     const user = await this._userRepository.findByEmail(email);
     if (!user)
-      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
     const otp = await this._otpService.generateOtp();
     await this._otpRepository.saveOtp(otp, email, otpType.reset, 300);
     const message = {
@@ -212,6 +236,15 @@ export class AuthService implements IAuthService {
   }
 
   async verifyResetOtp(email: string, otp: string): Promise<void> {
+    const count =
+      (await this._otpRepository.getResendCount(email, otpType.reset)) ?? 0;
+    if (count > 3) {
+      await this._otpRepository.deleteOtp(email, otpType.reset);
+      throw new AppError(
+        ErrorMessage.TOO_MANY_OTP_ATTEMPTS,
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
     const savedOtp = await this._otpRepository.getOtp(email, otpType.reset);
     if (!savedOtp)
       throw new AppError(ErrorMessage.OTP_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -226,9 +259,17 @@ export class AuthService implements IAuthService {
     const user = await this._userRepository.findByEmail(email);
     if (!user)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-    await this._otpRepository.deleteOtp(email, otpType.reset);
+    const count =
+      (await this._otpRepository.getResendCount(email, otpType.reset)) ?? 0;
+    if (count > 3) {
+      await this._otpRepository.deleteOtp(email, otpType.reset);
+      throw new AppError(
+        ErrorMessage.TOO_MANY_OTP_ATTEMPTS,
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
     const otp = await this._otpService.generateOtp();
-    await this._otpRepository.saveOtp(otp, email, otpType.reset, 300);
+    await this._otpRepository.updateOtp(otp, email, otpType.reset);
     const message = {
       to: email,
       subject: OTP_SUBJECT,
@@ -240,7 +281,7 @@ export class AuthService implements IAuthService {
   async updatePassword(email: string, newPassword: string): Promise<void> {
     const user = await this._userRepository.findByEmail(email);
     if (!user)
-      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
     const hashedPassword = await this._cryptoService.hash(newPassword);
     await this._userRepository.update(user.id, {
       passwordHash: hashedPassword,

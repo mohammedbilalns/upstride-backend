@@ -1,5 +1,5 @@
 import { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
-import {Redis} from "ioredis"
+import { Redis } from "ioredis";
 
 export class OtpRepository implements IOtpRepository {
   constructor(private readonly redisClient: Redis) {}
@@ -11,7 +11,7 @@ export class OtpRepository implements IOtpRepository {
     otp: string,
     email: string,
     type: string,
-    expiryInSeconds: number = 300
+    expiryInSeconds: number = 300,
   ): Promise<void> {
     const key = this.getKey(email, type);
 
@@ -41,7 +41,7 @@ export class OtpRepository implements IOtpRepository {
     otp: string,
     email: string,
     type: string,
-    expiryInSeconds: number = 300
+    expiryInSeconds: number = 300,
   ): Promise<void> {
     const key = this.getKey(email, type);
     await this.redisClient.hincrby(key, "resendCount", 1);
@@ -58,5 +58,10 @@ export class OtpRepository implements IOtpRepository {
   async incrementCount(email: string, type: string): Promise<void> {
     const key = this.getKey(email, type);
     await this.redisClient.hincrby(key, "resendCount", 1);
+  }
+
+  async updateOtp(otp: string, email: string, type: string): Promise<void> {
+    const key = this.getKey(email, type);
+    await this.redisClient.hset(key, "otp", otp);
   }
 }

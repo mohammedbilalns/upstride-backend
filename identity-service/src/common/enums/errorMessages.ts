@@ -19,4 +19,5 @@ export enum ErrorMessage {
   INVALID_REFRESH_TOKEN = "Invalid refresh token",
   TOKEN_EXPIRED = "Token expired",
   FORBIDDEN_RESOURCE = "Forbidden resource",
+  TOO_MANY_OTP_ATTEMPTS = "Too many attempts, please register again",
 }
