@@ -7,15 +7,15 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "scripts": {
-    "start": "node dist/server.js",
-    "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc",
-    "lint": "eslint . --ext .ts",
-    "test": "jest"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.33.0",
+	"scripts": {
+		"start": "node dist/server.js",
+		"dev": "nodemon --watch src -e ts --exec 'tsc && node dist/server.js'", 
+		"build": "tsc",
+		"lint": "eslint . --ext .ts",
+		"test": "jest"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.33.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",

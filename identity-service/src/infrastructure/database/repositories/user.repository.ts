@@ -4,7 +4,10 @@ import { BaseRepository } from "./base.repository";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { IUserRepository } from "../../../domain/repositories/user.repository.interface";
 
-export class UserRepository extends BaseRepository<User, IUser> implements IUserRepository {
+export class UserRepository
+  extends BaseRepository<User, IUser>
+  implements IUserRepository
+{
   constructor() {
     super(userModel);
   }
@@ -15,19 +18,28 @@ export class UserRepository extends BaseRepository<User, IUser> implements IUser
       id: mapped.id,
       name: mapped.name,
       email: mapped.email,
+      phone: mapped.phone,
       profilePicture: mapped.profilePicture,
+      passwordHash: mapped.passwordHash,
       isBlocked: mapped.isBlocked,
       googleId: mapped.googleId,
-      passwordHash: mapped.passwordHash,
-      roles: mapped.roles,
+      role: mapped.role,
       isVerified: mapped.isVerified,
-      createdAt: mapped.createdAt,
-      updatedAt: mapped.updatedAt,
     };
   }
 
   async findByEmail(email: string): Promise<User | null> {
     const doc = await this._model.findOne({ email }).exec();
     return doc ? this.mapToDomain(doc) : null;
+  }
+
+  async findAll(page: number, limit: number, query?: string): Promise<User[]> {
+    const filter = query ? { $text: { $search: query } } : {};
+    const docs = await this._model
+      .find(filter)
+      .skip(page * limit)
+      .limit(limit)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 }

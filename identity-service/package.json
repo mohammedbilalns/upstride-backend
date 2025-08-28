@@ -9,10 +9,11 @@
   "type": "commonjs",
   "scripts": {
     "start": "node dist/server.js",
-    "dev": "nodemon --exec ts-node src/server.ts",
+    "dev": "nodemon --watch src -e ts --exec 'tsc && node dist/server.js'",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "test": "jest"
+    "test": "jest",
+    "create-admin": "ts-node scripts/createAdmin.ts"
   },
   "dependencies": {
     "amqplib": "^0.10.8",
@@ -22,6 +23,7 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "ioredis": "^5.7.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.2",
     "morgan": "^1.10.1",
@@ -35,8 +37,10 @@
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/ioredis": "^4.28.10",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.3.0",
+    "@types/redis": "^4.0.10",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
     "eslint": "^9.33.0",
