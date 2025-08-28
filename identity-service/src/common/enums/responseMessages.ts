@@ -8,4 +8,6 @@ export enum ResponseMessage {
   PASSWORD_UPDATED = "Password updated successfully",
   LOGOUT_SUCCESS = "Logged out successfully",
   REFRESH_TOKEN_SUCCESS = "Refresh token refreshed successfully",
+  USER_BLOCKED = "User blocked successfully",
+  USER_UNBLOCKED = "User unblocked successfully",
 }

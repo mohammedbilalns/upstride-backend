@@ -3,7 +3,7 @@ import { User } from "../../../domain/entities/user.entity";
 
 export interface IUser extends Document, Omit<User, "id"> {}
 
-const userSchema: Schema = new Schema(
+export const userSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -12,6 +12,10 @@ const userSchema: Schema = new Schema(
     isBlocked: { type: Boolean, default: false },
     googleId: { type: String },
     isVerified: { type: Boolean, default: false },
+    isRequestedForMentoring: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+    },
     passwordHash: { type: String },
     role: {
       type: String,
@@ -21,5 +25,6 @@ const userSchema: Schema = new Schema(
   },
   { timestamps: true },
 );
+userSchema.index({ name: "text", email: "text" });
 
 export const userModel = model<IUser>("User", userSchema);

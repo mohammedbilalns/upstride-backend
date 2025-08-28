@@ -1,9 +1,7 @@
-
-export interface ProfessionDto {
-  id: string
-  name: string
-  description: string
-  fields: Record<string,any>
-  isActive: boolean
+export interface ExpertiseDto {
+  id: string;
+  name: string;
+  description: string;
+  fields: Record<string, any>;
+  isActive: boolean;
 }
-

@@ -32,4 +32,14 @@ export class UserRepository
     const doc = await this._model.findOne({ email }).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
+
+  async findAll(page: number, limit: number, query?: string): Promise<User[]> {
+    const filter = query ? { $text: { $search: query } } : {};
+    const docs = await this._model
+      .find(filter)
+      .skip(page * limit)
+      .limit(limit)
+      .exec();
+    return docs.map((doc) => this.mapToDomain(doc));
+  }
 }

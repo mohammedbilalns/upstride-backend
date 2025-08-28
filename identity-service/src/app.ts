@@ -9,6 +9,7 @@ import {
 } from "./interfaces/http/routes";
 import { connectToDb, redisClient } from "./infrastructure/config";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { createUserManagementRouter } from "./interfaces/http/routes/userManagement.routes";
 
 class App {
   private _app: Application;
@@ -27,6 +28,7 @@ class App {
 
   private _setupRoutes() {
     this._app.use("/api/auth", createAuthRouter());
+    this._app.use("/api/user", createUserManagementRouter());
     this._app.use("/api/expertise", createExpertiseRouter());
     this._app.use(errorHandler);
   }

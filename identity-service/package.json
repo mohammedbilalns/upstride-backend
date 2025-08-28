@@ -12,7 +12,8 @@
     "dev": "nodemon --watch src -e ts --exec 'tsc && node dist/server.js'",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "test": "jest"
+    "test": "jest",
+    "create-admin": "ts-node scripts/createAdmin.ts"
   },
   "dependencies": {
     "amqplib": "^0.10.8",
