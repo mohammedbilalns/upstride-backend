@@ -4,7 +4,7 @@ import { IMenotorRepository } from "../../../domain/repositories/mentor.reposito
 import { BaseRepository } from "./base.repository";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 
-export class ExpertRepository
+export class MentorRepository
   extends BaseRepository<Mentor, IMentor>
   implements IMenotorRepository
 {

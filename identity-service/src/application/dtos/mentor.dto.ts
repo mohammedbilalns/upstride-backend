@@ -19,10 +19,10 @@ export interface createMentorDto {
   institution: string;
   yearsofExperience: number;
   educationalQualifications: string[];
-  personalWebsite: string;
+  personalWebsite?: string;
   expertiseId: string;
   skillIds: string[];
-  resumeUrl: string;
+  resumeUrl?: string;
   termsAccepted: boolean;
 }
 

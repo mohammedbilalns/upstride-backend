@@ -10,6 +10,7 @@ import {
 import { connectToDb, redisClient } from "./infrastructure/config";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { createUserManagementRouter } from "./interfaces/http/routes/userManagement.routes";
+import { createMentorRoutes } from "./interfaces/http/routes/mentor.routes";
 
 class App {
   private _app: Application;
@@ -30,6 +31,7 @@ class App {
     this._app.use("/api/auth", createAuthRouter());
     this._app.use("/api/users", createUserManagementRouter());
     this._app.use("/api/expertise", createExpertiseRouter());
+    this._app.use("/api/mentor", createMentorRoutes());
     this._app.use(errorHandler);
   }
 

@@ -25,7 +25,7 @@ export class ExpertiseRepository
   async findAll(
     page: number,
     limit: number,
-    query: string,
+    query?: string,
   ): Promise<Expertise[]> {
     const filter: any = {};
 
