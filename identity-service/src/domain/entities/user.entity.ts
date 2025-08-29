@@ -9,6 +9,6 @@ export interface User {
   passwordHash?: string;
   isVerified: boolean;
   role: "user" | "expert" | "admin" | "superadmin";
-  createdAt?: Date;
+  createdAt: Date;
   updatedAt?: Date;
 }
