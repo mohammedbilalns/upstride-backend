@@ -28,7 +28,7 @@ class App {
 
   private _setupRoutes() {
     this._app.use("/api/auth", createAuthRouter());
-    this._app.use("/api/user", createUserManagementRouter());
+    this._app.use("/api/users", createUserManagementRouter());
     this._app.use("/api/expertise", createExpertiseRouter());
     this._app.use(errorHandler);
   }

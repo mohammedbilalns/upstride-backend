@@ -2,21 +2,23 @@ import { IUserManagementService } from "../../../domain/services/userManagement.
 import { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
+import { paginationQuerySchema } from "../validations/pagination.validation";
 
 export class UserManagementController {
   constructor(private _userManagementService: IUserManagementService) {}
 
   fetchUsers = asyncHandler(async (req: Request, res: Response) => {
-    const page = req.query.page ? Number(req.query.page) : 0;
-    const limit = req.query.limit ? Number(req.query.limit) : 10;
-    const query = req.query.query ? String(req.query.query) : undefined;
+    const result = paginationQuerySchema.parse(req.query);
+    const { page, limit, query } = result;
+    const userRole = res.locals.user?.role;
 
-    const users = await this._userManagementService.fetchUsers(
+    const { users, total } = await this._userManagementService.fetchUsers(
+      userRole,
       page,
       limit,
       query,
     );
-    res.status(HttpStatus.OK).json({ data: users });
+    res.status(HttpStatus.OK).json({ data: users, total });
   });
 
   blockUser = asyncHandler(async (req: Request, res: Response) => {

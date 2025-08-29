@@ -86,7 +86,7 @@ export class AuthService implements IAuthService {
       await this._otpRepository.incrementCount(email, otpType.register);
       throw new AppError(ErrorMessage.INVALID_OTP, HttpStatus.UNAUTHORIZED);
     }
-    const user = await this._userRepository.findByEmail(email)!;
+    const user = await this._userRepository.findByEmailAndRole(email, "user")!;
     if (!user)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
 
@@ -109,6 +109,7 @@ export class AuthService implements IAuthService {
     password: string,
   ): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
     const user = await this._userRepository.findByEmail(email);
+
     if (!user || !user.isVerified)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
     if (user.googleId && !user.passwordHash) {
@@ -146,7 +147,7 @@ export class AuthService implements IAuthService {
   }
 
   async resendRegisterOtp(email: string): Promise<void> {
-    const user = await this._userRepository.findByEmail(email);
+    const user = await this._userRepository.findByEmailAndRole(email, "user");
     if (!user)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
     const count =

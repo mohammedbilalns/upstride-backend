@@ -3,11 +3,13 @@ import jwt from "jsonwebtoken";
 import env from "../../../infrastructure/config/env";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { redisClient } from "../../../infrastructure/config";
+import { RevokedUserRepository } from "../../../infrastructure/database/repositories/revokeduser.repository";
+import logger from "../../../common/utils/logger";
 
 export const createAuthMiddleware = (jwtSecret: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.cookies.accessToken;
+      const token = req.cookies.accesstoken;
       if (!token) {
         return res.status(HttpStatus.UNAUTHORIZED).json({
           success: false,
@@ -19,8 +21,7 @@ export const createAuthMiddleware = (jwtSecret: string) => {
         email: string;
         role: "user" | "admin" | "superadmin" | "expert";
       };
-      const isRevoked = await redisClient.sismember(
-        "revoked_users",
+      const isRevoked = await new RevokedUserRepository(redisClient).isRevoked(
         decoded.id,
       );
       if (isRevoked) {
@@ -29,6 +30,7 @@ export const createAuthMiddleware = (jwtSecret: string) => {
           message: ErrorMessage.BLOCKED_FROM_PLATFORM,
         });
       }
+      console.log("user from locals", res.locals.user);
 
       res.locals.user = decoded;
       return next();
@@ -54,6 +56,7 @@ export const authMiddleware = (jwtSecret: string = env.JWT_SECRET) => {
 export const authorizeRoles = (
   ...allowedRoles: ("user" | "admin" | "superadmin" | "expert")[]
 ) => {
+  logger.info("Hit authorize roles middleware");
   return (_req: Request, res: Response, next: NextFunction) => {
     try {
       if (!allowedRoles.includes(res.locals.user?.role)) {

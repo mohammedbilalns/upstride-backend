@@ -30,7 +30,7 @@ router.use("/auth", proxy(env.IDENTITY_SERVICE_URL, {
 }));
 
 
-router.use("/user", proxy(env.IDENTITY_SERVICE_URL, {
+router.use("/users", proxy(env.IDENTITY_SERVICE_URL, {
 	...proxyOptions,
 	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
 		proxyReqOpts.headers["Content-Type"] = "application/json";

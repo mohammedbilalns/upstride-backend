@@ -25,7 +25,7 @@ export function createAuthRouter() {
     authController.resendOtp,
   );
   router.post(
-    "/refresh-token",
+    "/refresh",
     rateLimiter(5, 60, ["ip", "route"]),
     authController.refreshToken,
   );

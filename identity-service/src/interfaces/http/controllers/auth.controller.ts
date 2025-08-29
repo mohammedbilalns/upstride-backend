@@ -126,7 +126,7 @@ export class AuthController {
   });
 
   refreshToken = asyncHandler(async (req, res) => {
-    const refreshTokenFromCookie = req.cookies.refreshToken;
+    const refreshTokenFromCookie = req.cookies.refreshtoken;
     if (!refreshTokenFromCookie) {
       res.status(HttpStatus.UNAUTHORIZED).json({
         success: false,

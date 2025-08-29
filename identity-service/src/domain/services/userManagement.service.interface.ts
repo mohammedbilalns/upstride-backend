@@ -1,7 +1,12 @@
-import { UserDTO } from "../../application/dtos/userDto";
+import { AdminUserDTO } from "../../application/dtos/userDto";
 
 export interface IUserManagementService {
-  fetchUsers(page: number, limit: number, query?: string): Promise<UserDTO[]>;
+  fetchUsers(
+    userRole: string,
+    page: number,
+    limit: number,
+    query?: string,
+  ): Promise<{ users: AdminUserDTO[]; total: number }>;
   blockUser(id: string): Promise<void>;
   unblockUser(id: string): Promise<void>;
 }
