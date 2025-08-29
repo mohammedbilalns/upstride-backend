@@ -54,4 +54,19 @@ export class SkillRepository
     const doc = await this._model.findOne({ name, expertiseId });
     return doc ? true : false;
   }
+
+  async count(expertiseId?: string, query?: string): Promise<number> {
+    const filter: any = {};
+
+    if (expertiseId) {
+      filter.expertiseId = expertiseId;
+    }
+
+    if (query) {
+      filter.$or = [{ name: { $regex: query, $options: "i" } }];
+    }
+
+    const total = await this._model.countDocuments(filter).exec();
+    return total;
+  }
 }

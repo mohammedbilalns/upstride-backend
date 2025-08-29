@@ -33,6 +33,10 @@ export class UserRepository
     const doc = await this._model.findOne({ email, role }).exec();
     return doc ? this.mapToDomain(doc) : null;
   }
+  async finddByIdAndRole(id: string, role: string): Promise<User | null> {
+    const doc = await this._model.findOne({ id, role }).exec();
+    return doc ? this.mapToDomain(doc) : null;
+  }
 
   async findByEmail(email: string): Promise<User | null> {
     const doc = await this._model.findOne({ email }).exec();

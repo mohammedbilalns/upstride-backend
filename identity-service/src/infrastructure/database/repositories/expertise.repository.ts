@@ -45,4 +45,18 @@ export class ExpertiseRepository
       .exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
+
+  async count(query?: string): Promise<number> {
+    const filter: any = {};
+
+    if (query) {
+      filter.$or = [
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    const total = await this._model.countDocuments(filter).exec();
+    return total;
+  }
 }
