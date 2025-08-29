@@ -1,4 +1,4 @@
-import { UserDTO } from "../../application/dtos/userDto";
+import { UserDTO } from "../../application/dtos";
 
 export interface IAuthService {
   registerUser(

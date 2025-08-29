@@ -1,40 +1,45 @@
-import { Expertise } from "../../../domain/entities";
-import { expertiseModel, IExpertise } from "../models/expertise.model";
-import { IExpertiseRepository } from "../../../domain/repositories/expertise.repository.interface";
 import { BaseRepository } from "./base.repository";
+import { Skill } from "../../../domain/entities";
+import { ISkill, skillModel } from "../models/skill.model";
+import { ISkillRepository } from "../../../domain/repositories/skill.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 
-export class ExpertiseRepository
-  extends BaseRepository<Expertise, IExpertise>
-  implements IExpertiseRepository
+export class SkillRepository
+  extends BaseRepository<Skill, ISkill>
+  implements ISkillRepository
 {
   constructor() {
-    super(expertiseModel);
+    super(skillModel);
   }
 
-  protected mapToDomain(doc: IExpertise): Expertise {
+  protected mapToDomain(doc: ISkill): Skill {
     const mapped = mapMongoDocument(doc)!;
     return {
       id: mapped.id,
       name: mapped.name,
-      description: mapped.description,
+      expertiseId: mapped.expertiseId,
       isVerified: mapped.isVerified,
     };
   }
 
   async findAll(
+    expertiseId: string,
     page: number,
     limit: number,
-    query: string,
-  ): Promise<Expertise[]> {
+    query?: string,
+  ): Promise<Skill[]> {
     const filter: any = {};
 
+    if (expertiseId) {
+      filter.expertiseId = expertiseId;
+    }
     if (query) {
       filter.$or = [
         { name: { $regex: query, $options: "i" } },
         { email: { $regex: query, $options: "i" } },
       ];
     }
+
     const skip = (page - 1) * limit;
 
     const docs = await this._model
@@ -44,5 +49,9 @@ export class ExpertiseRepository
       .limit(limit)
       .exec();
     return docs.map((doc) => this.mapToDomain(doc));
+  }
+  async exists(name: string, expertiseId: string): Promise<boolean> {
+    const doc = await this._model.findOne({ name, expertiseId });
+    return doc ? true : false;
   }
 }

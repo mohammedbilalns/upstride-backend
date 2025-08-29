@@ -1,4 +1,4 @@
-import { AdminUserDTO } from "../../application/dtos/userDto";
+import { AdminUserDTO } from "../../application/dtos/user.dto";
 
 export interface IUserManagementService {
   fetchUsers(

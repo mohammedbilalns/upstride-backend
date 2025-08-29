@@ -1,7 +1,7 @@
 import { ITokenService } from "../../domain/services";
 import env from "../../infrastructure/config/env";
 import jwt from "jsonwebtoken";
-import { UserDTO } from "../dtos/userDto";
+import { UserDTO } from "../dtos";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 

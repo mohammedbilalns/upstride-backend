@@ -20,4 +20,5 @@ export enum ErrorMessage {
   TOKEN_EXPIRED = "Token expired",
   FORBIDDEN_RESOURCE = "Forbidden resource",
   TOO_MANY_OTP_ATTEMPTS = "Too many attempts, please register again",
+  SKILL_ALREADY_EXISTS = "Skill already exists for this expertise",
 }

@@ -1,7 +1,8 @@
+import { UserRole } from "../../common/enums/userRoles";
 import { IRevokedUserRepository } from "../../domain/repositories/revokeduser.repository.interface";
 import { IUserRepository } from "../../domain/repositories/user.repository.interface";
 import { IUserManagementService } from "../../domain/services/userManagement.service.interface";
-import { AdminUserDTO } from "../dtos/userDto";
+import { AdminUserDTO } from "../dtos/user.dto";
 
 export class UserManagementService implements IUserManagementService {
   constructor(
@@ -10,19 +11,17 @@ export class UserManagementService implements IUserManagementService {
   ) {}
 
   async fetchUsers(
-    userRole: string,
+    userRole: UserRole,
     page: number,
     limit: number,
     query?: string,
   ): Promise<{ users: AdminUserDTO[]; total: number }> {
     let allowedRoles: string[] = [];
 
-    if (userRole === "admin") {
-      allowedRoles = ["user", "mentor"];
-    } else if (userRole === "superadmin") {
-      allowedRoles = ["user", "mentor", "admin"];
-    } else {
-      throw new Error("Unauthorized to fetch users");
+    if (userRole === UserRole.ADMIN) {
+      allowedRoles = [UserRole.USER, UserRole.MENTOR];
+    } else if (userRole === UserRole.SUPER_ADMIN) {
+      allowedRoles = [UserRole.ADMIN, UserRole.USER, UserRole.MENTOR];
     }
 
     const [users, total] = await Promise.all([

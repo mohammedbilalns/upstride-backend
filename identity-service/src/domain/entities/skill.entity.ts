@@ -1,6 +1,6 @@
-export interface Expertise {
+export interface Skill {
   id: string;
   name: string;
-  description?: string;
+  expertiseId: string;
   isVerified: boolean;
 }

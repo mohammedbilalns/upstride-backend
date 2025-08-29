@@ -5,7 +5,7 @@ import {
   ITokenService,
   IOtpService,
 } from "../../domain/services";
-import { UserDTO } from "../../application/dtos/userDto";
+import { UserDTO } from "../dtos/user.dto";
 import { AppError } from "../errors/AppError";
 import { HttpStatus, ErrorMessage } from "../../common/enums";
 import { IEventBus } from "../../domain/events/IEventBus";
