@@ -1,36 +1,32 @@
-import { Router } from "express"
+import { Router } from "express";
+import { createExpertiseController } from "../compositions/expertise.composition";
+import { authMiddleware, authorizeRoles } from "../middlewares/auth.middleware";
 
 export function createExpertiseRouter() {
   const router = Router();
+  const expertiseController = createExpertiseController();
 
-	// create Profession by admin
-	router.post('/professions', (_req, res)=>{
-		res.json({message:"hello world"})
-	})
+  router.use(authMiddleware());
+  router.get(
+    "/",
+    authorizeRoles("user", "admin", "superadmin"),
+    expertiseController.fetchExpertises,
+  );
+  router.post(
+    "/skill",
+    authorizeRoles("user", "admin", "superadmin"),
+    expertiseController.createSkill,
+  );
+  router.get(
+    "/skill",
+    authorizeRoles("user", "admin", "superadmin"),
+    expertiseController.fetchSkills,
+  );
 
-	// update professino by admin 
-	router.put('/professions/:id', (_req, res)=>{
-		res.json({message:"hello world"})
-	})
-	// fetch all professions by admin and user 
-	router.get('/professions', (_req, res)=>{
-		res.json({message:"hello world"})
-	})
-
-	// fetch profession details by admin and user 
-	router.get('/professions/:id', (_req, res)=>{
-		res.json({message:"hello world"})
-	})
-
-	// save a user's expertise by user 
-	router.post('/:userId', (_req, res)=>{
-		res.json({message:"hello world"})
-	})
-
-	// update a user's expertise  by user 
-	router.put('/:userId', (_req, res)=>{
-		res.json({message:"hello world"})
-	})
+  router.use(authorizeRoles("admin", "superadmin"));
+  router.post("/", expertiseController.createExpertise);
+  router.put("/:expertiseId", expertiseController.udpateExpertise);
+  router.put("/skill", expertiseController.updateSkill);
 
   return router;
 }

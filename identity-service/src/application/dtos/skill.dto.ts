@@ -16,6 +16,6 @@ export interface fetchSkillsDto {
   expertiseId: string;
   page: number;
   limit: number;
-  query: string;
+  query?: string;
   userRole: UserRole;
 }

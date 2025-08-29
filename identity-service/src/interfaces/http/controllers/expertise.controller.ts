@@ -1,1 +1,71 @@
+import { HttpStatus, ResponseMessage } from "../../../common/enums";
+import { IExpertiseService } from "../../../domain/services";
+import asyncHandler from "../utils/asyncHandler";
+import {
+  createExpertiseSchema,
+  createSkillSchema,
+  fetchExpertisesSchema,
+  fetchSkillSchema,
+  updateExpertiseParamsSchema,
+  updateExpertiseSchema,
+  updateSkillparamsSchema,
+  updateSkillSchema,
+} from "../validations/expertise.validation";
 
+export class ExpertiseController {
+  constructor(private _expertiseService: IExpertiseService) {}
+
+  createExpertise = asyncHandler(async (req, res) => {
+    const data = createExpertiseSchema.parse(req.body);
+    await this._expertiseService.createExpertise(data);
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.EXPERTISE_CREATED });
+  });
+
+  udpateExpertise = asyncHandler(async (req, res) => {
+    const { expertiseId } = updateExpertiseParamsSchema.parse(req.params);
+    const data = updateExpertiseSchema.parse(req.body);
+    await this._expertiseService.updateExpertise({ expertiseId, ...data });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.EXPERTISE_UPDATED });
+  });
+
+  fetchExpertises = asyncHandler(async (req, res) => {
+    const data = fetchExpertisesSchema.parse(req.query);
+    const result = await this._expertiseService.fetchExpertises({
+      ...data,
+      userRole: res.locals.user.role,
+    });
+    res.status(HttpStatus.OK).json({ success: true, data: result });
+  });
+
+  createSkill = asyncHandler(async (req, res) => {
+    const data = createSkillSchema.parse(req.body);
+    await this._expertiseService.createSkill({
+      ...data,
+      userRole: res.locals.user.role,
+    });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.SKILL_CREATED });
+  });
+
+  updateSkill = asyncHandler(async (req, res) => {
+    const { skillId } = updateSkillparamsSchema.parse(req.params);
+    const data = updateSkillSchema.parse(req.body);
+    await this._expertiseService.updateSkill({ skillId, ...data });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.SKILL_UPDATED });
+  });
+
+  fetchSkills = asyncHandler(async (req, res) => {
+    const data = fetchSkillSchema.parse(req.query);
+    await this._expertiseService.fetchSkills({
+      ...data,
+      userRole: res.locals.user.role,
+    });
+  });
+}

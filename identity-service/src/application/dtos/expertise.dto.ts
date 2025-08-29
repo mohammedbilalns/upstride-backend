@@ -16,6 +16,6 @@ export interface updateExpertiseDto {
 export interface fetchExpertiseDto {
   page: number;
   limit: number;
-  query: string;
+  query?: string;
   userRole: UserRole;
 }
