@@ -19,6 +19,8 @@ export const mentorSchema: Schema = new Schema(
     skillIds: [{ type: Schema.Types.ObjectId, required: true, ref: "Skill" }],
     resumeUrl: { type: String, required: true },
     termsAccepted: { type: Boolean, required: true },
+    isApproved: { type: Boolean, Required: true, default: false },
+    isRejected: { type: Boolean, Required: true, default: false },
   },
   { timestamps: true },
 );

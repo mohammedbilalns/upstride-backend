@@ -11,4 +11,6 @@ export interface Mentor {
   skillIds: string[];
   resumeUrl?: string;
   termsAccepted: boolean;
+  isApproved: boolean;
+  isRejected: boolean;
 }

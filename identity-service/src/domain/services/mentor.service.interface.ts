@@ -1,38 +1,13 @@
+import {
+  createMentorDto,
+  fetchMentorsDto,
+  updateMentorDto,
+  updateMentorStatusDto,
+} from "../../application/dtos";
+
 export interface IMentorService {
-  createMentor(
-    userId: string,
-    bio: string,
-    currentRole: string,
-    institution: string,
-    yearsOfExperience: number,
-    educationalQualifications: string[],
-    personalWebsite: string,
-    expertiseId: string,
-    skillIds: string[],
-    resumeUrl: string,
-    termsAccepted: boolean,
-  ): Promise<void>;
-
-  updateMentor(
-    id: string,
-    userId: string,
-    bio: string,
-    currentRole: string,
-    institution: string,
-    yearsOfExperience: number,
-    educationalQualifications: string[],
-    personalWebsite: string,
-    expertiseId: string,
-    skillIds: string[],
-    resumeUrl: string,
-    termsAccepted: boolean,
-  ): Promise<void>;
-
-  fetchMentors(
-    page: number,
-    limit: number,
-    query: string,
-    expertiseId: string,
-    skillIds: string[],
-  ): Promise<any>;
+  createMentor(data: createMentorDto): Promise<void>;
+  updateMentor(data: updateMentorDto): Promise<void>;
+  updateMentorStatus(data: updateMentorStatusDto): Promise<void>;
+  fetchMentors(data: fetchMentorsDto): Promise<any>;
 }

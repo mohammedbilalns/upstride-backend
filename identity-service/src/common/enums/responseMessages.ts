@@ -10,4 +10,12 @@ export enum ResponseMessage {
   REFRESH_TOKEN_SUCCESS = "Refresh token refreshed successfully",
   USER_BLOCKED = "User blocked successfully",
   USER_UNBLOCKED = "User unblocked successfully",
+  EXPERTISE_CREATED = "Expertise created successfully",
+  EXPERTISE_UPDATED = "Expertise updated successfully",
+  SKILL_CREATED = "Skill created successfully",
+  SKILL_UPDATED = "Skill updated successfully",
+  MENTOR_REQUEST_SENT = "Mentor request sent successfully",
+  MENTOR_APPROVED = "Mentor approved successfully",
+	EXPERTISE_VERIFIED = "Expertise verified successfully",
+	SKILL_VERIFIED = "Skill verified successfully",
 }

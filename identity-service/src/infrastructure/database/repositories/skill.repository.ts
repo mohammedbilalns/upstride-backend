@@ -22,36 +22,57 @@ export class SkillRepository
     };
   }
 
-  async findAll(
-    expertiseId: string,
-    page: number,
-    limit: number,
-    query?: string,
-  ): Promise<Skill[]> {
+	async findAll(
+		expertiseId: string,
+		page?: number,
+		limit?: number,
+		query?: string,
+	): Promise<Skill[]> {
+		const filter: any = {};
+
+		if (expertiseId) {
+			filter.expertiseId = expertiseId;
+		}
+		if (query) {
+			filter.$or = [
+				{ name: { $regex: query, $options: "i" } },
+				{ email: { $regex: query, $options: "i" } },
+			];
+		}
+
+		let queryBuilder = this._model
+		.find(filter)
+		.sort(query ? {} : { createdAt: -1 });
+
+		if (page && limit) {
+			const skip = (page - 1) * limit;
+			queryBuilder = queryBuilder.skip(skip).limit(limit);
+		}
+
+		const docs = await queryBuilder.exec();
+		return docs.map((doc) => this.mapToDomain(doc));
+	}
+
+	async exists(name: string, expertiseId: string): Promise<boolean> {
+		const doc = await this._model.findOne({
+			name: { $regex: new RegExp(`^${name}$`, "i") },
+			expertiseId,
+		});
+		return !!doc;
+	} 
+
+  async count(expertiseId?: string, query?: string): Promise<number> {
     const filter: any = {};
 
     if (expertiseId) {
       filter.expertiseId = expertiseId;
     }
+
     if (query) {
-      filter.$or = [
-        { name: { $regex: query, $options: "i" } },
-        { email: { $regex: query, $options: "i" } },
-      ];
+      filter.$or = [{ name: { $regex: query, $options: "i" } }];
     }
 
-    const skip = (page - 1) * limit;
-
-    const docs = await this._model
-      .find(filter)
-      .sort(query ? {} : { createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .exec();
-    return docs.map((doc) => this.mapToDomain(doc));
-  }
-  async exists(name: string, expertiseId: string): Promise<boolean> {
-    const doc = await this._model.findOne({ name, expertiseId });
-    return doc ? true : false;
+    const total = await this._model.countDocuments(filter).exec();
+    return total;
   }
 }

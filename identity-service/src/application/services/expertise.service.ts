@@ -49,11 +49,10 @@ export class ExpertiseService implements IExpertiseService {
   }
 
   async fetchExpertises(data: fetchExpertiseDto): Promise<any> {
-    const expertises = await this._expertiseRepository.findAll(
-      data.page,
-      data.limit,
-      data.query,
-    );
+    const [expertises, total] = await Promise.all([
+      this._expertiseRepository.findAll(data.page, data.limit, data.query),
+      this._expertiseRepository.count(data.query),
+    ]);
     const isAdmin = data.userRole == UserRole.ADMIN || UserRole.SUPER_ADMIN;
     const mapped = expertises.map((expertise) => ({
       id: expertise.id,
@@ -64,8 +63,15 @@ export class ExpertiseService implements IExpertiseService {
       }),
     }));
 
-    return { expertises: mapped };
+    return { data: mapped, total };
   }
+
+	async verifyExpertise(expertiseId: string): Promise<void> {
+		await this._expertiseRepository.update(expertiseId, {isVerified:true}) 
+		const skills = await this._skillRepository.findAll(expertiseId);
+		await Promise.all(skills.map((skill) => this._skillRepository.update(skill.id, {isVerified:true})))
+
+	}
 
   async createSkill(data: createSkillDto): Promise<void> {
     const isExists = await this._skillRepository.exists(
@@ -94,12 +100,16 @@ export class ExpertiseService implements IExpertiseService {
   }
 
   async fetchSkills(data: fetchSkillsDto): Promise<any> {
-    const skills = await this._skillRepository.findAll(
-      data.expertiseId,
-      data.page,
-      data.limit,
-      data.query,
-    );
+    const [skills, total] = await Promise.all([
+      this._skillRepository.findAll(
+        data.expertiseId,
+        data.page,
+        data.limit,
+        data.query,
+      ),
+      this._skillRepository.count(data.expertiseId, data.query),
+    ]);
+
     const isAdmin = data.userRole == UserRole.ADMIN || UserRole.SUPER_ADMIN;
     const mapped = skills.map((skill) => ({
       id: skill.id,
@@ -110,6 +120,6 @@ export class ExpertiseService implements IExpertiseService {
       }),
     }));
 
-    return { expertises: mapped };
+    return { expertises: mapped, total };
   }
 }

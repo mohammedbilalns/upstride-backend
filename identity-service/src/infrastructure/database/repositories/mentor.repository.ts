@@ -4,7 +4,7 @@ import { IMenotorRepository } from "../../../domain/repositories/mentor.reposito
 import { BaseRepository } from "./base.repository";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 
-export class ExpertRepository
+export class MentorRepository
   extends BaseRepository<Mentor, IMentor>
   implements IMenotorRepository
 {
@@ -27,16 +27,78 @@ export class ExpertRepository
       skillIds: mapped.skillIds,
       resumeUrl: mapped.resumeUrl,
       termsAccepted: mapped.termsAccepted,
+      isApproved: mapped.isApproved,
+      isRejected: mapped.isRejected,
     };
   }
 
-  async findAll(page: number, limit: number): Promise<Mentor[]> {
+  async findByUserId(userId: string): Promise<Mentor | null> {
+    const doc = await this._model.findOne({ userId }).exec();
+    return doc ? this.mapToDomain(doc) : null;
+  }
+  async findAll(
+    page: number,
+    limit: number,
+    query?: string,
+    expertiseId?: string,
+    skillIds?: string[],
+  ): Promise<Mentor[]> {
+    const filter: any = {};
+
+    if (expertiseId) {
+      filter.expertiseId = expertiseId;
+    }
+
+    if (skillIds && skillIds.length > 0) {
+      filter.skillIds = { $all: skillIds };
+    }
+
+    if (query) {
+      filter.$or = [
+        { bio: { $regex: query, $options: "i" } },
+        { currentRole: { $regex: query, $options: "i" } },
+        { institution: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    const skip = (page - 1) * limit;
+
     const docs = await this._model
-      .find()
-      .skip(page * limit)
+      .find(filter)
+      .populate("expertiseId", "name _id")
+      .populate("skillIds", "name _id")
+      .sort({ createdAt: -1 })
+      .skip(skip)
       .limit(limit)
       .exec();
-    const mapped = docs.map(this.mapToDomain);
-    return docs ? mapped : [];
+
+    return docs.map(this.mapToDomain);
+  }
+
+  async count(
+    query?: string,
+    expertiseId?: string,
+    skillIds?: string[],
+  ): Promise<number> {
+    const filter: any = {};
+
+    if (expertiseId) {
+      filter.expertiseId = expertiseId;
+    }
+
+    if (skillIds && skillIds.length > 0) {
+      filter.skillIds = { $all: skillIds };
+    }
+
+    if (query) {
+      filter.$or = [
+        { bio: { $regex: query, $options: "i" } },
+        { currentRole: { $regex: query, $options: "i" } },
+        { institution: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    const total = await this._model.countDocuments(filter).exec();
+    return total;
   }
 }

@@ -30,7 +30,6 @@ export const createAuthMiddleware = (jwtSecret: string) => {
           message: ErrorMessage.BLOCKED_FROM_PLATFORM,
         });
       }
-      console.log("user from locals", res.locals.user);
 
       res.locals.user = decoded;
       return next();

@@ -25,7 +25,7 @@ export class ExpertiseRepository
   async findAll(
     page: number,
     limit: number,
-    query: string,
+    query?: string,
   ): Promise<Expertise[]> {
     const filter: any = {};
 
@@ -44,5 +44,19 @@ export class ExpertiseRepository
       .limit(limit)
       .exec();
     return docs.map((doc) => this.mapToDomain(doc));
+  }
+
+  async count(query?: string): Promise<number> {
+    const filter: any = {};
+
+    if (query) {
+      filter.$or = [
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    const total = await this._model.countDocuments(filter).exec();
+    return total;
   }
 }

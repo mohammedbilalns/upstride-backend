@@ -14,8 +14,8 @@ export interface updateSkillDto {
 
 export interface fetchSkillsDto {
   expertiseId: string;
-  page: number;
-  limit: number;
-  query: string;
+  page?: number;
+  limit?: number;
+  query?: string;
   userRole: UserRole;
 }
