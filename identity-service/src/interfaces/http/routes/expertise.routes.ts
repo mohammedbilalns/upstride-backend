@@ -23,6 +23,7 @@ export function createExpertiseRouter() {
     authorizeRoles("user", "admin", "superadmin"),
     expertiseController.fetchSkills,
   );
+	router.put("/skills/:skillId/verify", expertiseController.verifySkill);
 
   router.use(authorizeRoles("admin", "superadmin"));
   router.post("/", expertiseController.createExpertise);

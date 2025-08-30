@@ -17,4 +17,5 @@ export enum ResponseMessage {
   MENTOR_REQUEST_SENT = "Mentor request sent successfully",
   MENTOR_APPROVED = "Mentor approved successfully",
 	EXPERTISE_VERIFIED = "Expertise verified successfully",
+	SKILL_VERIFIED = "Skill verified successfully",
 }

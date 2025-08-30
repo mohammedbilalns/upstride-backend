@@ -12,7 +12,8 @@ import {
   updateSkillSchema,
 	verifyExpertiseParamsSchema,
 	fetchSkillsParamsSchema,
-	createSkillParamsSchema
+	createSkillParamsSchema,
+	verifySkillParamsSchema
 } from "../validations/expertise.validation";
 
 export class ExpertiseController {
@@ -74,6 +75,14 @@ export class ExpertiseController {
       .status(HttpStatus.OK)
       .json({ success: true, message: ResponseMessage.SKILL_UPDATED });
   });
+
+	verifySkill = asyncHandler(async (req, res) => {
+		const { skillId } = verifySkillParamsSchema.parse(req.params);
+		await this._expertiseService.updateSkill({skillId, isVerified: true});
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.SKILL_VERIFIED });
+	});
 
   fetchSkills = asyncHandler(async (req, res) => {
     const data = fetchSkillSchema.parse(req.query);

@@ -13,7 +13,7 @@ export const updateExpertiseParamsSchema = z.object({
 export const updateExpertiseSchema = z.object({
   name: z.string().min(3).max(50).trim().optional(),
   description: z.string().min(3).max(200).trim().optional(),
-  isVerified: z.boolean().optional(),
+ 
 });
 
 export const fetchExpertisesSchema = z.object({
@@ -50,4 +50,8 @@ export const fetchSkillSchema = z.object({
 
 export const fetchSkillsParamsSchema = z.object({
   expertiseId: z.string(),
+});
+
+export const verifySkillParamsSchema = z.object({
+  skillId: z.string(),
 });
