@@ -27,7 +27,9 @@ export const verifyExpertiseParamsSchema = z.object({
 });
 
 export const createSkillSchema = z.object({
-  name: z.string().min(3).max(50).trim(),
+  name: z.string().min(3).max(50).trim(), 
+});
+export const createSkillParamsSchema = z.object({
   expertiseId: z.string(),
 });
 
@@ -41,8 +43,11 @@ export const updateSkillSchema = z.object({
 });
 
 export const fetchSkillSchema = z.object({
-  expertiseId: z.string(),
-  page: z.coerce.number().min(1).max(100).default(1),
-  limit: z.coerce.number().min(1).max(100).default(10),
+  page: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
   query: z.string().min(3).max(50).trim().optional(),
+});
+
+export const fetchSkillsParamsSchema = z.object({
+  expertiseId: z.string(),
 });

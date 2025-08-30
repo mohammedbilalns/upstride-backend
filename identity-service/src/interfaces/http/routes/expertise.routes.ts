@@ -12,14 +12,14 @@ export function createExpertiseRouter() {
     authorizeRoles("user", "admin", "superadmin"),
     expertiseController.fetchExpertises,
   );
-	router.put("/verify/:expertiseId", expertiseController.verifyExpertise)
+	router.put("/:expertiseId/verify", expertiseController.verifyExpertise)
   router.post(
-    "/skill",
+    "/:expertiseId/skills",
     authorizeRoles("user", "admin", "superadmin"),
     expertiseController.createSkill,
   );
   router.get(
-    "/skill",
+    "/:expertiseId/skills",
     authorizeRoles("user", "admin", "superadmin"),
     expertiseController.fetchSkills,
   );
@@ -27,7 +27,7 @@ export function createExpertiseRouter() {
   router.use(authorizeRoles("admin", "superadmin"));
   router.post("/", expertiseController.createExpertise);
   router.put("/:expertiseId", expertiseController.udpateExpertise);
-  router.put("/skill", expertiseController.updateSkill);
+  router.put("/skills/:skillId", expertiseController.updateSkill);
 
   return router;
 }

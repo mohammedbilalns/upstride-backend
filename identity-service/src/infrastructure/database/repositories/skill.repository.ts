@@ -53,10 +53,13 @@ export class SkillRepository
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
 
-  async exists(name: string, expertiseId: string): Promise<boolean> {
-    const doc = await this._model.findOne({ name, expertiseId });
-    return doc ? true : false;
-  }
+	async exists(name: string, expertiseId: string): Promise<boolean> {
+		const doc = await this._model.findOne({
+			name: { $regex: new RegExp(`^${name}$`, "i") },
+			expertiseId,
+		});
+		return !!doc;
+	} 
 
   async count(expertiseId?: string, query?: string): Promise<number> {
     const filter: any = {};

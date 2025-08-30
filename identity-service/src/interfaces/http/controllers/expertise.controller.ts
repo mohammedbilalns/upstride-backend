@@ -11,6 +11,8 @@ import {
   updateSkillparamsSchema,
   updateSkillSchema,
 	verifyExpertiseParamsSchema,
+	fetchSkillsParamsSchema,
+	createSkillParamsSchema
 } from "../validations/expertise.validation";
 
 export class ExpertiseController {
@@ -44,7 +46,6 @@ export class ExpertiseController {
   });
 
 	verifyExpertise = asyncHandler(async (req, res) => {
-		console.log("verify expertise request recieved")
 		const { expertiseId } = verifyExpertiseParamsSchema.parse(req.params);	
 		await this._expertiseService.verifyExpertise(expertiseId);
 		res
@@ -52,10 +53,12 @@ export class ExpertiseController {
 			.json({ success: true, message: ResponseMessage.EXPERTISE_VERIFIED });
 	});
 
-  createSkill = asyncHandler(async (req, res) => {
-    const data = createSkillSchema.parse(req.body);
+  createSkill = asyncHandler(async (req, res) => {	
+		const {expertiseId} = createSkillParamsSchema.parse(req.params);
+    const {name} = createSkillSchema.parse(req.body);
     await this._expertiseService.createSkill({
-      ...data,
+			expertiseId,
+      name,
       userRole: res.locals.user.role,
     });
     res
@@ -74,9 +77,13 @@ export class ExpertiseController {
 
   fetchSkills = asyncHandler(async (req, res) => {
     const data = fetchSkillSchema.parse(req.query);
-    await this._expertiseService.fetchSkills({
+		const {expertiseId} = fetchSkillsParamsSchema.parse(req.params);
+    const {expertises, total} =   await this._expertiseService.fetchSkills({
       ...data,
+			expertiseId,
       userRole: res.locals.user.role,
     });
+
+		res.status(HttpStatus.OK).json({ data: expertises, total });
   });
 }
