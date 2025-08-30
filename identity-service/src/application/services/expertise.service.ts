@@ -63,8 +63,15 @@ export class ExpertiseService implements IExpertiseService {
       }),
     }));
 
-    return { expertises: mapped, total };
+    return { data: mapped, total };
   }
+
+	async verifyExpertise(expertiseId: string): Promise<void> {
+		await this._expertiseRepository.update(expertiseId, {isVerified:true}) 
+		const skills = await this._skillRepository.findAll(expertiseId);
+		await Promise.all(skills.map((skill) => this._skillRepository.update(skill.id, {isVerified:true})))
+
+	}
 
   async createSkill(data: createSkillDto): Promise<void> {
     const isExists = await this._skillRepository.exists(
