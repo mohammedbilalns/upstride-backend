@@ -8,4 +8,5 @@ export enum ErrorMessage {
 	SERVER_ERROR = "Server error",
 	VALIDATION_FAILED = "Validation failed",
 	INTERNAL_SERVER_ERROR = "Internal server error",
+	NO_FILE_FOUND = "No file found",
 }
