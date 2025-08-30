@@ -9,6 +9,8 @@ export interface User {
   passwordHash?: string;
   isVerified: boolean;
   role: "user" | "expert" | "admin" | "superadmin";
+	interestedExpertises: string[];
+	interestedSkills: string[];
   createdAt: Date;
   updatedAt?: Date;
 }

@@ -24,6 +24,8 @@ export class UserRepository
       isBlocked: mapped.isBlocked,
       googleId: mapped.googleId,
       role: mapped.role,
+			interestedExpertises: mapped.interestedExpertises,
+			interestedSkills: mapped.interestedSkills,
       isVerified: mapped.isVerified,
       createdAt: mapped.createdAt!,
     };

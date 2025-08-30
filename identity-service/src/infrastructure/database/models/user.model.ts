@@ -22,6 +22,9 @@ export const userSchema: Schema = new Schema(
       enum: ["user", "expert", "admin", "superadmin"],
       default: "user",
     },
+		interestedExpertises: [{type:Schema.Types.ObjectId, ref:"Expertise"}],
+		interestedSkills: [{type:Schema.Types.ObjectId, ref:"Skill"}],
+		
   },
   { timestamps: true },
 );
