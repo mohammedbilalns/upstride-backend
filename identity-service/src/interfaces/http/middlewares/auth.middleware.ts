@@ -52,13 +52,20 @@ export const authMiddleware = (jwtSecret: string = env.JWT_SECRET) => {
   return createAuthMiddleware(jwtSecret);
 };
 
+
 export const authorizeRoles = (
-  ...allowedRoles: ("user" | "admin" | "superadmin" | "expert")[]
+  ...allowedRoles: ("user" | "admin" | "superadmin" | "mentor")[]
 ) => {
   logger.info("Hit authorize roles middleware");
+  
+  
+  const roles = allowedRoles.length === 1 && Array.isArray(allowedRoles[0]) 
+    ? allowedRoles[0] 
+    : allowedRoles;
+
   return (_req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!allowedRoles.includes(res.locals.user?.role)) {
+      if (!roles.includes(res.locals.user?.role)) {
         res.status(HttpStatus.FORBIDDEN).json({
           success: false,
           message: ErrorMessage.FORBIDDEN_RESOURCE,

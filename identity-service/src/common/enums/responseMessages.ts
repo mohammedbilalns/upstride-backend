@@ -18,4 +18,6 @@ export enum ResponseMessage {
   MENTOR_APPROVED = "Mentor approved successfully",
 	EXPERTISE_VERIFIED = "Expertise verified successfully",
 	SKILL_VERIFIED = "Skill verified successfully",
+	INTERESTS_FETCHED = "Interests fetched successfully",
+	INTERESTS_ADDED = "Interests added successfully",
 }

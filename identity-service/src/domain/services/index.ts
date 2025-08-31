@@ -1,4 +1,6 @@
 export * from "./auth.service.interface";
+export * from "./userManagement.service.interface";
+export * from "./interests.service.interface";
 export * from "./crypto.service.interface";
 export * from "./token.service.interface";
 export * from "./otp.service.interface";
