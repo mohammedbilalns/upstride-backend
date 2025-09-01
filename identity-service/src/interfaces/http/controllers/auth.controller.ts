@@ -75,15 +75,24 @@ export class AuthController {
       .json({ success: true, message: ResponseMessage.OTP_SENT });
   });
 
-  googleAuth = asyncHandler(async (req, res) => {
-    const { credential } = req.body;
-    const { user, accessToken, refreshToken } =
-      await this._authService.googleAuthenticate(credential);
-    this.setAuthCookies(res, accessToken, refreshToken);
-    res
-      .status(HttpStatus.OK)
-      .json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
-  });
+	googleAuth = asyncHandler(async (req, res) => {
+		const { credential } = req.body;
+
+		const  result=
+			await this._authService.googleAuthenticate(credential);
+		if("token" in result){
+			this.setTokenCookie(res, "register", result.token);
+			return res
+				.status(HttpStatus.OK)
+				.json({ success: true, message: ResponseMessage.USER_REGISTERED,email:result.email });
+		}
+		const { user, accessToken, refreshToken } = result;
+
+		this.setAuthCookies(res, accessToken, refreshToken);
+		return res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
+	});
 
   verifyOtp = asyncHandler(async (req, res) => {
     const { email, otp } = verifyOtpSchema.parse(req.body);

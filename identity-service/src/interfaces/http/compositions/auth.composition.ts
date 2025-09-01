@@ -3,8 +3,6 @@ import {
   CryptoService,
   TokenService,
   OtpService,
-	PasswordResetService,
-	RegistrationService,
 } from "../../../application/services";
 import {
   ICryptoService,
@@ -19,10 +17,12 @@ import { IEventBus } from "../../../domain/events/IEventBus";
 import EventBus from "../../../infrastructure/events/eventBus";
 import env from "../../../infrastructure/config/env";
 import { redisClient } from "../../../infrastructure/config";
-
+import { RegistrationService } from "../../../application/services/registration.service";
+import { PasswordResetService } from "../../../application/services/passwordReset.service";
 
 export function createAuthController(): AuthController {
   const userRepository: IUserRepository = new UserRepository();
+	const verificationTokenRepository = new VerificationTokenRepository(redisClient);
   const otpRepository = new VerificationTokenRepository(redisClient);
   const cryptoService: ICryptoService = new CryptoService();
   const tokenService: ITokenService = new TokenService(env.JWT_SECRET);
@@ -31,6 +31,7 @@ export function createAuthController(): AuthController {
 	const registrationService = new RegistrationService(userRepository, cryptoService, otpRepository, tokenService, otpService, eventBus);
   const authService = new AuthService(
     userRepository,
+		verificationTokenRepository,
     cryptoService,
     tokenService,
   );

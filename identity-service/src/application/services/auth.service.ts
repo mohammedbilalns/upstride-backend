@@ -1,4 +1,4 @@
-import { IUserRepository } from "../../domain/repositories/user.repository.interface";
+import { IUserRepository,IVerificationTokenRepository } from "../../domain/repositories";
 import {
   ICryptoService,
   IAuthService,
@@ -7,10 +7,13 @@ import {
 import { UserDTO } from "../dtos/user.dto";
 import { AppError } from "../errors/AppError";
 import { HttpStatus, ErrorMessage } from "../../common/enums";
+import { generateSecureToken } from "../utils/token.util";
+import { GoogleAuthResponse } from "../dtos/auth.dto";
 
 export class AuthService implements IAuthService {
   constructor(
     private _userRepository: IUserRepository, 
+		private _verificationTokenRepository: IVerificationTokenRepository,
     private _cryptoService: ICryptoService,
     private _tokenService: ITokenService,
   ) {}
@@ -92,7 +95,7 @@ export class AuthService implements IAuthService {
 
   async googleAuthenticate(
     token: string,
-  ): Promise<{ user: UserDTO; accessToken: string; refreshToken: string }> {
+  ): Promise< GoogleAuthResponse> {
     const decodedToken = this._tokenService.decodeGoogleToken(token);
     if (!decodedToken)
       throw new AppError(ErrorMessage.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
@@ -102,10 +105,15 @@ export class AuthService implements IAuthService {
       user = await this._userRepository.create({
         email: decodedToken.email,
         name: decodedToken.name,
-        isVerified: true,
+        isVerified: false,
         googleId: decodedToken.sub,
         profilePicture: decodedToken.picture,
       });
+
+			const token = generateSecureToken()
+			this._verificationTokenRepository.saveToken(token, decodedToken.email, "register", 15*60)
+			return {token,email: decodedToken.email} 
+			
     } else if (!user.googleId) {
       const { id } = user;
       user = await this._userRepository.update(id, {

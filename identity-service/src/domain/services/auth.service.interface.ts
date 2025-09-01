@@ -1,4 +1,4 @@
-import { UserDTO } from "../../application/dtos";
+import { UserDTO , GoogleAuthResponse} from "../../application/dtos";
 
 export interface IAuthService { 
   loginUser(
@@ -10,7 +10,7 @@ export interface IAuthService {
   ): Promise<{ accessToken: string; refreshToken: string }>;
   googleAuthenticate(
     token: string,
-  ): Promise<{ user: UserDTO; accessToken: string; refreshToken: string }>;
+  ): Promise<GoogleAuthResponse>;
 	isUserBlocked(userId: string): Promise<boolean>;
 
 }
