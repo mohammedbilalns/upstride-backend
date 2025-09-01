@@ -25,7 +25,7 @@ export const userSchema: Schema = new Schema(
 		interestedExpertises: [{type:Schema.Types.ObjectId, ref:"Expertise"}],
 		interestedSkills: [{type:Schema.Types.ObjectId, ref:"Skill"}],
 		
-  },
+  }, 
   { timestamps: true },
 );
 userSchema.index({ name: 1 });

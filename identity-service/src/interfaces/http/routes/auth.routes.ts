@@ -47,5 +47,6 @@ export function createAuthRouter() {
   );
   router.post("/logout", authController.logout);
   router.post("/google", authController.googleAuth);
+	router.post("/add-interests", authController.addInterests);
   return router;
 }

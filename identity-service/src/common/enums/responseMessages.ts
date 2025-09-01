@@ -1,5 +1,5 @@
 export enum ResponseMessage {
-  USER_REGISTERED = "User registered successfully",
+  USER_REGISTERED = "Registered successfully",
   USER_ALREADY_EXISTS = "User with this email already exists",
   LOGIN_SUCCESS = "Login successful",
   OTP_SENT = "OTP sent to your email, please check your inbox",
@@ -18,4 +18,7 @@ export enum ResponseMessage {
   MENTOR_APPROVED = "Mentor approved successfully",
 	EXPERTISE_VERIFIED = "Expertise verified successfully",
 	SKILL_VERIFIED = "Skill verified successfully",
+	INTERESTS_FETCHED = "Interests fetched successfully",
+	INTERESTS_ADDED = "Interests added successfully",
+
 }

@@ -13,7 +13,8 @@ import {
 	verifyExpertiseParamsSchema,
 	fetchSkillsParamsSchema,
 	createSkillParamsSchema,
-	verifySkillParamsSchema
+	verifySkillParamsSchema,
+    fetchSkillSFromMultipleExpertiseSchema
 } from "../validations/expertise.validation";
 
 export class ExpertiseController {
@@ -39,11 +40,12 @@ export class ExpertiseController {
 
   fetchExpertises = asyncHandler(async (req, res) => {
     const filterData = fetchExpertisesSchema.parse(req.query);
+		const userRole = res.locals.user?.role;
     const {data,total} = await this._expertiseService.fetchExpertises({
       ...filterData,
-      userRole: res.locals.user.role,
+      userRole
     });
-    res.status(HttpStatus.OK).json({ data,total});
+    res.status(HttpStatus.OK).json({ expertises:data,total});
   });
 
 	verifyExpertise = asyncHandler(async (req, res) => {
@@ -90,9 +92,17 @@ export class ExpertiseController {
     const {expertises, total} =   await this._expertiseService.fetchSkills({
       ...data,
 			expertiseId,
-      userRole: res.locals.user.role,
+      userRole: res.locals?.user?.role,
     });
 
 		res.status(HttpStatus.OK).json({ data: expertises, total });
   });
+
+
+fetchSkillsFromMultipleExpertise = asyncHandler(async (req, res) => {
+    const data = fetchSkillSFromMultipleExpertiseSchema.parse(req.body);
+    const skills = await this._expertiseService.fetchSkillsFromMulipleExpertise(data);
+    return res.status(HttpStatus.OK).json({ data: skills });
+})
+
 }

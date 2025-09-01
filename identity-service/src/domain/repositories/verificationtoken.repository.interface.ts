@@ -1,4 +1,4 @@
-export interface IOtpRepository {
+export interface IVerificationTokenRepository {
   saveOtp(
     otp: string,
     email: string,
@@ -17,4 +17,12 @@ export interface IOtpRepository {
   getResendCount(email: string, type: string): Promise<number>;
   incrementCount(email: string, type: string): Promise<void>;
   updateOtp(otp: string, email: string, type: string): Promise<void>;
+	saveToken(token: string, value: string, context: string, expiryInSeconds: number): Promise<void>;
+	getToken(token: string, context: string): Promise<string | null>;
+	deleteToken(token: string, context: string): Promise<void>;
+	tokenExists(token: string, context: string): Promise<boolean>;
+
+
+	
+
 }
