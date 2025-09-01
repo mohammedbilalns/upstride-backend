@@ -11,6 +11,7 @@ const envSchema = z.object({
   EXCHANGE_NAME: z.string(),
   ACCESS_TOKEN_EXPIRY: z.string().default("15m"),
   REFRESH_TOKEN_EXPIRY: z.string().default("7d"),
+	RESET_TOKEN_EXPIRY: z.string().default("15m"),
   REDIS_URL: z.string(),
 });
 

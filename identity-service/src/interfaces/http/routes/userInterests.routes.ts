@@ -9,7 +9,6 @@ export function createUserInterestsRouter() {
 
 	router.use(authMiddleware(), authorizeRoles("user", "mentor"));
 	// save user interests 
-	router.post("/:userId/interestedExpertises", interestsController.addInterests);
 
 	router.get("/:userId/interestedExpertises", interestsController.fetchInterests);
 

@@ -5,3 +5,6 @@ export * from "./expertise.service";
 export * from "./crypto.service";
 export * from "./token.service";
 export * from "./otp.service";
+export * from "./interests.service";
+export * from "./registration.service";
+export * from "./passwordReset.service";

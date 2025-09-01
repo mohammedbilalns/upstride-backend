@@ -10,6 +10,9 @@ import {
   updateSkillDto,
   fetchExpertiseDto,
   fetchSkillsDto,
+	fetchSkillsFromMultipleExpertiseDto,
+    FetchSkillsResponse,
+    FetchExpertisesResponse
 } from "../dtos";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
@@ -48,7 +51,7 @@ export class ExpertiseService implements IExpertiseService {
     await this._expertiseRepository.update(data.expertiseId, updateData);
   }
 
-  async fetchExpertises(data: fetchExpertiseDto): Promise<any> {
+  async fetchExpertises(data: fetchExpertiseDto): Promise<FetchExpertisesResponse> {
     const [expertises, total] = await Promise.all([
       this._expertiseRepository.findAll(data.page, data.limit, data.query),
       this._expertiseRepository.count(data.query),
@@ -99,7 +102,7 @@ export class ExpertiseService implements IExpertiseService {
     await this._skillRepository.update(data.skillId, updateData);
   }
 
-  async fetchSkills(data: fetchSkillsDto): Promise<any> {
+  async fetchSkills(data: fetchSkillsDto): Promise<FetchSkillsResponse> {
     const [skills, total] = await Promise.all([
       this._skillRepository.findAll(
         data.expertiseId,
@@ -122,4 +125,19 @@ export class ExpertiseService implements IExpertiseService {
 
     return { expertises: mapped, total };
   }
+
+	async fetchSkillsFromMulipleExpertise(data: fetchSkillsFromMultipleExpertiseDto): Promise<any> {
+	
+		const skills = []
+		for (const expertise of data.expertise) {
+			const skillsFromExpertise = await this._skillRepository.findAll(expertise);
+			skills.push(...skillsFromExpertise);
+		}
+		const mapped = skills.map((skill) => ({
+			id: skill.id,
+			name: skill.name,	
+		}));
+
+		return mapped; 
+	}
 }

@@ -1,7 +1,7 @@
-import { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
+import { IVerificationTokenRepository } from "../../../domain/repositories/verificationtoken.repository.interface"; 
 import { Redis } from "ioredis";
 
-export class OtpRepository implements IOtpRepository {
+export class VerificationTokenRepository implements IVerificationTokenRepository {
   constructor(private readonly redisClient: Redis) {}
 
   private getKey(email: string, type: string) {
@@ -64,4 +64,32 @@ export class OtpRepository implements IOtpRepository {
     const key = this.getKey(email, type);
     await this.redisClient.hset(key, "otp", otp);
   }
+
+
+async saveToken(
+  token: string,
+  value: string,
+  context: string,
+  expiryInSeconds: number = 900, 
+): Promise<void> {
+  const key = `token:${token}:${context}`;
+  await this.redisClient.setex(key, expiryInSeconds, value);
+}
+
+async getToken(token: string, context: string): Promise<string | null> {
+  const key = `token:${token}:${context}`;
+  return this.redisClient.get(key);
+}
+
+
+async deleteToken(token: string, context: string): Promise<void> {
+  const key = `token:${token}:${context}`;
+  await this.redisClient.del(key);
+}
+
+async tokenExists(token: string, context: string): Promise<boolean> {
+  const key = `token:${token}:${context}`;
+  const exists = await this.redisClient.exists(key);
+  return exists === 1;
+}
 }
