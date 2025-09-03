@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
+import { createMediaRoutes } from "./interfaces/http/routes/media.routes";
 
 class App {
   private _app: Application;
@@ -22,6 +23,7 @@ class App {
   }
 
   private _setupRoutes() {
+    this._app.use("/media", createMediaRoutes());
     this._app.use(errorHandler);
   }
 

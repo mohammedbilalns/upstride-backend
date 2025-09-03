@@ -2,7 +2,6 @@ import { configDotenv } from "dotenv";
 import { z } from "zod";
 configDotenv();
 
-
 const envSchema = z.object({
   JWT_SECRET: z.string().min(1),
   PORT: z.string(),
@@ -12,7 +11,10 @@ const envSchema = z.object({
   EXCHANGE_NAME: z.string(),
   ACCESS_TOKEN_EXPIRY: z.string().default("15m"),
   REFRESH_TOKEN_EXPIRY: z.string().default("7d"),
-	REDIS_URL: z.string(),
+  REDIS_URL: z.string(),
+  CLOUDINARY_API_SECRET: z.string(),
+  CLOUDINARY_CLOUD_NAME: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
 });
 
 const env = envSchema.parse(process.env);
