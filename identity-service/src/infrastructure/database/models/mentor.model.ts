@@ -5,7 +5,7 @@ export interface IMentor extends Document, Omit<Mentor, "id"> {}
 export const mentorSchema: Schema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-    bio: { type: String, ref: "User" },
+    bio: { type: String },
     currentRole: { type: String, required: true },
     institution: { type: String, required: true },
     yearsOfExperience: { type: Number, required: true },
