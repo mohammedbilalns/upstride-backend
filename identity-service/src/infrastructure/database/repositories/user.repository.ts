@@ -25,6 +25,8 @@ export class UserRepository
 			isRequestedForMentoring: mapped.isRequestedForMentoring,
       googleId: mapped.googleId,
       role: mapped.role,
+			interestedExpertises: mapped.interestedExpertises,
+			interestedSkills: mapped.interestedSkills,
       isVerified: mapped.isVerified,
       createdAt: mapped.createdAt!,
     };

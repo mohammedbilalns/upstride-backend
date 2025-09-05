@@ -22,6 +22,7 @@ export const mentorSchema: Schema = new Schema(
 		isActive: { type: Boolean, default: true },
 	},
 	{ timestamps: true },
+
 );
 
 export const mentorModel = model<IMentor>("Mentor", mentorSchema);

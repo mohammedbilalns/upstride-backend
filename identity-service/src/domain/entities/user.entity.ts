@@ -10,6 +10,8 @@ export interface User {
   isVerified: boolean;
   isRequestedForMentoring?: "pending" | "approved" | "rejected";
   role: "user" | "expert" | "admin" | "superadmin";
+	interestedExpertises: string[];
+	interestedSkills: string[];
   createdAt: Date;
   updatedAt?: Date;
 }

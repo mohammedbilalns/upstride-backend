@@ -55,3 +55,11 @@ export const fetchSkillsParamsSchema = z.object({
 export const verifySkillParamsSchema = z.object({
   skillId: z.string(),
 });
+
+
+
+export const fetchSkillSFromMultipleExpertiseSchema = z.object({
+  expertise: z.array(z.string().min(1))
+    .min(1, "At least one expertise is required")
+    .max(3, "Maximum 3 expertises allowed")
+});
