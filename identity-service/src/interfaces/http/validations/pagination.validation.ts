@@ -24,4 +24,3 @@ export const paginationQuerySchema = z.object({
   query: z.string().optional(),
 });
 
-// export const paginatedQuery = z.infer<typeof paginationQuerySchema>;

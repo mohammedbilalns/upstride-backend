@@ -1,104 +1,84 @@
 import { Mentor } from "../../../domain/entities/mentor.entity";
 import { mentorModel, IMentor } from "../models/mentor.model";
-import { IMenotorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import { BaseRepository } from "./base.repository";
+import { IMentorRepository } from "../../../domain/repositories";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 
 export class MentorRepository
-  extends BaseRepository<Mentor, IMentor>
-  implements IMenotorRepository
+extends BaseRepository<Mentor, IMentor>
+implements IMentorRepository
 {
-  constructor() {
-    super(mentorModel);
-  }
+	constructor() {
+		super(mentorModel);
+	}
 
-  protected mapToDomain(doc: IMentor): Mentor {
-    const mapped = mapMongoDocument(doc)!;
-    return {
-      id: mapped.id,
-      userId: mapped.userId,
-      bio: mapped.bio,
-      currentRole: mapped.currentRole,
-      institution: mapped.institution,
-      yearsOfExperience: mapped.yearsOfExperience,
-      educationalQualifications: mapped.educationalQualifications,
-      personalWebsite: mapped.personalWebsite,
-      expertiseId: mapped.expertiseId,
-      skillIds: mapped.skillIds,
-      resumeUrl: mapped.resumeUrl,
-      termsAccepted: mapped.termsAccepted,
-      isApproved: mapped.isApproved,
-      isRejected: mapped.isRejected,
-    };
-  }
+	private createSearchCondition(query?: string) {
+		if (!query) return {};
 
-  async findByUserId(userId: string): Promise<Mentor | null> {
-    const doc = await this._model.findOne({ userId }).exec();
-    return doc ? this.mapToDomain(doc) : null;
-  }
-  async findAll(
-    page: number,
-    limit: number,
-    query?: string,
-    expertiseId?: string,
-    skillIds?: string[],
-  ): Promise<Mentor[]> {
-    const filter: any = {};
+		return {
+			$or: [
+				{ bio: { $regex: query, $options: 'i' } },
+				{ currentRole: { $regex: query, $options: 'i' } },
+				{ institution: { $regex: query, $options: 'i' } },
+				{ educationalQualifications: { $regex: query, $options: 'i' } },
+				{ personalWebsite: { $regex: query, $options: 'i' } }
+			]
+		};
+	}
 
-    if (expertiseId) {
-      filter.expertiseId = expertiseId;
-    }
+	protected mapToDomain(doc: IMentor): Mentor {
+		const mapped = mapMongoDocument(doc)!;
+		return {
+			id: mapped.id,
+			userId: mapped.userId,
+			bio: mapped.bio,
+			currentRole: mapped.currentRole,
+			institution: mapped.institution,
+			yearsOfExperience: mapped.yearsOfExperience,
+			educationalQualifications: mapped.educationalQualifications,
+			personalWebsite: mapped.personalWebsite,
+			expertiseId: mapped.expertiseId,
+			skillIds: mapped.skillIds,
+			resumeUrl: mapped.resumeUrl,
+			termsAccepted: mapped.termsAccepted,
+			isActive: mapped.isActive
+		};
+	}
 
-    if (skillIds && skillIds.length > 0) {
-      filter.skillIds = { $all: skillIds };
-    }
+	async findAll(page: number, limit: number, query?: string): Promise<Mentor[]> {
+		const searchCondition = this.createSearchCondition(query);
 
-    if (query) {
-      filter.$or = [
-        { bio: { $regex: query, $options: "i" } },
-        { currentRole: { $regex: query, $options: "i" } },
-        { institution: { $regex: query, $options: "i" } },
-      ];
-    }
+		const docs = await this._model
+			.find(searchCondition)
+			.skip(page * limit)
+			.limit(limit)
+			.exec();
 
-    const skip = (page - 1) * limit;
+		const mapped = docs.map(this.mapToDomain);
+		return docs ? mapped : [];
+	} 
 
-    const docs = await this._model
-      .find(filter)
-      .populate("expertiseId", "name _id")
-      .populate("skillIds", "name _id")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .exec();
+	async findByExpertiseandSkill(
+		expertiseId: string, 
+		skillId: string, 
+		page: number, 
+		limit: number,
+		query?: string
+	): Promise<Mentor[]> {
+		const searchCondition = this.createSearchCondition(query);
+		const baseCondition = { expertiseId, skillIds: skillId };
 
-    return docs.map(this.mapToDomain);
-  }
+		const finalCondition = query 
+			? { $and: [baseCondition, searchCondition] }
+			: baseCondition;
 
-  async count(
-    query?: string,
-    expertiseId?: string,
-    skillIds?: string[],
-  ): Promise<number> {
-    const filter: any = {};
+		const docs = await this._model
+			.find(finalCondition)
+			.skip(page * limit)
+			.limit(limit)
+			.exec();
 
-    if (expertiseId) {
-      filter.expertiseId = expertiseId;
-    }
-
-    if (skillIds && skillIds.length > 0) {
-      filter.skillIds = { $all: skillIds };
-    }
-
-    if (query) {
-      filter.$or = [
-        { bio: { $regex: query, $options: "i" } },
-        { currentRole: { $regex: query, $options: "i" } },
-        { institution: { $regex: query, $options: "i" } },
-      ];
-    }
-
-    const total = await this._model.countDocuments(filter).exec();
-    return total;
-  }
+		const mapped = docs.map(this.mapToDomain);
+		return docs ? mapped : [];
+	}	
 }

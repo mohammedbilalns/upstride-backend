@@ -11,7 +11,6 @@ import { connectToDb, redisClient } from "./infrastructure/config";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { createUserManagementRouter } from "./interfaces/http/routes/userManagement.routes";
 import { createMentorRoutes } from "./interfaces/http/routes/mentor.routes";
-
 class App {
   private _app: Application;
   constructor() {

@@ -1,6 +1,5 @@
 export enum ErrorMessage {
   USER_NOT_FOUND = "User not found",
-  MENTOR_NOT_FOUND = "Mentor not found",
   INVALID_CREDENTIALS = "Invalid email or password",
   EMAIL_ALREADY_EXISTS = "User with this email already exists",
   ALERADY_WITH_GOOGLE_ID = "Already registered with this Google ID, please login with Google",
@@ -22,4 +21,5 @@ export enum ErrorMessage {
   FORBIDDEN_RESOURCE = "Forbidden resource",
   TOO_MANY_OTP_ATTEMPTS = "Too many attempts, please register again",
   SKILL_ALREADY_EXISTS = "Skill already exists for this expertise",
+	MENTOR_NOT_FOUND = "Mentor not found",
 }

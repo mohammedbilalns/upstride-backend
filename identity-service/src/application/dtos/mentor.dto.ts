@@ -1,42 +1,49 @@
-import { UserRole } from "../../common/enums/userRoles";
 
-export interface updateMentorDto {
-  mentorId: string;
-  bio: string;
-  currentRole: string;
-  institution: string;
-  yearsofExperience: number;
-  educationalQualifications: string[];
-  personalWebsite: string;
-  skillIds: string[];
-  resumeUrl: string;
+export interface  createMentorDto {
+	userId: string;
+	bio: string;
+	currentRole: string;
+	institution: string;
+	yearsOfExperience: number;
+	educationalQualifications: string[];
+	personalWebsite: string;
+	resumeUrl: string;
+	termsAccepted: boolean;
+	skillIds: string[];
+	expertiseId: string;
 }
 
-export interface createMentorDto {
-  userId: string;
-  bio: string;
-  currentRole: string;
-  institution: string;
-  yearsofExperience: number;
-  educationalQualifications: string[];
-  personalWebsite?: string;
-  expertiseId: string;
-  skillIds: string[];
-  resumeUrl?: string;
-  termsAccepted: boolean;
+export interface updateMentoDto {
+	userId: string;
+	bio?: string;
+	currentRole?: string;
+	institution?: string;
+	yearsOfExperience?: number;
+	educationalQualifications?: string[];
+	personalWebsite?: string;
+	resumeUrl?: string;
+	skillIds?: string[];
+	expertiseId?: string;
 }
 
-export interface updateMentorStatusDto {
-  mentorId: string;
-  isAccepted?: boolean;
-  isRejected?: boolean;
+export interface fetchMentorDto {
+	page: number;
+	limit: number;
+	query?: string;
 }
 
-export interface fetchMentorsDto {
-  userRole: UserRole;
-  page: number;
-  limit: number;
-  query?: string;
-  expertiseId: string;
-  skillIds?: string[];
+export interface findByExpertiseandSkillDto {
+	page: number;
+	limit: number;
+	query?: string;
+	expertiseId: string;
+	skillId: string;
+}
+
+export interface approveMentorDto {
+	mentorId: string; 
+}
+
+export interface rejectMentorDto {
+	mentorId: string;
 }

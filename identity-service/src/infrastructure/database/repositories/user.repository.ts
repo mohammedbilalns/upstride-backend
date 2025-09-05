@@ -22,6 +22,7 @@ export class UserRepository
       profilePicture: mapped.profilePicture,
       passwordHash: mapped.passwordHash,
       isBlocked: mapped.isBlocked,
+			isRequestedForMentoring: mapped.isRequestedForMentoring,
       googleId: mapped.googleId,
       role: mapped.role,
       isVerified: mapped.isVerified,
