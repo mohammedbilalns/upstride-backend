@@ -1,114 +1,82 @@
-import { ErrorMessage, HttpStatus } from "../../common/enums";
-import { IMenotorRepository, IUserRepository } from "../../domain/repositories";
+import { IMentorRepository, IUserRepository } from "../../domain/repositories";
 import { IMentorService } from "../../domain/services";
-import { Mentor, User } from "../../domain/entities";
-import { AppError } from "../errors/AppError";
-
 import {
   createMentorDto,
-  updateMentorDto,
-  updateMentorStatusDto,
-  fetchMentorsDto,
+  updateMentoDto,
+  fetchMentorDto,
+  findByExpertiseandSkillDto,
+  approveMentorDto,
+  rejectMentorDto,
 } from "../dtos/mentor.dto";
-import { UserRole } from "../../common/enums/userRoles";
+import { Mentor } from "../../domain/entities";
+import { AppError } from "../errors/AppError";
+import { ErrorMessage, HttpStatus } from "../../common/enums";
 
 export class MentorService implements IMentorService {
   constructor(
-    private _mentorRepository: IMenotorRepository,
+    private _mentorRepository: IMentorRepository,
     private _userRepository: IUserRepository,
   ) {}
-  async createMentor(data: createMentorDto): Promise<void> {
-    const isUserExists = await this._userRepository.finddByIdAndRole(
-      data.userId,
-      UserRole.USER,
-    );
-    if (!isUserExists)
+
+  async createMentor(createMentorDto: createMentorDto): Promise<void> {
+    const user = await this._userRepository.findByEmail(createMentorDto.userId);
+    if (!user || !user.isVerified)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+
     await Promise.all([
-      this._mentorRepository.create({ ...data }),
-      this._userRepository.update(data.userId, {
+      this._mentorRepository.create({ ...createMentorDto, isActive: false }),
+      this._userRepository.update(createMentorDto.userId, {
         isRequestedForMentoring: "pending",
       }),
     ]);
   }
 
-  async updateMentor(data: updateMentorDto): Promise<void> {
-    const { mentorId, ...dataToUpdate } = data;
-    const mentor = await this._mentorRepository.findById(mentorId);
-    if (!mentor)
-      throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
-
-    await this._mentorRepository.update(mentorId, dataToUpdate);
+  async updateMentor(updateMentorDto: updateMentoDto): Promise<void> {
+    const { userId, ...rest } = updateMentorDto;
+    await this._mentorRepository.update(userId, rest);
   }
 
-  async updateMentorStatus(data: updateMentorStatusDto): Promise<void> {
-    const mentorUpdate: Partial<Mentor> = {};
-    const userUpdate: Partial<User> = {};
+  async fetchMentors(fetchMentorDto: fetchMentorDto): Promise<Mentor[]> {
+    const { page, limit, query } = fetchMentorDto;
+    const mentors = await this._mentorRepository.findAll(page, limit, query);
+    return mentors;
+  }
 
-    if (data.isAccepted !== undefined) {
-      mentorUpdate.isApproved = data.isAccepted;
-      mentorUpdate.isRejected = !data.isAccepted;
+  async findByExpertiseandSkill(
+    findByExpertiseandSkillDto: findByExpertiseandSkillDto,
+  ): Promise<Mentor[]> {
+    const { page, limit, query, expertiseId, skillId } =
+      findByExpertiseandSkillDto;
+    const mentors = await this._mentorRepository.findByExpertiseandSkill(
+      expertiseId,
+      skillId,
+      page,
+      limit,
+      query,
+    );
+    return mentors;
+  }
 
-      userUpdate.isRequestedForMentoring = data.isAccepted
-        ? "approved"
-        : "pending";
-    }
-
-    if (data.isRejected !== undefined) {
-      mentorUpdate.isRejected = data.isRejected;
-      mentorUpdate.isApproved = !data.isRejected;
-
-      userUpdate.isRequestedForMentoring = data.isRejected
-        ? "rejected"
-        : "pending";
-    }
-
-    const mentor = await this._mentorRepository.update(
-      data.mentorId,
-      mentorUpdate,
+  async approveMentor(aproveMentorDto: approveMentorDto): Promise<void> {
+    const mentor = await this._mentorRepository.findById(
+      aproveMentorDto.mentorId,
     );
     if (!mentor)
       throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    await this._userRepository.update(mentor?.userId, userUpdate);
+    await Promise.all([
+      this._userRepository.update(mentor.userId, {
+        isRequestedForMentoring: "approved",
+      }),
+      this._mentorRepository.update(mentor.id, { isActive: true }),
+    ]);
   }
 
-  async fetchMentors(data: fetchMentorsDto): Promise<{
-    mentors: any[];
-    total: number;
-    page: number;
-    limit: number;
-  }> {
-    const { page, limit, query, expertiseId, skillIds, userRole } = data;
-
-    const [mentors, total] = await Promise.all([
-      this._mentorRepository.findAll(page, limit, query, expertiseId, skillIds),
-      this._mentorRepository.count(query, expertiseId, skillIds),
-    ]);
-    const isAdmin =
-      userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN;
-
-    const mappedMentors = mentors.map((mentor) => ({
-      id: mentor.id,
-      name: mentor.userId,
-      bio: mentor.bio,
-      currentRole: mentor.currentRole,
-      institution: mentor.institution,
-      yearsOfExperience: mentor.yearsOfExperience,
-      educationalQualifications: mentor.educationalQualifications,
-      personalWebsite: mentor.personalWebsite,
-      expertiseId: mentor.expertiseId,
-      skillIds: mentor.skillIds,
-      isApproved: mentor.isApproved,
-      isRejected: mentor.isRejected,
-      ...(isAdmin && { resumeUrl: mentor.resumeUrl }),
-    }));
-
-    return {
-      mentors: mappedMentors,
-      total,
-      page,
-      limit,
-    };
+  async rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void> {
+    const mentor = await this._mentorRepository.findById(
+      rejectMentorDto.mentorId,
+    );
+    if (!mentor)
+      throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
   }
 }

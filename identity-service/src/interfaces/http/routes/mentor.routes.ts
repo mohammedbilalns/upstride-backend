@@ -1,23 +1,18 @@
 import { Router } from "express";
 import { createMentorController } from "../compositions/mentor.composition";
-import { authMiddleware, authorizeRoles } from "../middlewares/auth.middleware";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
-export function createMentorRoutes() {
-  const router = Router();
-  const mentorController = createMentorController();
+export function createMentorRoutes(){
+	const router = Router();
+	const mentorController = createMentorController();
 
-  router.use(authMiddleware);
-  router.post("/", authorizeRoles("user"), mentorController.createMentor);
-  router.post(
-    "/update-status",
-    authorizeRoles("admin"),
-    mentorController.approveMentor,
-  );
+	router.use(authMiddleware())
+	router.post("/", mentorController.createMentor);
+	router.put("/", mentorController.updateMentor);
+	router.get("/", mentorController.fetchMentors);
+	router.get("/by-expertise-and-skill", mentorController.fetchMentorsByExpertiseAndSkill);
+	router.post("/:id/approve", mentorController.appoveMentor);
+	router.post("/:id/reject", mentorController.rejectMentor);
 
-  router.get(
-    "/",
-    authorizeRoles("admin", "user"),
-    mentorController.fetchMentors,
-  );
-  return router;
+	return router;
 }
