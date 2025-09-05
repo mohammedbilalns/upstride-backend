@@ -12,11 +12,9 @@ export enum ResponseMessage {
   USER_UNBLOCKED = "User unblocked successfully",
 	UPDATED_MENTOR = "Mentor updated successfully",
 	MENTOR_REJECTED = "Mentor rejected successfully",
-	MENTOR_APPROVED = "Mentor approved successfully",
 	REQUEST_FOR_MENTORING = "Request for mentoring sent successfully",
   EXPERTISE_CREATED = "Expertise created successfully",
   EXPERTISE_UPDATED = "Expertise updated successfully",
-  EXPERTISE_VERIFIED = "Expertise verified successfully",
   SKILL_CREATED = "Skill created successfully",
   SKILL_UPDATED = "Skill updated successfully",
   MENTOR_REQUEST_SENT = "Mentor request sent successfully",
@@ -25,5 +23,4 @@ export enum ResponseMessage {
 	SKILL_VERIFIED = "Skill verified successfully",
 	INTERESTS_FETCHED = "Interests fetched successfully",
 	INTERESTS_ADDED = "Interests added successfully",
-
 }
