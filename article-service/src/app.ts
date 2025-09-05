@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
+import { createArticleRoutes, createCommentRoutes, createReactionRoutes } from "./interfaces/http/routes"; 
 
 class App {
   private _app: Application;
@@ -23,6 +24,9 @@ class App {
 
   private _setupRoutes() {
     this._app.use(errorHandler);
+		this._app.use("/article", createArticleRoutes())
+		this._app.use("/comment", createCommentRoutes())
+		this._app.use("/reaction", createReactionRoutes())
   }
 
   public listen(port: string) {
