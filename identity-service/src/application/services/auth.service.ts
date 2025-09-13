@@ -126,10 +126,10 @@ export class AuthService implements IAuthService {
         );
       }
     }
-
+		const {passwordHash, isBlocked, isVerified, googleId, ...publicUser} = user
     const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
     return {
-      user,
+      user: publicUser,
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
     };
