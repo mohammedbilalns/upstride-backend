@@ -9,4 +9,5 @@ export interface IUserManagementService {
   ): Promise<{ users: AdminUserDTO[]; total: number }>;
   blockUser(id: string): Promise<void>;
   unblockUser(id: string): Promise<void>;
+	fetchUsersByIds(ids : string[]): Promise<AdminUserDTO[]>;
 }

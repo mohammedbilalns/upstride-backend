@@ -55,4 +55,16 @@ export class UserManagementService implements IUserManagementService {
       this._revokedUserRepository.remove(id);
     }
   }
+
+	async fetchUsersByIds(ids: string[]): Promise<AdminUserDTO[]> {
+	   const users = await this._userRepository.findByIds(ids);
+			return users.map((user) => ({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				isBlocked: user.isBlocked,
+				role: user.role,
+				createdAt: user.createdAt,
+			}));
+	} 
 }

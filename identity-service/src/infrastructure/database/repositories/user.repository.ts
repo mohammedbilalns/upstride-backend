@@ -84,4 +84,10 @@ export class UserRepository
     }
     return this._model.countDocuments(filter);
   }
+
+	async findByIds(ids: string[]): Promise<User[]> {
+	    const filter = {id:{$in:ids}};
+	    const docs = await this._model.find(filter).exec(); 
+		  return docs.map((doc) => this.mapToDomain(doc));
+	}
 }

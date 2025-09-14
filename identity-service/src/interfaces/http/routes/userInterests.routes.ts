@@ -8,7 +8,6 @@ export function createUserInterestsRouter() {
 	const interestsController = createInterestsController();
 
 	router.use(authMiddleware(), authorizeRoles("user", "mentor"));
-	// save user interests 
 
 	router.get("/:userId/interestedExpertises", interestsController.fetchInterests);
 

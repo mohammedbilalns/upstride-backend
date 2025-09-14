@@ -1,5 +1,5 @@
 import { IArticleService } from "../../domain/services/article.service.interface";
-import { IArticleRepository,ITagRepository,IArticleViewRepository } from "../../domain/repositories";
+import { IArticleRepository,ITagRepository,IArticleViewRepository, IArticleReactionRepository } from "../../domain/repositories";
 import { Article } from "../../domain/entities/article.entity";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
@@ -10,7 +10,8 @@ export class ArticleService implements IArticleService {
 	constructor(
 		private _articleRepository: IArticleRepository,
 		private _tagRepository : ITagRepository,
-		private _articleViewRepository: IArticleViewRepository
+		private _articleViewRepository: IArticleViewRepository ,
+		private _articleReactionRepository: IArticleReactionRepository
 		
 	){}
 
@@ -48,12 +49,15 @@ private generateDescription(content: string): string {
 		});
 	}
 
-	async getArticleById(id: string, userId: string): Promise<Article> {
+	async getArticleById(id: string, userId: string): Promise<{article: Article, isViewed: boolean, isLiked: boolean}> {
 		const article = await this._articleRepository.findById(id);
 		if(!article) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 		await Promise.all([this._articleViewRepository.create({articleId: article.id, userId}), this._articleRepository.update(id,{views:article.views+1})]);
+		const isViewed = !!await this._articleViewRepository.findByArticleAndUser(id, userId);
+		const isLiked =  !!await this._articleReactionRepository.findByArticleAndUser(id, userId);
+		
 
-		return article;
+		return {article, isViewed, isLiked };
 	}
 
 	async fetchArticles(fetchArticlesDto: FetchArticlesDto): Promise<FetchArticlesResponseDto> {

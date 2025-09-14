@@ -47,8 +47,8 @@ update = asyncHandler(async (req, res) => {
 	fetchArticle = asyncHandler(async (req, res) => {
 		const id = req.params.id;
 		const userId = res.locals.user.id;
-		const article = await this._articleService.getArticleById(id, userId);
-		res.status(HttpStatus.OK).send(article);
+		const {article, isViewed, isLiked} = await this._articleService.getArticleById(id, userId);
+		res.status(HttpStatus.OK).json({article, isViewed, isLiked});
 	});
 
 	fetchArticles = asyncHandler(async (req, res) => {
