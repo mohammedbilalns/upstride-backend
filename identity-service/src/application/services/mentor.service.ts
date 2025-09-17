@@ -1,7 +1,7 @@
 import { IMentorRepository, IUserRepository } from "../../domain/repositories";
 import { IMentorService } from "../../domain/services";
 import {
-  createMentorDto,
+  MentorRegistrationDTO,
   updateMentoDto,
   fetchMentorDto,
   findByExpertiseandSkillDto,
@@ -11,24 +11,67 @@ import {
 import { Mentor } from "../../domain/entities";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
+import { IEventBus } from "../../domain/events/IEventBus";
+import { QueueEvents } from "../../common/enums/queueEvents";
 
 export class MentorService implements IMentorService {
   constructor(
     private _mentorRepository: IMentorRepository,
     private _userRepository: IUserRepository,
+    private _eventBus: IEventBus,
   ) {}
 
-  async createMentor(createMentorDto: createMentorDto): Promise<void> {
-    const user = await this._userRepository.findByEmail(createMentorDto.userId);
+  async createMentor(createMentorDto: MentorRegistrationDTO): Promise<void> {
+    const {
+      userId,
+      bio,
+      currentRole,
+      organisation,
+      yearsOfExperience,
+      educationalQualifications,
+      personalWebsite,
+      resume,
+      termsAccepted,
+      skills,
+      expertise,
+    } = createMentorDto;
+
+    const user = await this._userRepository.findById(userId);
     if (!user || !user.isVerified)
       throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-    await Promise.all([
-      this._mentorRepository.create({ ...createMentorDto, isActive: false }),
-      this._userRepository.update(createMentorDto.userId, {
+    if (user.isRequestedForMentoring === "approved") {
+      throw new AppError(
+        ErrorMessage.MENTOR_ALREADY_APPROVED,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const mentorDetails = {
+      bio,
+      currentRole,
+      organisation,
+      yearsOfExperience,
+      educationalQualifications,
+      personalWebsite,
+      resumeId: resume.public_id,
+      expertiseId: expertise,
+      userId,
+      termsAccepted,
+      skills,
+      expertise,
+    };
+    const [mentor, _] = await Promise.all([
+      this._mentorRepository.create({ ...mentorDetails, isActive: false }),
+      this._userRepository.update(userId, {
         isRequestedForMentoring: "pending",
       }),
     ]);
+    await this._eventBus.publish(QueueEvents.SAVE_MEDIA, {
+      ...resume,
+      userId,
+      mentorId: mentor.id,
+      category: "resume",
+    });
   }
 
   async updateMentor(updateMentorDto: updateMentoDto): Promise<void> {

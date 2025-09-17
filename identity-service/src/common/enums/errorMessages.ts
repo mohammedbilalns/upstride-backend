@@ -21,5 +21,6 @@ export enum ErrorMessage {
   FORBIDDEN_RESOURCE = "Forbidden resource",
   TOO_MANY_OTP_ATTEMPTS = "Too many attempts, please register again",
   SKILL_ALREADY_EXISTS = "Skill already exists for this expertise",
-	MENTOR_NOT_FOUND = "Mentor not found",
+  MENTOR_NOT_FOUND = "Mentor not found",
+  MENTOR_ALREADY_APPROVED = "Mentor already approved",
 }

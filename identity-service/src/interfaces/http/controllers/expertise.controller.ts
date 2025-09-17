@@ -10,11 +10,11 @@ import {
   updateExpertiseSchema,
   updateSkillparamsSchema,
   updateSkillSchema,
-	verifyExpertiseParamsSchema,
-	fetchSkillsParamsSchema,
-	createSkillParamsSchema,
-	verifySkillParamsSchema,
-    fetchSkillSFromMultipleExpertiseSchema
+  verifyExpertiseParamsSchema,
+  fetchSkillsParamsSchema,
+  createSkillParamsSchema,
+  verifySkillParamsSchema,
+  fetchSkillSFromMultipleExpertiseSchema,
 } from "../validations/expertise.validation";
 
 export class ExpertiseController {
@@ -22,7 +22,6 @@ export class ExpertiseController {
 
   createExpertise = asyncHandler(async (req, res) => {
     const data = createExpertiseSchema.parse(req.body);
-		console.log("create expertise data", data)
     await this._expertiseService.createExpertise(data);
     res
       .status(HttpStatus.OK)
@@ -40,27 +39,27 @@ export class ExpertiseController {
 
   fetchExpertises = asyncHandler(async (req, res) => {
     const filterData = fetchExpertisesSchema.parse(req.query);
-		const userRole = res.locals.user?.role;
-    const {data,total} = await this._expertiseService.fetchExpertises({
+    const userRole = res.locals.user?.role;
+    const { data, total } = await this._expertiseService.fetchExpertises({
       ...filterData,
-      userRole
+      userRole,
     });
-    res.status(HttpStatus.OK).json({ expertises:data,total});
+    res.status(HttpStatus.OK).json({ expertises: data, total });
   });
 
-	verifyExpertise = asyncHandler(async (req, res) => {
-		const { expertiseId } = verifyExpertiseParamsSchema.parse(req.params);	
-		await this._expertiseService.verifyExpertise(expertiseId);
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.EXPERTISE_VERIFIED });
-	});
+  verifyExpertise = asyncHandler(async (req, res) => {
+    const { expertiseId } = verifyExpertiseParamsSchema.parse(req.params);
+    await this._expertiseService.verifyExpertise(expertiseId);
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.EXPERTISE_VERIFIED });
+  });
 
-  createSkill = asyncHandler(async (req, res) => {	
-		const {expertiseId} = createSkillParamsSchema.parse(req.params);
-    const {name} = createSkillSchema.parse(req.body);
+  createSkill = asyncHandler(async (req, res) => {
+    const { expertiseId } = createSkillParamsSchema.parse(req.params);
+    const { name } = createSkillSchema.parse(req.body);
     await this._expertiseService.createSkill({
-			expertiseId,
+      expertiseId,
       name,
       userRole: res.locals.user.role,
     });
@@ -78,31 +77,30 @@ export class ExpertiseController {
       .json({ success: true, message: ResponseMessage.SKILL_UPDATED });
   });
 
-	verifySkill = asyncHandler(async (req, res) => {
-		const { skillId } = verifySkillParamsSchema.parse(req.params);
-		await this._expertiseService.updateSkill({skillId, isVerified: true});
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.SKILL_VERIFIED });
-	});
+  verifySkill = asyncHandler(async (req, res) => {
+    const { skillId } = verifySkillParamsSchema.parse(req.params);
+    await this._expertiseService.updateSkill({ skillId, isVerified: true });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.SKILL_VERIFIED });
+  });
 
   fetchSkills = asyncHandler(async (req, res) => {
     const data = fetchSkillSchema.parse(req.query);
-		const {expertiseId} = fetchSkillsParamsSchema.parse(req.params);
-    const {expertises, total} =   await this._expertiseService.fetchSkills({
+    const { expertiseId } = fetchSkillsParamsSchema.parse(req.params);
+    const { expertises, total } = await this._expertiseService.fetchSkills({
       ...data,
-			expertiseId,
+      expertiseId,
       userRole: res.locals?.user?.role,
     });
 
-		res.status(HttpStatus.OK).json({ data: expertises, total });
+    res.status(HttpStatus.OK).json({ data: expertises, total });
   });
 
-
-fetchSkillsFromMultipleExpertise = asyncHandler(async (req, res) => {
+  fetchSkillsFromMultipleExpertise = asyncHandler(async (req, res) => {
     const data = fetchSkillSFromMultipleExpertiseSchema.parse(req.body);
-    const skills = await this._expertiseService.fetchSkillsFromMulipleExpertise(data);
+    const skills =
+      await this._expertiseService.fetchSkillsFromMulipleExpertise(data);
     return res.status(HttpStatus.OK).json({ data: skills });
-})
-
+  });
 }

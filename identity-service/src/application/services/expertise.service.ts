@@ -10,9 +10,9 @@ import {
   updateSkillDto,
   fetchExpertiseDto,
   fetchSkillsDto,
-	fetchSkillsFromMultipleExpertiseDto,
-    FetchSkillsResponse,
-    FetchExpertisesResponse
+  fetchSkillsFromMultipleExpertiseDto,
+  FetchSkillsResponse,
+  FetchExpertisesResponse,
 } from "../dtos";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
@@ -51,7 +51,9 @@ export class ExpertiseService implements IExpertiseService {
     await this._expertiseRepository.update(data.expertiseId, updateData);
   }
 
-  async fetchExpertises(data: fetchExpertiseDto): Promise<FetchExpertisesResponse> {
+  async fetchExpertises(
+    data: fetchExpertiseDto,
+  ): Promise<FetchExpertisesResponse> {
     const [expertises, total] = await Promise.all([
       this._expertiseRepository.findAll(data.page, data.limit, data.query),
       this._expertiseRepository.count(data.query),
@@ -69,12 +71,15 @@ export class ExpertiseService implements IExpertiseService {
     return { data: mapped, total };
   }
 
-	async verifyExpertise(expertiseId: string): Promise<void> {
-		await this._expertiseRepository.update(expertiseId, {isVerified:true}) 
-		const skills = await this._skillRepository.findAll(expertiseId);
-		await Promise.all(skills.map((skill) => this._skillRepository.update(skill.id, {isVerified:true})))
-
-	}
+  async verifyExpertise(expertiseId: string): Promise<void> {
+    await this._expertiseRepository.update(expertiseId, { isVerified: true });
+    const skills = await this._skillRepository.findAll(expertiseId);
+    await Promise.all(
+      skills.map((skill) =>
+        this._skillRepository.update(skill.id, { isVerified: true }),
+      ),
+    );
+  }
 
   async createSkill(data: createSkillDto): Promise<void> {
     const isExists = await this._skillRepository.exists(
@@ -126,18 +131,20 @@ export class ExpertiseService implements IExpertiseService {
     return { expertises: mapped, total };
   }
 
-	async fetchSkillsFromMulipleExpertise(data: fetchSkillsFromMultipleExpertiseDto): Promise<any> {
-	
-		const skills = []
-		for (const expertise of data.expertise) {
-			const skillsFromExpertise = await this._skillRepository.findAll(expertise);
-			skills.push(...skillsFromExpertise);
-		}
-		const mapped = skills.map((skill) => ({
-			id: skill.id,
-			name: skill.name,	
-		}));
+  async fetchSkillsFromMulipleExpertise(
+    data: fetchSkillsFromMultipleExpertiseDto,
+  ): Promise<any> {
+    const skills = [];
+    for (const expertise of data.expertise) {
+      const skillsFromExpertise =
+        await this._skillRepository.findAll(expertise);
+      skills.push(...skillsFromExpertise);
+    }
+    const mapped = skills.map((skill) => ({
+      id: skill.id,
+      name: skill.name,
+    }));
 
-		return mapped; 
-	}
+    return mapped;
+  }
 }

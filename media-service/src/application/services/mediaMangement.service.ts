@@ -1,13 +1,13 @@
 import { IMediaMangementService } from "../../domain/services/mediaMangement.service.interface";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
-import { v2 as cloudinary } from "cloudinary";
+import cloudinary from "../../infrastructure/config/cloudinary";
 import env from "../../infrastructure/config/env";
 import {
   CreateSignatureResponse,
   getMediaData,
   getMediasDto,
-  uploadMediaDto,
+  SaveMediaDto,
 } from "../dtos/media.dto";
 import { IMediaRepository } from "../../domain/repositories/media.repository.interface";
 import { Media } from "../../domain/entities/media.entity";
@@ -15,40 +15,54 @@ import { Media } from "../../domain/entities/media.entity";
 export class MediaManagementService implements IMediaMangementService {
   constructor(private _mediaRepository: IMediaRepository) {}
 
-  async createSignature(
-    timeStamp: number,
-    userId: string,
-  ): Promise<CreateSignatureResponse> {
-    if (Math.abs(timeStamp - Date.now()) > 1000 * 60 * 60 * 24 * 30) {
-      throw new AppError(
-        ErrorMessage.INVALID_TIMESTAMP,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  async createSignature(): Promise<CreateSignatureResponse> {
+    const timestamp = Math.floor(Date.now() / 1000);
 
     const paramsToSign = {
-      timeStamp,
-      folder: `uploads/users/${userId}`,
-      resource_type: "auto",
-      allowed_formats: "pdf,doc,docx,jpg,png,mp3,wav",
-      eager: "",
+      timestamp,
+      upload_preset: env.CLOUDINARY_UPLOAD_PRESET,
     };
 
     const signature = cloudinary.utils.api_sign_request(
       paramsToSign,
       env.CLOUDINARY_API_SECRET,
     );
+
     return {
       signature,
-      timeStamp,
-      CLOUDINARY_API_SECRET: env.CLOUDINARY_API_SECRET,
-      CLOUDINARY_CLOUD_NAME: env.CLOUDINARY_CLOUD_NAME,
+      timestamp,
+      api_key: env.CLOUDINARY_API_KEY,
+      cloud_name: env.CLOUDINARY_CLOUD_NAME,
+      upload_preset: env.CLOUDINARY_UPLOAD_PRESET,
     };
   }
-
-  async saveMedia(data: uploadMediaDto): Promise<void> {
-    await this._mediaRepository.create(data);
+  async saveMedia(saveMediaDto: SaveMediaDto): Promise<void> {
+    const {
+      resource_type,
+      category,
+      public_id,
+      original_filename,
+      secure_url,
+      bytes,
+      articleId,
+      chatMessageId,
+      mentorId,
+      userId,
+    } = saveMediaDto;
+    await this._mediaRepository.create({
+      mediaType: resource_type,
+      category,
+      publicId: public_id,
+      originalName: original_filename,
+      url: secure_url,
+      size: bytes,
+      articleId,
+      chatMessageId,
+      mentorId,
+      userId,
+    });
   }
+
   async getMedia(data: getMediaData): Promise<Media> {
     const media: Media = await this._mediaRepository.findOne(data);
     if (!media) {
@@ -65,10 +79,7 @@ export class MediaManagementService implements IMediaMangementService {
     return medias;
   }
 
-  async deleteMedia(publicId: string, userId: string): Promise<void> {
-    await Promise.all([
-      cloudinary.uploader.destroy(publicId),
-      this._mediaRepository.delete({ publicId, userId }),
-    ]);
+  async deleteMedia(publicId: string, resource_type: string): Promise<void> {
+    await cloudinary.uploader.destroy(publicId, { resource_type });
   }
 }
