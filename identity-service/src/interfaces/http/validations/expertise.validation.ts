@@ -13,7 +13,6 @@ export const updateExpertiseParamsSchema = z.object({
 export const updateExpertiseSchema = z.object({
   name: z.string().min(3).max(50).trim().optional(),
   description: z.string().min(3).max(200).trim().optional(),
- 
 });
 
 export const fetchExpertisesSchema = z.object({
@@ -27,7 +26,7 @@ export const verifyExpertiseParamsSchema = z.object({
 });
 
 export const createSkillSchema = z.object({
-  name: z.string().min(3).max(50).trim(), 
+  name: z.string().min(3).max(50).trim(),
 });
 export const createSkillParamsSchema = z.object({
   expertiseId: z.string(),
@@ -56,10 +55,9 @@ export const verifySkillParamsSchema = z.object({
   skillId: z.string(),
 });
 
-
-
 export const fetchSkillSFromMultipleExpertiseSchema = z.object({
-  expertise: z.array(z.string().min(1))
+  expertise: z
+    .array(z.string().min(1))
     .min(1, "At least one expertise is required")
-    .max(3, "Maximum 3 expertises allowed")
+    .max(3, "Maximum 3 expertises allowed"),
 });

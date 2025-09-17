@@ -6,6 +6,8 @@ import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
 import { createMediaRoutes } from "./interfaces/http/routes/media.routes";
+import { notFound } from "./interfaces/http/middlewares/notFound.middleware";
+import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 
 class App {
   private _app: Application;
@@ -23,12 +25,17 @@ class App {
   }
 
   private _setupRoutes() {
-    this._app.use("/media", createMediaRoutes());
+    this._app.get("/health", (_req, res) => {
+      res.send("OK");
+    });
+    this._app.use("/api/media", createMediaRoutes());
     this._app.use(errorHandler);
+    this._app.use(notFound);
   }
 
   public listen(port: string) {
     this._app.listen(port, () => {
+      connectRabbitMq();
       connectToDb();
       logger.info(`Media service is listening on port ${port}`);
     });

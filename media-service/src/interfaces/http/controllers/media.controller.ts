@@ -1,49 +1,45 @@
 import { IMediaMangementService } from "../../../domain/services/mediaMangement.service.interface";
 import asyncHandler from "../utils/asyncHandler";
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
+import { deleteMediaParamsSchema } from "../validations/deleteMediaParams.schema";
 
 export class MediaController {
   constructor(private _mediaService: IMediaMangementService) {}
 
-  generateSingnateure = asyncHandler(async (req, res) => {
-    const { timeStamp } = req.body;
-    const userId = res.locals.user.id;
-    const signatureData = await this._mediaService.createSignature(
-      timeStamp,
-      userId,
-    );
+  generateSignature = asyncHandler(async (_req, res) => {
+    const signatureData = await this._mediaService.createSignature();
     res.status(HttpStatus.OK).json({ data: signatureData });
   });
 
-  saveMedia = asyncHandler(async (req, res) => {
-    const {
-      mediaType,
-      category,
-      publicId,
-      originalName,
-      url,
-      size,
-      articleId,
-      chatMessageId,
-      mentorId,
-    } = req.body;
-    const data = {
-      mediaType,
-      category,
-      publicId,
-      originalName,
-      url,
-      size,
-      articleId,
-      chatMessageId,
-      mentorId,
-      userId: res.locals.user.id,
-    };
-    await this._mediaService.saveMedia(data);
-    res
-      .status(HttpStatus.OK)
-      .json({ message: ResponseMessage.MEDIA_UPLOADED_SUCCESSFULLY });
-  });
+  // saveMedia = asyncHandler(async (req, res) => {
+  //   const {
+  //     mediaType,
+  //     category,
+  //     publicId,
+  //     originalName,
+  //     url,
+  //     size,
+  //     articleId,
+  //     chatMessageId,
+  //     mentorId,
+  //   } = req.body;
+  //   const data = {
+  //     mediaType,
+  //     category,
+  //     publicId,
+  //     originalName,
+  //     url,
+  //     size,
+  //     articleId,
+  //     chatMessageId,
+  //     mentorId,
+  //     userId: res.locals.user.id,
+  //   };
+  //   await this._mediaService.saveMedia(data);
+  //   res
+  //     .status(HttpStatus.OK)
+  //     .json({ message: ResponseMessage.MEDIA_UPLOADED_SUCCESSFULLY });
+  // });
 
   getMedia = asyncHandler(async (req, res) => {
     const { publicId, articleId, chatMessageId, mentorId } = req.body;
@@ -69,9 +65,9 @@ export class MediaController {
   });
 
   deleteMedia = asyncHandler(async (req, res) => {
-    const { publicId } = req.body;
-    const userId = res.locals.user.id;
-    await this._mediaService.deleteMedia(publicId, userId);
+    const { publicId, mediaType } = deleteMediaParamsSchema.parse(req.params);
+    console.log("publicId in params");
+    await this._mediaService.deleteMedia(publicId, mediaType);
     res
       .status(HttpStatus.OK)
       .json({ message: ResponseMessage.MEDIA_DELETED_SUCCESSFULLY });

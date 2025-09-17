@@ -3,13 +3,15 @@ export interface Mentor {
   userId: string;
   bio: string;
   currentRole: string;
-  institution?: string;
+  organisation?: string;
   yearsOfExperience: number;
   educationalQualifications: string[];
   personalWebsite?: string;
   expertiseId: string;
   skillIds: string[];
-  resumeUrl?: string;
+  resumeId: string;
+  rejectionReason?: string;
+  blockingReason?: string;
   termsAccepted: boolean;
-	isActive: boolean;
+  isActive: boolean;
 }
