@@ -58,4 +58,5 @@ export const approveMentorSchema = z.object({
 
 export const rejectMentorSchema = z.object({
   mentorId: z.string(),
+  rejectionReason: z.string().min(1).max(500),
 });

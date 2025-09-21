@@ -3,6 +3,8 @@ import { mentorModel, IMentor } from "../models/mentor.model";
 import { BaseRepository } from "./base.repository";
 import { IMentorRepository } from "../../../domain/repositories";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
+import { findAllMentorsDto } from "../../../application/dtos";
+import { ObjectId } from "mongoose";
 
 export class MentorRepository
   extends BaseRepository<Mentor, IMentor>
@@ -19,47 +21,191 @@ export class MentorRepository
       $or: [
         { bio: { $regex: query, $options: "i" } },
         { currentRole: { $regex: query, $options: "i" } },
-        { institution: { $regex: query, $options: "i" } },
         { educationalQualifications: { $regex: query, $options: "i" } },
         { personalWebsite: { $regex: query, $options: "i" } },
       ],
     };
   }
 
-  protected mapToDomain(doc: IMentor): Mentor {
-    const mapped = mapMongoDocument(doc)!;
-    return {
-      id: mapped.id,
-      userId: mapped.userId,
-      bio: mapped.bio,
-      currentRole: mapped.currentRole,
-      organisation: mapped.organisation,
-      yearsOfExperience: mapped.yearsOfExperience,
-      educationalQualifications: mapped.educationalQualifications,
-      personalWebsite: mapped.personalWebsite,
-      expertiseId: mapped.expertiseId,
-      skillIds: mapped.skillIds,
-      resumeId: mapped.resumeId,
-      termsAccepted: mapped.termsAccepted,
-      isActive: mapped.isActive,
-    };
+  // Helper function to check if a value is an ObjectId
+  private isObjectId(value: any): value is ObjectId {
+    return (
+      value &&
+      typeof value === "object" &&
+      value.constructor.name === "ObjectId"
+    );
   }
 
-  async findAll(
-    page: number,
-    limit: number,
-    query?: string,
-  ): Promise<Mentor[]> {
+  // Helper function to check if a value is a populated document
+  private isPopulatedDocument(value: any): boolean {
+    return (
+      value &&
+      typeof value === "object" &&
+      !this.isObjectId(value) &&
+      "_id" in value
+    );
+  }
+
+  protected mapToDomain(doc: IMentor): Mentor {
+    if (
+      (doc.userId && this.isPopulatedDocument(doc.userId)) ||
+      (doc.expertiseId && this.isPopulatedDocument(doc.expertiseId)) ||
+      (doc.skillIds &&
+        Array.isArray(doc.skillIds) &&
+        doc.skillIds.length > 0 &&
+        this.isPopulatedDocument(doc.skillIds[0]))
+    ) {
+      const mentorObj: any = {
+        id: doc._id?.toString() || doc.id,
+        bio: doc.bio,
+        currentRole: doc.currentRole,
+        organisation: doc.organisation,
+        yearsOfExperience: doc.yearsOfExperience,
+        educationalQualifications: doc.educationalQualifications,
+        personalWebsite: doc.personalWebsite,
+        resumeId: doc.resumeId,
+        isPending: doc.isPending,
+        isRejected: doc.isRejected,
+        isActive: doc.isActive,
+        createdAt: doc.createdAt,
+      };
+
+      // Add populated user data if available
+      if (doc.userId && this.isPopulatedDocument(doc.userId)) {
+        mentorObj.user = {
+          id: (doc.userId as any)._id?.toString() || doc.userId,
+          name: (doc.userId as any).name,
+          email: (doc.userId as any).email,
+        };
+      } else {
+        mentorObj.userId = doc.userId?.toString() || doc.userId;
+      }
+
+      if (doc.expertiseId && this.isPopulatedDocument(doc.expertiseId)) {
+        mentorObj.expertise = {
+          id: (doc.expertiseId as any)._id?.toString() || doc.expertiseId,
+          name: (doc.expertiseId as any).name,
+        };
+      } else {
+        mentorObj.expertiseId = doc.expertiseId?.toString() || doc.expertiseId;
+      }
+
+      // Add populated skills data if available
+      if (
+        doc.skillIds &&
+        Array.isArray(doc.skillIds) &&
+        doc.skillIds.length > 0 &&
+        this.isPopulatedDocument(doc.skillIds[0])
+      ) {
+        mentorObj.skills = (doc.skillIds as any[]).map((skill) => ({
+          id: skill._id?.toString() || skill,
+          name: skill.name,
+        }));
+      } else {
+        mentorObj.skillIds = Array.isArray(doc.skillIds)
+          ? doc.skillIds.map((id) => id?.toString() || id)
+          : doc.skillIds;
+      }
+
+      return mentorObj as Mentor;
+    } else {
+      if (doc && typeof doc.toObject === "function") {
+        const mapped = mapMongoDocument(doc)!;
+        return {
+          id: mapped.id,
+          userId: mapped.userId,
+          bio: mapped.bio,
+          currentRole: mapped.currentRole,
+          organisation: mapped.organisation,
+          yearsOfExperience: mapped.yearsOfExperience,
+          educationalQualifications: mapped.educationalQualifications,
+          personalWebsite: mapped.personalWebsite,
+          expertiseId: mapped.expertiseId,
+          skillIds: mapped.skillIds,
+          resumeId: mapped.resumeId,
+          isPending: mapped.isPending,
+          termsAccepted: mapped.termsAccepted,
+          isRejected: mapped.isRejected,
+          isActive: mapped.isActive,
+        };
+      } else {
+        return {
+          id: doc._id?.toString() || doc.id,
+          userId: doc.userId,
+          bio: doc.bio,
+          currentRole: doc.currentRole,
+          organisation: doc.organisation,
+          yearsOfExperience: doc.yearsOfExperience,
+          educationalQualifications: doc.educationalQualifications,
+          personalWebsite: doc.personalWebsite,
+          expertiseId: doc.expertiseId,
+          skillIds: doc.skillIds,
+          resumeId: doc.resumeId,
+          isPending: doc.isPending,
+          isRejected: doc.isRejected,
+          termsAccepted: doc.termsAccepted,
+          isActive: doc.isActive,
+        };
+      }
+    }
+  }
+
+  async findAll(params: findAllMentorsDto): Promise<Mentor[]> {
+    const { page, limit, query, status } = params;
     const searchCondition = this.createSearchCondition(query);
 
+    // Status filter mapping
+    let statusCondition: Record<string, any> = {};
+    if (status) {
+      if (status === "pending") {
+        statusCondition = { isPending: true, isrRejected: false };
+      } else if (status === "approved") {
+        statusCondition = { isPending: false, isrRejected: false };
+      } else if (status === "rejected") {
+        statusCondition = { isrRejected: true };
+      }
+    }
+
+    const finalCondition =
+      Object.keys(searchCondition).length > 0 ||
+      Object.keys(statusCondition).length > 0
+        ? { $and: [searchCondition, statusCondition] }
+        : {};
+
     const docs = await this._model
-      .find(searchCondition)
-      .skip(page * limit)
+      .find(finalCondition)
+      .populate("userId", "name email")
+      .populate("expertiseId", "name")
+      .populate("skillIds", "name")
+      .skip((page - 1) * limit)
       .limit(limit)
       .exec();
 
-    const mapped = docs.map(this.mapToDomain);
-    return docs ? mapped : [];
+    return docs.map((doc) => this.mapToDomain(doc));
+  }
+
+  async count(query?: string, status?: string): Promise<number> {
+    const searchCondition = this.createSearchCondition(query);
+
+    // Status filter mapping
+    let statusCondition: Record<string, any> = {};
+    if (status) {
+      if (status === "pending") {
+        statusCondition = { isPending: true, isrRejected: false };
+      } else if (status === "approved") {
+        statusCondition = { isPending: false, isrRejected: false };
+      } else if (status === "rejected") {
+        statusCondition = { isrRejected: true };
+      }
+    }
+
+    const finalCondition =
+      Object.keys(searchCondition).length > 0 ||
+      Object.keys(statusCondition).length > 0
+        ? { $and: [searchCondition, statusCondition] }
+        : {};
+
+    return this._model.countDocuments(finalCondition);
   }
 
   async findByExpertiseandSkill(
@@ -78,11 +224,13 @@ export class MentorRepository
 
     const docs = await this._model
       .find(finalCondition)
+      .populate("userId", "name email")
+      .populate("expertiseId", "name")
+      .populate("skillIds", "name")
       .skip(page * limit)
       .limit(limit)
       .exec();
 
-    const mapped = docs.map(this.mapToDomain);
-    return docs ? mapped : [];
+    return docs.map((doc) => this.mapToDomain(doc));
   }
 }

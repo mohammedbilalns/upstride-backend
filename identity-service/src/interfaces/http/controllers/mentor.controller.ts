@@ -22,6 +22,45 @@ export class MentorController {
       .json({ success: true, message: ResponseMessage.REQUEST_FOR_MENTORING });
   });
 
+  fetchMentors = asyncHandler(async (req, res) => {
+    const { page, limit, query } = paginationQuerySchema.parse(req.query);
+    const data = await this._mentorService.fetchMentors({
+      page,
+      limit,
+      query,
+    });
+    res.status(HttpStatus.OK).json(data);
+  });
+
+  fetchMentorsByExpertiseAndSkill = asyncHandler(async (req, res) => {
+    const { page, limit, query, expertiseId, skillId } =
+      fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
+    const mentors = await this._mentorService.findByExpertiseandSkill({
+      page,
+      limit,
+      query,
+      expertiseId,
+      skillId,
+    });
+    res.status(HttpStatus.OK).json({ success: true, data: mentors });
+  });
+
+  appoveMentor = asyncHandler(async (req, res) => {
+    const { mentorId } = approveMentorSchema.parse(req.body);
+    await this._mentorService.approveMentor({ mentorId });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.MENTOR_APPROVED });
+  });
+
+  rejectMentor = asyncHandler(async (req, res) => {
+    const { mentorId, rejectionReason } = rejectMentorSchema.parse(req.body);
+    await this._mentorService.rejectMentor({ mentorId, rejectionReason });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: ResponseMessage.MENTOR_REJECTED });
+  });
+
   updateMentor = asyncHandler(async (req, res) => {
     const {
       bio,
@@ -50,44 +89,5 @@ export class MentorController {
     res
       .status(HttpStatus.OK)
       .json({ success: true, message: ResponseMessage.UPDATED_MENTOR });
-  });
-
-  fetchMentors = asyncHandler(async (req, res) => {
-    const { page, limit, query } = paginationQuerySchema.parse(req.query);
-    const mentors = await this._mentorService.fetchMentors({
-      page,
-      limit,
-      query,
-    });
-    res.status(HttpStatus.OK).json({ success: true, data: mentors });
-  });
-
-  fetchMentorsByExpertiseAndSkill = asyncHandler(async (req, res) => {
-    const { page, limit, query, expertiseId, skillId } =
-      fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
-    const mentors = await this._mentorService.findByExpertiseandSkill({
-      page,
-      limit,
-      query,
-      expertiseId,
-      skillId,
-    });
-    res.status(HttpStatus.OK).json({ success: true, data: mentors });
-  });
-
-  appoveMentor = asyncHandler(async (req, res) => {
-    const { mentorId } = approveMentorSchema.parse(req.body);
-    await this._mentorService.approveMentor({ mentorId });
-    res
-      .status(HttpStatus.OK)
-      .json({ success: true, message: ResponseMessage.MENTOR_APPROVED });
-  });
-
-  rejectMentor = asyncHandler(async (req, res) => {
-    const { mentorId } = rejectMentorSchema.parse(req.body);
-    await this._mentorService.rejectMentor({ mentorId });
-    res
-      .status(HttpStatus.OK)
-      .json({ success: true, message: ResponseMessage.MENTOR_REJECTED });
   });
 }

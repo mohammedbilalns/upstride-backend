@@ -10,6 +10,8 @@ export interface Mentor {
   expertiseId: string;
   skillIds: string[];
   resumeId: string;
+  isPending: boolean;
+  isRejected: boolean;
   rejectionReason?: string;
   blockingReason?: string;
   termsAccepted: boolean;

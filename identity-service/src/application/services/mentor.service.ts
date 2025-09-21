@@ -3,16 +3,16 @@ import { IMentorService } from "../../domain/services";
 import {
   MentorRegistrationDTO,
   updateMentoDto,
-  fetchMentorDto,
   findByExpertiseandSkillDto,
   approveMentorDto,
   rejectMentorDto,
+  findAllMentorsDto,
+  findAllMentorsResponseDto,
 } from "../dtos/mentor.dto";
 import { Mentor } from "../../domain/entities";
 import { AppError } from "../errors/AppError";
-import { ErrorMessage, HttpStatus } from "../../common/enums";
+import { ErrorMessage, HttpStatus, QueueEvents } from "../../common/enums";
 import { IEventBus } from "../../domain/events/IEventBus";
-import { QueueEvents } from "../../common/enums/queueEvents";
 
 export class MentorService implements IMentorService {
   constructor(
@@ -57,11 +57,11 @@ export class MentorService implements IMentorService {
       expertiseId: expertise,
       userId,
       termsAccepted,
-      skills,
+      skillIds: skills,
       expertise,
     };
     const [mentor, _] = await Promise.all([
-      this._mentorRepository.create({ ...mentorDetails, isActive: false }),
+      this._mentorRepository.create({ ...mentorDetails, isPending: true }),
       this._userRepository.update(userId, {
         isRequestedForMentoring: "pending",
       }),
@@ -79,10 +79,32 @@ export class MentorService implements IMentorService {
     await this._mentorRepository.update(userId, rest);
   }
 
-  async fetchMentors(fetchMentorDto: fetchMentorDto): Promise<Mentor[]> {
-    const { page, limit, query } = fetchMentorDto;
-    const mentors = await this._mentorRepository.findAll(page, limit, query);
-    return mentors;
+  async fetchMentors(
+    fetchMentorDto: findAllMentorsDto,
+  ): Promise<findAllMentorsResponseDto> {
+    const { page, limit, query, status } = fetchMentorDto;
+
+    const [mentors, totalMentos, totalPending, totalApproved, totalRejected] =
+      await Promise.all([
+        this._mentorRepository.findAll({
+          page,
+          limit,
+          query,
+          status,
+        }),
+        this._mentorRepository.count(query, status),
+        this._mentorRepository.count(query, "pending"),
+        this._mentorRepository.count(query, "approved"),
+        this._mentorRepository.count(query, "rejected"),
+      ]);
+
+    return {
+      mentors,
+      totalMentors: totalMentos,
+      totalPending,
+      totalApproved,
+      totalRejected,
+    };
   }
 
   async findByExpertiseandSkill(
@@ -111,15 +133,32 @@ export class MentorService implements IMentorService {
       this._userRepository.update(mentor.userId, {
         isRequestedForMentoring: "approved",
       }),
-      this._mentorRepository.update(mentor.id, { isActive: true }),
+      this._mentorRepository.update(mentor.id, {
+        isPending: false,
+        isRejected: false,
+        isActive: true,
+      }),
     ]);
   }
 
   async rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void> {
-    const mentor = await this._mentorRepository.findById(
-      rejectMentorDto.mentorId,
-    );
+    const { rejectionReason, mentorId } = rejectMentorDto;
+    console.log("reason", rejectionReason);
+    console.log("mentor id", mentorId);
+    const mentor = await this._mentorRepository.findById(mentorId);
     if (!mentor)
       throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
+
+    await Promise.all([
+      this._userRepository.update(mentor.userId, {
+        isRequestedForMentoring: "rejected",
+      }),
+      this._mentorRepository.update(mentor.id, {
+        isActive: false,
+        isRejected: true,
+        isPending: false,
+        rejectionReason,
+      }),
+    ]);
   }
 }

@@ -1,7 +1,9 @@
 import { Document, Schema, model } from "mongoose";
 import { Mentor } from "../../../domain/entities";
 
-export interface IMentor extends Document, Omit<Mentor, "id"> {}
+export interface IMentor extends Document, Omit<Mentor, "id"> {
+  createdAt: Date;
+}
 export const mentorSchema: Schema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
@@ -18,6 +20,8 @@ export const mentorSchema: Schema = new Schema(
     },
     skillIds: [{ type: Schema.Types.ObjectId, required: true, ref: "Skill" }],
     resumeId: { type: String, required: true },
+    isPending: { type: Boolean, default: true },
+    isRejected: { type: Boolean, default: false },
     rejectionReason: { type: String },
     blockingReason: { type: String },
     termsAccepted: { type: Boolean, required: true },

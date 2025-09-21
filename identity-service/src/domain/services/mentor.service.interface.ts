@@ -1,17 +1,20 @@
 import {
   MentorRegistrationDTO,
-  fetchMentorDto,
   updateMentoDto,
   findByExpertiseandSkillDto,
   approveMentorDto,
   rejectMentorDto,
+  findAllMentorsDto,
+  findAllMentorsResponseDto,
 } from "../../application/dtos/mentor.dto";
 import { Mentor } from "../entities";
 
 export interface IMentorService {
   createMentor(createMentorDto: MentorRegistrationDTO): Promise<void>;
   updateMentor(updateMentorDto: updateMentoDto): Promise<void>;
-  fetchMentors(fetchMentorDto: fetchMentorDto): Promise<Mentor[]>;
+  fetchMentors(
+    fetchMentorDto: findAllMentorsDto,
+  ): Promise<findAllMentorsResponseDto>;
   findByExpertiseandSkill(
     findByExpertiseandSkillDto: findByExpertiseandSkillDto,
   ): Promise<Mentor[]>;

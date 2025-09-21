@@ -1,3 +1,5 @@
+import { Mentor } from "../../domain/entities";
+
 export interface MentorRegistrationDTO {
   userId: string;
   bio: string;
@@ -36,6 +38,7 @@ export interface fetchMentorDto {
   page: number;
   limit: number;
   query?: string;
+  status?: "pending" | "approved" | "rejected";
 }
 
 export interface findByExpertiseandSkillDto {
@@ -52,4 +55,19 @@ export interface approveMentorDto {
 
 export interface rejectMentorDto {
   mentorId: string;
+  rejectionReason: string;
+}
+export interface findAllMentorsDto {
+  page: number;
+  limit: number;
+  query?: string;
+  status?: "pending" | "approved" | "rejected";
+}
+
+export interface findAllMentorsResponseDto {
+  mentors: Mentor[];
+  totalMentors: number;
+  totalPending: number;
+  totalApproved: number;
+  totalRejected: number;
 }

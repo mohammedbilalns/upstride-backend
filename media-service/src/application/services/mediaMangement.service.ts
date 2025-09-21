@@ -11,6 +11,7 @@ import {
 } from "../dtos/media.dto";
 import { IMediaRepository } from "../../domain/repositories/media.repository.interface";
 import { Media } from "../../domain/entities/media.entity";
+import { Readable } from "stream";
 
 export class MediaManagementService implements IMediaMangementService {
   constructor(private _mediaRepository: IMediaRepository) {}
@@ -21,13 +22,13 @@ export class MediaManagementService implements IMediaMangementService {
     const paramsToSign = {
       timestamp,
       upload_preset: env.CLOUDINARY_UPLOAD_PRESET,
+      type: "authenticated",
     };
 
     const signature = cloudinary.utils.api_sign_request(
       paramsToSign,
       env.CLOUDINARY_API_SECRET,
     );
-
     return {
       signature,
       timestamp,
@@ -61,6 +62,30 @@ export class MediaManagementService implements IMediaMangementService {
       mentorId,
       userId,
     });
+  }
+
+  async streamMedia(
+    publicId: string,
+    mediaType: string,
+  ): Promise<{ stream: Readable; contentType: string }> {
+    const expiresAt = Math.floor(Date.now() / 1000) + 60;
+
+    const signedUrl = cloudinary.url(publicId, {
+      sign_url: true,
+      type: "authenticated",
+      resource_type: mediaType,
+      expires_at: expiresAt,
+    });
+    const response = await fetch(signedUrl);
+    console.log(response);
+    if (!response.ok || !response.body) {
+      throw new Error(`Failed to fetch media. Status: ${response.status}`);
+    }
+    return {
+      stream: Readable.fromWeb(response.body!),
+      contentType:
+        response.headers.get("content-type") || "application/octet-stream",
+    };
   }
 
   async getMedia(data: getMediaData): Promise<Media> {

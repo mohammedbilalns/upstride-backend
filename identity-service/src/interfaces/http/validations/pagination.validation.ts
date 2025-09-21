@@ -22,5 +22,5 @@ export const paginationQuerySchema = z.object({
     .transform((val) => Number(val)),
 
   query: z.string().optional(),
+  status: z.enum(["pending", "approved", "rejected"]).optional(),
 });
-
