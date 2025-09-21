@@ -27,7 +27,7 @@ export class MentorRepository
     };
   }
 
-  // Helper function to check if a value is an ObjectId
+  //  function to check if a value is an ObjectId
   private isObjectId(value: any): value is ObjectId {
     return (
       value &&
@@ -158,11 +158,11 @@ export class MentorRepository
     let statusCondition: Record<string, any> = {};
     if (status) {
       if (status === "pending") {
-        statusCondition = { isPending: true, isrRejected: false };
+        statusCondition = { isPending: true };
       } else if (status === "approved") {
-        statusCondition = { isPending: false, isrRejected: false };
+        statusCondition = { isPending: false, isRejected: false };
       } else if (status === "rejected") {
-        statusCondition = { isrRejected: true };
+        statusCondition = { isRejected: true };
       }
     }
 
@@ -191,11 +191,11 @@ export class MentorRepository
     let statusCondition: Record<string, any> = {};
     if (status) {
       if (status === "pending") {
-        statusCondition = { isPending: true, isrRejected: false };
+        statusCondition = { isPending: true};
       } else if (status === "approved") {
-        statusCondition = { isPending: false, isrRejected: false };
+        statusCondition = { isPending: false, isRejected: false };
       } else if (status === "rejected") {
-        statusCondition = { isrRejected: true };
+        statusCondition = { isRejected: true };
       }
     }
 

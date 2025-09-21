@@ -83,6 +83,7 @@ export class MentorService implements IMentorService {
     fetchMentorDto: findAllMentorsDto,
   ): Promise<findAllMentorsResponseDto> {
     const { page, limit, query, status } = fetchMentorDto;
+    console.log("Status from service", status);
 
     const [mentors, totalMentos, totalPending, totalApproved, totalRejected] =
       await Promise.all([
@@ -92,7 +93,7 @@ export class MentorService implements IMentorService {
           query,
           status,
         }),
-        this._mentorRepository.count(query, status),
+        this._mentorRepository.count(query),
         this._mentorRepository.count(query, "pending"),
         this._mentorRepository.count(query, "approved"),
         this._mentorRepository.count(query, "rejected"),

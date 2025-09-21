@@ -4,11 +4,11 @@ import asyncHandler from "../utils/asyncHandler";
 import {
   approveMentorSchema,
   fetchMentorsByExpertiseAndSkillSchema,
+  fetchMentorsQuerySchema,
   mentorRegistrationSchema,
   rejectMentorSchema,
   updateMentorSchema,
 } from "../validations/mentor.validation";
-import { paginationQuerySchema } from "../validations/pagination.validation";
 
 export class MentorController {
   constructor(private _mentorService: IMentorService) {}
@@ -23,11 +23,12 @@ export class MentorController {
   });
 
   fetchMentors = asyncHandler(async (req, res) => {
-    const { page, limit, query } = paginationQuerySchema.parse(req.query);
+    const { page, limit, query, status } = fetchMentorsQuerySchema.parse(req.query);
     const data = await this._mentorService.fetchMentors({
       page,
       limit,
       query,
+			status
     });
     res.status(HttpStatus.OK).json(data);
   });
