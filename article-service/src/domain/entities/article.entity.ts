@@ -1,12 +1,11 @@
-
 export interface Article {
 	id: string;
 	authorName: string;
-	authorImage?: string; 
+	authorImage?: string;
 	featuredImage?: string;
 	title: string;
-	category: string; 
-	topics : string[]; 
+	category: string;
+	topics: string[];
 	author: string;
 	tags: string[];
 	description: string;
@@ -15,5 +14,5 @@ export interface Article {
 	comments: number;
 	likes: number;
 	isArchived: boolean;
-	content: string; 
+	content: string;
 }

@@ -1,10 +1,16 @@
-import { BaseRepository } from "./base.repository";
-import { IArticleCommentRepository } from "../../../domain/repositories/articleComment.repository.interface";
+import type { ArticleComment } from "../../../domain/entities/articleComment.entity";
+import type { IArticleCommentRepository } from "../../../domain/repositories/articleComment.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import { ArticleCommentModel, IArticleComment } from "../models/articleComment.model";
-import { ArticleComment } from "../../../domain/entities/articleComment.entity";
+import {
+	ArticleCommentModel,
+	type IArticleComment,
+} from "../models/articleComment.model";
+import { BaseRepository } from "./base.repository";
 
-export class ArticleCommentRepository extends BaseRepository<ArticleComment, IArticleComment> implements IArticleCommentRepository {
+export class ArticleCommentRepository
+	extends BaseRepository<ArticleComment, IArticleComment>
+	implements IArticleCommentRepository
+{
 	constructor() {
 		super(ArticleCommentModel);
 	}
@@ -19,19 +25,33 @@ export class ArticleCommentRepository extends BaseRepository<ArticleComment, IAr
 			userImage: mapped.userImage,
 			content: mapped.content,
 			isActive: mapped.isActive,
-		}
+		};
 	}
 
-
-	async findByArticle(articleId: string, page: number, limit: number, parentId?: string): Promise<{comments: ArticleComment[], total:number}> {
-		if(parentId){
-			const articles = await this._model.find({articleId: articleId, parentId: parentId}).skip((page-1) * limit).limit(limit).lean().exec();
+	async findByArticle(
+		articleId: string,
+		page: number,
+		limit: number,
+		parentId?: string,
+	): Promise<{ comments: ArticleComment[]; total: number }> {
+		if (parentId) {
+			const articles = await this._model
+				.find({ articleId: articleId, parentId: parentId })
+				.skip((page - 1) * limit)
+				.limit(limit)
+				.lean()
+				.exec();
 			return {
 				comments: articles.map(this.mapToDomain),
 				total: articles.length,
 			};
 		}
-		const articles = await this._model.find({articleId: articleId}).skip((page-1) * limit).limit(limit).lean().exec();
+		const articles = await this._model
+			.find({ articleId: articleId })
+			.skip((page - 1) * limit)
+			.limit(limit)
+			.lean()
+			.exec();
 		return {
 			comments: articles.map(this.mapToDomain),
 			total: articles.length,

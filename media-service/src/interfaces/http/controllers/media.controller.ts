@@ -1,8 +1,10 @@
-import { IMediaMangementService } from "../../../domain/services/mediaMangement.service.interface";
-import asyncHandler from "../utils/asyncHandler";
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import { deleteMediaParamsSchema, getSignedUrlBodySchema } from "../validations/media.schema"
-
+import type { IMediaMangementService } from "../../../domain/services/mediaMangement.service.interface";
+import asyncHandler from "../utils/asyncHandler";
+import {
+	deleteMediaParamsSchema,
+	getSignedUrlBodySchema,
+} from "../validations/media.schema";
 
 export class MediaController {
 	constructor(private _mediaService: IMediaMangementService) {}
@@ -12,14 +14,16 @@ export class MediaController {
 		res.status(HttpStatus.OK).json({ data: signatureData });
 	});
 
-	streamMedia = asyncHandler(async (req,res)=>{	
+	streamMedia = asyncHandler(async (req, res) => {
 		const { publicId, mediaType } = getSignedUrlBodySchema.parse(req.body);
-		const {stream, contentType} =  await this._mediaService.streamMedia(publicId, mediaType);
+		const { stream, contentType } = await this._mediaService.streamMedia(
+			publicId,
+			mediaType,
+		);
 		res.setHeader("Content-Type", contentType);
 		res.setHeader("Content-Disposition", `inline; filename="${publicId}"`);
 		stream.pipe(res);
-
-	})
+	});
 
 	deleteMedia = asyncHandler(async (req, res) => {
 		const { publicId, mediaType } = deleteMediaParamsSchema.parse(req.params);
@@ -31,26 +35,24 @@ export class MediaController {
 	});
 	// getMedia = asyncHandler(async (req, res) => {
 	//   const { publicId, articleId, chatMessageId, mentorId } = req.body;
-  //   const data = {
-  //     publicId,
-  //     articleId,
-  //     chatMessageId,
-  //     mentorId,
-  //     userId: res.locals.user.id,
-  //   };
-  //   const media = await this._mediaService.getMedia(data);
-  //   res.status(HttpStatus.OK).json({ data: media });
-  // });
+	//   const data = {
+	//     publicId,
+	//     articleId,
+	//     chatMessageId,
+	//     mentorId,
+	//     userId: res.locals.user.id,
+	//   };
+	//   const media = await this._mediaService.getMedia(data);
+	//   res.status(HttpStatus.OK).json({ data: media });
+	// });
 
-  // getMedias = asyncHandler(async (req, res) => {
-  //   const { publicIds } = req.body;
-  //   const data = {
-  //     publicIds,
-  //     userId: res.locals.user.id,
-  //   };
-  //   const medias = await this._mediaService.getMedias(data);
-  //   res.status(HttpStatus.OK).json({ data: medias });
-  // });
-
-
+	// getMedias = asyncHandler(async (req, res) => {
+	//   const { publicIds } = req.body;
+	//   const data = {
+	//     publicIds,
+	//     userId: res.locals.user.id,
+	//   };
+	//   const medias = await this._mediaService.getMedias(data);
+	//   res.status(HttpStatus.OK).json({ data: medias });
+	// });
 }

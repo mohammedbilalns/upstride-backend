@@ -1,10 +1,13 @@
-import { BaseRepository } from "./base.repository";
-import { ITagRepository } from "../../../domain/repositories/tag.repository.interface";
+import type { Tag } from "../../../domain/entities/tag.entity";
+import type { ITagRepository } from "../../../domain/repositories/tag.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import { ITag, TagModel } from "../models/tag.model";
-import { Tag } from "../../../domain/entities/tag.entity";
+import { type ITag, TagModel } from "../models/tag.model";
+import { BaseRepository } from "./base.repository";
 
-export class TagRepository extends BaseRepository<Tag, ITag> implements ITagRepository {
+export class TagRepository
+	extends BaseRepository<Tag, ITag>
+	implements ITagRepository
+{
 	constructor() {
 		super(TagModel);
 	}
@@ -16,38 +19,36 @@ export class TagRepository extends BaseRepository<Tag, ITag> implements ITagRepo
 			promoted: mapped.promoted,
 			usageCount: mapped.usageCount,
 			createdAt: mapped.createdAt,
-		}
+		};
 	}
 
-
 	async createOrIncrement(tags: string[]): Promise<string[]> {
-    const bulkOps = tags.map(tagName => ({
-      updateOne: {
-        filter: { name: tagName },
-        update: {
-          $setOnInsert: { 
-            name: tagName,
-            createdAt: new Date()
-          },
-          $inc: { usageCount: 1 }
-        },
-        upsert: true
-      }
-    })); 
+		const bulkOps = tags.map((tagName) => ({
+			updateOne: {
+				filter: { name: tagName },
+				update: {
+					$setOnInsert: {
+						name: tagName,
+						createdAt: new Date(),
+					},
+					$inc: { usageCount: 1 },
+				},
+				upsert: true,
+			},
+		}));
 
 		await this._model.bulkWrite(bulkOps, { ordered: false });
-		
-		    const tagDocs = await this._model
-      .find({ name: { $in: tags } })
-      .select('_id')
-      .lean();
-    
-    return tagDocs.map(doc => doc._id.toString());
+
+		const tagDocs = await this._model
+			.find({ name: { $in: tags } })
+			.select("_id")
+			.lean();
+
+		return tagDocs.map((doc) => doc._id.toString());
 	}
 
 	async findByName(tag: string): Promise<Tag | null> {
-		const doc = await this._model.findOne({name: tag}).exec();
+		const doc = await this._model.findOne({ name: tag }).exec();
 		return doc ? this.mapToDomain(doc) : null;
 	}
-}	
-
+}
