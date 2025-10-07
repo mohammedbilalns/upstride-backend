@@ -73,15 +73,14 @@ export class MediaManagementService implements IMediaMangementService {
     const signedUrl = cloudinary.url(publicId, {
       sign_url: true,
       type: "authenticated",
-      resource_type: mediaType,
-      expires_at: expiresAt,
-    });
-    const response = await fetch(signedUrl);
-    console.log(response);
-    if (!response.ok || !response.body) {
-      throw new Error(`Failed to fetch media. Status: ${response.status}`);
-    }
-    return {
+			resource_type: mediaType,
+			expires_at: expiresAt,
+		});
+		const response = await fetch(signedUrl);
+		if (!response.ok || !response.body) {
+			throw new AppError(ErrorMessage.FAILED_TO_FETCH_MEDIA, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return {
       stream: Readable.fromWeb(response.body!),
       contentType:
         response.headers.get("content-type") || "application/octet-stream",

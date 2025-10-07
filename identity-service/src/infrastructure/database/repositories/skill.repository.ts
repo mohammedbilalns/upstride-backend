@@ -1,26 +1,26 @@
-import { BaseRepository } from "./base.repository";
-import { Skill } from "../../../domain/entities";
-import { ISkill, skillModel } from "../models/skill.model";
-import { ISkillRepository } from "../../../domain/repositories/skill.repository.interface";
+import type { Skill } from "../../../domain/entities";
+import type { ISkillRepository } from "../../../domain/repositories/skill.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
+import { type ISkill, skillModel } from "../models/skill.model";
+import { BaseRepository } from "./base.repository";
 
 export class SkillRepository
-  extends BaseRepository<Skill, ISkill>
-  implements ISkillRepository
+	extends BaseRepository<Skill, ISkill>
+	implements ISkillRepository
 {
-  constructor() {
-    super(skillModel);
-  }
+	constructor() {
+		super(skillModel);
+	}
 
-  protected mapToDomain(doc: ISkill): Skill {
-    const mapped = mapMongoDocument(doc)!;
-    return {
-      id: mapped.id,
-      name: mapped.name,
-      expertiseId: mapped.expertiseId,
-      isVerified: mapped.isVerified,
-    };
-  }
+	protected mapToDomain(doc: ISkill): Skill {
+		const mapped = mapMongoDocument(doc)!;
+		return {
+			id: mapped.id,
+			name: mapped.name,
+			expertiseId: mapped.expertiseId,
+			isVerified: mapped.isVerified,
+		};
+	}
 
 	async findAll(
 		expertiseId: string,
@@ -41,8 +41,8 @@ export class SkillRepository
 		}
 
 		let queryBuilder = this._model
-		.find(filter)
-		.sort(query ? {} : { createdAt: -1 });
+			.find(filter)
+			.sort(query ? {} : { createdAt: -1 });
 
 		if (page && limit) {
 			const skip = (page - 1) * limit;
@@ -59,20 +59,20 @@ export class SkillRepository
 			expertiseId,
 		});
 		return !!doc;
-	} 
+	}
 
-  async count(expertiseId?: string, query?: string): Promise<number> {
-    const filter: any = {};
+	async count(expertiseId?: string, query?: string): Promise<number> {
+		const filter: any = {};
 
-    if (expertiseId) {
-      filter.expertiseId = expertiseId;
-    }
+		if (expertiseId) {
+			filter.expertiseId = expertiseId;
+		}
 
-    if (query) {
-      filter.$or = [{ name: { $regex: query, $options: "i" } }];
-    }
+		if (query) {
+			filter.$or = [{ name: { $regex: query, $options: "i" } }];
+		}
 
-    const total = await this._model.countDocuments(filter).exec();
-    return total;
-  }
+		const total = await this._model.countDocuments(filter).exec();
+		return total;
+	}
 }

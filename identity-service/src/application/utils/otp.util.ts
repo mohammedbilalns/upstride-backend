@@ -1,12 +1,12 @@
 export const OTP_SUBJECT = "Skillsphere - OTP";
 
 export enum otpType {
-  register = "register",
-  reset = "reset",
+	register = "register",
+	reset = "reset",
 }
 
 export function buildOtpEmailHtml(otp: string, type: otpType) {
-  return `
+	return `
 <!doctype html>
 <html lang="en">
 <head>

@@ -1,6 +1,6 @@
 export interface Skill {
-  id: string;
-  name: string;
-  expertiseId: string;
-  isVerified: boolean;
+	id: string;
+	name: string;
+	expertiseId: string;
+	isVerified: boolean;
 }

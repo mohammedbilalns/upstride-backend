@@ -3,17 +3,17 @@ import { createUserManagementController } from "../compositions/userManagement.c
 import { authMiddleware, authorizeRoles } from "../middlewares/auth.middleware";
 
 export function createUserManagementRouter() {
-  const router = Router();
-  const userManagementController = createUserManagementController();
+	const router = Router();
+	const userManagementController = createUserManagementController();
 
-  router.use(authMiddleware(), authorizeRoles("admin", "superadmin"));
-  router.get(
-    "/",
+	router.use(authMiddleware(), authorizeRoles("admin", "superadmin"));
+	router.get(
+		"/",
 
-    userManagementController.fetchUsers,
-  );
-  router.post("/block/:userId", userManagementController.blockUser);
-  router.post("/unblock/:userId", userManagementController.unblockUser);
+		userManagementController.fetchUsers,
+	);
+	router.post("/block/:userId", userManagementController.blockUser);
+	router.post("/unblock/:userId", userManagementController.unblockUser);
 
-  return router;
+	return router;
 }

@@ -5,7 +5,7 @@ import { IMailService } from "../../../domain/services/mail.service.interface";
 
 export async function createSendOtpConsumer(mailService: IMailService) {
   await eventBus.subscribe<{ to: string; subject: string; text: string }>(
-    "send.otp",
+    "send.mail",
     async (payload) => {
       try {
         const { to, subject, text } = mailPayloadSchema.parse(payload);

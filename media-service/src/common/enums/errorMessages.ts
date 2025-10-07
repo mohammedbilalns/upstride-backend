@@ -11,4 +11,5 @@ export enum ErrorMessage {
   NO_FILE_FOUND = "No file found",
   INVALID_TIMESTAMP = "Invalid timestamp",
   MEDIA_NOT_FOUND = "Media not found",
+	FAILED_TO_FETCH_MEDIA = "Failed to fetch media",
 }

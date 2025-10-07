@@ -1,7 +1,14 @@
 import {z} from "zod"
 
 export const createArticleSchema = z.object({
-	featuredImage: z.string(),
+	featuredImage:  z.object({
+    public_id: z.string(),
+    original_filename: z.string(),
+    resource_type: z.string(),
+    secure_url: z.url(),
+    bytes: z.number(),
+    asset_folder: z.string(),
+  }),
 	title: z.string().min(5,"Title must be at least 5 characters").max(200,"Title must be less than 200 characters"),
 	category: z.string(),
 	topics: z.array(z.string()).max(5),

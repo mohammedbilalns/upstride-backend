@@ -15,7 +15,6 @@ export class ArticleService implements IArticleService {
 		
 	){}
 
-
 private generateDescription(content: string): string {
   if (!content) return '';
   

@@ -1,20 +1,20 @@
-import { Document } from "mongoose";
+import type { Document } from "mongoose";
 
 export type DocumentToPlain<T extends Document> = Omit<
-  T,
-  keyof Document | "_id" | "__v"
+	T,
+	keyof Document | "_id" | "__v"
 > & { id: string };
 
 export const mapMongoDocument = <T extends Document>(
-  doc: T | null,
+	doc: T | null,
 ): DocumentToPlain<T> | null => {
-  if (!doc) return null;
+	if (!doc) return null;
 
-  const obj = doc.toObject();
-  const { _id, __v, ...rest } = obj;
+	const obj = doc.toObject();
+	const { _id, __v, ...rest } = obj;
 
-  return {
-    ...rest,
-    id: _id.toString(),
-  } as DocumentToPlain<T>;
+	return {
+		...rest,
+		id: _id.toString(),
+	} as DocumentToPlain<T>;
 };

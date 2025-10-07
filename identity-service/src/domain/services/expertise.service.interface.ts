@@ -1,13 +1,13 @@
-import {
+import type {
 	createExpertiseDto,
-	updateExpertiseDto,
 	createSkillDto,
-	updateSkillDto,
+	FetchExpertisesResponse,
+	FetchSkillsResponse,
 	fetchExpertiseDto,
-	fetchSkillsDto,	
+	fetchSkillsDto,
 	fetchSkillsFromMultipleExpertiseDto,
-    FetchSkillsResponse,
-    FetchExpertisesResponse
+	updateExpertiseDto,
+	updateSkillDto,
 } from "../../application/dtos";
 
 export interface IExpertiseService {
@@ -18,5 +18,7 @@ export interface IExpertiseService {
 	createSkill(data: createSkillDto): Promise<void>;
 	updateSkill(data: updateSkillDto): Promise<void>;
 	fetchSkills(data: fetchSkillsDto): Promise<FetchSkillsResponse>;
-	fetchSkillsFromMulipleExpertise(data: fetchSkillsFromMultipleExpertiseDto): Promise<any>;
+	fetchSkillsFromMulipleExpertise(
+		data: fetchSkillsFromMultipleExpertiseDto,
+	): Promise<any>;
 }
