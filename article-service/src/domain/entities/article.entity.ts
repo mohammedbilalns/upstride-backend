@@ -13,4 +13,5 @@ export interface Article {
 	likes: number;
 	isArchived: boolean;
 	content: string;
+	createdAt: Date;
 }

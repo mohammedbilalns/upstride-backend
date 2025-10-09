@@ -41,12 +41,9 @@ export const updateArticleSchema = z.object({
 });
 
 export const fetchArticlesSchema = z.object({
-	page: z.number().min(1).max(100).default(1),
-	limit: z.number().min(1).max(100).default(10),
-	sortBy: z.literal("asc", "desc").optional(),
-	author: z.string().optional(),
+	page: z.coerce.number().min(1).max(100).default(1),
+	sortBy: z.string().optional(),
 	category: z.string().optional(),
-	topic: z.string().optional(),
 	tag: z.string().optional(),
 	query: z.string().default(""),
 });

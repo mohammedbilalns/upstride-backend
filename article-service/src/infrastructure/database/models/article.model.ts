@@ -23,5 +23,6 @@ export const ArticleSchema: Schema = new Schema<IArticle>(
 		timestamps: true,
 	},
 );
+ArticleSchema.index({ title: "text", description: "text", content: "text" });
 
 export const ArticleModel = model<IArticle>("Article", ArticleSchema);

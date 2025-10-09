@@ -54,6 +54,7 @@ export class ArticleController {
 	});
 
 	fetchArticles = asyncHandler(async (req, res) => {
+		console.log("req query",   req.query)
 		const fetchArticleParams = fetchArticlesSchema.parse(req.query);
 		const articles =
 			await this._articleService.fetchArticles(fetchArticleParams);

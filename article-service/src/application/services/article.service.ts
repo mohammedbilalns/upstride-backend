@@ -86,46 +86,36 @@ export class ArticleService implements IArticleService {
 	async fetchArticles(
 		fetchArticlesDto: FetchArticlesDto,
 	): Promise<FetchArticlesResponseDto> {
-		const { page, limit, sortBy, author, category, topic, tag, query } =
+		const { page, sortBy, author, category, tag, query } =
 			fetchArticlesDto;
+		const limit = 4 
+		let repositoryResponse: { articles: Article[], total: number };
+
 		if (author) {
-			return await this._articleRepository.findByAuthor(
-				author,
-				page,
-				limit,
-				sortBy,
-				query,
+			repositoryResponse = await this._articleRepository.findByAuthor(
+				author, page, limit, sortBy, query,
 			);
-		}
-		if (category) {
-			return await this._articleRepository.findByCategory(
-				category,
-				page,
-				limit,
-				sortBy,
-				query,
+		} else if (category) {
+			repositoryResponse = await this._articleRepository.findByCategory(
+				category, page, limit, sortBy, query,
 			);
-		}
-		if (tag) {
-			return await this._articleRepository.findByTag(
-				tag,
-				page,
-				limit,
-				sortBy,
-				query,
+		} else if (tag) {
+			repositoryResponse = await this._articleRepository.findByTag(
+				tag, page, limit, sortBy, query,
 			);
-		}
-		if (topic) {
-			return await this._articleRepository.findByTopic(
-				topic,
-				page,
-				limit,
-				sortBy,
-				query,
-			);
+		} else {
+			repositoryResponse = await this._articleRepository.find(query, page, limit, sortBy);
 		}
 
-		return await this._articleRepository.find(query, page, limit, sortBy);
+		const articlesWithoutContent = repositoryResponse.articles.map(article => {
+			const { content, ...articleWithoutContent } = article;
+			return articleWithoutContent;
+		});
+
+		return {
+			articles: articlesWithoutContent,
+			total: repositoryResponse.total,
+		};
 	}
 
 	async updateArticle(updateArticleData: UpdateArticleDto): Promise<void> {

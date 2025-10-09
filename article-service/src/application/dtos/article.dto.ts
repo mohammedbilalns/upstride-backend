@@ -35,11 +35,9 @@ export interface UpdateArticleDto {
 export interface FetchArticlesDto {
 	userId?: string;
 	page: number;
-	limit: number;
 	sortBy?: string;
 	author?: string;
 	category?: string;
-	topic?: string;
 	tag?: string;
 	query: string;
 }

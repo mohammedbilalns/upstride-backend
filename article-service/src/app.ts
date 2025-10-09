@@ -8,6 +8,8 @@ import {
   createCommentRoutes,
   createReactionRoutes,
 } from "./interfaces/http/routes";
+import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import { createTagRoutes } from "./interfaces/http/routes/tag.routes";
 
 class App {
 	private _app: Application;
@@ -25,9 +27,10 @@ class App {
 	}
 
   private _setupRoutes() {
-    this._app.use("/article", createArticleRoutes());
-    this._app.use("/comment", createCommentRoutes());
-    this._app.use("/reaction", createReactionRoutes());
+    this._app.use("/api/articles", createArticleRoutes());
+    this._app.use("/api/comment", createCommentRoutes());
+    this._app.use("/api/reaction", createReactionRoutes());
+		this._app.use("/api/tag", createTagRoutes());
     this._app.use(errorHandler);
   }
 
