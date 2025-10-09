@@ -1,13 +1,22 @@
 import type { Article } from "../../domain/entities/article.entity";
 
+
+
+interface FeaturedImage {
+	public_id: string, 
+	original_filename: string, 
+	resource_type: string, 
+	secure_url: string, 
+	bytes: number, 
+	asset_folder: string
+}
+
 export interface CreateArticleDto {
-	author: string;
+	author: string,
 	authorName: string;
 	authorImage: string;
-	featuredImage: string;
+	featuredImage?: FeaturedImage;
 	title: string;
-	category: string;
-	topics: string[];
 	tags: string[];
 	content: string;
 }
@@ -16,7 +25,7 @@ export interface UpdateArticleDto {
 	id: string;
 	title?: string;
 	userId: string;
-	featuredImage?: string;
+	featuredImage?: FeaturedImage;
 	category?: string;
 	topics?: string[];
 	tags?: string[];

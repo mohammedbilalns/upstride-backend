@@ -1,13 +1,21 @@
 import { z } from "zod";
 
+
+const featuredImageSchema = z.object({
+	public_id: z.string(),
+	original_filename: z.string(),
+	resource_type: z.string(),
+	secure_url: z.url(),
+	bytes: z.number(),
+	asset_folder: z.string(),
+}).optional();
+
 export const createArticleSchema = z.object({
-	featuredImage: z.string(),
+	featuredImage: featuredImageSchema,
 	title: z
 		.string()
 		.min(5, "Title must be at least 5 characters")
 		.max(200, "Title must be less than 200 characters"),
-	category: z.string(),
-	topics: z.array(z.string()).max(5),
 	tags: z.array(z.string()).max(5),
 	content: z
 		.string()
@@ -22,7 +30,7 @@ export const updateArticleSchema = z.object({
 		.min(5, "Title must be at least 5 characters")
 		.max(200, "Title must be less than 200 characters")
 		.optional(),
-	featuredImage: z.string().optional(),
+	featuredImage: featuredImageSchema,
 	category: z.string().optional(),
 	topics: z.array(z.string()).max(5).optional(),
 	tags: z.array(z.string()).max(5).optional(),

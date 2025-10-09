@@ -3,11 +3,10 @@ import express, { type Application } from "express";
 import helmet from "helmet";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
-import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import {
-	createArticleRoutes,
-	createCommentRoutes,
-	createReactionRoutes,
+  createArticleRoutes,
+  createCommentRoutes,
+  createReactionRoutes,
 } from "./interfaces/http/routes";
 
 class App {
@@ -25,12 +24,12 @@ class App {
 		this._app.use(requestLogger);
 	}
 
-	private _setupRoutes() {
-		this._app.use(errorHandler);
-		this._app.use("/article", createArticleRoutes());
-		this._app.use("/comment", createCommentRoutes());
-		this._app.use("/reaction", createReactionRoutes());
-	}
+  private _setupRoutes() {
+    this._app.use("/article", createArticleRoutes());
+    this._app.use("/comment", createCommentRoutes());
+    this._app.use("/reaction", createReactionRoutes());
+    this._app.use(errorHandler);
+  }
 
 	public listen(port: string) {
 		this._app.listen(port, () => {

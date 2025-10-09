@@ -8,24 +8,25 @@ import {
 } from "../validations/article.validation";
 
 export class ArticleController {
-	constructor(private _articleService: IArticleService) {}
+  constructor(private _articleService: IArticleService) {}
 
 	create = asyncHandler(async (req, res) => {
 		const articleData = createArticleSchema.parse(req.body);
+		console.log("author from the res local", JSON.stringify(res.locals.user))
 		const author = res.locals.user.id;
 		const authorName = res.locals.user.name;
 		const authorImage = res.locals.user.profilePicture;
 
-		await this._articleService.createArticle({
-			author,
-			authorName,
-			authorImage,
-			...articleData,
-		});
-		res
-			.status(HttpStatus.CREATED)
-			.send({ message: ResponseMessage.ARTICLE_CREATED });
-	});
+    await this._articleService.createArticle({
+      author,
+      authorName,
+      authorImage,
+      ...articleData,
+    });
+    res
+      .status(HttpStatus.CREATED)
+      .send({ message: ResponseMessage.ARTICLE_CREATED });
+  });
 
 	update = asyncHandler(async (req, res) => {
 		const articleData = updateArticleSchema.parse(req.body);
