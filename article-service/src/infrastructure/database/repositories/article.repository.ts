@@ -149,6 +149,7 @@ export class ArticleRepository
     const [articles, total] = await Promise.all([
       this._model
         .find(filter)
+			  .populate("tags", "id name")
         .sort(sortBy || { createdAt: -1 })
         .skip(skip)
         .limit(limit)

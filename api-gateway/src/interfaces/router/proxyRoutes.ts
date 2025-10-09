@@ -57,8 +57,6 @@ router.use("/expertise", proxy(env.IDENTITY_SERVICE_URL, {
 	}
 }));
 
-
-
 router.use("/mentor", proxy(env.IDENTITY_SERVICE_URL, {
 	...proxyOptions,
 	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
@@ -96,4 +94,41 @@ router.use("/articles", proxy(env.ARTICLE_SERVICE_URL, {
 		return proxyResData
 	}
 }))
+
+router.use("/tags", proxy(env.ARTICLE_SERVICE_URL, {
+	...proxyOptions, 
+	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+		proxyReqOpts.headers["Content-Type"] = "application/json";
+		return proxyReqOpts;
+	},
+	userResDecorator: (proxyRes, proxyResData, _srcReq, _res) => {
+		logger.info(`Response received from article service: ${proxyRes.statusCode}`);
+		return proxyResData;
+	}
+}))
+
+router.use("/comments", proxy(env.ARTICLE_SERVICE_URL, {
+	...proxyOptions, 
+	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+		proxyReqOpts.headers["Content-Type"] = "application/json";
+		return proxyReqOpts;
+	},
+	userResDecorator: (proxyRes, proxyResData, _srcReq, _res) => {
+		logger.info(`Response received from article service: ${proxyRes.statusCode}`);
+		return proxyResData;
+	}
+}))
+
+router.use("/reactions", proxy(env.ARTICLE_SERVICE_URL, {
+	...proxyOptions, 
+	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+		proxyReqOpts.headers["Content-Type"] = "application/json";
+		return proxyReqOpts;
+	},
+	userResDecorator: (proxyRes, proxyResData, _srcReq, _res) => {
+		logger.info(`Response received from article service: ${proxyRes.statusCode}`);
+		return proxyResData;
+	}
+}))
+
 export default router;

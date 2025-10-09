@@ -28,9 +28,9 @@ class App {
 
   private _setupRoutes() {
     this._app.use("/api/articles", createArticleRoutes());
-    this._app.use("/api/comment", createCommentRoutes());
-    this._app.use("/api/reaction", createReactionRoutes());
-		this._app.use("/api/tag", createTagRoutes());
+    this._app.use("/api/comments", createCommentRoutes());
+    this._app.use("/api/reactions", createReactionRoutes());
+		this._app.use("/api/tags", createTagRoutes());
     this._app.use(errorHandler);
   }
 

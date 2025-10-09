@@ -6,6 +6,7 @@ import type {
 	ITagRepository,
 } from "../../../domain/repositories";
 import type { IArticleService } from "../../../domain/services";
+import { redisClient } from "../../../infrastructure/config";
 import {
 	ArticleReactionRepository,
 	ArticleRepository,
@@ -26,6 +27,7 @@ export function createArticleController(): ArticleController {
 		tagRepository,
 		articleViewRepository,
 		articleReactionRepository,
+		redisClient
 	);
 	return new ArticleController(articleService);
 }
