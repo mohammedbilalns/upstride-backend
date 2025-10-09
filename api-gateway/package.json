@@ -12,7 +12,8 @@
 		"dev": "nodemon --watch src -e ts --exec 'tsc && node dist/server.js'", 
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",
-		"test": "jest"
+		"test": "jest",
+		"preinstall":"npx only-allow pnpm"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.33.0",

@@ -1,6 +1,6 @@
 import { configDotenv } from "dotenv";
-import env from "./infrastructure/config/env";
 import App from "./app";
+import env from "./infrastructure/config/env";
 
 configDotenv();
 const PORT = env.PORT;

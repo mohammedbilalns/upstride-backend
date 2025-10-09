@@ -1,7 +1,7 @@
-import { Document,model,Schema } from "mongoose";
-import { Article } from "../../../domain/entities/article.entity";
+import { type Document, model, Schema } from "mongoose";
+import type { Article } from "../../../domain/entities/article.entity";
 
-export interface IArticle  extends Document, Omit<Article, "id"> {}
+export interface IArticle extends Document, Omit<Article, "id"> {}
 
 export const ArticleSchema: Schema = new Schema<IArticle>(
 	{
@@ -21,7 +21,7 @@ export const ArticleSchema: Schema = new Schema<IArticle>(
 	},
 	{
 		timestamps: true,
-	});
-
+	},
+);
 
 export const ArticleModel = model<IArticle>("Article", ArticleSchema);

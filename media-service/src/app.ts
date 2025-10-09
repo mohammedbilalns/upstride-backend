@@ -1,36 +1,44 @@
-import { Application } from "express";
-import express from "express";
-import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import express, { type Application } from "express";
+import helmet from "helmet";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
+import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import { notFound } from "./interfaces/http/middlewares/notFound.middleware";
+import { createMediaRoutes } from "./interfaces/http/routes/media.routes";
 
 class App {
-  private _app: Application;
-  constructor() {
-    this._app = express();
-    this._setupMiddleware();
-    this._setupRoutes();
-  }
+	private _app: Application;
+	constructor() {
+		this._app = express();
+		this._setupMiddleware();
+		this._setupRoutes();
+	}
 
-  private _setupMiddleware() {
-    this._app.use(express.json());
-    this._app.use(helmet());
-    this._app.use(cookieParser());
-    this._app.use(requestLogger);
-  }
+	private _setupMiddleware() {
+		this._app.use(express.json());
+		this._app.use(helmet());
+		this._app.use(cookieParser());
+		this._app.use(requestLogger);
+	}
 
-  private _setupRoutes() {
-    this._app.use(errorHandler);
-  }
+	private _setupRoutes() {
+		this._app.get("/health", (_req, res) => {
+			res.send("OK");
+		});
+		this._app.use("/api/media", createMediaRoutes());
+		this._app.use(errorHandler);
+		this._app.use(notFound);
+	}
 
-  public listen(port: string) {
-    this._app.listen(port, () => {
-      connectToDb();
-      logger.info(`Media service is listening on port ${port}`);
-    });
-  }
+	public listen(port: string) {
+		this._app.listen(port, () => {
+			connectRabbitMq();
+			connectToDb();
+			logger.info(`Media service is listening on port ${port}`);
+		});
+	}
 }
 
 export default App;

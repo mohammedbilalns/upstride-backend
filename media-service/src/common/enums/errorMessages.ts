@@ -8,4 +8,8 @@ export enum ErrorMessage {
 	SERVER_ERROR = "Server error",
 	VALIDATION_FAILED = "Validation failed",
 	INTERNAL_SERVER_ERROR = "Internal server error",
+	NO_FILE_FOUND = "No file found",
+	INVALID_TIMESTAMP = "Invalid timestamp",
+	MEDIA_NOT_FOUND = "Media not found",
+	FAILED_TO_FETCH_MEDIA = "Failed to fetch media",
 }

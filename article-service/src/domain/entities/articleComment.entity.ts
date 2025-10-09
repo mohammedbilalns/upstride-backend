@@ -1,4 +1,3 @@
-
 export interface ArticleComment {
 	id: string;
 	articleId: string;

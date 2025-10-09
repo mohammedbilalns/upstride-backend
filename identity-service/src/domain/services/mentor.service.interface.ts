@@ -1,38 +1,24 @@
+import type {
+	approveMentorDto,
+	findAllMentorsDto,
+	findAllMentorsResponseDto,
+	findByExpertiseandSkillDto,
+	MentorRegistrationDTO,
+	rejectMentorDto,
+	updateMentoDto,
+} from "../../application/dtos/mentor.dto";
+import type { Mentor } from "../entities";
+
 export interface IMentorService {
-  createMentor(
-    userId: string,
-    bio: string,
-    currentRole: string,
-    institution: string,
-    yearsOfExperience: number,
-    educationalQualifications: string[],
-    personalWebsite: string,
-    expertiseId: string,
-    skillIds: string[],
-    resumeUrl: string,
-    termsAccepted: boolean,
-  ): Promise<void>;
-
-  updateMentor(
-    id: string,
-    userId: string,
-    bio: string,
-    currentRole: string,
-    institution: string,
-    yearsOfExperience: number,
-    educationalQualifications: string[],
-    personalWebsite: string,
-    expertiseId: string,
-    skillIds: string[],
-    resumeUrl: string,
-    termsAccepted: boolean,
-  ): Promise<void>;
-
-  fetchMentors(
-    page: number,
-    limit: number,
-    query: string,
-    expertiseId: string,
-    skillIds: string[],
-  ): Promise<any>;
+	createMentor(createMentorDto: MentorRegistrationDTO): Promise<void>;
+	updateMentor(updateMentorDto: updateMentoDto): Promise<void>;
+	getMentor(userId: string): Promise<Mentor>;
+	fetchMentors(
+		fetchMentorDto: findAllMentorsDto,
+	): Promise<findAllMentorsResponseDto>;
+	findByExpertiseandSkill(
+		findByExpertiseandSkillDto: findByExpertiseandSkillDto,
+	): Promise<Mentor[]>;
+	approveMentor(aproveMentorDto: approveMentorDto): Promise<void>;
+	rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void>;
 }

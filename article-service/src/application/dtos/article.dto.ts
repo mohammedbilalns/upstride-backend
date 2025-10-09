@@ -1,4 +1,4 @@
-import { Article } from "../../domain/entities/article.entity";
+import type { Article } from "../../domain/entities/article.entity";
 
 
 
@@ -33,19 +33,18 @@ export interface UpdateArticleDto {
 }
 
 export interface FetchArticlesDto {
-	userId?: string,
-	page: number,
-	limit: number,
-	sortBy?: string,
-	author?: string,
-	category?: string,
-	topic?: string,
-	tag?: string,	
-	query: string,
+	userId?: string;
+	page: number;
+	limit: number;
+	sortBy?: string;
+	author?: string;
+	category?: string;
+	topic?: string;
+	tag?: string;
+	query: string;
 }
 
 export interface FetchArticlesResponseDto {
-	articles: Partial<Article>[],
-	total: number,
+	articles: Partial<Article>[];
+	total: number;
 }
-

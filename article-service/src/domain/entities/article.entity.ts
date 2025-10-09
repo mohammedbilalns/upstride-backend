@@ -1,8 +1,7 @@
-
 export interface Article {
 	id: string;
 	authorName: string;
-	authorImage?: string; 
+	authorImage?: string;
 	featuredImage?: string;
 	title: string;
 	author: string;
@@ -13,5 +12,5 @@ export interface Article {
 	comments: number;
 	likes: number;
 	isArchived: boolean;
-	content: string; 
+	content: string;
 }

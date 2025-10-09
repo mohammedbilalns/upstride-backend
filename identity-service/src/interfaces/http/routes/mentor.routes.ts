@@ -1,0 +1,27 @@
+import { Router } from "express";
+import { createMentorController } from "../compositions/mentor.composition";
+import { rateLimiter } from "../middlewares";
+import { authMiddleware } from "../middlewares/auth.middleware";
+
+export function createMentorRoutes() {
+	const router = Router();
+	const mentorController = createMentorController();
+
+	router.use(authMiddleware());
+	router.post(
+		"/",
+		rateLimiter(2, 60, ["ip", "route"]),
+		mentorController.createMentor,
+	);
+	router.post("/approve", mentorController.appoveMentor);
+	router.post("/reject", mentorController.rejectMentor);
+	router.get("/details", mentorController.getMentor);
+	router.put("/", mentorController.updateMentor);
+	router.get("/", mentorController.fetchMentors);
+	router.get(
+		"/by-expertise-and-skill",
+		mentorController.fetchMentorsByExpertiseAndSkill,
+	);
+
+	return router;
+}
