@@ -82,32 +82,6 @@ export class ArticleRepository
     };
   }
 
-  async findByCategory(
-    category: string,
-    page: number,
-    limit: number,
-    sortBy?: string,
-    query?: string
-  ): Promise<{ articles: Article[]; total: number }> {
-    const skip = (page - 1) * limit;
-    const filter = this.buildFilter({ category }, query);
-
-    const [articles, total] = await Promise.all([
-      this._model
-        .find(filter)
-        .sort(sortBy || { createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
-      this._model.countDocuments(filter),
-    ]);
-
-    return {
-      articles: articles.map(this.mapToDomain),
-      total,
-    };
-  }
-
   async findByTopic(
     topic: string,
     page: number,
@@ -192,4 +166,64 @@ export class ArticleRepository
       total,
     };
   }
+
+
+async findRandmoArticlesByAuthor(
+    authorIds: string[], 
+    page: number, 
+    limit: number, 
+    sortBy?: string, 
+    query?: string
+): Promise<{ articles: Article[]; total: number }> {
+    const skip = (page - 1) * limit;
+    
+    const searchStage = query
+        ? [{ $match: { $text: { $search: query } } }]
+        : [];
+
+    let sortStage: { $sort: Record<string, 1 | -1> } = { $sort: { createdAt: -1 } };
+    let addFieldsStage: { $addFields: Record<string, any> } | null = null;
+
+    if (sortBy === 'random') {
+        addFieldsStage = { $addFields: { randomSort: { $rand: {} } } };
+        sortStage = { $sort: { randomSort: 1 } };
+    } else if (sortBy === 'asc') {
+        sortStage = { $sort: { createdAt: 1 } };
+    }
+
+    const pipeline = [
+        {
+            $match: {
+                author: { $in: authorIds },
+                isActive: true,
+               isArchived: false,
+            },
+        },
+        ...searchStage,
+        ...(addFieldsStage ? [addFieldsStage] : []),
+        {
+            $facet: {
+                data: [
+                    sortStage, 
+                    { $skip: skip },
+                    { $limit: limit },
+                ],
+                count: [
+                    {
+                        $count: "total",
+                    },
+                ],
+            },
+        },
+    ];
+    const [result] = await ArticleModel.aggregate(pipeline);
+
+    const articles = result.data || [];
+    const total = result.count.length > 0 ? result.count[0].total : 0;
+
+    return {
+        articles,
+        total
+    };
+}
 }

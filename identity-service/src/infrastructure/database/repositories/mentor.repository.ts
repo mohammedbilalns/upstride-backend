@@ -1,4 +1,4 @@
-import type { ObjectId } from "mongoose";
+import { Types, type ObjectId } from "mongoose";
 import type { findAllMentorsDto } from "../../../application/dtos";
 import type { Mentor } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories";
@@ -237,4 +237,26 @@ export class MentorRepository
 
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
+
+
+	async findByExpertiseId(expertiseId: string): Promise<Mentor[]> {
+	
+        const mentors = await this._model.aggregate([
+            {
+                $match: {
+                    expertiseId: new Types.ObjectId(expertiseId),
+                    isActive: true,
+   
+                },
+            },
+            {
+                $sample: {
+                    size: 10,
+                },
+            },
+        ]);	
+		return mentors.map((doc) => this.mapToDomain(doc));
+	}
+
+
 }

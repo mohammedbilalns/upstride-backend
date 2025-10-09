@@ -13,4 +13,5 @@ export interface IMentorRepository extends IBaseRepository<Mentor> {
 		query?: string,
 	): Promise<Mentor[]>;
 	count(query?: string, status?: string): Promise<number>;
+	findByExpertiseId(expertiseId: string): Promise<Mentor[]>;
 }

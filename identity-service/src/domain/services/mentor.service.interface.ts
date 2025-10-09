@@ -21,4 +21,5 @@ export interface IMentorService {
 	): Promise<Mentor[]>;
 	approveMentor(aproveMentorDto: approveMentorDto): Promise<void>;
 	rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void>;
+	getMentorByExpertiseId(expertiseId: string): Promise<string[]>;
 }

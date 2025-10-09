@@ -7,6 +7,7 @@ export function createMentorRoutes() {
 	const router = Router();
 	const mentorController = createMentorController();
 
+	router.get("/:expertiseId", mentorController.fetchMentorsByExpertiseId);
 	router.use(authMiddleware());
 	router.post(
 		"/",

@@ -16,7 +16,7 @@ export const ArticleSchema: Schema = new Schema<IArticle>(
 		views: { type: Number, default: 0 },
 		comments: { type: Number, default: 0 },
 		likes: { type: Number, default:0 },
-		isArchived: { type: Boolean, deafult: false },
+		isArchived: { type: Boolean, default: false },
 		content: { type: String, required: true },
 	},
 	{

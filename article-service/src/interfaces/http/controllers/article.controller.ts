@@ -4,6 +4,7 @@ import asyncHandler from "../utils/asyncHandler";
 import {
 	createArticleSchema,
 	fetchArticlesSchema,
+	fetchRandomArticlesByAuthorsSchema,
 	updateArticleSchema,
 } from "../validations/article.validation";
 
@@ -12,7 +13,6 @@ export class ArticleController {
 
 	create = asyncHandler(async (req, res) => {
 		const articleData = createArticleSchema.parse(req.body);
-		console.log("author from the res local", JSON.stringify(res.locals.user))
 		const author = res.locals.user.id;
 		const authorName = res.locals.user.name;
 		const authorImage = res.locals.user.profilePicture;
@@ -58,6 +58,15 @@ export class ArticleController {
 		const fetchArticleParams = fetchArticlesSchema.parse(req.query);
 		const articles =
 			await this._articleService.fetchArticles(fetchArticleParams);
+		res.status(HttpStatus.OK).send(articles);
+	});
+
+	fetchRandomArticlesByAuthors = asyncHandler(async (req, res) => {
+		console.log( "authorids", req.query.authorIds)
+		console.log("query",   req.query)
+		const fetchArticlesParams = fetchRandomArticlesByAuthorsSchema.parse(req.query) 	
+		const articles =
+			await this._articleService.getRandomArticlesByAuthors(fetchArticlesParams);
 		res.status(HttpStatus.OK).send(articles);
 	});
 }

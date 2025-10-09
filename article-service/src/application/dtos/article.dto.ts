@@ -46,3 +46,13 @@ export interface FetchArticlesResponseDto {
 	articles: Partial<Article>[];
 	total: number;
 }
+
+
+export interface FetchRandomArticlesByAuthorsDto {
+    authorIds: string[];
+    search?: string;
+    page: number;
+    limit: number;
+    sortBy?: string; 
+}
+

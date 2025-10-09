@@ -5,6 +5,17 @@ import { proxyOptions } from "../../infra/config/proxyOptions";
 import logger from "../../utils/logger";
 const router = Router();
 
+router.use("/article/filterbyCategory",(req,_res)=>{
+
+	const category = req.query.category;
+	console.log(category)
+	// fetch users matching the category from identity service 
+
+	// fetch articles matchin the users from the article service 
+	// return the articles 
+	
+
+})
 router.use("/auth", proxy(env.IDENTITY_SERVICE_URL, {
 	...proxyOptions,
 	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {

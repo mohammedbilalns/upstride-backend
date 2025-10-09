@@ -47,3 +47,11 @@ export const fetchArticlesSchema = z.object({
 	tag: z.string().optional(),
 	query: z.string().default(""),
 });
+
+export const fetchRandomArticlesByAuthorsSchema = z.object({
+	authorIds: z.array(z.string()).min(1),
+	search: z.string().optional(),
+	page: z.coerce.number().min(1).max(100).default(1),
+	limit: z.coerce.number().min(1).max(100).default(10),
+	sortBy: z.string().optional(),
+});

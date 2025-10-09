@@ -11,6 +11,7 @@ import type {
 	CreateArticleDto,
 	FetchArticlesDto,
 	FetchArticlesResponseDto,
+	FetchRandomArticlesByAuthorsDto,
 	UpdateArticleDto,
 } from "../dtos/article.dto";
 import { AppError } from "../errors/AppError";
@@ -107,7 +108,7 @@ export class ArticleService implements IArticleService {
 	async fetchArticles(
 		fetchArticlesDto: FetchArticlesDto,
 	): Promise<FetchArticlesResponseDto> {
-		const { page, sortBy, author, category, tag, query } =
+		const { page, sortBy, author, tag, query } =
 			fetchArticlesDto;
 		const limit = 4 
 
@@ -123,11 +124,7 @@ export class ArticleService implements IArticleService {
 			repositoryResponse = await this._articleRepository.findByAuthor(
 				author, page, limit, sortBy, query,
 			);
-		} else if (category) {
-			repositoryResponse = await this._articleRepository.findByCategory(
-				category, page, limit, sortBy, query,
-			);
-		} else if (tag) {
+		}else if (tag) {
 			repositoryResponse = await this._articleRepository.findByTag(
 				tag, page, limit, sortBy, query,
 			);
@@ -169,11 +166,14 @@ export class ArticleService implements IArticleService {
     if (keys.length > 0) {
         await this._redisClient.del(...keys);
     }
-
-
-
 	}
 	async deleteArticle(id: string): Promise<void> {
 		await this._articleRepository.delete(id);
+	}
+
+	async getRandomArticlesByAuthors(fetchArticlesDto: FetchRandomArticlesByAuthorsDto): Promise<FetchArticlesResponseDto> {
+		const { authorIds, page, limit, sortBy, search } = fetchArticlesDto;
+		const result = await this._articleRepository.findRandmoArticlesByAuthor(authorIds, page, limit, sortBy, search);
+		return result
 	}
 }

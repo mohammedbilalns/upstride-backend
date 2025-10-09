@@ -9,13 +9,6 @@ export interface IArticleRepository extends IBaseRepository<Article> {
 		sortBy?: string,
 		query?: string,
 	): Promise<{ articles: Article[]; total: number }>;
-	findByCategory(
-		category: string,
-		page: number,
-		limit: number,
-		sortBy?: string,
-		query?: string,
-	): Promise<{ articles: Article[]; total: number }>;
 	findByTopic(
 		topic: string,
 		page: number,
@@ -36,4 +29,6 @@ export interface IArticleRepository extends IBaseRepository<Article> {
 		limit: number,
 		sortBy?: string,
 	): Promise<{ articles: Article[]; total: number }>;
+
+	findRandmoArticlesByAuthor(authorIds:string[], page: number, limit: number, sortBy?: string, query?: string): Promise<{ articles: Article[]; total: number }>;
 }
