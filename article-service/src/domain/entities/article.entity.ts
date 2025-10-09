@@ -5,8 +5,6 @@ export interface Article {
 	authorImage?: string; 
 	featuredImage?: string;
 	title: string;
-	category: string; 
-	topics : string[]; 
 	author: string;
 	tags: string[];
 	description: string;

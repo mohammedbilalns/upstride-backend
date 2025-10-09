@@ -44,4 +44,57 @@ router.use("/users", proxy(env.IDENTITY_SERVICE_URL, {
 }));
 
 
+router.use("/expertise", proxy(env.IDENTITY_SERVICE_URL, {
+	...proxyOptions,
+	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+		proxyReqOpts.headers["Content-Type"] = "application/json";
+		return proxyReqOpts;
+	},
+	userResDecorator: (proxyRes, proxyResData, _srcReq, _res) => {
+		logger.info(`Response received from identity service: ${proxyRes.statusCode}`);
+	
+		return proxyResData;
+	}
+}));
+
+
+
+router.use("/mentor", proxy(env.IDENTITY_SERVICE_URL, {
+	...proxyOptions,
+	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+		proxyReqOpts.headers["Content-Type"] = "application/json";
+		return proxyReqOpts;
+	},
+	userResDecorator: (proxyRes, proxyResData, _srcReq, _res) => {
+		logger.info(`Response received from identity service: ${proxyRes.statusCode}`);
+
+		return proxyResData;
+	}
+}));
+
+router.use("/media", proxy(env.MEDIA_SERVICE_URL, {
+	...proxyOptions, 
+	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+		proxyReqOpts.headers["Content-Type"] = "application/json";
+		return proxyReqOpts;
+	},
+	userResDecorator: (proxyRes, proxyResData, _srcReq, _res) => {
+		logger.info(`Response received from Media service: ${proxyRes.statusCode}`);	
+		return proxyResData;
+	}
+
+}))
+
+
+router.use("/articles", proxy(env.ARTICLE_SERVICE_URL, {
+	...proxyOptions,
+	proxyReqOptDecorator: (proxyReqOpts, _srcReq) =>{
+		proxyReqOpts.headers["content-type"] = "application/json";
+		return proxyReqOpts
+	}, 
+	userResDecorator: (proxyRes, proxyResData, _srcReq, _res) =>{
+		logger.info(`Response recieved from article service: ${proxyRes.statusCode} `)
+		return proxyResData
+	}
+}))
 export default router;

@@ -1,26 +1,35 @@
 import { Article } from "../../domain/entities/article.entity";
 
+
+
+interface FeaturedImage {
+	public_id: string, 
+	original_filename: string, 
+	resource_type: string, 
+	secure_url: string, 
+	bytes: number, 
+	asset_folder: string
+}
+
 export interface CreateArticleDto {
 	author: string,
-	authorName: string,
-	authorImage: string,
-	featuredImage: string,
-	title: string,
-	category: string,
-	topics: string[],
-	tags: string[],
-	content: string,
+	authorName: string;
+	authorImage: string;
+	featuredImage?: FeaturedImage;
+	title: string;
+	tags: string[];
+	content: string;
 }
 
 export interface UpdateArticleDto {
-	id: string,
-	title?: string,
-	userId: string,
-	featuredImage?: string,
-	category?: string,
-	topics?: string[],
-	tags?: string[],
-	content?: string,
+	id: string;
+	title?: string;
+	userId: string;
+	featuredImage?: FeaturedImage;
+	category?: string;
+	topics?: string[];
+	tags?: string[];
+	content?: string;
 }
 
 export interface FetchArticlesDto {

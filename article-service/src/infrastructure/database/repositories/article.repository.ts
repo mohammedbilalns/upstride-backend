@@ -10,27 +10,25 @@ export class ArticleRepository extends BaseRepository<Article, IArticle> impleme
         super(ArticleModel);
     }
 
-    protected mapToDomain(doc: IArticle): Article {
-        const mapped = mapMongoDocument(doc)!;
-        return {
-            id: mapped.id,
-            authorName: mapped.authorName,
-            authorImage: mapped.authorImage,
-            featuredImage: mapped.featuredImage,
-            title: mapped.title,
-            category: mapped.category,
-            topics: mapped.topics,
-            author: mapped.author,
-            tags: mapped.tags,
-            description: mapped.description,
-            isActive: mapped.isActive,
-            views: mapped.views,
-            comments: mapped.comments,
-            likes: mapped.likes,
-            isArchived: mapped.isArchived,
-            content: mapped.content,
-        }
-    }
+	protected mapToDomain(doc: IArticle): Article {
+		const mapped = mapMongoDocument(doc)!;
+		return {
+			id: mapped.id,
+			authorName: mapped.authorName,
+			authorImage: mapped.authorImage,
+			featuredImage: mapped.featuredImage,
+			title: mapped.title,
+			author: mapped.author,
+			tags: mapped.tags,
+			description: mapped.description,
+			isActive: mapped.isActive,
+			views: mapped.views,
+			comments: mapped.comments,
+			likes: mapped.likes,
+			isArchived: mapped.isArchived,
+			content: mapped.content,
+		};
+	}
 
     private buildSearchFilter(query?: string): any {
         if (!query) return {};

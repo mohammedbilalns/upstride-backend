@@ -37,12 +37,15 @@ private generateDescription(content: string): string {
 }
 
 	async createArticle(createAricleDto: CreateArticleDto): Promise<void> {
-		const {content, tags,...rest} = createAricleDto
+		const { content, tags, author,featuredImage,  ...rest } = createAricleDto;
+//		if(author.role !== "mentor") throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE,HttpStatus.FORBIDDEN)
 		const tagIds = await this._tagRepository.createOrIncrement(tags);
 		const description = this.generateDescription(content);
 		await this._articleRepository.create({
 			content,
 			description,
+			author,
+			featuredImage: featuredImage?.secure_url, 
 			...rest,
 			tags: tagIds,
 		});
