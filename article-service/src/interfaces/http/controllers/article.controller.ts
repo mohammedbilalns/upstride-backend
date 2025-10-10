@@ -1,5 +1,5 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import type { IArticleService } from "../../../domain/services";
+import type { IArticleReadService, IArticleWriteService } from "../../../domain/services";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	createArticleSchema,
@@ -9,7 +9,10 @@ import {
 } from "../validations/article.validation";
 
 export class ArticleController {
-  constructor(private _articleService: IArticleService) {}
+  constructor(
+		private _articleReadService: IArticleReadService,
+	 	private _articleWriteService: IArticleWriteService
+	) {}
 
 	create = asyncHandler(async (req, res) => {
 		const articleData = createArticleSchema.parse(req.body);
@@ -18,7 +21,7 @@ export class ArticleController {
 		const authorRole = res.locals.user.role;
 		const authorImage = res.locals.user.profilePicture;
 
-    await this._articleService.createArticle({
+    await this._articleWriteService.createArticle({
       author,
       authorName,
       authorRole,
@@ -33,7 +36,7 @@ export class ArticleController {
 	update = asyncHandler(async (req, res) => {
 		const articleData = updateArticleSchema.parse(req.body);
 		const userId = res.locals.user.id;
-		await this._articleService.updateArticle({ userId, ...articleData });
+		await this._articleWriteService.updateArticle({ userId, ...articleData });
 		res
 			.status(HttpStatus.CREATED)
 			.send({ message: ResponseMessage.ARTICLE_CREATED });
@@ -41,7 +44,7 @@ export class ArticleController {
 
 	delete = asyncHandler(async (req, res) => {
 		const id = req.params.id;
-		await this._articleService.deleteArticle(id);
+		await this._articleWriteService.deleteArticle(id);
 		res
 			.status(HttpStatus.OK)
 			.send({ message: ResponseMessage.ARTICLE_DELETED });
@@ -51,14 +54,14 @@ export class ArticleController {
 		const id = req.params.id;
 		const userId = res.locals.user.id;
 		const { article, isViewed, isLiked } =
-			await this._articleService.getArticleById(id, userId);
+			await this._articleReadService.getArticleById(id, userId);
 		res.status(HttpStatus.OK).json({ article, isViewed, isLiked });
 	});
 
 	fetchArticles = asyncHandler(async (req, res) => {
 		const fetchArticleParams = fetchArticlesSchema.parse(req.query);
 		const articles =
-			await this._articleService.fetchArticles(fetchArticleParams);
+			await this._articleReadService.fetchArticles(fetchArticleParams);
 		res.status(HttpStatus.OK).send(articles);
 	});
 
@@ -66,7 +69,7 @@ export class ArticleController {
 		console.log("query in article service", req.query)
 		const fetchArticlesParams = fetchRandomArticlesByAuthorsSchema.parse(req.query) 	
 		const articles =
-			await this._articleService.getRandomArticlesByAuthors(fetchArticlesParams);
+			await this._articleReadService.getRandomArticlesByAuthors(fetchArticlesParams);
 		res.status(HttpStatus.OK).send(articles);
 	});
 }

@@ -4,6 +4,7 @@ import type { IArticleRepository } from "../../../domain/repositories/article.re
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ArticleModel, type IArticle } from "../models/article.model";
 import { BaseRepository } from "./base.repository";
+import { ArticleMetricsResponseDto } from "../../../application/dtos/article.dto";
 
 export class ArticleRepository
 extends BaseRepository<Article, IArticle>
@@ -82,32 +83,6 @@ implements IArticleRepository
 		};
 	}
 
-	async findByTopic(
-		topic: string,
-		page: number,
-		limit: number,
-		sortBy?: string,
-		query?: string
-	): Promise<{ articles: Article[]; total: number }> {
-		const skip = (page - 1) * limit;
-		const filter = this.buildFilter({ topics: { $in: [topic] } }, query);
-
-		const [articles, total] = await Promise.all([
-			this._model
-			.find(filter)
-			.sort(sortBy || { createdAt: -1 })
-			.skip(skip)
-			.limit(limit)
-			.exec(),
-			this._model.countDocuments(filter),
-		]);
-
-		return {
-			articles: articles.map(this.mapToDomain),
-			total,
-		};
-	}
-
 	async findByTag(
 		tagId: string,
 		page: number,
@@ -167,104 +142,115 @@ implements IArticleRepository
 		};
 	}
 
-
 	async findRandmoArticlesByAuthor(
-    authorIds: string[], 
-    page: number, 
-    limit: number, 
-    sortBy?: string, 
-    query?: string
-): Promise<{ articles: Article[]; total: number }> {
-    const skip = (page - 1) * limit;
-    
-    const searchStage = query
-        ? [{ $match: { $text: { $search: query } } }]
-        : [];
+		authorIds: string[], 
+		page: number, 
+		limit: number, 
+		sortBy?: string, 
+		query?: string
+	): Promise<{ articles: Article[]; total: number }> {
+		const skip = (page - 1) * limit;
 
-    let sortStage: { $sort: Record<string, 1 | -1> } = { $sort: { createdAt: -1 } };
-    let addFieldsStage: { $addFields: Record<string, any> } | null = null;
+		const searchStage = query
+			? [{ $match: { $text: { $search: query } } }]
+			: [];
 
-    if (sortBy === 'random') {
-        addFieldsStage = { $addFields: { randomSort: { $rand: {} } } };
-        sortStage = { $sort: { randomSort: 1 } };
-    } else if (sortBy === 'asc') {
-        sortStage = { $sort: { createdAt: 1 } };
-    }
+		let sortStage: { $sort: Record<string, 1 | -1> } = { $sort: { createdAt: -1 } };
+		let addFieldsStage: { $addFields: Record<string, any> } | null = null;
 
-    const pipeline = [
-        {
-            $match: {
-                author: { $in: authorIds },
-                isActive: true,
-                isArchived: false,
-            },
-        },
-        ...searchStage,
-        ...(addFieldsStage ? [addFieldsStage] : []),
-        {
-            $lookup: {
-                from: "tags",
-                localField: "tags",
-                foreignField: "_id",
-                as: "tags",
-                pipeline: [
-                    {
-                        $project: {
-                            id: "$_id",
-                            name: 1,
-                            _id: 0      
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $facet: {
-                data: [
-                    sortStage, 
-                    { $skip: skip },
-                    { $limit: limit },
-                    {
-                        $project: {
-                            id: "$_id",
-                            title: 1,
-                            description: 1,
-                            author: 1,
-                            authorName: 1,
-                            authorImage: 1,
-                            featuredImage: 1,
-                            tags: 1, 
-                            views: 1,
-                            comments: 1,
-                            likes: 1,
-                            createdAt: 1,
-                            updatedAt: 1,
-                            _id: 0 
+		if (sortBy === 'random') {
+			addFieldsStage = { $addFields: { randomSort: { $rand: {} } } };
+			sortStage = { $sort: { randomSort: 1 } };
+		} else if (sortBy === 'asc') {
+			sortStage = { $sort: { createdAt: 1 } };
+		}
 
-                        }
-                    }
-                ],
-                count: [
-                    {
-                        $count: "total",
-                    },
-                ],
-            },
-        },
-    ];
+		const pipeline = [
+			{
+				$match: {
+					author: { $in: authorIds },
+					isActive: true,
+					isArchived: false,
+				},
+			},
+			...searchStage,
+			...(addFieldsStage ? [addFieldsStage] : []),
+			{
+				$lookup: {
+					from: "tags",
+					localField: "tags",
+					foreignField: "_id",
+					as: "tags",
+					pipeline: [
+						{
+							$project: {
+								id: "$_id",
+								name: 1,
+								_id: 0      
+							}
+						}
+					]
+				}
+			},
+			{
+				$facet: {
+					data: [
+						sortStage, 
+						{ $skip: skip },
+						{ $limit: limit },
+						{
+							$project: {
+								id: "$_id",
+								title: 1,
+								description: 1,
+								author: 1,
+								authorName: 1,
+								authorImage: 1,
+								featuredImage: 1,
+								tags: 1, 
+								views: 1,
+								comments: 1,
+								likes: 1,
+								createdAt: 1,
+								updatedAt: 1,
+								_id: 0 
 
-    const [result] = await ArticleModel.aggregate(pipeline);
+							}
+						}
+					],
+					count: [
+						{
+							$count: "total",
+						},
+					],
+				},
+			},
+		];
 
-    const articles = result.data || [];
-    const total = result.count.length > 0 ? result.count[0].total : 0;
+		const [result] = await ArticleModel.aggregate(pipeline);
 
-    return {
-        articles,
-        total
-    };
-}
-async findByArticleId(id: string): Promise<Article | null> {
-    const doc= await this._model.findOne({ _id: id, isActive: true , isArchived: false }).populate("tags", "id name").exec();
+		const articles = result.data || [];
+		const total = result.count.length > 0 ? result.count[0].total : 0;
+
+		return {
+			articles,
+			total
+		};
+	}
+	async findByArticleId(id: string): Promise<Article | null> {
+		const doc= await this._model.findOne({ _id: id, isActive: true , isArchived: false }).populate("tags", "id name").exec();
 		return doc ? this.mapToDomain(doc) : null;
-}
+	}
+
+	async incrementViewCount(id: string): Promise<void> {
+		await this._model.updateOne({ _id: id }, { $inc: { views: 1 } });
+	}
+
+	async getArticleMetrics(id: string): Promise<ArticleMetricsResponseDto > {
+		return  await this._model.findById(id, "views comments likes").lean().exec()
+
+	}
+
+
+
 }

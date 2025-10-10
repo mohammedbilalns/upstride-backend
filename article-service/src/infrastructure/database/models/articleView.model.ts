@@ -12,7 +12,7 @@ export const ArticleViewSchema: Schema = new Schema(
 		timestamps: true,
 	},
 );
-
+ArticleViewSchema.index({ userId: 1, articleId: 1 }, { unique: true });
 export const ArticleViewModel = model<IArticleView>(
 	"ArticleView",
 	ArticleViewSchema,

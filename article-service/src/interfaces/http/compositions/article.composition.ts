@@ -1,11 +1,11 @@
-import { ArticleService } from "../../../application/services";
+import { ArticleReadService, ArticleWriteService  } from "../../../application/services";
 import type {
 	IReactionRepository,
 	IArticleRepository,
 	IArticleViewRepository,
 	ITagRepository,
 } from "../../../domain/repositories";
-import type { IArticleService } from "../../../domain/services";
+import type { IArticleReadService, IArticleWriteService } from "../../../domain/services";
 import { redisClient } from "../../../infrastructure/config";
 import {
 	ReactionRepository,
@@ -22,12 +22,16 @@ export function createArticleController(): ArticleController {
 		new ArticleViewRepository();
 	const articleReactionRepository: IReactionRepository =
 		new ReactionRepository();
-	const articleService: IArticleService = new ArticleService(
+	const articleReadService: IArticleReadService = new ArticleReadService(
 		articleRepository,
-		tagRepository,
 		articleViewRepository,
 		articleReactionRepository,
 		redisClient
 	);
-	return new ArticleController(articleService);
+	const articleWriteService: IArticleWriteService = new ArticleWriteService(
+		articleRepository,
+		tagRepository,
+		redisClient
+	);
+	return new ArticleController(articleReadService, articleWriteService);
 }

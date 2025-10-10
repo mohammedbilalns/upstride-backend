@@ -22,18 +22,6 @@ export class ArticleViewRepository
 			userId: mapped.userId,
 		};
 	}
-	async findByArticle(
-		articleId: string,
-		page: number,
-		limit: number,
-	): Promise<ArticleView[]> {
-		const articles = await this._model
-			.find({ articleId: articleId })
-			.skip(page * limit)
-			.limit(limit)
-			.exec();
-		return articles.map(this.mapToDomain);
-	}
 
 	async findByArticleAndUser(
 		articleId: string,

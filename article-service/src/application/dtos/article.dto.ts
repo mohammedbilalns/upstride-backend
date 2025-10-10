@@ -1,7 +1,5 @@
 import type { Article } from "../../domain/entities/article.entity";
 
-
-
 interface FeaturedImage {
 	public_id: string, 
 	original_filename: string, 
@@ -27,8 +25,6 @@ export interface UpdateArticleDto {
 	title?: string;
 	userId: string;
 	featuredImage?: FeaturedImage;
-	category?: string;
-	topics?: string[];
 	tags?: string[];
 	content?: string;
 }
@@ -56,4 +52,8 @@ export interface FetchRandomArticlesByAuthorsDto {
     limit: number;
     sortBy?: string; 
 }
+
+
+
+export type ArticleMetricsResponseDto = Pick<Article, "views"|"comments"|"likes">| null;
 
