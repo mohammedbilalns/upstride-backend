@@ -6,169 +6,169 @@ import { ArticleModel, type IArticle } from "../models/article.model";
 import { BaseRepository } from "./base.repository";
 
 export class ArticleRepository
-  extends BaseRepository<Article, IArticle>
-  implements IArticleRepository
+extends BaseRepository<Article, IArticle>
+implements IArticleRepository
 {
-  constructor() {
-    super(ArticleModel);
-  }
+	constructor() {
+		super(ArticleModel);
+	}
 
-  protected mapToDomain(doc: IArticle): Article {
-    const mapped = mapMongoDocument(doc)!;
-    return {
-      id: mapped.id,
-      authorName: mapped.authorName,
-      authorImage: mapped.authorImage,
-      featuredImage: mapped.featuredImage,
-      title: mapped.title,
-      author: mapped.author,
-      tags: mapped.tags,
-      description: mapped.description,
-      isActive: mapped.isActive,
-      views: mapped.views,
-      comments: mapped.comments,
-      likes: mapped.likes,
-      isArchived: mapped.isArchived,
-      content: mapped.content,
-      createdAt: mapped.createdAt,
-    };
-  }
+	protected mapToDomain(doc: IArticle): Article {
+		const mapped = mapMongoDocument(doc)!;
+		return {
+			id: mapped.id,
+			authorName: mapped.authorName,
+			authorImage: mapped.authorImage,
+			featuredImage: mapped.featuredImage,
+			title: mapped.title,
+			author: mapped.author,
+			tags: mapped.tags,
+			description: mapped.description,
+			isActive: mapped.isActive,
+			views: mapped.views,
+			comments: mapped.comments,
+			likes: mapped.likes,
+			isArchived: mapped.isArchived,
+			content: mapped.content,
+			createdAt: mapped.createdAt,
+		};
+	}
 
-  private buildSearchFilter(query?: string): any {
-    if (!query) return {};
+	private buildSearchFilter(query?: string): any {
+		if (!query) return {};
 
-    const regex = new RegExp(query, "i");
-    return {
-      $or: [
-        { title: { $regex: regex } },
-        { description: { $regex: regex } },
-        { content: { $regex: regex } },
-      ],
-    };
-  }
+		const regex = new RegExp(query, "i");
+		return {
+			$or: [
+				{ title: { $regex: regex } },
+				{ description: { $regex: regex } },
+				{ content: { $regex: regex } },
+			],
+		};
+	}
 
-  private buildFilter(baseFilter: any, query?: string): any {
-    const searchFilter = this.buildSearchFilter(query);
-    if (!query) return baseFilter;
+	private buildFilter(baseFilter: any, query?: string): any {
+		const searchFilter = this.buildSearchFilter(query);
+		if (!query) return baseFilter;
 
-    return {
-      $and: [baseFilter, searchFilter],
-    };
-  }
+		return {
+			$and: [baseFilter, searchFilter],
+		};
+	}
 
-  async findByAuthor(
-    author: string,
-    page: number,
-    limit: number,
-    sortBy?: string,
-    query?: string
-  ): Promise<{ articles: Article[]; total: number }> {
-    const skip = (page - 1) * limit;
-    const filter = this.buildFilter({ author }, query);
+	async findByAuthor(
+		author: string,
+		page: number,
+		limit: number,
+		sortBy?: string,
+		query?: string
+	): Promise<{ articles: Article[]; total: number }> {
+		const skip = (page - 1) * limit;
+		const filter = this.buildFilter({ author }, query);
 
-    const [articles, total] = await Promise.all([
-      this._model
-        .find(filter)
-        .sort(sortBy || { createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
-      this._model.countDocuments(filter),
-    ]);
+		const [articles, total] = await Promise.all([
+			this._model
+			.find(filter)
+			.sort(sortBy || { createdAt: -1 })
+			.skip(skip)
+			.limit(limit)
+			.exec(),
+			this._model.countDocuments(filter),
+		]);
 
-    return {
-      articles: articles.map(this.mapToDomain),
-      total,
-    };
-  }
+		return {
+			articles: articles.map(this.mapToDomain),
+			total,
+		};
+	}
 
-  async findByTopic(
-    topic: string,
-    page: number,
-    limit: number,
-    sortBy?: string,
-    query?: string
-  ): Promise<{ articles: Article[]; total: number }> {
-    const skip = (page - 1) * limit;
-    const filter = this.buildFilter({ topics: { $in: [topic] } }, query);
+	async findByTopic(
+		topic: string,
+		page: number,
+		limit: number,
+		sortBy?: string,
+		query?: string
+	): Promise<{ articles: Article[]; total: number }> {
+		const skip = (page - 1) * limit;
+		const filter = this.buildFilter({ topics: { $in: [topic] } }, query);
 
-    const [articles, total] = await Promise.all([
-      this._model
-        .find(filter)
-        .sort(sortBy || { createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
-      this._model.countDocuments(filter),
-    ]);
+		const [articles, total] = await Promise.all([
+			this._model
+			.find(filter)
+			.sort(sortBy || { createdAt: -1 })
+			.skip(skip)
+			.limit(limit)
+			.exec(),
+			this._model.countDocuments(filter),
+		]);
 
-    return {
-      articles: articles.map(this.mapToDomain),
-      total,
-    };
-  }
+		return {
+			articles: articles.map(this.mapToDomain),
+			total,
+		};
+	}
 
-  async findByTag(
-    tagId: string,
-    page: number,
-    limit: number,
-    sortBy?: string,
-    query?: string
-  ): Promise<{ articles: Article[]; total: number }> {
-    const skip = (page - 1) * limit;
+	async findByTag(
+		tagId: string,
+		page: number,
+		limit: number,
+		sortBy?: string,
+		query?: string
+	): Promise<{ articles: Article[]; total: number }> {
+		const skip = (page - 1) * limit;
 
-    const objectId = new mongoose.Types.ObjectId(tagId);
-    const filter = this.buildFilter({ tags: objectId }, query);
+		const objectId = new mongoose.Types.ObjectId(tagId);
+		const filter = this.buildFilter({ tags: objectId }, query);
 
-    const [articles, total] = await Promise.all([
-      this._model
-        .find(filter)
-			  .populate("tags", "id name")
-        .sort(sortBy || { createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
-      this._model.countDocuments(filter),
-    ]);
+		const [articles, total] = await Promise.all([
+			this._model
+			.find(filter)
+			.populate("tags", "id name")
+			.sort(sortBy || { createdAt: -1 })
+			.skip(skip)
+			.limit(limit)
+			.exec(),
+			this._model.countDocuments(filter),
+		]);
 
-    return {
-      articles: articles.map(this.mapToDomain),
-      total,
-    };
-  }
+		return {
+			articles: articles.map(this.mapToDomain),
+			total,
+		};
+	}
 
-  async find(
-    query: string,
-    page: number,
-    limit: number,
-    sortBy?: string
-  ): Promise<{ articles: Article[]; total: number }> {
-    const skip = (page - 1) * limit;
+	async find(
+		query: string,
+		page: number,
+		limit: number,
+		sortBy?: string
+	): Promise<{ articles: Article[]; total: number }> {
+		const skip = (page - 1) * limit;
 
-    let filter = {};
-    if (query && query.trim() !== "") {
-      filter = { $text: { $search: query } };
-    }
+		let filter = {};
+		if (query && query.trim() !== "") {
+			filter = { $text: { $search: query } };
+		}
 
-    const [articles, total] = await Promise.all([
-      this._model
-        .find(filter)
-        .populate("tags", "id name")
-        .sort(sortBy || { createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
-      this._model.countDocuments(filter),
-    ]);
+		const [articles, total] = await Promise.all([
+			this._model
+			.find(filter)
+			.populate("tags", "id name")
+			.sort(sortBy || { createdAt: -1 })
+			.skip(skip)
+			.limit(limit)
+			.exec(),
+			this._model.countDocuments(filter),
+		]);
 
-    return {
-      articles: articles.map(this.mapToDomain),
-      total,
-    };
-  }
+		return {
+			articles: articles.map(this.mapToDomain),
+			total,
+		};
+	}
 
 
-async findRandmoArticlesByAuthor(
+	async findRandmoArticlesByAuthor(
     authorIds: string[], 
     page: number, 
     limit: number, 
@@ -196,17 +196,53 @@ async findRandmoArticlesByAuthor(
             $match: {
                 author: { $in: authorIds },
                 isActive: true,
-               isArchived: false,
+                isArchived: false,
             },
         },
         ...searchStage,
         ...(addFieldsStage ? [addFieldsStage] : []),
+        {
+            $lookup: {
+                from: "tags",
+                localField: "tags",
+                foreignField: "_id",
+                as: "tags",
+                pipeline: [
+                    {
+                        $project: {
+                            id: "$_id",
+                            name: 1,
+                            _id: 0      
+                        }
+                    }
+                ]
+            }
+        },
         {
             $facet: {
                 data: [
                     sortStage, 
                     { $skip: skip },
                     { $limit: limit },
+                    {
+                        $project: {
+                            id: "$_id",
+                            title: 1,
+                            description: 1,
+                            author: 1,
+                            authorName: 1,
+                            authorImage: 1,
+                            featuredImage: 1,
+                            tags: 1, 
+                            views: 1,
+                            comments: 1,
+                            likes: 1,
+                            createdAt: 1,
+                            updatedAt: 1,
+                            _id: 0 
+
+                        }
+                    }
                 ],
                 count: [
                     {
@@ -216,6 +252,7 @@ async findRandmoArticlesByAuthor(
             },
         },
     ];
+
     const [result] = await ArticleModel.aggregate(pipeline);
 
     const articles = result.data || [];
@@ -226,4 +263,5 @@ async findRandmoArticlesByAuthor(
         total
     };
 }
+
 }

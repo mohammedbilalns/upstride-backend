@@ -5,17 +5,38 @@ import { proxyOptions } from "../../infra/config/proxyOptions";
 import logger from "../../utils/logger";
 const router = Router();
 
-router.use("/article/filterbyCategory",(req,_res)=>{
+router.get("/articles/by-category", async (req, res) => {
+  try {
+    const category = req.query.category as string;
+    const page = (req.query.page as string) || "1";
+    const limit = (req.query.limit as string) || "10";
+    const query = req.query.query as string | "";
 
-	const category = req.query.category;
-	console.log(category)
-	// fetch users matching the category from identity service 
+		// retrieve the users from the identity service
+    const response = await fetch(`${env.IDENTITY_SERVICE_URL}/api/mentor/${category}`);
+    const users = (await response.json()) as string[];
+		console.log("users recieved in gateway", users)
 
-	// fetch articles matchin the users from the article service 
-	// return the articles 
-	
+		// build the url to fetch the articles
+    const baseUrl = `${env.ARTICLE_SERVICE_URL}/api/articles/by-users`;
+    const url = new URL(baseUrl);
 
-})
+    url.searchParams.append("page", page);
+    url.searchParams.append("limit", limit);
+		url.searchParams.append("query", query);
+    users.forEach((id: string) => url.searchParams.append("authorIds", id));
+		
+		// fetch the articles
+    const articleResponse = await fetch(url);
+    const articles = await articleResponse.json();
+
+    res.json(articles);
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error", error: err?.message });
+  }
+});
+
 router.use("/auth", proxy(env.IDENTITY_SERVICE_URL, {
 	...proxyOptions,
 	proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {

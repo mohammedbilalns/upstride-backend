@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import express, { type Application } from "express";
 import helmet from "helmet";
+import cors from "cors";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
 import {
@@ -10,6 +11,7 @@ import {
 } from "./interfaces/http/routes";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import { createTagRoutes } from "./interfaces/http/routes/tag.routes";
+import env from "./infrastructure/config/env";
 
 class App {
 	private _app: Application;
@@ -20,8 +22,12 @@ class App {
 	}
 
 	private _setupMiddleware() {
-		this._app.use(express.json());
 		this._app.use(helmet());
+		this._app.use(cors({
+			origin: [env.CLIENT_URL, env.GATEWAY_URL],
+			credentials: true,
+		}))
+		this._app.use(express.json());
 		this._app.use(cookieParser());
 		this._app.use(requestLogger);
 	}

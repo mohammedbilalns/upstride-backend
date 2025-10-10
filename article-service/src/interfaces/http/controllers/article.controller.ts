@@ -54,7 +54,6 @@ export class ArticleController {
 	});
 
 	fetchArticles = asyncHandler(async (req, res) => {
-		console.log("req query",   req.query)
 		const fetchArticleParams = fetchArticlesSchema.parse(req.query);
 		const articles =
 			await this._articleService.fetchArticles(fetchArticleParams);
@@ -62,8 +61,7 @@ export class ArticleController {
 	});
 
 	fetchRandomArticlesByAuthors = asyncHandler(async (req, res) => {
-		console.log( "authorids", req.query.authorIds)
-		console.log("query",   req.query)
+		console.log("query in article service", req.query)
 		const fetchArticlesParams = fetchRandomArticlesByAuthorsSchema.parse(req.query) 	
 		const articles =
 			await this._articleService.getRandomArticlesByAuthors(fetchArticlesParams);

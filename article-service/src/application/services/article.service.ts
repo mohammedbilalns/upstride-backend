@@ -173,7 +173,16 @@ export class ArticleService implements IArticleService {
 
 	async getRandomArticlesByAuthors(fetchArticlesDto: FetchRandomArticlesByAuthorsDto): Promise<FetchArticlesResponseDto> {
 		const { authorIds, page, limit, sortBy, search } = fetchArticlesDto;
-		const result = await this._articleRepository.findRandmoArticlesByAuthor(authorIds, page, limit, sortBy, search);
+		if(!authorIds) return { articles: [], total: 0 }
+		const data = await this._articleRepository.findRandmoArticlesByAuthor(authorIds, page, limit, sortBy, search);
+		const articlesWithoutContent = data.articles.map(article => {
+			const { content, ...articleWithoutContent } = article;
+			return articleWithoutContent;
+		});
+		const result = {
+			articles: articlesWithoutContent,
+			total: data.total
+		}
 		return result
 	}
 }

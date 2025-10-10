@@ -49,7 +49,7 @@ export interface FetchArticlesResponseDto {
 
 
 export interface FetchRandomArticlesByAuthorsDto {
-    authorIds: string[];
+    authorIds?: string[];
     search?: string;
     page: number;
     limit: number;

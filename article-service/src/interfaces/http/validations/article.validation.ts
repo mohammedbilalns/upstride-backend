@@ -43,13 +43,17 @@ export const updateArticleSchema = z.object({
 export const fetchArticlesSchema = z.object({
 	page: z.coerce.number().min(1).max(100).default(1),
 	sortBy: z.string().optional(),
-	category: z.string().optional(),
 	tag: z.string().optional(),
 	query: z.string().default(""),
 });
 
 export const fetchRandomArticlesByAuthorsSchema = z.object({
-	authorIds: z.array(z.string()).min(1),
+	authorIds: z.preprocess(
+		(input) => {
+			return typeof input === "string" ? [input] : input;
+		},
+		z.array(z.string()).optional()
+	),
 	search: z.string().optional(),
 	page: z.coerce.number().min(1).max(100).default(1),
 	limit: z.coerce.number().min(1).max(100).default(10),

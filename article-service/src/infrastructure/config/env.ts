@@ -13,6 +13,8 @@ const envSchema = z.object({
 	ACCESS_TOKEN_EXPIRY: z.string().default("15m"),
 	REFRESH_TOKEN_EXPIRY: z.string().default("7d"),
 	REDIS_URL: z.string(),
+	GATEWAY_URL: z.string(),
+	CLIENT_URL: z.string(),
 });
 
 const env = envSchema.parse(process.env);
