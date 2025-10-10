@@ -1,5 +1,5 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import type { IArticleRectionService } from "../../../domain/services";
+import type { IReactionService } from "../../../domain/services";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	fetchReactionsParams,
@@ -7,13 +7,13 @@ import {
 } from "../validations/reaction.validation";
 
 export class ArticleReactionController {
-	constructor(private _articleReactionService: IArticleRectionService) {}
+	constructor(private _articleReactionService: IReactionService) {}
 
 	reactArticle = asyncHandler(async (req, res) => {
 		const { articleId, reaction } = reactionSchema.parse(req.body);
 		const userId = res.locals.user.id;
-		await this._articleReactionService.reactToArticle({
-			articleId,
+		await this._articleReactionService.reactToResource({
+			resourceId: articleId,
 			userId,
 			reaction,
 		});

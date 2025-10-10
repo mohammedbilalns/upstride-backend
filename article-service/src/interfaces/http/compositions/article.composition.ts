@@ -1,6 +1,6 @@
 import { ArticleService } from "../../../application/services";
 import type {
-	IArticleReactionRepository,
+	IReactionRepository,
 	IArticleRepository,
 	IArticleViewRepository,
 	ITagRepository,
@@ -8,7 +8,7 @@ import type {
 import type { IArticleService } from "../../../domain/services";
 import { redisClient } from "../../../infrastructure/config";
 import {
-	ArticleReactionRepository,
+	ReactionRepository,
 	ArticleRepository,
 	ArticleViewRepository,
 	TagRepository,
@@ -20,8 +20,8 @@ export function createArticleController(): ArticleController {
 	const tagRepository: ITagRepository = new TagRepository();
 	const articleViewRepository: IArticleViewRepository =
 		new ArticleViewRepository();
-	const articleReactionRepository: IArticleReactionRepository =
-		new ArticleReactionRepository();
+	const articleReactionRepository: IReactionRepository =
+		new ReactionRepository();
 	const articleService: IArticleService = new ArticleService(
 		articleRepository,
 		tagRepository,

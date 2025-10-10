@@ -10,6 +10,7 @@ export const ArticleCommentSchema: Schema = new Schema(
 		userId: { type: String, required: true },
 		userName: { type: String, required: true },
 		userImage: { type: String, required: true },
+		likes: { type: Number, default: 0 },
 		content: { type: String, required: true },
 		isActive: { type: Boolean, default: true },
 	},

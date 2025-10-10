@@ -20,7 +20,6 @@ export class ArticleViewRepository
 			id: mapped.id,
 			articleId: mapped.articleId.toString(),
 			userId: mapped.userId,
-			createdAt: mapped.createdAt,
 		};
 	}
 	async findByArticle(
@@ -32,7 +31,6 @@ export class ArticleViewRepository
 			.find({ articleId: articleId })
 			.skip(page * limit)
 			.limit(limit)
-			.lean()
 			.exec();
 		return articles.map(this.mapToDomain);
 	}
@@ -43,8 +41,8 @@ export class ArticleViewRepository
 	): Promise<ArticleView | null> {
 		const article = await this._model
 			.findOne({ articleId: articleId, userId: userId })
-			.lean()
 			.exec();
+
 		return article ? this.mapToDomain(article) : null;
 	}
 }

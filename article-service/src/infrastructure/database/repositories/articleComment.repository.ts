@@ -23,6 +23,7 @@ export class ArticleCommentRepository
 			userId: mapped.userId,
 			userName: mapped.userName,
 			userImage: mapped.userImage,
+			likes: mapped.likes,
 			content: mapped.content,
 			isActive: mapped.isActive,
 		};

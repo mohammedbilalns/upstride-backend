@@ -31,4 +31,5 @@ export interface IArticleRepository extends IBaseRepository<Article> {
 	): Promise<{ articles: Article[]; total: number }>;
 
 	findRandmoArticlesByAuthor(authorIds:string[], page: number, limit: number, sortBy?: string, query?: string): Promise<{ articles: Article[]; total: number }>;
+	findByArticleId(id: string): Promise<Article | null>;
 }

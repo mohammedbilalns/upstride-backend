@@ -15,11 +15,13 @@ export class ArticleController {
 		const articleData = createArticleSchema.parse(req.body);
 		const author = res.locals.user.id;
 		const authorName = res.locals.user.name;
+		const authorRole = res.locals.user.role;
 		const authorImage = res.locals.user.profilePicture;
 
     await this._articleService.createArticle({
       author,
       authorName,
+      authorRole,
       authorImage,
       ...articleData,
     });

@@ -1,28 +1,28 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
-import type { ArticleReaction } from "../../domain/entities/articleReaction.entity";
+import type { Reaction } from "../../domain/entities/reaction.entity";
 import type {
-	IArticleReactionRepository,
+	IReactionRepository,
 	IArticleRepository,
 } from "../../domain/repositories";
-import type { IArticleRectionService } from "../../domain/services/articleRection.service.interface";
-import type { ArticleReactionDto } from "../dtos/articleReaction.dto";
+import { IReactionService } from "../../domain/services";
+import type { ReactionDto } from "../dtos/reaction.dto";
 
 import { AppError } from "../errors/AppError";
 
-export class ArticleReactionService implements IArticleRectionService {
+export class ReactionService implements IReactionService {
 	constructor(
-		private _articleRectionRepository: IArticleReactionRepository,
+		private _articleRectionRepository: IReactionRepository,
 		private _articleRepository: IArticleRepository,
 	) {}
 
-	async reactToArticle(articleReactionDto: ArticleReactionDto): Promise<void> {
-		const { articleId, userId, reaction } = articleReactionDto;
-		const article = await this._articleRepository.findById(articleId);
+	async reactToResource(ReactionDto: ReactionDto): Promise<void> {
+		const { resourceId, userId, reaction } = ReactionDto;
+		const article = await this._articleRepository.findById(resourceId);
 		if (!article)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 		const existingReaction =
-			await this._articleRectionRepository.findByArticleAndUser(
-				articleId,
+			await this._articleRectionRepository.findByResourceAndUser(
+				resourceId,
 				userId,
 			);
 		if (existingReaction) {
@@ -37,7 +37,7 @@ export class ArticleReactionService implements IArticleRectionService {
 			});
 		} else {
 			await this._articleRectionRepository.create({
-				articleId,
+				resourceId,
 				userId,
 				reaction,
 			});
@@ -53,8 +53,8 @@ export class ArticleReactionService implements IArticleRectionService {
 		articleId: string,
 		page: number,
 		limit: number,
-	): Promise<Partial<ArticleReaction>[]> {
-		return await this._articleRectionRepository.findByArticle(
+	): Promise<Partial<Reaction>[]> {
+		return await this._articleRectionRepository.findByResource(
 			articleId,
 			page,
 			limit,

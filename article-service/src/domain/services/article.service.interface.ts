@@ -12,7 +12,7 @@ export interface IArticleService {
 	getArticleById(
 		id: string,
 		userId: string,
-	): Promise<{ article: Article; isViewed: boolean; isLiked: boolean }>;
+	): Promise<{ article: Omit<Article, "isActive" | "isArchived">; isViewed: boolean; isLiked: boolean }>;
 	fetchArticles(
 		fetchArticlesDto: FetchArticlesDto,
 	): Promise<FetchArticlesResponseDto>;

@@ -5,6 +5,7 @@ export interface ArticleComment {
 	userId: string;
 	userName: string;
 	userImage: string;
+	likes: number;
 	content: string;
 	isActive: boolean;
 }

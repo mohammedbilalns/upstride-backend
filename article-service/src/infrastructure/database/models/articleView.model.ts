@@ -7,7 +7,6 @@ export const ArticleViewSchema: Schema = new Schema(
 	{
 		articleId: { type: Schema.Types.ObjectId, ref: "Article" },
 		userId: { type: String, required: true },
-		createdAt: { type: Date, required: true },
 	},
 	{
 		timestamps: true,

@@ -1,7 +1,7 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type { Article } from "../../domain/entities/article.entity";
 import type {
-	IArticleReactionRepository,
+	IReactionRepository,
 	IArticleRepository,
 	IArticleViewRepository,
 	ITagRepository,
@@ -24,14 +24,14 @@ export class ArticleService implements IArticleService {
 		private _articleRepository: IArticleRepository,
 		private _tagRepository: ITagRepository,
 		private _articleViewRepository: IArticleViewRepository,
-		private _articleReactionRepository: IArticleReactionRepository,
+		private _articleReactionRepository: IReactionRepository,
 		private _redisClient: Redis,
 
 	) {}
 
 	private readonly ARTICLE_CACHE_PREFIX = 'article:';
 	private readonly ARTICLES_LIST_CACHE_PREFIX = 'articles:';
-	private readonly CACHE_TTL = 3600; // 1 hour in seconds
+	private readonly CACHE_TTL = 3600; 
 
 
 	private async invalidateCache(pattern: string): Promise<void> {
@@ -43,8 +43,8 @@ export class ArticleService implements IArticleService {
 
 
 	async createArticle(createAricleDto: CreateArticleDto): Promise<void> {
-		const { content, tags, author,featuredImage,  ...rest } = createAricleDto;
-		//		if(author.role !== "mentor") throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE,HttpStatus.FORBIDDEN)
+		const { content, tags, author ,authorRole, featuredImage,  ...rest } = createAricleDto;
+		if(authorRole !== "mentor") throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE,HttpStatus.FORBIDDEN)
 		const tagIds = await this._tagRepository.createOrIncrement(tags);
 		const description = generateDescription(content);
 		await this._articleRepository.create({
@@ -63,7 +63,7 @@ export class ArticleService implements IArticleService {
 	async getArticleById(
 		id: string,
 		userId: string,
-	): Promise<{ article: Article; isViewed: boolean; isLiked: boolean }> {
+	): Promise<{ article: Omit<Article, "isActive" | "isArchived">; isViewed: boolean; isLiked: boolean }> {
 
 		const cacheKey = `${this.ARTICLE_CACHE_PREFIX}${id}`;
 		const cachedArticle = await this._redisClient.get(cacheKey);
@@ -72,7 +72,7 @@ export class ArticleService implements IArticleService {
 
 			const [isViewed, isLiked] = await Promise.all([
 				this._articleViewRepository.findByArticleAndUser(id, userId),
-				this._articleReactionRepository.findByArticleAndUser(id, userId),
+				this._articleReactionRepository.findByResourceAndUser(id, userId),
 			]);
 
 			return { 
@@ -81,9 +81,10 @@ export class ArticleService implements IArticleService {
 				isLiked: !!isLiked 
 			};
 		}
-		const article = await this._articleRepository.findById(id);
+		const article = await this._articleRepository.findByArticleId(id);
 		if (!article)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
+		const {isActive, isArchived, ...articleForView} = article;
 
 		await Promise.all([
 			this._articleViewRepository.create({ articleId: article.id, userId }),
@@ -97,12 +98,12 @@ export class ArticleService implements IArticleService {
 			userId,
 		));
 		const isLiked =
-			!!(await this._articleReactionRepository.findByArticleAndUser(
+			!!(await this._articleReactionRepository.findByResourceAndUser(
 				id,
 				userId,
 			));
 
-		return { article, isViewed, isLiked };
+		return { article:articleForView, isViewed, isLiked };
 	}
 
 	async fetchArticles(
@@ -174,6 +175,13 @@ export class ArticleService implements IArticleService {
 	async getRandomArticlesByAuthors(fetchArticlesDto: FetchRandomArticlesByAuthorsDto): Promise<FetchArticlesResponseDto> {
 		const { authorIds, page, limit, sortBy, search } = fetchArticlesDto;
 		if(!authorIds) return { articles: [], total: 0 }
+
+		const cacheKey = `${this.ARTICLES_LIST_CACHE_PREFIX}${fetchArticlesDto}`;
+		const cachedArticles = await this._redisClient.get(cacheKey);
+		if (cachedArticles) {
+			return JSON.parse(cachedArticles);
+		}
+
 		const data = await this._articleRepository.findRandmoArticlesByAuthor(authorIds, page, limit, sortBy, search);
 		const articlesWithoutContent = data.articles.map(article => {
 			const { content, ...articleWithoutContent } = article;
@@ -183,6 +191,7 @@ export class ArticleService implements IArticleService {
 			articles: articlesWithoutContent,
 			total: data.total
 		}
+		await this._redisClient.set(cacheKey, JSON.stringify(result), 'EX', this.CACHE_TTL/2);
 		return result
 	}
 }

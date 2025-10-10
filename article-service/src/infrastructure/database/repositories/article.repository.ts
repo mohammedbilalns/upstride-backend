@@ -263,5 +263,8 @@ implements IArticleRepository
         total
     };
 }
-
+async findByArticleId(id: string): Promise<Article | null> {
+    const doc= await this._model.findOne({ _id: id, isActive: true , isArchived: false }).populate("tags", "id name").exec();
+		return doc ? this.mapToDomain(doc) : null;
+}
 }

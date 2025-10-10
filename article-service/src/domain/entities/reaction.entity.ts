@@ -1,6 +1,6 @@
-export interface ArticleReaction {
+export interface Reaction {
 	id: string;
-	articleId: string;
+	resourceId: string;
 	userId: string;
 	userName: string;
 	userImage: string;
