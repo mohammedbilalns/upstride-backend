@@ -252,7 +252,7 @@ implements IArticleRepository
 
 	async getArticleMetrics(id: string): Promise<ArticleMetricsResponseDto > {
 		if(!mongoose.isValidObjectId(id)) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND)
-		return  await this._model.findById(id, "views comments likes").lean().exec()
+		return  await this._model.findById(id, "views comments likes").exec()
 
 	}
 

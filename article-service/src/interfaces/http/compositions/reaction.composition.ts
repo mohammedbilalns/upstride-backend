@@ -8,13 +8,13 @@ import {
 	ReactionRepository,
 	ArticleRepository,
 } from "../../../infrastructure/database/repositories";
-import { ArticleReactionController } from "../controllers/reaction.controller";
+import { ReactionController } from "../controllers/reaction.controller";
 
-export function createReactionController(): ArticleReactionController {
+export function createReactionController(): ReactionController {
 	const articleReactionRepository: IReactionRepository =
 		new ReactionRepository();
 	const articleRepository: IArticleRepository = new ArticleRepository();
 	const articleReactionService: IReactionService =
 		new ReactionService(articleReactionRepository, articleRepository);
-	return new ArticleReactionController(articleReactionService);
+	return new ReactionController(articleReactionService);
 }

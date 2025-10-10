@@ -60,13 +60,13 @@ export class ArticleReadService implements IArticleReadService {
 		}
 		const { isActive, isArchived, ...articleForView } = articleWithMetrics;
 
-		const [isViewed, isLiked] = await Promise.all([
+		const [isViewed, userReaction] = await Promise.all([
 			this._articleViewRepository.findByArticleAndUser(id, userId),
 			this._articleReactionRepository.findByResourceAndUser(id, userId),
 		]);
 		if(!isViewed) await this.updateViewCount(id, userId);
 
-		return { article:articleForView, isViewed: !!isViewed , isLiked : !!isLiked };
+		return { article:articleForView, isViewed: !!isViewed , isLiked : userReaction?.reaction == "like" };
 
 	}
 

@@ -50,12 +50,12 @@ export class ReactionService implements IReactionService {
 	}
 
 	async getReactions(
-		articleId: string,
+		resourceId: string,
 		page: number,
 		limit: number,
 	): Promise<Partial<Reaction>[]> {
 		return await this._articleRectionRepository.findByResource(
-			articleId,
+			resourceId,
 			page,
 			limit,
 		);

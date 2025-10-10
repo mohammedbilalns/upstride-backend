@@ -47,7 +47,6 @@ implements IReactionRepository
 	): Promise<Reaction | null> {
 		const article = await this._model
 			.findOne({ resourceId, userId: userId })
-			.lean()
 			.exec();
 		return article ? this.mapToDomain(article) : null;
 	}
