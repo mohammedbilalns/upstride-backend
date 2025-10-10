@@ -1,4 +1,4 @@
-import type { Document } from "mongoose";
+import { type Document } from "mongoose";
 
 export type DocumentToPlain<T extends Document> = Omit<
 	T,
@@ -18,3 +18,4 @@ export const mapMongoDocument = <T extends Document>(
 		id: _id.toString(),
 	} as DocumentToPlain<T>;
 };
+

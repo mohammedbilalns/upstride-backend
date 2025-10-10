@@ -5,6 +5,8 @@ import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ArticleModel, type IArticle } from "../models/article.model";
 import { BaseRepository } from "./base.repository";
 import { ArticleMetricsResponseDto } from "../../../application/dtos/article.dto";
+import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import { AppError } from "../../../application/errors/AppError";
 
 export class ArticleRepository
 extends BaseRepository<Article, IArticle>
@@ -238,19 +240,20 @@ implements IArticleRepository
 		};
 	}
 	async findByArticleId(id: string): Promise<Article | null> {
+	if(!mongoose.isValidObjectId(id)) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND)	
 		const doc= await this._model.findOne({ _id: id, isActive: true , isArchived: false }).populate("tags", "id name").exec();
 		return doc ? this.mapToDomain(doc) : null;
 	}
 
 	async incrementViewCount(id: string): Promise<void> {
+		if(!mongoose.isValidObjectId(id)) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND)
 		await this._model.updateOne({ _id: id }, { $inc: { views: 1 } });
 	}
 
 	async getArticleMetrics(id: string): Promise<ArticleMetricsResponseDto > {
+		if(!mongoose.isValidObjectId(id)) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND)
 		return  await this._model.findById(id, "views comments likes").lean().exec()
 
 	}
-
-
 
 }
