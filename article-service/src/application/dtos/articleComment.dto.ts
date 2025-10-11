@@ -10,7 +10,7 @@ export interface ArticleCommentDto {
 }
 
 export interface ArticleCommentUpdateDto {
-	id: string;
+	commentId: string;
 	userId: string;
 	content: string;
 }
