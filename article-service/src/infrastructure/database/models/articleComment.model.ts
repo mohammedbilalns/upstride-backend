@@ -11,6 +11,7 @@ export const ArticleCommentSchema: Schema = new Schema(
 		userName: { type: String, required: true },
 		userImage: { type: String, required: true },
 		likes: { type: Number, default: 0 },
+		replies: { type: Number, default: 0 },
 		content: { type: String, required: true },
 		isActive: { type: Boolean, default: true },
 	},

@@ -6,6 +6,7 @@ export interface ArticleComment {
 	userName: string;
 	userImage: string;
 	likes: number;
+	replies: number;
 	content: string;
 	isActive: boolean;
 }

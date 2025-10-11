@@ -36,13 +36,16 @@ export class ArticleCommentService implements IArticleCommentService {
 				comments: article.comments + 1,
 			}),
 		]);
+		if (parentId) {
+			await this._articleCommentRepository.incrementReplies(parentId);
+		}
 	}
 
 	async updateComment(
 		articleCommentUpdateDto: ArticleCommentUpdateDto,
 	): Promise<void> {
-		const { id, content, userId } = articleCommentUpdateDto;
-		const comment = await this._articleCommentRepository.findById(id);
+		const { commentId, content, userId } = articleCommentUpdateDto;
+		const comment = await this._articleCommentRepository.findById(commentId);
 		if (!comment)
 			throw new AppError(
 				ErrorMessage.ARTICLE_COMMENT_NOT_FOUND,
@@ -50,7 +53,7 @@ export class ArticleCommentService implements IArticleCommentService {
 			);
 		if (comment.userId !== userId)
 			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
-		await this._articleCommentRepository.update(id, { content });
+		await this._articleCommentRepository.update(commentId, { content });
 	}
 
 	async getComments(

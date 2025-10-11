@@ -24,6 +24,7 @@ export class ArticleCommentRepository
 			userName: mapped.userName,
 			userImage: mapped.userImage,
 			likes: mapped.likes,
+			replies: mapped.replies,
 			content: mapped.content,
 			isActive: mapped.isActive,
 		};
@@ -57,5 +58,12 @@ export class ArticleCommentRepository
 			comments: articles.map(this.mapToDomain),
 			total: articles.length,
 		};
+	}
+	async incrementLikes(commentId: string): Promise<void> {
+		await this._model.updateOne({ _id: commentId }, { $inc: { likes: 1 } });
+	}
+
+	async incrementReplies(commentId: string): Promise<void> {
+		await this._model.updateOne({ _id: commentId }, { $inc: { replies: 1 } });
 	}
 }
