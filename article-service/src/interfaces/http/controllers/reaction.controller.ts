@@ -10,10 +10,11 @@ export class ReactionController {
 	constructor(private _reactionService: IReactionService) {}
 
 	reactArticle = asyncHandler(async (req, res) => {
-		const { resourceId, reaction } = reactionSchema.parse(req.body);
+		const { resourceId, reaction , resourceType } = reactionSchema.parse(req.body);
 		const userId = res.locals.user.id;
 		await this._reactionService.reactToResource({
 			resourceId,
+			resourceType,
 			userId,
 			reaction,
 		});
