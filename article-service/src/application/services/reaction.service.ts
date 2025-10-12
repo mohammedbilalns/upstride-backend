@@ -1,11 +1,11 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type { Reaction } from "../../domain/entities/reaction.entity";
 import type {
-	IReactionRepository,
-	IArticleRepository,
 	IArticleCommentRepository,
+	IArticleRepository,
+	IReactionRepository,
 } from "../../domain/repositories";
-import { IReactionService } from "../../domain/services";
+import type { IReactionService } from "../../domain/services";
 import type { ReactionDto } from "../dtos/reaction.dto";
 import { AppError } from "../errors/AppError";
 
@@ -36,31 +36,33 @@ export class ReactionService implements IReactionService {
 	}
 
 	async reactToResource(dto: ReactionDto): Promise<void> {
-		const { resourceId,resourceType, userId, reaction } = dto;
-		const { repository, notFoundError, alreadedReactedError } = this.getResourceHandlers(resourceType);
-		// find the resource 
+		const { resourceId, resourceType, userId, reaction } = dto;
+
+		const { repository, notFoundError, alreadedReactedError } =
+			this.getResourceHandlers(resourceType);
+		// find the resource
 		const resource = await repository.findById(resourceId);
-		if (!resource)
-			throw new AppError(notFoundError, HttpStatus.NOT_FOUND);
+
+		if (!resource) throw new AppError(notFoundError, HttpStatus.NOT_FOUND);
 
 		// fetch the existing reaction
-		const existingReaction = await this._reactionRepository.findByResourceAndUser(
-			userId,
-			resourceId,
-		);
+		const existingReaction =
+			await this._reactionRepository.findByResourceAndUser(resourceId, userId);
 
 		// handle create/update reaction
-		if(existingReaction){
-			if(existingReaction.reaction === reaction) throw new AppError(alreadedReactedError, HttpStatus.BAD_REQUEST);
+		if (existingReaction) {
+			if (existingReaction.reaction === reaction)
+				throw new AppError(alreadedReactedError, HttpStatus.BAD_REQUEST);
 			await this._reactionRepository.update(existingReaction.id, { reaction });
-		}else{
-			await this._reactionRepository.create({resourceId, userId, reaction});
+		} else {
+			await this._reactionRepository.create({ resourceId, userId, reaction });
 		}
 
 		// update likes count in the resource
 		const likesChanged = reaction === "like" ? 1 : -1;
-		await repository.update(resourceId, {likes:(resource.likes ?? 0) + likesChanged});
-
+		await repository.update(resourceId, {
+			likes: (resource.likes ?? 0) + likesChanged,
+		});
 	}
 
 	async getReactions(

@@ -1,5 +1,8 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import type { IArticleReadService, IArticleWriteService } from "../../../domain/services";
+import type {
+	IArticleReadService,
+	IArticleWriteService,
+} from "../../../domain/services";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	createArticleSchema,
@@ -9,9 +12,9 @@ import {
 } from "../validations/article.validation";
 
 export class ArticleController {
-  constructor(
+	constructor(
 		private _articleReadService: IArticleReadService,
-	 	private _articleWriteService: IArticleWriteService
+		private _articleWriteService: IArticleWriteService,
 	) {}
 
 	create = asyncHandler(async (req, res) => {
@@ -21,17 +24,17 @@ export class ArticleController {
 		const authorRole = res.locals.user.role;
 		const authorImage = res.locals.user.profilePicture;
 
-    await this._articleWriteService.createArticle({
-      author,
-      authorName,
-      authorRole,
-      authorImage,
-      ...articleData,
-    });
-    res
-      .status(HttpStatus.CREATED)
-      .send({ message: ResponseMessage.ARTICLE_CREATED });
-  });
+		await this._articleWriteService.createArticle({
+			author,
+			authorName,
+			authorRole,
+			authorImage,
+			...articleData,
+		});
+		res
+			.status(HttpStatus.CREATED)
+			.send({ message: ResponseMessage.ARTICLE_CREATED });
+	});
 
 	update = asyncHandler(async (req, res) => {
 		const articleData = updateArticleSchema.parse(req.body);
@@ -66,10 +69,14 @@ export class ArticleController {
 	});
 
 	fetchRandomArticlesByAuthors = asyncHandler(async (req, res) => {
-		console.log("query in article service", req.query)
-		const fetchArticlesParams = fetchRandomArticlesByAuthorsSchema.parse(req.query) 	
+		console.log("query in article service", req.query);
+		const fetchArticlesParams = fetchRandomArticlesByAuthorsSchema.parse(
+			req.query,
+		);
 		const articles =
-			await this._articleReadService.getRandomArticlesByAuthors(fetchArticlesParams);
+			await this._articleReadService.getRandomArticlesByAuthors(
+				fetchArticlesParams,
+			);
 		res.status(HttpStatus.OK).send(articles);
 	});
 }

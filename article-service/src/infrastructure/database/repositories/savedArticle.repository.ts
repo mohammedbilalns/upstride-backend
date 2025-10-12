@@ -1,11 +1,16 @@
-import { BaseRepository } from "./base.repository";
-import { SavedArticle } from "../../../domain/entities/savedArticle.entity";
-import { ISavedArticle, SavedArticleModel } from "../models/savedArticle.model";
-import { ISavedArticleRepository } from "../../../domain/repositories/savedArticle.repository.interface";
+import type { SavedArticle } from "../../../domain/entities/savedArticle.entity";
+import type { ISavedArticleRepository } from "../../../domain/repositories/savedArticle.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
+import {
+	type ISavedArticle,
+	SavedArticleModel,
+} from "../models/savedArticle.model";
+import { BaseRepository } from "./base.repository";
 
-
-export class SavedArticleRepository  extends BaseRepository<SavedArticle,ISavedArticle> implements ISavedArticleRepository {
+export class SavedArticleRepository
+	extends BaseRepository<SavedArticle, ISavedArticle>
+	implements ISavedArticleRepository
+{
 	constructor() {
 		super(SavedArticleModel);
 	}
@@ -18,17 +23,25 @@ export class SavedArticleRepository  extends BaseRepository<SavedArticle,ISavedA
 		};
 	}
 
-	async  getSavedArticles(userId: string, page: number, limit: number, sortBy?: string): Promise<{articles: SavedArticle[], total:number}> {
+	async getSavedArticles(
+		userId: string,
+		page: number,
+		limit: number,
+		sortBy?: string,
+	): Promise<{ articles: SavedArticle[]; total: number }> {
 		const skip = limit * (page - 1);
 
 		const [articles, total] = await Promise.all([
 			this._model
-			.find({ userId })
-			.populate("articleId", "title description authorName authorImage featuredImage tags views comments likes createdAt")
-			.sort(sortBy || { createdAt: -1 })
-			.skip(skip)
-			.limit(limit)
-			.exec(),
+				.find({ userId })
+				.populate(
+					"articleId",
+					"title description authorName authorImage featuredImage tags views comments likes createdAt",
+				)
+				.sort(sortBy || { createdAt: -1 })
+				.skip(skip)
+				.limit(limit)
+				.exec(),
 			this._model.countDocuments({ userId }),
 		]);
 
@@ -36,8 +49,5 @@ export class SavedArticleRepository  extends BaseRepository<SavedArticle,ISavedA
 			articles: articles.map(this.mapToDomain),
 			total,
 		};
-	    
 	}
-
-	
-} 
+}

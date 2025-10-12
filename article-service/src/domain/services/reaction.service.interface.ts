@@ -1,5 +1,5 @@
+import type { ReactionDto } from "../../application/dtos/reaction.dto";
 import type { Reaction } from "../entities/reaction.entity";
-import { ReactionDto } from "../../application/dtos/reaction.dto";
 
 export interface IReactionService {
 	reactToResource(ReactionDto: ReactionDto): Promise<void>;

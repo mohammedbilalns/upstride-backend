@@ -1,11 +1,10 @@
-
-export function  generateDescription(content: string): string {
+export function generateDescription(content: string): string {
 	if (!content) return "";
 
 	const plainText = content
-	.replace(/<[^>]*>/g, "")
-	.replace(/\s+/g, " ")
-	.trim();
+		.replace(/<[^>]*>/g, "")
+		.replace(/\s+/g, " ")
+		.trim();
 
 	if (plainText.length <= 150) {
 		return plainText;
@@ -14,8 +13,8 @@ export function  generateDescription(content: string): string {
 	const lastSpaceIndex = truncated.lastIndexOf(" ");
 
 	if (lastSpaceIndex > 0) {
-		return truncated.substring(0, lastSpaceIndex) + "...";
+		return `${truncated.substring(0, lastSpaceIndex)}...`;
 	}
 
-	return truncated.substring(0, 147) + "...";
+	return `${truncated.substring(0, 147)}...`;
 }

@@ -53,7 +53,7 @@ export class TagRepository
 	}
 
 	async findMostUsed(limit: number): Promise<Tag[]> {
-		const docs =  await this._model.find().sort({ usageCount: -1 }).limit(limit);
+		const docs = await this._model.find().sort({ usageCount: -1 }).limit(limit);
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
 }

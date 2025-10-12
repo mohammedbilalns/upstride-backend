@@ -1,17 +1,17 @@
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import express, { type Application } from "express";
 import helmet from "helmet";
-import cors from "cors";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
-import {
-  createArticleRoutes,
-  createCommentRoutes,
-  createReactionRoutes,
-} from "./interfaces/http/routes";
-import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
-import { createTagRoutes } from "./interfaces/http/routes/tag.routes";
 import env from "./infrastructure/config/env";
+import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import {
+	createArticleRoutes,
+	createCommentRoutes,
+	createReactionRoutes,
+} from "./interfaces/http/routes";
+import { createTagRoutes } from "./interfaces/http/routes/tag.routes";
 
 class App {
 	private _app: Application;
@@ -23,22 +23,24 @@ class App {
 
 	private _setupMiddleware() {
 		this._app.use(helmet());
-		this._app.use(cors({
-			origin: [env.CLIENT_URL, env.GATEWAY_URL],
-			credentials: true,
-		}))
+		this._app.use(
+			cors({
+				origin: [env.CLIENT_URL, env.GATEWAY_URL],
+				credentials: true,
+			}),
+		);
 		this._app.use(express.json());
 		this._app.use(cookieParser());
 		this._app.use(requestLogger);
 	}
 
-  private _setupRoutes() {
-    this._app.use("/api/articles", createArticleRoutes());
-    this._app.use("/api/comments", createCommentRoutes());
-    this._app.use("/api/reactions", createReactionRoutes());
+	private _setupRoutes() {
+		this._app.use("/api/articles", createArticleRoutes());
+		this._app.use("/api/comments", createCommentRoutes());
+		this._app.use("/api/reactions", createReactionRoutes());
 		this._app.use("/api/tags", createTagRoutes());
-    this._app.use(errorHandler);
-  }
+		this._app.use(errorHandler);
+	}
 
 	public listen(port: string) {
 		this._app.listen(port, () => {

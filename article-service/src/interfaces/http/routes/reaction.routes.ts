@@ -6,9 +6,12 @@ export function createReactionRoutes() {
 	const router = Router();
 	const reactionController = createReactionController();
 
-
-	router.use(authMiddleware()) 
-	router.post("/",rateLimiter(10,60,["ip","route"]), reactionController.reactArticle)
+	router.use(authMiddleware());
+	router.post(
+		"/",
+		rateLimiter(50, 60, ["ip", "route"]),
+		reactionController.reactArticle,
+	);
 	router.get("/", reactionController.fetchReactions);
 
 	return router;

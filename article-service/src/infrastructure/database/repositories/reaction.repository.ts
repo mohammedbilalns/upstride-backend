@@ -1,15 +1,12 @@
-import { IReactionRepository } from "../../../domain/repositories";
 import type { Reaction } from "../../../domain/entities/reaction.entity";
+import type { IReactionRepository } from "../../../domain/repositories";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import {
-	ReactionModel,
-	type IReaction,
-} from "../models/reaction.model";
+import { type IReaction, ReactionModel } from "../models/reaction.model";
 import { BaseRepository } from "./base.repository";
 
 export class ReactionRepository
-extends BaseRepository<Reaction, IReaction>
-implements IReactionRepository
+	extends BaseRepository<Reaction, IReaction>
+	implements IReactionRepository
 {
 	constructor() {
 		super(ReactionModel);
@@ -33,7 +30,7 @@ implements IReactionRepository
 		limit: number,
 	): Promise<Reaction[]> {
 		const articles = await this._model
-			.find({resourceId })
+			.find({ resourceId })
 			.skip(page * limit)
 			.limit(limit)
 			.lean()

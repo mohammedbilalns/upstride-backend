@@ -6,7 +6,7 @@ export function createArticleRoutes() {
 	const router = Router();
 	const articleController = createArticleController();
 
-	router.get("/by-users", articleController.fetchRandomArticlesByAuthors)
+	router.get("/by-users", articleController.fetchRandomArticlesByAuthors);
 	router.use(authMiddleware());
 
 	router.get("/:id", articleController.fetchArticle);

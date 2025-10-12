@@ -20,7 +20,7 @@ export class ArticleCommentService implements IArticleCommentService {
 	) {}
 
 	async createComment(articleCommentDto: ArticleCommentDto): Promise<void> {
-		const { articleId, userId, content, parentId } = articleCommentDto;
+		const { articleId, userId,userName, userImage, content, parentId } = articleCommentDto;
 		const article = await this._articleRepository.findById(articleId);
 		if (!article)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -29,6 +29,8 @@ export class ArticleCommentService implements IArticleCommentService {
 			this._articleCommentRepository.create({
 				articleId,
 				userId,
+				userName,
+				userImage,
 				content,
 				parentId,
 			}),

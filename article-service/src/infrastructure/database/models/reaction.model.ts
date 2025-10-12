@@ -1,9 +1,7 @@
 import { type Document, model, Schema } from "mongoose";
-import { Reaction } from "../../../domain/entities/reaction.entity";
+import type { Reaction } from "../../../domain/entities/reaction.entity";
 
-export interface IReaction
-	extends Document,
-	Omit<Reaction, "id"> {}
+export interface IReaction extends Document, Omit<Reaction, "id"> {}
 
 export const ReactionSchema: Schema = new Schema(
 	{
@@ -16,7 +14,4 @@ export const ReactionSchema: Schema = new Schema(
 	},
 );
 
-export const ReactionModel = model<IReaction>(
-	"Reaction",
-	ReactionSchema,
-);
+export const ReactionModel = model<IReaction>("Reaction", ReactionSchema);

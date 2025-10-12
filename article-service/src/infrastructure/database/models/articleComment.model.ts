@@ -9,7 +9,7 @@ export const ArticleCommentSchema: Schema = new Schema(
 		parentId: { type: Schema.Types.ObjectId, ref: "ArticleComment" },
 		userId: { type: String, required: true },
 		userName: { type: String, required: true },
-		userImage: { type: String, required: true },
+		userImage: { type: String },
 		likes: { type: Number, default: 0 },
 		replies: { type: Number, default: 0 },
 		content: { type: String, required: true },

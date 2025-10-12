@@ -1,16 +1,16 @@
 import * as mongoose from "mongoose";
+import type { ArticleMetricsResponseDto } from "../../../application/dtos/article.dto";
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import type { Article } from "../../../domain/entities/article.entity";
 import type { IArticleRepository } from "../../../domain/repositories/article.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ArticleModel, type IArticle } from "../models/article.model";
 import { BaseRepository } from "./base.repository";
-import { ArticleMetricsResponseDto } from "../../../application/dtos/article.dto";
-import { ErrorMessage, HttpStatus } from "../../../common/enums";
-import { AppError } from "../../../application/errors/AppError";
 
 export class ArticleRepository
-extends BaseRepository<Article, IArticle>
-implements IArticleRepository
+	extends BaseRepository<Article, IArticle>
+	implements IArticleRepository
 {
 	constructor() {
 		super(ArticleModel);
@@ -64,18 +64,18 @@ implements IArticleRepository
 		page: number,
 		limit: number,
 		sortBy?: string,
-		query?: string
+		query?: string,
 	): Promise<{ articles: Article[]; total: number }> {
 		const skip = (page - 1) * limit;
 		const filter = this.buildFilter({ author }, query);
 
 		const [articles, total] = await Promise.all([
 			this._model
-			.find(filter)
-			.sort(sortBy || { createdAt: -1 })
-			.skip(skip)
-			.limit(limit)
-			.exec(),
+				.find(filter)
+				.sort(sortBy || { createdAt: -1 })
+				.skip(skip)
+				.limit(limit)
+				.exec(),
 			this._model.countDocuments(filter),
 		]);
 
@@ -90,7 +90,7 @@ implements IArticleRepository
 		page: number,
 		limit: number,
 		sortBy?: string,
-		query?: string
+		query?: string,
 	): Promise<{ articles: Article[]; total: number }> {
 		const skip = (page - 1) * limit;
 
@@ -99,12 +99,12 @@ implements IArticleRepository
 
 		const [articles, total] = await Promise.all([
 			this._model
-			.find(filter)
-			.populate("tags", "id name")
-			.sort(sortBy || { createdAt: -1 })
-			.skip(skip)
-			.limit(limit)
-			.exec(),
+				.find(filter)
+				.populate("tags", "id name")
+				.sort(sortBy || { createdAt: -1 })
+				.skip(skip)
+				.limit(limit)
+				.exec(),
 			this._model.countDocuments(filter),
 		]);
 
@@ -118,7 +118,7 @@ implements IArticleRepository
 		query: string,
 		page: number,
 		limit: number,
-		sortBy?: string
+		sortBy?: string,
 	): Promise<{ articles: Article[]; total: number }> {
 		const skip = (page - 1) * limit;
 
@@ -129,12 +129,12 @@ implements IArticleRepository
 
 		const [articles, total] = await Promise.all([
 			this._model
-			.find(filter)
-			.populate("tags", "id name")
-			.sort(sortBy || { createdAt: -1 })
-			.skip(skip)
-			.limit(limit)
-			.exec(),
+				.find(filter)
+				.populate("tags", "id name")
+				.sort(sortBy || { createdAt: -1 })
+				.skip(skip)
+				.limit(limit)
+				.exec(),
 			this._model.countDocuments(filter),
 		]);
 
@@ -145,11 +145,11 @@ implements IArticleRepository
 	}
 
 	async findRandmoArticlesByAuthor(
-		authorIds: string[], 
-		page: number, 
-		limit: number, 
-		sortBy?: string, 
-		query?: string
+		authorIds: string[],
+		page: number,
+		limit: number,
+		sortBy?: string,
+		query?: string,
 	): Promise<{ articles: Article[]; total: number }> {
 		const skip = (page - 1) * limit;
 
@@ -157,13 +157,15 @@ implements IArticleRepository
 			? [{ $match: { $text: { $search: query } } }]
 			: [];
 
-		let sortStage: { $sort: Record<string, 1 | -1> } = { $sort: { createdAt: -1 } };
+		let sortStage: { $sort: Record<string, 1 | -1> } = {
+			$sort: { createdAt: -1 },
+		};
 		let addFieldsStage: { $addFields: Record<string, any> } | null = null;
 
-		if (sortBy === 'random') {
+		if (sortBy === "random") {
 			addFieldsStage = { $addFields: { randomSort: { $rand: {} } } };
 			sortStage = { $sort: { randomSort: 1 } };
-		} else if (sortBy === 'asc') {
+		} else if (sortBy === "asc") {
 			sortStage = { $sort: { createdAt: 1 } };
 		}
 
@@ -188,16 +190,16 @@ implements IArticleRepository
 							$project: {
 								id: "$_id",
 								name: 1,
-								_id: 0      
-							}
-						}
-					]
-				}
+								_id: 0,
+							},
+						},
+					],
+				},
 			},
 			{
 				$facet: {
 					data: [
-						sortStage, 
+						sortStage,
 						{ $skip: skip },
 						{ $limit: limit },
 						{
@@ -209,16 +211,15 @@ implements IArticleRepository
 								authorName: 1,
 								authorImage: 1,
 								featuredImage: 1,
-								tags: 1, 
+								tags: 1,
 								views: 1,
 								comments: 1,
 								likes: 1,
 								createdAt: 1,
 								updatedAt: 1,
-								_id: 0 
-
-							}
-						}
+								_id: 0,
+							},
+						},
 					],
 					count: [
 						{
@@ -236,24 +237,28 @@ implements IArticleRepository
 
 		return {
 			articles,
-			total
+			total,
 		};
 	}
 	async findByArticleId(id: string): Promise<Article | null> {
-	if(!mongoose.isValidObjectId(id)) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND)	
-		const doc= await this._model.findOne({ _id: id, isActive: true , isArchived: false }).populate("tags", "id name").exec();
+		if (!mongoose.isValidObjectId(id))
+			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
+		const doc = await this._model
+			.findOne({ _id: id, isActive: true, isArchived: false })
+			.populate("tags", "id name")
+			.exec();
 		return doc ? this.mapToDomain(doc) : null;
 	}
 
 	async incrementViewCount(id: string): Promise<void> {
-		if(!mongoose.isValidObjectId(id)) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND)
+		if (!mongoose.isValidObjectId(id))
+			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 		await this._model.updateOne({ _id: id }, { $inc: { views: 1 } });
 	}
 
-	async getArticleMetrics(id: string): Promise<ArticleMetricsResponseDto > {
-		if(!mongoose.isValidObjectId(id)) throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND)
-		return  await this._model.findById(id, "views comments likes").exec()
-
+	async getArticleMetrics(id: string): Promise<ArticleMetricsResponseDto> {
+		if (!mongoose.isValidObjectId(id))
+			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
+		return await this._model.findById(id, "views comments likes").exec();
 	}
-
 }

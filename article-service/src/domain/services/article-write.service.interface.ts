@@ -1,4 +1,7 @@
-import { CreateArticleDto, UpdateArticleDto } from "../../application/dtos/article.dto";
+import type {
+	CreateArticleDto,
+	UpdateArticleDto,
+} from "../../application/dtos/article.dto";
 
 export interface IArticleWriteService {
 	createArticle(createArticleDto: CreateArticleDto): Promise<void>;

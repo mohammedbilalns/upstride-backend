@@ -10,7 +10,9 @@ export class ReactionController {
 	constructor(private _reactionService: IReactionService) {}
 
 	reactArticle = asyncHandler(async (req, res) => {
-		const { resourceId, reaction , resourceType } = reactionSchema.parse(req.body);
+		const { resourceId, reaction, resourceType } = reactionSchema.parse(
+			req.body,
+		);
 		const userId = res.locals.user.id;
 		await this._reactionService.reactToResource({
 			resourceId,
@@ -18,7 +20,9 @@ export class ReactionController {
 			userId,
 			reaction,
 		});
-		res.status(HttpStatus.OK).send(ResponseMessage.REACTED_ARTICLE);
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.REACTED_ARTICLE });
 	});
 
 	fetchReactions = asyncHandler(async (req, res) => {

@@ -1,5 +1,5 @@
-import { Tag } from "../entities/tag.entity";
+import type { Tag } from "../entities/tag.entity";
 
 export interface ITagService {
-	findMostUsedCounts(): Promise<Tag[]>
+	findMostUsedCounts(): Promise<Tag[]>;
 }
