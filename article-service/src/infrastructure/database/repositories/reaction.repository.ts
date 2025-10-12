@@ -42,9 +42,18 @@ export class ReactionRepository
 		resourceId: string,
 		userId: string,
 	): Promise<Reaction | null> {
-		const article = await this._model
+		const reaction = await this._model
 			.findOne({ resourceId, userId: userId })
 			.exec();
-		return article ? this.mapToDomain(article) : null;
+		return reaction ? this.mapToDomain(reaction) : null;
+	}
+	async existsByResourceAndUser(
+		resourceId: string,
+		userId: string,
+	): Promise<boolean> {
+		const exists = await this._model
+			.exists({ resourceId, userId: userId })
+			.exec();
+		return !!exists;
 	}
 }

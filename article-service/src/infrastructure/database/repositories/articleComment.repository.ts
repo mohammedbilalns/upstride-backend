@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import type { ArticleComment } from "../../../domain/entities/articleComment.entity";
 import type { IArticleCommentRepository } from "../../../domain/repositories/articleComment.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
@@ -27,6 +28,7 @@ export class ArticleCommentRepository
 			replies: mapped.replies,
 			content: mapped.content,
 			isActive: mapped.isActive,
+			createdAt: mapped.createdAt,
 		};
 	}
 
@@ -36,27 +38,27 @@ export class ArticleCommentRepository
 		limit: number,
 		parentId?: string,
 	): Promise<{ comments: ArticleComment[]; total: number }> {
+		const filter: Record<string, string | Record<string, boolean>> = {
+			articleId,
+		};
 		if (parentId) {
-			const articles = await this._model
-				.find({ articleId: articleId, parentId: parentId })
+			filter.parentId = parentId;
+		} else {
+			filter.parentId = { $exists: false };
+		}
+		const [comments, total] = await Promise.all([
+			this._model
+				.find(filter)
+				.sort({ createdAt: -1 })
 				.skip((page - 1) * limit)
 				.limit(limit)
-				.lean()
-				.exec();
-			return {
-				comments: articles.map(this.mapToDomain),
-				total: articles.length,
-			};
-		}
-		const articles = await this._model
-			.find({ articleId: articleId })
-			.skip((page - 1) * limit)
-			.limit(limit)
-			.lean()
-			.exec();
+				.exec(),
+			this._model.countDocuments(filter).exec(),
+		]);
+
 		return {
-			comments: articles.map(this.mapToDomain),
-			total: articles.length,
+			comments: comments.map(this.mapToDomain),
+			total,
 		};
 	}
 	async incrementLikes(commentId: string): Promise<void> {
@@ -65,5 +67,27 @@ export class ArticleCommentRepository
 
 	async incrementReplies(commentId: string): Promise<void> {
 		await this._model.updateOne({ _id: commentId }, { $inc: { replies: 1 } });
+	}
+
+	async incrementRepliesWithParent(commentId: string): Promise<void> {
+		const parentComments = await this._model.aggregate([
+			{$match: {_id : new Types.ObjectId(commentId)}},
+			{$graphLookup:{
+				from:"articlecomments",
+				startWith:"$parentId",
+				connectFromField:"parentId",
+				connectToField:"_id",
+				as:"parents"
+			}},
+			{ $project: { parentIds: "$parents._id" } }
+
+		])
+
+    if (parentComments.length > 0 && parentComments[0].parentIds.length > 0) {
+      await ArticleCommentModel.updateMany(
+        { _id: { $in: parentComments[0].parentIds } },
+        { $inc: { replies: 1 } }
+      );
+    }
 	}
 }

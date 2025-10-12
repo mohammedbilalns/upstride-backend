@@ -11,4 +11,6 @@ export interface IArticleCommentRepository
 	): Promise<{ comments: ArticleComment[]; total: number }>;
 	incrementLikes(commentId: string): Promise<void>;
 	incrementReplies(commentId: string): Promise<void>;
+	incrementRepliesWithParent(commentId: string): Promise<void>;
+	
 }

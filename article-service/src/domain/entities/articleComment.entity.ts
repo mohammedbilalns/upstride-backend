@@ -9,4 +9,5 @@ export interface ArticleComment {
 	replies: number;
 	content: string;
 	isActive: boolean;
+	createdAt: Date;
 }

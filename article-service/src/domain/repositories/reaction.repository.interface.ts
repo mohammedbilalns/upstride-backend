@@ -7,6 +7,9 @@ export interface IReactionRepository extends IBaseRepository<Reaction> {
 		page: number,
 		limit: number,
 	): Promise<Reaction[]>;
+
+	existsByResourceAndUser(resourceId: string, userId: string): Promise<boolean>;
+
 	findByResourceAndUser(
 		resoucrceId: string,
 		userId: string,

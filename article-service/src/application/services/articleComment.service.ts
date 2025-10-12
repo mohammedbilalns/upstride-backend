@@ -2,6 +2,7 @@ import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
+	IReactionRepository,
 } from "../../domain/repositories";
 import type { IArticleCommentService } from "../../domain/services/articleComment.service.interface";
 import type {
@@ -17,10 +18,12 @@ export class ArticleCommentService implements IArticleCommentService {
 	constructor(
 		private _articleCommentRepository: IArticleCommentRepository,
 		private _articleRepository: IArticleRepository,
+		private _reactionRepository: IReactionRepository,
 	) {}
 
 	async createComment(articleCommentDto: ArticleCommentDto): Promise<void> {
-		const { articleId, userId,userName, userImage, content, parentId } = articleCommentDto;
+		const { articleId, userId, userName, userImage, content, parentCommentId } =
+			articleCommentDto;
 		const article = await this._articleRepository.findById(articleId);
 		if (!article)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -32,14 +35,14 @@ export class ArticleCommentService implements IArticleCommentService {
 				userName,
 				userImage,
 				content,
-				parentId,
+				parentId: parentCommentId,
 			}),
 			this._articleRepository.update(article.id, {
 				comments: article.comments + 1,
 			}),
 		]);
-		if (parentId) {
-			await this._articleCommentRepository.incrementReplies(parentId);
+		if (parentCommentId) {
+			await Promise.all([this._articleCommentRepository.incrementReplies(parentCommentId), this._articleCommentRepository.incrementRepliesWithParent(parentCommentId)])
 		}
 	}
 
@@ -61,17 +64,43 @@ export class ArticleCommentService implements IArticleCommentService {
 	async getComments(
 		fetchCommentsDto: fetchCommentsDto,
 	): Promise<fetchCommentsResponseDto> {
-		const { articleId, page, limit, parentId } = fetchCommentsDto;
+		const {
+			articleId,
+			page,
+			limit,
+			parentCommentId: parentId,
+			userId,
+		} = fetchCommentsDto;
 		const article = await this._articleRepository.findById(articleId);
 		if (!article)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-		return await this._articleCommentRepository.findByArticle(
-			articleId,
-			page,
-			limit,
-			parentId,
+		const { comments, total } =
+			await this._articleCommentRepository.findByArticle(
+				articleId,
+				page,
+				limit,
+				parentId,
+			);
+		const commentsWithIsLiked = await Promise.all(
+			comments.map(async (comment) => {
+				const userReacton =
+					await this._reactionRepository.findByResourceAndUser(
+						comment.id,
+						userId,
+					);
+				const isLiked = userReacton?.reaction === "like";
+				return {
+					...comment,
+					isLiked,
+				};
+			}),
 		);
+
+		return {
+			comments: commentsWithIsLiked,
+			total,
+		};
 	}
 
 	async deleteComment(id: string): Promise<void> {
