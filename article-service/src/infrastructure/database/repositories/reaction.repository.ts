@@ -42,6 +42,7 @@ export class ReactionRepository
 		resourceId: string,
 		userId: string,
 	): Promise<Reaction | null> {
+
 		const reaction = await this._model
 			.findOne({ resourceId, userId: userId })
 			.exec();

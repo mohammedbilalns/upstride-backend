@@ -70,6 +70,7 @@ export class ArticleCommentRepository
 	}
 
 	async incrementRepliesWithParent(commentId: string): Promise<void> {
+
 		const parentComments = await this._model.aggregate([
 			{$match: {_id : new Types.ObjectId(commentId)}},
 			{$graphLookup:{

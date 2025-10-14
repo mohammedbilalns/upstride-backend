@@ -12,6 +12,7 @@ import {
 	createReactionRoutes,
 } from "./interfaces/http/routes";
 import { createTagRoutes } from "./interfaces/http/routes/tag.routes";
+import { createBookmarkRoutes } from "./interfaces/http/routes/bookmark.routes";
 
 class App {
 	private _app: Application;
@@ -39,6 +40,7 @@ class App {
 		this._app.use("/api/comments", createCommentRoutes());
 		this._app.use("/api/reactions", createReactionRoutes());
 		this._app.use("/api/tags", createTagRoutes());
+		this._app.use("/api/bookmark", createBookmarkRoutes());
 		this._app.use(errorHandler);
 	}
 

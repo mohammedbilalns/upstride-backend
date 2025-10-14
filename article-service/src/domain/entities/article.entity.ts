@@ -3,6 +3,7 @@ export interface Article {
 	authorName: string;
 	authorImage?: string;
 	featuredImage?: string;
+	featuredImageId?: string; 
 	title: string;
 	author: string;
 	tags: string[];

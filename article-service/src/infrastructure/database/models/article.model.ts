@@ -8,6 +8,7 @@ export const ArticleSchema: Schema = new Schema<IArticle>(
 		authorName: { type: String, required: true },
 		authorImage: { type: String },
 		featuredImage: { type: String },
+		featuredImageId: {type:String},
 		title: { type: String, required: true },
 		description: { type: String, required: true },
 		author: { type: String, required: true },

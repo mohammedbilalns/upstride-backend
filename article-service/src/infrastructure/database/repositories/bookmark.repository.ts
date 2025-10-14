@@ -1,20 +1,20 @@
-import type { SavedArticle } from "../../../domain/entities/savedArticle.entity";
-import type { ISavedArticleRepository } from "../../../domain/repositories/savedArticle.repository.interface";
+import type { BookMark } from "../../../domain/entities/bookmark.entity";
+import type { IBookMarkRepository } from "../../../domain/repositories/bookmark.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import {
-	type ISavedArticle,
-	SavedArticleModel,
-} from "../models/savedArticle.model";
+	type IBookMark,
+	BookMarkModel,
+} from "../models/bookmark.model";
 import { BaseRepository } from "./base.repository";
 
-export class SavedArticleRepository
-	extends BaseRepository<SavedArticle, ISavedArticle>
-	implements ISavedArticleRepository
+export class BookMarkRepository
+	extends BaseRepository<BookMark, IBookMark>
+	implements IBookMarkRepository
 {
 	constructor() {
-		super(SavedArticleModel);
+		super(BookMarkModel);
 	}
-	protected mapToDomain(doc: ISavedArticle): SavedArticle {
+	protected mapToDomain(doc: IBookMark): BookMark {
 		const mapped = mapMongoDocument(doc)!;
 		return {
 			id: mapped.id,
@@ -23,12 +23,12 @@ export class SavedArticleRepository
 		};
 	}
 
-	async getSavedArticles(
+	async getBookMarkedArticles(
 		userId: string,
 		page: number,
 		limit: number,
 		sortBy?: string,
-	): Promise<{ articles: SavedArticle[]; total: number }> {
+	): Promise<{ articles: BookMark[]; total: number }> {
 		const skip = limit * (page - 1);
 
 		const [articles, total] = await Promise.all([
@@ -49,5 +49,9 @@ export class SavedArticleRepository
 			articles: articles.map(this.mapToDomain),
 			total,
 		};
+	}
+
+	async deleteByUserIdAndArticleId(userId: string, articleId: string): Promise<void> {
+	    await this._model.deleteOne({userId, articleId})
 	}
 }

@@ -40,6 +40,7 @@ export class ArticleWriteService implements IArticleWriteService {
 			description,
 			author,
 			featuredImage: featuredImage?.secure_url,
+			featuredImageId: featuredImage?.public_id,
 			...rest,
 			tags: tagIds,
 		});
