@@ -12,5 +12,7 @@ export interface IArticleCommentRepository
 	incrementLikes(commentId: string): Promise<void>;
 	incrementReplies(commentId: string): Promise<void>;
 	incrementRepliesWithParent(commentId: string): Promise<void>;
+	deleteByArticle(articleId: string): Promise<void>;
+	fetchCommentsByArticle(articleId: string): Promise<string[]>;
 	
 }

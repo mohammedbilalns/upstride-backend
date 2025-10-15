@@ -57,4 +57,11 @@ export class ReactionRepository
 			.exec();
 		return !!exists;
 	}
+
+	async deleteByArticle(articleId: string): Promise<void> {
+		await this._model.deleteMany({ resourceId: articleId });
+	}
+	async deleteByComments(commentIds: string[]): Promise<void> {
+		await this._model.deleteMany({ resourceId: { $in: commentIds } });
+	}
 }

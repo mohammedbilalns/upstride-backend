@@ -6,4 +6,5 @@ export interface IArticleViewRepository extends IBaseRepository<ArticleView> {
 		articleId: string,
 		userId: string,
 	): Promise<ArticleView | null>;
+	deleteByArticle(articleId: string): Promise<void>;
 }

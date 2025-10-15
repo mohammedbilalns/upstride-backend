@@ -14,4 +14,7 @@ export interface IReactionRepository extends IBaseRepository<Reaction> {
 		resoucrceId: string,
 		userId: string,
 	): Promise<Reaction | null>;
+
+	deleteByArticle(articleId: string): Promise<void>;
+	deleteByComments(commentIds: string[]): Promise<void>;
 }

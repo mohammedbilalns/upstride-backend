@@ -1,3 +1,4 @@
+import { Tag } from "./tag.entity";
 export interface Article {
 	id: string;
 	authorName: string;
@@ -6,7 +7,7 @@ export interface Article {
 	featuredImageId?: string; 
 	title: string;
 	author: string;
-	tags: string[];
+	tags: string[] | Tag[] ;
 	description: string;
 	isActive: boolean;
 	views: number;

@@ -25,7 +25,7 @@ export const createArticleSchema = z.object({
 });
 
 export const updateArticleSchema = z.object({
-	id: z.string(),
+	id:z.string(),
 	title: z
 		.string()
 		.min(5, "Title must be at least 5 characters")

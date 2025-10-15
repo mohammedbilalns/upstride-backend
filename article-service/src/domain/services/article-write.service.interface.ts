@@ -6,5 +6,5 @@ import type {
 export interface IArticleWriteService {
 	createArticle(createArticleDto: CreateArticleDto): Promise<void>;
 	updateArticle(article: UpdateArticleDto): Promise<void>;
-	deleteArticle(articleId: string): Promise<void>;
+	deleteArticle(articleId: string,userId: string): Promise<void>;
 }

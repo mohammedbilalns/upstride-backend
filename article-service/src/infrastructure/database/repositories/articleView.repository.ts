@@ -33,4 +33,8 @@ export class ArticleViewRepository
 
 		return article ? this.mapToDomain(article) : null;
 	}
+
+	async deleteByArticle(articleId: string): Promise<void> {
+		await this._model.deleteMany({ articleId });
+	}
 }

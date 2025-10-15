@@ -3,6 +3,7 @@ import {
 	ArticleWriteService,
 } from "../../../application/services";
 import type {
+    IArticleCommentRepository,
 	IArticleRepository,
 	IArticleViewRepository,
 	IReactionRepository,
@@ -14,6 +15,7 @@ import type {
 } from "../../../domain/services";
 import { redisClient } from "../../../infrastructure/config";
 import {
+    ArticleCommentRepository,
 	ArticleRepository,
 	ArticleViewRepository,
 	ReactionRepository,
@@ -28,6 +30,7 @@ export function createArticleController(): ArticleController {
 		new ArticleViewRepository();
 	const articleReactionRepository: IReactionRepository =
 		new ReactionRepository();
+	const articleCommentRepository: IArticleCommentRepository = new ArticleCommentRepository()
 	const articleReadService: IArticleReadService = new ArticleReadService(
 		articleRepository,
 		articleViewRepository,
@@ -37,6 +40,9 @@ export function createArticleController(): ArticleController {
 	const articleWriteService: IArticleWriteService = new ArticleWriteService(
 		articleRepository,
 		tagRepository,
+		articleViewRepository,
+		articleCommentRepository,
+		articleReactionRepository,
 		redisClient,
 	);
 	return new ArticleController(articleReadService, articleWriteService);

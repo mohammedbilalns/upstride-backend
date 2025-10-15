@@ -91,4 +91,11 @@ export class ArticleCommentRepository
       );
     }
 	}
+
+	async deleteByArticle(articleId: string): Promise<void> {
+		await this._model.deleteMany({ articleId });
+	}
+	async fetchCommentsByArticle(articleId: string): Promise<string[]> {
+		return this._model.find({ articleId }).select("_id").lean().then((docs) => docs.map((doc) => doc._id.toString()));
+	}
 }
