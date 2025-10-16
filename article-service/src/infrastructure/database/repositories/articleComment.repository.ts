@@ -70,32 +70,36 @@ export class ArticleCommentRepository
 	}
 
 	async incrementRepliesWithParent(commentId: string): Promise<void> {
-
 		const parentComments = await this._model.aggregate([
-			{$match: {_id : new Types.ObjectId(commentId)}},
-			{$graphLookup:{
-				from:"articlecomments",
-				startWith:"$parentId",
-				connectFromField:"parentId",
-				connectToField:"_id",
-				as:"parents"
-			}},
-			{ $project: { parentIds: "$parents._id" } }
+			{ $match: { _id: new Types.ObjectId(commentId) } },
+			{
+				$graphLookup: {
+					from: "articlecomments",
+					startWith: "$parentId",
+					connectFromField: "parentId",
+					connectToField: "_id",
+					as: "parents",
+				},
+			},
+			{ $project: { parentIds: "$parents._id" } },
+		]);
 
-		])
-
-    if (parentComments.length > 0 && parentComments[0].parentIds.length > 0) {
-      await ArticleCommentModel.updateMany(
-        { _id: { $in: parentComments[0].parentIds } },
-        { $inc: { replies: 1 } }
-      );
-    }
+		if (parentComments.length > 0 && parentComments[0].parentIds.length > 0) {
+			await ArticleCommentModel.updateMany(
+				{ _id: { $in: parentComments[0].parentIds } },
+				{ $inc: { replies: 1 } },
+			);
+		}
 	}
 
 	async deleteByArticle(articleId: string): Promise<void> {
 		await this._model.deleteMany({ articleId });
 	}
 	async fetchCommentsByArticle(articleId: string): Promise<string[]> {
-		return this._model.find({ articleId,isActive: true }).select("_id").lean().then((docs) => docs.map((doc) => doc._id.toString()));
+		return this._model
+			.find({ articleId, isActive: true })
+			.select("_id")
+			.lean()
+			.then((docs) => docs.map((doc) => doc._id.toString()));
 	}
 }

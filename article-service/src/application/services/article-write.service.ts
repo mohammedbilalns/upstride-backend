@@ -1,7 +1,9 @@
 import type Redis from "ioredis";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
+import type { Article } from "../../domain/entities/article.entity";
+import type { Tag } from "../../domain/entities/tag.entity";
 import type {
-    IArticleCommentRepository,
+	IArticleCommentRepository,
 	IArticleRepository,
 	IArticleViewRepository,
 	IReactionRepository,
@@ -12,8 +14,6 @@ import type { CreateArticleDto, UpdateArticleDto } from "../dtos/article.dto";
 import { AppError } from "../errors/AppError";
 import { ArticleCacheConstants } from "../utils/cacheUtils";
 import { generateDescription } from "../utils/generateDescription";
-import { Article } from "../../domain/entities/article.entity";
-import { Tag } from "../../domain/entities/tag.entity";
 
 export class ArticleWriteService implements IArticleWriteService {
 	constructor(
@@ -70,12 +70,13 @@ export class ArticleWriteService implements IArticleWriteService {
 	}
 
 	async updateArticle(updateArticleData: UpdateArticleDto): Promise<void> {
-	const { id, content, tags, userId, featuredImage, ...rest } = updateArticleData;
-    
-    const article = await this._articleRepository.findByArticleId(id);
-    if (article?.author !== userId) {
-        throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
-    }
+		const { id, content, tags, userId, featuredImage, ...rest } =
+			updateArticleData;
+
+		const article = await this._articleRepository.findByArticleId(id);
+		if (article?.author !== userId) {
+			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
+		}
 
 		const updateData: Partial<Article> = { ...rest };
 
@@ -86,43 +87,51 @@ export class ArticleWriteService implements IArticleWriteService {
 			updateData.featuredImage = featuredImage?.secure_url;
 		}
 
-    if (tags) {
-        const prevTagNames = article.tags
-            .filter((tag): tag is Tag => typeof tag !== 'string')
-            .map((tag) => tag.name);
-        
-        const tagsToAdd = tags.filter((tag) => !prevTagNames.includes(tag));
-        const tagsToRemove = prevTagNames.filter((tag) => !tags.includes(tag));
-        
-        const [newTagIds] = await Promise.all([
-            tagsToAdd.length ? this._tagRepository.createOrIncrement(tagsToAdd) : Promise.resolve([]),
-            tagsToRemove.length ? this._tagRepository.deleteOrDecrement(tagsToRemove) : Promise.resolve(),
-        ]);
-        
+		if (tags) {
+			const prevTagNames = article.tags
+				.filter((tag): tag is Tag => typeof tag !== "string")
+				.map((tag) => tag.name);
+
+			const tagsToAdd = tags.filter((tag) => !prevTagNames.includes(tag));
+			const tagsToRemove = prevTagNames.filter((tag) => !tags.includes(tag));
+
+			const [newTagIds] = await Promise.all([
+				tagsToAdd.length
+					? this._tagRepository.createOrIncrement(tagsToAdd)
+					: Promise.resolve([]),
+				tagsToRemove.length
+					? this._tagRepository.deleteOrDecrement(tagsToRemove)
+					: Promise.resolve(),
+			]);
+
 			const remainingTagIds = article.tags
-			.filter((tag): tag is Tag => typeof tag !== 'string' && tags.includes(tag.name))
-			.map((tag:any) => tag._id); 
-        
-        updateData.tags = [...remainingTagIds, ...newTagIds];
-    }
+				.filter(
+					(tag): tag is Tag =>
+						typeof tag !== "string" && tags.includes(tag.name),
+				)
+				.map((tag: any) => tag._id);
 
-    await this._articleRepository.update(id, updateData);
+			updateData.tags = [...remainingTagIds, ...newTagIds];
+		}
 
-    await this._clearArticleCache(id);	
+		await this._articleRepository.update(id, updateData);
+
+		await this._clearArticleCache(id);
 	}
 
-
 	async deleteArticle(articleId: string, userId: string): Promise<void> {
-
 		const article = await this._articleRepository.findByArticleId(articleId);
 		if (!article) {
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
-		if(article.author !== userId) {
+		if (article.author !== userId) {
 			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
 		}
-		const tags = article.tags.filter((tag): tag is Tag => typeof tag !== 'string').map((tag) => tag.name);
-		const comments = await this._commentRepository.fetchCommentsByArticle(articleId);
+		const tags = article.tags
+			.filter((tag): tag is Tag => typeof tag !== "string")
+			.map((tag) => tag.name);
+		const comments =
+			await this._commentRepository.fetchCommentsByArticle(articleId);
 
 		await Promise.all([
 			this._articleRepository.delete(articleId),

@@ -7,9 +7,9 @@ export function createBookmarkRoutes() {
 
 	router.get("/", bookmarkController.fetchBookMarks);
 	router.post("/", bookmarkController.createBookMark);
-	router.delete("/bookmarks/:userId/:articleId", bookmarkController.deleteBookMark);
+	router.delete(
+		"/bookmarks/:userId/:articleId",
+		bookmarkController.deleteBookMark,
+	);
 	return router;
 }
-
-
-

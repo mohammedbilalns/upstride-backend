@@ -56,5 +56,3 @@ export type ArticleMetricsResponseDto = Pick<
 	Article,
 	"views" | "comments" | "likes"
 > | null;
-
-

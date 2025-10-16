@@ -42,7 +42,12 @@ export class ArticleCommentService implements IArticleCommentService {
 			}),
 		]);
 		if (parentCommentId) {
-			await Promise.all([this._articleCommentRepository.incrementReplies(parentCommentId), this._articleCommentRepository.incrementRepliesWithParent(parentCommentId)])
+			await Promise.all([
+				this._articleCommentRepository.incrementReplies(parentCommentId),
+				this._articleCommentRepository.incrementRepliesWithParent(
+					parentCommentId,
+				),
+			]);
 		}
 	}
 
@@ -61,66 +66,65 @@ export class ArticleCommentService implements IArticleCommentService {
 		await this._articleCommentRepository.update(commentId, { content });
 	}
 
-
 	async getComments(
-	fetchCommentsDto: fetchCommentsDto,
-): Promise<fetchCommentsResponseDto> {
-	const {
-		articleId,
-		page,
-		limit,
-		parentCommentId: parentId,
-		userId,
-	} = fetchCommentsDto;
-
-	const article = await this._articleRepository.findById(articleId);
-	if (!article)
-		throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
-
-	const { comments, total } =
-		await this._articleCommentRepository.findByArticle(
+		fetchCommentsDto: fetchCommentsDto,
+	): Promise<fetchCommentsResponseDto> {
+		const {
 			articleId,
 			page,
 			limit,
-			parentId,
+			parentCommentId: parentId,
+			userId,
+		} = fetchCommentsDto;
+
+		const article = await this._articleRepository.findById(articleId);
+		if (!article)
+			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
+
+		const { comments, total } =
+			await this._articleCommentRepository.findByArticle(
+				articleId,
+				page,
+				limit,
+				parentId,
+			);
+
+		const commentsWithIsLiked = await Promise.all(
+			comments.map(async (comment) => {
+				const userReaction =
+					await this._reactionRepository.findByResourceAndUser(
+						comment.id,
+						userId,
+					);
+				const isLiked = userReaction?.reaction === "like";
+
+				if (!comment.isActive) {
+					return {
+						id: comment.id,
+						isDeleted: true,
+						isActive: false,
+						createdAt: comment.createdAt,
+						userName: comment.userName,
+						replies: comment.replies,
+						likes: comment.likes,
+						isLiked,
+						parentCommentId: comment.parentId ?? null,
+					};
+				}
+
+				return {
+					...comment,
+					isLiked,
+					isDeleted: false,
+				};
+			}),
 		);
 
-	const commentsWithIsLiked = await Promise.all(
-		comments.map(async (comment) => {
-			const userReaction = await this._reactionRepository.findByResourceAndUser(
-				comment.id,
-				userId,
-			);
-			const isLiked = userReaction?.reaction === "like";
-
-			if (!comment.isActive) {
-				return {
-					id: comment.id,
-					isDeleted: true,
-					isActive: false,
-					createdAt: comment.createdAt,
-					userName: comment.userName,
-					replies: comment.replies,
-					likes: comment.likes,
-					isLiked,
-					parentCommentId: comment.parentId ?? null,
-				};
-			}
-
-			return {
-				...comment,
-				isLiked,
-				isDeleted: false,
-			};
-		}),
-	);
-
-	return {
-		comments: commentsWithIsLiked,
-		total,
-	};
-}
-
+		return {
+			comments: commentsWithIsLiked,
+			total,
+		};
+	}
 
 	async deleteComment(id: string, userId: string): Promise<void> {
 		const comment = await this._articleCommentRepository.findById(id);
@@ -129,7 +133,7 @@ export class ArticleCommentService implements IArticleCommentService {
 				ErrorMessage.ARTICLE_COMMENT_NOT_FOUND,
 				HttpStatus.NOT_FOUND,
 			);
-		if(comment.userId !== userId)
+		if (comment.userId !== userId)
 			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
 
 		const article = await this._articleRepository.findById(comment.articleId);

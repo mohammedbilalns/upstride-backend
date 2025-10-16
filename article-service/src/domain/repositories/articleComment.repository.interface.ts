@@ -14,5 +14,4 @@ export interface IArticleCommentRepository
 	incrementRepliesWithParent(commentId: string): Promise<void>;
 	deleteByArticle(articleId: string): Promise<void>;
 	fetchCommentsByArticle(articleId: string): Promise<string[]>;
-	
 }

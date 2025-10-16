@@ -1,10 +1,7 @@
 import type { BookMark } from "../../../domain/entities/bookmark.entity";
 import type { IBookMarkRepository } from "../../../domain/repositories/bookmark.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import {
-	type IBookMark,
-	BookMarkModel,
-} from "../models/bookmark.model";
+import { BookMarkModel, type IBookMark } from "../models/bookmark.model";
 import { BaseRepository } from "./base.repository";
 
 export class BookMarkRepository
@@ -51,7 +48,10 @@ export class BookMarkRepository
 		};
 	}
 
-	async deleteByUserIdAndArticleId(userId: string, articleId: string): Promise<void> {
-	    await this._model.deleteOne({userId, articleId})
+	async deleteByUserIdAndArticleId(
+		userId: string,
+		articleId: string,
+	): Promise<void> {
+		await this._model.deleteOne({ userId, articleId });
 	}
 }

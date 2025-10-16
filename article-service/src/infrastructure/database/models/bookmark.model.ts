@@ -13,8 +13,4 @@ export const bookMarkSchema: Schema = new Schema(
 	},
 );
 
-
-export const BookMarkModel = model<IBookMark>(
-	"SavedArticle",
-	bookMarkSchema,
-);
+export const BookMarkModel = model<IBookMark>("SavedArticle", bookMarkSchema);

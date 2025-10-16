@@ -23,6 +23,7 @@ export class TagRepository
 	}
 
 	async createOrIncrement(tags: string[]): Promise<string[]> {
+		this._model.deleteMany({});
 		const bulkOps = tags.map((tagName) => ({
 			updateOne: {
 				filter: { name: tagName },
@@ -45,19 +46,19 @@ export class TagRepository
 			.lean();
 
 		return tagDocs.map((doc) => doc._id.toString());
-	}	
+	}
 
 	async deleteOrDecrement(tags: string[]): Promise<void> {
-    await this._model.updateMany(
-        { name: { $in: tags } },
-        { $inc: { usageCount: -1 } }
-    );
+		await this._model.updateMany(
+			{ name: { $in: tags } },
+			{ $inc: { usageCount: -1 } },
+		);
 
-    await this._model.deleteMany({
-        name: { $in: tags },
-        usageCount: { $lte: 0 }
-    });
-	}	
+		await this._model.deleteMany({
+			name: { $in: tags },
+			usageCount: { $lte: 0 },
+		});
+	}
 
 	async findByName(tag: string): Promise<Tag | null> {
 		const doc = await this._model.findOne({ name: tag }).exec();

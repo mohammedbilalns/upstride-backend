@@ -36,6 +36,18 @@ export class ArticleRepository
 			createdAt: mapped.createdAt,
 		};
 	}
+	private getSortOptions(sortBy?: string): Record<string, 1 | -1> {
+		switch (sortBy) {
+			case "commented":
+				return { comments: -1 };
+			case "popular":
+				return { views: -1 };
+			case "newest":
+				return { createdAt: -1 };
+			default:
+				return { createdAt: -1 };
+		}
+	}
 
 	private buildSearchFilter(query?: string): any {
 		if (!query) return {};
@@ -68,14 +80,10 @@ export class ArticleRepository
 	): Promise<{ articles: Article[]; total: number }> {
 		const skip = (page - 1) * limit;
 		const filter = this.buildFilter({ author }, query);
+		const sortOptions = this.getSortOptions(sortBy);
 
 		const [articles, total] = await Promise.all([
-			this._model
-				.find(filter)
-				.sort(sortBy || { createdAt: -1 })
-				.skip(skip)
-				.limit(limit)
-				.exec(),
+			this._model.find(filter).sort(sortOptions).skip(skip).limit(limit).exec(),
 			this._model.countDocuments(filter),
 		]);
 
@@ -93,15 +101,15 @@ export class ArticleRepository
 		query?: string,
 	): Promise<{ articles: Article[]; total: number }> {
 		const skip = (page - 1) * limit;
-
 		const objectId = new mongoose.Types.ObjectId(tagId);
 		const filter = this.buildFilter({ tags: objectId }, query);
+		const sortOptions = this.getSortOptions(sortBy);
 
 		const [articles, total] = await Promise.all([
 			this._model
 				.find(filter)
 				.populate("tags", "id name")
-				.sort(sortBy || { createdAt: -1 })
+				.sort(sortOptions)
 				.skip(skip)
 				.limit(limit)
 				.exec(),
@@ -120,8 +128,8 @@ export class ArticleRepository
 		limit: number,
 		sortBy?: string,
 	): Promise<{ articles: Article[]; total: number }> {
-
 		const skip = (page - 1) * limit;
+		const sortOptions = this.getSortOptions(sortBy);
 
 		let filter = {};
 		if (query && query.trim() !== "") {
@@ -132,7 +140,7 @@ export class ArticleRepository
 			this._model
 				.find(filter)
 				.populate("tags", "id name")
-				.sort(sortBy || { createdAt: -1 })
+				.sort(sortOptions)
 				.skip(skip)
 				.limit(limit)
 				.exec(),
@@ -144,7 +152,6 @@ export class ArticleRepository
 			total,
 		};
 	}
-
 	async findRandmoArticlesByAuthor(
 		authorIds: string[],
 		page: number,
@@ -166,10 +173,13 @@ export class ArticleRepository
 		if (sortBy === "random") {
 			addFieldsStage = { $addFields: { randomSort: { $rand: {} } } };
 			sortStage = { $sort: { randomSort: 1 } };
-		} else if (sortBy === "asc") {
-			sortStage = { $sort: { createdAt: 1 } };
+		} else if (sortBy === "commented") {
+			sortStage = { $sort: { comments: -1 } };
+		} else if (sortBy === "popular") {
+			sortStage = { $sort: { views: -1 } };
+		} else if (sortBy === "newest") {
+			sortStage = { $sort: { createdAt: -1 } };
 		}
-
 		const pipeline = [
 			{
 				$match: {
@@ -241,6 +251,7 @@ export class ArticleRepository
 			total,
 		};
 	}
+
 	async findByArticleId(id: string): Promise<Article | null> {
 		if (!mongoose.isValidObjectId(id))
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);

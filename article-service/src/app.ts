@@ -11,8 +11,8 @@ import {
 	createCommentRoutes,
 	createReactionRoutes,
 } from "./interfaces/http/routes";
-import { createTagRoutes } from "./interfaces/http/routes/tag.routes";
 import { createBookmarkRoutes } from "./interfaces/http/routes/bookmark.routes";
+import { createTagRoutes } from "./interfaces/http/routes/tag.routes";
 
 class App {
 	private _app: Application;

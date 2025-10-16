@@ -8,4 +8,4 @@ export const fetchBookMarksParamsSchema = z.object({
 
 export const createBookMarkSchema = z.object({
 	articleId: z.string(),
-})
+});

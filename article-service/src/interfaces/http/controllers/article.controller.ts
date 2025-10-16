@@ -19,7 +19,12 @@ export class ArticleController {
 
 	create = asyncHandler(async (req, res) => {
 		const articleData = createArticleSchema.parse(req.body);
-		const {id:author , name: authorName ,role: authorRole  , autherImage: authorImage} = res.locals.user;
+		const {
+			id: author,
+			name: authorName,
+			role: authorRole,
+			autherImage: authorImage,
+		} = res.locals.user;
 		await this._articleWriteService.createArticle({
 			author,
 			authorName,
@@ -29,7 +34,7 @@ export class ArticleController {
 		});
 		res
 			.status(HttpStatus.CREATED)
-			.send({ success: true,  message: ResponseMessage.ARTICLE_CREATED });
+			.send({ success: true, message: ResponseMessage.ARTICLE_CREATED });
 	});
 
 	update = asyncHandler(async (req, res) => {
@@ -38,7 +43,7 @@ export class ArticleController {
 		await this._articleWriteService.updateArticle({ userId, ...articleData });
 		res
 			.status(HttpStatus.CREATED)
-			.send({ success: true,  message: ResponseMessage.ARTICLE_CREATED });
+			.send({ success: true, message: ResponseMessage.ARTICLE_CREATED });
 	});
 
 	delete = asyncHandler(async (req, res) => {
@@ -47,7 +52,7 @@ export class ArticleController {
 		await this._articleWriteService.deleteArticle(id, userId);
 		res
 			.status(HttpStatus.OK)
-			.send({ success: true,  message: ResponseMessage.ARTICLE_DELETED });
+			.send({ success: true, message: ResponseMessage.ARTICLE_DELETED });
 	});
 
 	fetchArticle = asyncHandler(async (req, res) => {
