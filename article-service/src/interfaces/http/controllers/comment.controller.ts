@@ -42,8 +42,10 @@ export class ArticleCommentController {
 	});
 
 	deleteComment = asyncHandler(async (req, res) => {
+		const userId = res.locals.user.id;
+		console.log("query params", req.query)
 		const { commentId } = deleteCommentSchema.parse(req.query);
-		await this._articleCommentService.deleteComment(commentId);
+		await this._articleCommentService.deleteComment(commentId, userId);
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.COMMENT_DELETED });

@@ -96,6 +96,6 @@ export class ArticleCommentRepository
 		await this._model.deleteMany({ articleId });
 	}
 	async fetchCommentsByArticle(articleId: string): Promise<string[]> {
-		return this._model.find({ articleId }).select("_id").lean().then((docs) => docs.map((doc) => doc._id.toString()));
+		return this._model.find({ articleId,isActive: true }).select("_id").lean().then((docs) => docs.map((doc) => doc._id.toString()));
 	}
 }

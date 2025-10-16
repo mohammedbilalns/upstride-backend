@@ -13,5 +13,5 @@ export interface IArticleCommentService {
 	getComments(
 		fetchCommentsDto: fetchCommentsDto,
 	): Promise<fetchCommentsResponseDto>;
-	deleteComment(id: string): Promise<void>;
+	deleteComment(id: string, userId: string): Promise<void>;
 }

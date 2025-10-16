@@ -8,7 +8,7 @@ export function createCommentRoutes() {
 
 	router.use(authMiddleware());
 	router.post("/", commentController.createComment);
-	router.delete("/:id", commentController.deleteComment);
+	router.delete("/", commentController.deleteComment);
 	router.put("/", commentController.updateComment);
 	router.get("/", commentController.fetch);
 	return router;
