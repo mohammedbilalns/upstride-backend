@@ -7,13 +7,12 @@ export const ArticleViewSchema: Schema = new Schema(
 	{
 		articleId: { type: Schema.Types.ObjectId, ref: "Article" },
 		userId: { type: String, required: true },
-		createdAt: { type: Date, required: true },
 	},
 	{
 		timestamps: true,
 	},
 );
-
+ArticleViewSchema.index({ userId: 1, articleId: 1 }, { unique: true });
 export const ArticleViewModel = model<IArticleView>(
 	"ArticleView",
 	ArticleViewSchema,

@@ -25,7 +25,7 @@ export const createAuthMiddleware = (jwtSecret: string) => {
 			const decoded = jwt.verify(token, jwtSecret) as {
 				id: string;
 				email: string;
-				role: "user" | "admin" | "superadmin" | "expert";
+				role: "user" | "admin" | "superadmin" | "mentor";
 			};
 			const isRevoked = await new RevokedUserRepository(redisClient).isRevoked(
 				decoded.id,

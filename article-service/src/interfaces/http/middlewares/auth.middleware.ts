@@ -8,6 +8,7 @@ import env from "../../../infrastructure/config/env";
 export const createAuthMiddleware = (jwtSecret: string) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
+			logger.info("Hit auth middleware");
 			const token = req.cookies.accesstoken;
 			if (!token) {
 				return res.status(HttpStatus.UNAUTHORIZED).json({
@@ -18,18 +19,18 @@ export const createAuthMiddleware = (jwtSecret: string) => {
 			const decoded = jwt.verify(token, jwtSecret) as {
 				id: string;
 				email: string;
-				role: "user" | "admin" | "superadmin" | "expert";
+				role: "user" | "admin" | "superadmin" | "mentor";
 			};
 
 			const isRevoked = await redisClient.exists(`revokedUser:${decoded.id}`);
-			if (isRevoked == 1) {
+			if (isRevoked === 1) {
 				return res.status(HttpStatus.FORBIDDEN).json({
 					success: false,
 					message: ErrorMessage.BLOCKED_FROM_PLATFORM,
 				});
 			}
-
 			res.locals.user = decoded;
+
 			return next();
 		} catch (err) {
 			if (err.name === "TokenExpiredError") {
@@ -51,7 +52,7 @@ export const authMiddleware = (jwtSecret: string = env.JWT_SECRET) => {
 };
 
 export const authorizeRoles = (
-	...allowedRoles: ("user" | "admin" | "superadmin" | "expert")[]
+	...allowedRoles: ("user" | "admin" | "superadmin" | "mentor")[]
 ) => {
 	logger.info("Hit authorize roles middleware");
 	return (_req: Request, res: Response, next: NextFunction) => {

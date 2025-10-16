@@ -13,14 +13,20 @@ export class ArticleCommentController {
 
 	createComment = asyncHandler(async (req, res) => {
 		const articleCommentDto = articleCommentSchema.parse(req.body);
-		const { userId, userName, userImage } = res.locals.user;
+		const {
+			id: userId,
+			name: userName,
+			profilePicture: userImage,
+		} = res.locals.user;
 		await this._articleCommentService.createComment({
 			userId,
 			userName,
 			userImage,
 			...articleCommentDto,
 		});
-		res.status(HttpStatus.OK).send(ResponseMessage.COMMENT_CREATED);
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.COMMENT_CREATED });
 	});
 
 	updateComment = asyncHandler(async (req, res) => {
@@ -30,19 +36,32 @@ export class ArticleCommentController {
 			userId,
 			...articleCommentUpdateDto,
 		});
-		res.status(HttpStatus.OK).send(ResponseMessage.COMMENT_UPDATED);
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.COMMENT_UPDATED });
 	});
 
 	deleteComment = asyncHandler(async (req, res) => {
-		const { id } = deleteCommentSchema.parse(req.params);
-		await this._articleCommentService.deleteComment(id);
-		res.status(HttpStatus.OK).send(ResponseMessage.COMMENT_DELETED);
+		const userId = res.locals.user.id;
+		console.log("query params", req.query);
+		const { commentId } = deleteCommentSchema.parse(req.query);
+		await this._articleCommentService.deleteComment(commentId, userId);
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.COMMENT_DELETED });
 	});
 
 	fetch = asyncHandler(async (req, res) => {
-		const fetchCommentsDto = fetchCommentsQuerySchema.parse(req.query);
-		const comments =
-			await this._articleCommentService.getComments(fetchCommentsDto);
+		const { articleId, page, limit, parentCommentId } =
+			fetchCommentsQuerySchema.parse(req.query);
+		const userId = res.locals.user.id;
+		const comments = await this._articleCommentService.getComments({
+			articleId,
+			userId,
+			page,
+			limit,
+			parentCommentId,
+		});
 		res.status(HttpStatus.OK).send(comments);
 	});
 }

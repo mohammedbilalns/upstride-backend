@@ -81,4 +81,13 @@ export class MentorController {
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.UPDATED_MENTOR });
 	});
+
+	// update to fetch the mentors by userInterest later 
+	fetchMentorsByExpertiseId = asyncHandler(async (req, res) => {
+		const { expertiseId } = req.params;
+		const mentors = await this._mentorService.getMentorByExpertiseId(
+			expertiseId,
+		);
+		res.status(HttpStatus.OK).json(mentors);
+	});
 }

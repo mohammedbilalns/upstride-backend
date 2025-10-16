@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import type { Application } from "express";
 import express from "express";
 import helmet from "helmet";
+import cors from "cors";
 import { connectToDb, redisClient } from "./infrastructure/config";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
@@ -11,6 +12,7 @@ import {
 } from "./interfaces/http/routes";
 import { createMentorRoutes } from "./interfaces/http/routes/mentor.routes";
 import { createUserManagementRouter } from "./interfaces/http/routes/userManagement.routes";
+import env from "./infrastructure/config/env";
 
 /**
  * Main application class for the Identity Service.
@@ -41,8 +43,13 @@ class App {
 	 */
 
 	private _setupMiddlewares() {
-		this._app.use(express.json());
 		this._app.use(helmet());
+		this._app.use(cors({
+			origin:[env.GATEWAY_URL, env.CLIENT_URL],
+			credentials: true,
+		}));
+
+		this._app.use(express.json());
 		this._app.use(cookieParser());
 		this._app.use(requestLogger);
 	}

@@ -35,7 +35,6 @@ class App {
 
 	public listen(port: string){
 		this._app.listen(port, () => {
-			logger.info(`Identity service is running on port ${env.IDENTITY_SERVICE_URL}`)
 			logger.info(`API Gateway started on port ${port}`)
 		})
 

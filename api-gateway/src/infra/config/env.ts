@@ -10,6 +10,7 @@ const envSchema = z.object({
   CLIENT_URL: z.string(),
   IDENTITY_SERVICE_URL: z.string(),
   ARTICLE_SERVICE_URL: z.string(),
+	GATEWAY_URL: z.string(),
   CHAT_SERVICE_URL: z.string(),
   MEDIA_SERVICE_URL: z.string(),
   NOTIFICATION_SERVICE_URL: z.string(),

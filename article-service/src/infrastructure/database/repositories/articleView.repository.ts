@@ -20,21 +20,7 @@ export class ArticleViewRepository
 			id: mapped.id,
 			articleId: mapped.articleId.toString(),
 			userId: mapped.userId,
-			createdAt: mapped.createdAt,
 		};
-	}
-	async findByArticle(
-		articleId: string,
-		page: number,
-		limit: number,
-	): Promise<ArticleView[]> {
-		const articles = await this._model
-			.find({ articleId: articleId })
-			.skip(page * limit)
-			.limit(limit)
-			.lean()
-			.exec();
-		return articles.map(this.mapToDomain);
 	}
 
 	async findByArticleAndUser(
@@ -43,8 +29,12 @@ export class ArticleViewRepository
 	): Promise<ArticleView | null> {
 		const article = await this._model
 			.findOne({ articleId: articleId, userId: userId })
-			.lean()
 			.exec();
+
 		return article ? this.mapToDomain(article) : null;
+	}
+
+	async deleteByArticle(articleId: string): Promise<void> {
+		await this._model.deleteMany({ articleId });
 	}
 }

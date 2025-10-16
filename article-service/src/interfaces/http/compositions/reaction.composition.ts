@@ -1,20 +1,27 @@
-import { ArticleReactionService } from "../../../application/services";
+import { ReactionService } from "../../../application/services";
 import type {
-	IArticleReactionRepository,
+	IArticleCommentRepository,
 	IArticleRepository,
+	IReactionRepository,
 } from "../../../domain/repositories";
-import type { IArticleRectionService } from "../../../domain/services";
+import type { IReactionService } from "../../../domain/services";
 import {
-	ArticleReactionRepository,
+	ArticleCommentRepository,
 	ArticleRepository,
+	ReactionRepository,
 } from "../../../infrastructure/database/repositories";
-import { ArticleReactionController } from "../controllers/reaction.controller";
+import { ReactionController } from "../controllers/reaction.controller";
 
-export function createReactionController(): ArticleReactionController {
-	const articleReactionRepository: IArticleReactionRepository =
-		new ArticleReactionRepository();
+export function createReactionController(): ReactionController {
+	const articleReactionRepository: IReactionRepository =
+		new ReactionRepository();
 	const articleRepository: IArticleRepository = new ArticleRepository();
-	const articleReactionService: IArticleRectionService =
-		new ArticleReactionService(articleReactionRepository, articleRepository);
-	return new ArticleReactionController(articleReactionService);
+	const commentRepository: IArticleCommentRepository =
+		new ArticleCommentRepository();
+	const articleReactionService: IReactionService = new ReactionService(
+		articleReactionRepository,
+		articleRepository,
+		commentRepository,
+	);
+	return new ReactionController(articleReactionService);
 }

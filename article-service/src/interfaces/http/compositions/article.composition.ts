@@ -1,15 +1,24 @@
-import { ArticleService } from "../../../application/services";
+import {
+	ArticleReadService,
+	ArticleWriteService,
+} from "../../../application/services";
 import type {
-	IArticleReactionRepository,
+	IArticleCommentRepository,
 	IArticleRepository,
 	IArticleViewRepository,
+	IReactionRepository,
 	ITagRepository,
 } from "../../../domain/repositories";
-import type { IArticleService } from "../../../domain/services";
+import type {
+	IArticleReadService,
+	IArticleWriteService,
+} from "../../../domain/services";
+import { redisClient } from "../../../infrastructure/config";
 import {
-	ArticleReactionRepository,
+	ArticleCommentRepository,
 	ArticleRepository,
 	ArticleViewRepository,
+	ReactionRepository,
 	TagRepository,
 } from "../../../infrastructure/database/repositories";
 import { ArticleController } from "../controllers/article.controller";
@@ -19,13 +28,23 @@ export function createArticleController(): ArticleController {
 	const tagRepository: ITagRepository = new TagRepository();
 	const articleViewRepository: IArticleViewRepository =
 		new ArticleViewRepository();
-	const articleReactionRepository: IArticleReactionRepository =
-		new ArticleReactionRepository();
-	const articleService: IArticleService = new ArticleService(
+	const articleReactionRepository: IReactionRepository =
+		new ReactionRepository();
+	const articleCommentRepository: IArticleCommentRepository =
+		new ArticleCommentRepository();
+	const articleReadService: IArticleReadService = new ArticleReadService(
+		articleRepository,
+		articleViewRepository,
+		articleReactionRepository,
+		redisClient,
+	);
+	const articleWriteService: IArticleWriteService = new ArticleWriteService(
 		articleRepository,
 		tagRepository,
 		articleViewRepository,
+		articleCommentRepository,
 		articleReactionRepository,
+		redisClient,
 	);
-	return new ArticleController(articleService);
+	return new ArticleController(articleReadService, articleWriteService);
 }

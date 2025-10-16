@@ -10,5 +10,6 @@ export enum ErrorMessage {
 	INTERNAL_SERVER_ERROR = "Internal server error",
 	ARTICLE_NOT_FOUND = "Article not found",
 	ARTICLE_ALREADY_REACTED = "Article already reacted",
+	ARTICLE_COMMENT_ALREADY_REACTED = "Article comment already reacted",
 	ARTICLE_COMMENT_NOT_FOUND = "Article comment not found",
 }

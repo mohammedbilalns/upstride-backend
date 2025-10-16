@@ -8,6 +8,7 @@ export const ArticleSchema: Schema = new Schema<IArticle>(
 		authorName: { type: String, required: true },
 		authorImage: { type: String },
 		featuredImage: { type: String },
+		featuredImageId: { type: String },
 		title: { type: String, required: true },
 		description: { type: String, required: true },
 		author: { type: String, required: true },
@@ -15,8 +16,8 @@ export const ArticleSchema: Schema = new Schema<IArticle>(
 		isActive: { type: Boolean, default: true },
 		views: { type: Number, default: 0 },
 		comments: { type: Number, default: 0 },
-		likes: { type: Number, default:0 },
-		isArchived: { type: Boolean, deafult: false },
+		likes: { type: Number, default: 0 },
+		isArchived: { type: Boolean, default: false },
 		content: { type: String, required: true },
 	},
 	{
