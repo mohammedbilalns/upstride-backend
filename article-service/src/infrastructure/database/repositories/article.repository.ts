@@ -1,3 +1,4 @@
+import type { FilterQuery, PipelineStage } from "mongoose";
 import * as mongoose from "mongoose";
 import type { ArticleMetricsResponseDto } from "../../../application/dtos/article.dto";
 import { AppError } from "../../../application/errors/AppError";
@@ -17,7 +18,8 @@ export class ArticleRepository
 	}
 
 	protected mapToDomain(doc: IArticle): Article {
-		const mapped = mapMongoDocument(doc)!;
+		const mapped = mapMongoDocument(doc);
+		if (!mapped) throw new AppError(ErrorMessage.FAILED_TO_MAP_TO_DOMAIN);
 		return {
 			id: mapped.id,
 			authorName: mapped.authorName,
@@ -49,7 +51,7 @@ export class ArticleRepository
 		}
 	}
 
-	private buildSearchFilter(query?: string): any {
+	private buildSearchFilter(query?: string): FilterQuery<IArticle> {
 		if (!query) return {};
 
 		const regex = new RegExp(query, "i");
@@ -62,7 +64,10 @@ export class ArticleRepository
 		};
 	}
 
-	private buildFilter(baseFilter: any, query?: string): any {
+	private buildFilter(
+		baseFilter: FilterQuery<IArticle>,
+		query?: string,
+	): FilterQuery<IArticle> {
 		const searchFilter = this.buildSearchFilter(query);
 		if (!query) return baseFilter;
 
@@ -168,7 +173,7 @@ export class ArticleRepository
 		let sortStage: { $sort: Record<string, 1 | -1> } = {
 			$sort: { createdAt: -1 },
 		};
-		let addFieldsStage: { $addFields: Record<string, any> } | null = null;
+		let addFieldsStage: PipelineStage.AddFields | null = null;
 
 		if (sortBy === "random") {
 			addFieldsStage = { $addFields: { randomSort: { $rand: {} } } };
@@ -180,7 +185,7 @@ export class ArticleRepository
 		} else if (sortBy === "newest") {
 			sortStage = { $sort: { createdAt: -1 } };
 		}
-		const pipeline = [
+		const pipeline: PipelineStage[] = [
 			{
 				$match: {
 					author: { $in: authorIds },

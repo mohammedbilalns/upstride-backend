@@ -1,7 +1,7 @@
 import type Redis from "ioredis";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type { Article } from "../../domain/entities/article.entity";
-import type { Tag } from "../../domain/entities/tag.entity";
+import type { PopulatedTag, Tag } from "../../domain/entities/tag.entity";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
@@ -88,6 +88,12 @@ export class ArticleWriteService implements IArticleWriteService {
 		}
 
 		if (tags) {
+			const isPopulatedTag = (
+				tag: string | PopulatedTag,
+			): tag is PopulatedTag => {
+				return typeof tag === "object" && tag !== null && "name" in tag;
+			};
+
 			const prevTagNames = article.tags
 				.filter((tag): tag is Tag => typeof tag !== "string")
 				.map((tag) => tag.name);
@@ -106,10 +112,10 @@ export class ArticleWriteService implements IArticleWriteService {
 
 			const remainingTagIds = article.tags
 				.filter(
-					(tag): tag is Tag =>
-						typeof tag !== "string" && tags.includes(tag.name),
+					(tag): tag is PopulatedTag =>
+						isPopulatedTag(tag) && tags.includes(tag.name),
 				)
-				.map((tag: any) => tag._id);
+				.map((tag) => tag._id || tag.id);
 
 			updateData.tags = [...remainingTagIds, ...newTagIds];
 		}

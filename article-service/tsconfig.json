@@ -1,12 +1,12 @@
 {
 	"compilerOptions": {
 		"target": "es2018",
-		"module": "commonjs",
+		"module": "Node16",
 		"lib": ["es2018", "esnext.asynciterable"],
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"outDir": "./dist",
-		"moduleResolution": "node",
+		"moduleResolution": "node16",
 		"removeComments": true,
 		"noImplicitAny": true,
 		"strictNullChecks": true,
@@ -23,7 +23,6 @@
 		"resolveJsonModule": true,
 		"types": ["node"],
 		"typeRoots": ["./node_modules/@types", "src/types"],
-		// "baseUrl": ".",
 		"paths": {
 			"@shared/*": ["../shared/*"],
 			"@routes/*": ["./interfaces/http/routes/*"],
@@ -33,3 +32,4 @@
 	"exclude": ["node_modules"],
 	"include": ["./src/**/*.ts", "../shared/**/*.ts"]
 }
+

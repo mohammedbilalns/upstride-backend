@@ -34,17 +34,21 @@ export class ArticleReadService implements IArticleReadService {
 		id: string,
 		userId: string,
 	): Promise<{
-		article: Omit<Article, "isActive" | "isArchived">;
+		article: Omit<Article, "isActive" | "isArchived"> & {
+			views: number;
+			comments: number;
+			likes: number;
+		};
 		isViewed: boolean;
 		isLiked: boolean;
 	}> {
 		const contentCacheKey = `${ArticleCacheConstants.CONTENT_CACHE_PREFIX}${id}`;
 		const cachedContent = await this._redisClient.get(contentCacheKey);
 
-		let article;
+		let article: Article | null;
 
 		if (cachedContent) {
-			article = JSON.parse(cachedContent);
+			article = JSON.parse(cachedContent) as Article;
 		} else {
 			article = await this._articleRepository.findByArticleId(id);
 			if (!article)
@@ -52,6 +56,7 @@ export class ArticleReadService implements IArticleReadService {
 					ErrorMessage.ARTICLE_NOT_FOUND,
 					HttpStatus.NOT_FOUND,
 				);
+
 			await this._redisClient.set(
 				contentCacheKey,
 				JSON.stringify(article),
@@ -59,25 +64,34 @@ export class ArticleReadService implements IArticleReadService {
 				ArticleCacheConstants.CACHE_TTL,
 			);
 		}
+
 		const metrics = await this._articleRepository.getArticleMetrics(id);
 		if (!metrics)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-		const articleWithMetrics = {
+		const articleWithMetrics: Article & {
+			views: number;
+			comments: number;
+			likes: number;
+		} = {
 			...article,
 			views: metrics.views,
 			comments: metrics.comments,
 			likes: metrics.likes,
 		};
-		const { isActive, isArchived, ...articleForView } = articleWithMetrics;
+
+		const {
+			isActive: _isActive,
+			isArchived: _isArchived,
+			...articleForView
+		} = articleWithMetrics;
 
 		const [isViewed, userReaction] = await Promise.all([
 			this._articleViewRepository.findByArticleAndUser(id, userId),
 			this._articleReactionRepository.findByResourceAndUser(id, userId),
 		]);
-		if (!isViewed) await this.updateViewCount(id, userId);
 
-		console.log("userReaction", userReaction);
+		if (!isViewed) await this.updateViewCount(id, userId);
 
 		return {
 			article: articleForView,
@@ -127,7 +141,7 @@ export class ArticleReadService implements IArticleReadService {
 
 		const articlesWithoutContent = repositoryResponse.articles.map(
 			(article) => {
-				const { content, ...articleWithoutContent } = article;
+				const { content: _content, ...articleWithoutContent } = article;
 				return articleWithoutContent;
 			},
 		);
@@ -165,7 +179,7 @@ export class ArticleReadService implements IArticleReadService {
 			search,
 		);
 		const articlesWithoutContent = data.articles.map((article) => {
-			const { content, ...articleWithoutContent } = article;
+			const { content: _content, ...articleWithoutContent } = article;
 			return articleWithoutContent;
 		});
 		const result = {

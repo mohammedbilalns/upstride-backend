@@ -1,3 +1,5 @@
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage } from "../../../common/enums";
 import type { BookMark } from "../../../domain/entities/bookmark.entity";
 import type { IBookMarkRepository } from "../../../domain/repositories/bookmark.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
@@ -12,7 +14,8 @@ export class BookMarkRepository
 		super(BookMarkModel);
 	}
 	protected mapToDomain(doc: IBookMark): BookMark {
-		const mapped = mapMongoDocument(doc)!;
+		const mapped = mapMongoDocument(doc);
+		if (!mapped) throw new AppError(ErrorMessage.FAILED_TO_MAP_TO_DOMAIN);
 		return {
 			id: mapped.id,
 			userId: mapped.userId,
