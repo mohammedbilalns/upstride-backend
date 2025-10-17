@@ -16,7 +16,7 @@
 		"lint-format": "biome check --write"
 	},
 	"dependencies": {
-		"amqplib": "^0.10.8",
+		"amqplib": "0.10.8",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
 		"dotenv": "^17.2.1",

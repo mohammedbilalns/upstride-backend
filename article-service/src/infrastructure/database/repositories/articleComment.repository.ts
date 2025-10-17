@@ -1,4 +1,6 @@
 import { Types } from "mongoose";
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage } from "../../../common/enums";
 import type { ArticleComment } from "../../../domain/entities/articleComment.entity";
 import type { IArticleCommentRepository } from "../../../domain/repositories/articleComment.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
@@ -16,7 +18,8 @@ export class ArticleCommentRepository
 		super(ArticleCommentModel);
 	}
 	protected mapToDomain(doc: IArticleComment): ArticleComment {
-		const mapped = mapMongoDocument(doc)!;
+		const mapped = mapMongoDocument(doc);
+		if (!mapped) throw new AppError(ErrorMessage.FAILED_TO_MAP_TO_DOMAIN);
 		return {
 			id: mapped.id,
 			articleId: mapped.articleId,

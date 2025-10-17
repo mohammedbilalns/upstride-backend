@@ -13,8 +13,8 @@ export function rateLimiter(
 		try {
 			const keyParts: string[] = ["ratelimit"];
 
-			if (strategy.includes("ip")) {
-				keyParts.push(req.ip!);
+			if (strategy.includes("ip") && req.ip) {
+				keyParts.push(req.ip);
 			}
 
 			// if (strategy.includes("user") && req.user?.id) {

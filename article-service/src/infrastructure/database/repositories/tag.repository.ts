@@ -1,3 +1,5 @@
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage } from "../../../common/enums";
 import type { Tag } from "../../../domain/entities/tag.entity";
 import type { ITagRepository } from "../../../domain/repositories/tag.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
@@ -12,7 +14,8 @@ export class TagRepository
 		super(TagModel);
 	}
 	protected mapToDomain(doc: ITag): Tag {
-		const mapped = mapMongoDocument(doc)!;
+		const mapped = mapMongoDocument(doc);
+		if (!mapped) throw new AppError(ErrorMessage.FAILED_TO_MAP_TO_DOMAIN);
 		return {
 			id: mapped.id,
 			name: mapped.name,

@@ -1,3 +1,5 @@
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage } from "../../../common/enums";
 import type { ArticleView } from "../../../domain/entities/articleView.entity";
 import type { IArticleViewRepository } from "../../../domain/repositories/articleView.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
@@ -15,7 +17,8 @@ export class ArticleViewRepository
 		super(ArticleViewModel);
 	}
 	protected mapToDomain(doc: IArticleView): ArticleView {
-		const mapped = mapMongoDocument(doc)!;
+		const mapped = mapMongoDocument(doc);
+		if (!mapped) throw new AppError(ErrorMessage.FAILED_TO_MAP_TO_DOMAIN);
 		return {
 			id: mapped.id,
 			articleId: mapped.articleId.toString(),

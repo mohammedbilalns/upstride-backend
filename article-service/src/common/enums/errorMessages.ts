@@ -12,4 +12,5 @@ export enum ErrorMessage {
 	ARTICLE_ALREADY_REACTED = "Article already reacted",
 	ARTICLE_COMMENT_ALREADY_REACTED = "Article comment already reacted",
 	ARTICLE_COMMENT_NOT_FOUND = "Article comment not found",
+	FAILED_TO_MAP_TO_DOMAIN = "Failed to map to domain",
 }

@@ -1,3 +1,5 @@
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage } from "../../../common/enums";
 import type { Reaction } from "../../../domain/entities/reaction.entity";
 import type { IReactionRepository } from "../../../domain/repositories";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
@@ -5,14 +7,15 @@ import { type IReaction, ReactionModel } from "../models/reaction.model";
 import { BaseRepository } from "./base.repository";
 
 export class ReactionRepository
-	extends BaseRepository<Reaction, IReaction>
-	implements IReactionRepository
+extends BaseRepository<Reaction, IReaction>
+implements IReactionRepository
 {
 	constructor() {
 		super(ReactionModel);
 	}
 	protected mapToDomain(doc: IReaction): Reaction {
-		const mapped = mapMongoDocument(doc)!;
+		const mapped = mapMongoDocument(doc);
+		if (!mapped) throw new AppError(ErrorMessage.FAILED_TO_MAP_TO_DOMAIN);
 		return {
 			id: mapped.id,
 			resourceId: mapped.resourceId,
@@ -35,8 +38,10 @@ export class ReactionRepository
 			.limit(limit)
 			.lean()
 			.exec();
-		return articles.map(this.mapToDomain);
+
+		return articles.map((doc) => this.mapToDomain(doc as unknown as IReaction));
 	}
+
 
 	async findByResourceAndUser(
 		resourceId: string,
