@@ -13,4 +13,5 @@ export interface IUserRepository extends IBaseRepository<User> {
 	): Promise<User[]>;
 	count(allowedRoles: string[]): Promise<number>;
 	findByIds(ids: string[]): Promise<User[]>;
+	findByUserId(userId: string): Promise<User | null>;
 }

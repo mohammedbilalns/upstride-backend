@@ -13,6 +13,7 @@ import {
 import { createMentorRoutes } from "./interfaces/http/routes/mentor.routes";
 import { createUserManagementRouter } from "./interfaces/http/routes/userManagement.routes";
 import env from "./infrastructure/config/env";
+import { createProfileRoutes } from "./interfaces/http/routes/profile.routes";
 
 /**
  * Main application class for the Identity Service.
@@ -70,6 +71,7 @@ class App {
 		this._app.use("/api/users", createUserManagementRouter());
 		this._app.use("/api/expertise", createExpertiseRouter());
 		this._app.use("/api/mentor", createMentorRoutes());
+		this._app.use("/api/profile", createProfileRoutes());
 		this._app.use(errorHandler);
 	}
 

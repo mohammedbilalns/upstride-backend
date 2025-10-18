@@ -207,8 +207,15 @@ export class MentorRepository
 		return this._model.countDocuments(finalCondition);
 	}
 
-	async findByUserId(userId: string): Promise<Mentor | null> {
-		const mentor = await this._model.findOne({ userId });
+	async findByUserId(userId: string, populate?: boolean): Promise<Mentor | null> {
+		let query = this._model.findOne({ userId });
+		if(populate){
+			query = query.populate([
+				{path:"expertiseId",select:"name _id"},
+				{path:"skillIds",select:"name _id"},
+			])
+		}
+		const mentor = await query 
 		return mentor ? this.mapToDomain(mentor) : null;
 	}
 

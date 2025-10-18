@@ -278,4 +278,8 @@ export class ArticleRepository
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 		return await this._model.findById(id, "views comments likes").exec();
 	}
+
+	async updateAuthor(authorId: string, authorName: string, authorImage: string): Promise<void> {
+	   await this._model.updateMany({author: authorId}, {authorName, authorImage}) 
+	}
 }

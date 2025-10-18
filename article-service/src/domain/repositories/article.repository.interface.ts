@@ -34,4 +34,5 @@ export interface IArticleRepository extends IBaseRepository<Article> {
 	findByArticleId(id: string): Promise<Article | null>;
 	incrementViewCount(id: string): Promise<void>;
 	getArticleMetrics(id: string): Promise<ArticleMetricsResponseDto>;
+	updateAuthor(authorId: string, authorName: string, authorImage: string): Promise<void>;
 }

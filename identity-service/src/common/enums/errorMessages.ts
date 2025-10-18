@@ -3,6 +3,7 @@ export enum ErrorMessage {
 	INVALID_CREDENTIALS = "Invalid email or password",
 	EMAIL_ALREADY_EXISTS = "User with this email already exists",
 	ALERADY_WITH_GOOGLE_ID = "Already registered with this Google ID, please login with Google",
+	REGISTERED_WITH_GOOGLE_ID = "Cannot update password as you are registered with Google",
 	BLOCKED_FROM_PLATFORM = "Your account is blocked from the platform, contact support",
 	UNAUTHORIZED = "Unauthorized access",
 	FORBIDDEN = "Forbidden",
