@@ -124,10 +124,9 @@ router.use(
 	}),
 );
 
-
 router.use(
-	"/profile",
-	proxy(env.IDENTITY_SERVICE_URL, {
+	"/media",
+	proxy(env.MEDIA_SERVICE_URL, {
 		...proxyOptions,
 		proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
 			proxyReqOpts.headers["Content-Type"] = "application/json";
