@@ -92,4 +92,12 @@ export class UserRepository
 		const docs = await this._model.find(filter).exec();
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
+
+	async findByUserId(userId: string): Promise<User | null> {
+		const doc = await this._model.findOne({ _id: userId })
+			.populate({path:"interestedExpertises",select:"name _id"})
+			.populate({path:"interestedSkills",select:"name _id"})
+			.exec();
+		return doc ? this.mapToDomain(doc) : null;
+	}
 }
