@@ -66,6 +66,7 @@ export class ProfileService implements IProfileService {
 
 	async changePassword(userId: string, data: changePasswordDto): Promise<void> {
 		const { oldPassword, newPassword } = data;
+		console.log(oldPassword,newPassword)
 
 		const user  =  await this._userRepository.findById(userId);
 
@@ -73,7 +74,8 @@ export class ProfileService implements IProfileService {
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 		if(!user.passwordHash) throw new AppError(ErrorMessage.REGISTERED_WITH_GOOGLE_ID, HttpStatus.FORBIDDEN);
 		const validOldPassword = await this._cryptoService.compare(oldPassword, user.passwordHash);
-		if(!validOldPassword) throw new AppError(ErrorMessage.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
+		console.log(validOldPassword)
+		if(!validOldPassword) throw new AppError(ErrorMessage.INVALID_PASSWORD, HttpStatus.UNAUTHORIZED);
 		const hashedPassword = await this._cryptoService.hash(newPassword);
 		await this._userRepository.update(userId, {passwordHash: hashedPassword});
 

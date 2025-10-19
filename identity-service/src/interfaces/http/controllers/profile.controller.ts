@@ -17,14 +17,14 @@ export class ProfileController {
 		const userId = res.locals.user.id 
 	// validate the data here 	
 		const data = req.body 
-		this._profileService.updateProfile(userId, data)
+		await this._profileService.updateProfile(userId, data)
 		// handle updating user data in articles and comments 
 		res.status(HttpStatus.OK).json({success:true,message:ResponseMessage.PROFILE_UPDATED})
 	}) 
 	changePassword = asyncHandler(async (req,res)=>{
 		const userId = res.locals.user.id 
 		const {oldPassword,newPassword} = changePasswordSchema.parse(req.body)
-		this._profileService.changePassword(userId,{oldPassword,newPassword})
+		await this._profileService.changePassword(userId,{oldPassword,newPassword})
 		res.status(HttpStatus.OK).json({success:true,message:ResponseMessage.PASSWORD_UPDATED})
 	})
 }

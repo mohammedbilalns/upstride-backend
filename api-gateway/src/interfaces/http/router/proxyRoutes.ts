@@ -125,6 +125,24 @@ router.use(
 );
 
 router.use(
+	"/profile",
+	proxy(env.IDENTITY_SERVICE_URL, {
+		...proxyOptions,
+		proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+			proxyReqOpts.headers["Content-Type"] = "application/json";
+			return proxyReqOpts;
+		},
+		userResDecorator: (proxyRes, proxyResData, _srcReq, _res) => {
+			logger.info(
+				`Response received from identity service: ${proxyRes.statusCode}`,
+			);
+
+			return proxyResData;
+		},
+	}),
+);
+
+router.use(
 	"/media",
 	proxy(env.MEDIA_SERVICE_URL, {
 		...proxyOptions,
