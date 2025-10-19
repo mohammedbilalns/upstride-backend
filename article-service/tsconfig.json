@@ -32,4 +32,3 @@
 	"exclude": ["node_modules"],
 	"include": ["./src/**/*.ts", "../shared/**/*.ts"]
 }
-

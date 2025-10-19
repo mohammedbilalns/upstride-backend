@@ -11,4 +11,5 @@ export interface IAuthService {
 	googleAuthenticate(token: string): Promise<GoogleAuthResponse>;
 	isUserBlocked(userId: string): Promise<boolean>;
 	getUser(userId: string): Promise<UserDTO>;
+	logout(userId: string): Promise<void>;
 }

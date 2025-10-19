@@ -9,6 +9,7 @@ export const userSchema: Schema = new Schema(
 		email: { type: String, required: true, unique: true },
 		phone: { type: String },
 		profilePicture: { type: String },
+		profilePictureId: { type: String },
 		isBlocked: { type: Boolean, default: false },
 		googleId: { type: String },
 		isVerified: { type: Boolean, default: false },

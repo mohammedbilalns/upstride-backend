@@ -5,6 +5,7 @@ import {
 	OTP_SUBJECT,
 	otpType,
 } from "../../application/utils/otp.util";
+import { CACHE_TTL } from "../../common/constants/cacheOptions";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { QueueEvents } from "../../common/enums/queueEvents";
 import type { IEventBus } from "../../domain/events/IEventBus";
@@ -17,6 +18,7 @@ import type {
 	IOtpService,
 	ITokenService,
 } from "../../domain/services";
+import type { ICacheService } from "../../domain/services/cache.service.interface";
 import type { IRegistrationService } from "../../domain/services/registration.service.interface";
 import { generateSecureToken } from "../utils/token.util";
 
@@ -28,6 +30,7 @@ export class RegistrationService implements IRegistrationService {
 		private _tokenService: ITokenService,
 		private _otpService: IOtpService,
 		private _eventBus: IEventBus,
+		private _cacheService: ICacheService,
 	) {}
 
 	private async generateTokens(
@@ -181,6 +184,11 @@ export class RegistrationService implements IRegistrationService {
 		});
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
+		this._cacheService.set(
+			`user:${user.id}`,
+			{ image: user.profilePicture },
+			CACHE_TTL,
+		);
 		return {
 			accessToken: newAccessToken,
 			refreshToken: newRefreshToken,

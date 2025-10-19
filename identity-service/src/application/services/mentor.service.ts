@@ -223,7 +223,7 @@ export class MentorService implements IMentorService {
 		]);
 	}
 
-	async getMentor(userId: string): Promise< Mentor> {
+	async getMentor(userId: string): Promise<Mentor> {
 		const user = await this._userRepository.findById(userId);
 		if (!user)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -243,8 +243,7 @@ export class MentorService implements IMentorService {
 	}
 
 	async getMentorByExpertiseId(expertiseId: string): Promise<string[]> {
-		const mentors  = await  this._mentorRepository.findByExpertiseId(expertiseId);
-		return mentors.map((mentor:Mentor) => mentor.userId);
+		const mentors = await this._mentorRepository.findByExpertiseId(expertiseId);
+		return mentors.map((mentor: Mentor) => mentor.userId);
 	}
-	
 }

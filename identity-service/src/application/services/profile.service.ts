@@ -1,81 +1,86 @@
 import { ErrorMessage, HttpStatus, QueueEvents } from "../../common/enums";
-import { IMentorRepository, IUserRepository } from "../../domain/repositories";
-import { IProfileService } from "../../domain/services/profile.service.interface";
-import { changePasswordDto, fetchProfileResponseDto, updateProfileDto } from "../dtos/profile.dto";
-import { Mentor } from "../../domain/entities";
+import type { IEventBus } from "../../domain/events/IEventBus";
+import type { IUserRepository } from "../../domain/repositories";
+import type { ICryptoService } from "../../domain/services";
+import type { IProfileService } from "../../domain/services/profile.service.interface";
+import type {
+	changePasswordDto,
+	fetchProfileResponseDto,
+	updateProfileDto,
+} from "../dtos/profile.dto";
 import { AppError } from "../errors/AppError";
-import { ICryptoService } from "../../domain/services";
-import { IEventBus } from "../../domain/events/IEventBus";
 
 export class ProfileService implements IProfileService {
 	constructor(
 		private _userRepository: IUserRepository,
-		private _mentorRepository: IMentorRepository,
 		private _cryptoService: ICryptoService,
-		private _eventBus: IEventBus
+		private _eventBus: IEventBus,
 	) {}
 
-	async fetchProfileById(userId: string, profileId:string): Promise<fetchProfileResponseDto> {
-		const isUser = userId == profileId
-
-		let user = await this._userRepository.findByUserId(profileId);
-		if (!user)throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-		if(!user.isVerified) throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-
-		let {passwordHash, isBlocked, isVerified, ...userData} = user;
-		let mentor : Mentor | null 
-		if(userData.role == "mentor"){
-			mentor = await this._mentorRepository.findByUserId(profileId,true);
-			if(!mentor) throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
-			const {isPending, isRejected, isActive,resumeId, ...mentorData} = mentor 
-
-			const mergedData = {...userData, ...mentorData, ...(isUser && {resumeId})}
-			return {...mergedData}
-		}
-		return { ...userData}
+	async fetchProfileById(profileId: string): Promise<fetchProfileResponseDto> {
+		const user = await this._userRepository.findByUserId(profileId);
+		if (!user)
+			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+		if (!user.isVerified)
+			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+		const { passwordHash, isBlocked, ...userData } = user;
+		if (!passwordHash) userData.isVerified = false;
+		return { ...userData };
 	}
 
 	async updateProfile(userId: string, data: updateProfileDto): Promise<void> {
-		let {mentor:MentorData, ...userData} = data;
-		if(userId != data.id) throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN)
-		const user  =  await this._userRepository.findById(userId);
-		if(!user || !user.isVerified)
+		if (userId != data.id)
+			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
+		const user = await this._userRepository.findById(userId);
+		if (!user || !user.isVerified)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+		const { profilePicture, ...profileData } = data;
 
-		if(!MentorData){
-			await this._userRepository.update(userId, {...userData});
-			return 
+		const newUser = await this._userRepository.update(userId, {
+			...profileData,
+			profilePicture: profilePicture?.secure_url,
+			profilePictureId: profilePicture?.public_id,
+		});
+		console.log("profile pic", JSON.stringify(profilePicture));
+
+		if (!newUser)
+			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+		if (data.name || data.profilePicture) {
+			const { name, profilePicture } = newUser;
+			console.log("Before publishing event ");
+			this._eventBus.publish(QueueEvents.UPDATE_PROFILE, {
+				userId: user.id,
+				name,
+				profilePicture,
+			});
+			console.log("After publishing event ");
 		}
-		if(user.role !== "mentor") throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
-
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if( !mentor) throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
-		const [newUser] = await Promise.all([
-			this._userRepository.update(userId, {...userData}),
-			this._mentorRepository.update(mentor.id, {...MentorData}),
-		]);
-		if(!newUser) throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-
-		if(data.name || data.profilePicture){
-			const {name,profilePicture} = newUser
-			this._eventBus.publish(QueueEvents.UPDATE_PROFILE,{userId:user.id,name, profilePicture} )
-		}
-
 	}
-
 
 	async changePassword(userId: string, data: changePasswordDto): Promise<void> {
 		const { oldPassword, newPassword } = data;
+		console.log(oldPassword, newPassword);
 
-		const user  =  await this._userRepository.findById(userId);
+		const user = await this._userRepository.findById(userId);
 
-		if(!user || !user.isVerified)
+		if (!user || !user.isVerified)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-		if(!user.passwordHash) throw new AppError(ErrorMessage.REGISTERED_WITH_GOOGLE_ID, HttpStatus.FORBIDDEN);
-		const validOldPassword = await this._cryptoService.compare(oldPassword, user.passwordHash);
-		if(!validOldPassword) throw new AppError(ErrorMessage.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
+		if (!user.passwordHash)
+			throw new AppError(
+				ErrorMessage.REGISTERED_WITH_GOOGLE_ID,
+				HttpStatus.FORBIDDEN,
+			);
+		const validOldPassword = await this._cryptoService.compare(
+			oldPassword,
+			user.passwordHash,
+		);
+		console.log(validOldPassword);
+		if (!validOldPassword)
+			throw new AppError(
+				ErrorMessage.INVALID_PASSWORD,
+				HttpStatus.UNAUTHORIZED,
+			);
 		const hashedPassword = await this._cryptoService.hash(newPassword);
-		await this._userRepository.update(userId, {passwordHash: hashedPassword});
-
+		await this._userRepository.update(userId, { passwordHash: hashedPassword });
 	}
 }

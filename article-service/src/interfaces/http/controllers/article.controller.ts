@@ -19,17 +19,11 @@ export class ArticleController {
 
 	create = asyncHandler(async (req, res) => {
 		const articleData = createArticleSchema.parse(req.body);
-		const {
-			id: author,
-			name: authorName,
-			role: authorRole,
-			autherImage: authorImage,
-		} = res.locals.user;
+		const { id: author, name: authorName, role: authorRole } = res.locals.user;
 		await this._articleWriteService.createArticle({
 			author,
 			authorName,
 			authorRole,
-			authorImage,
 			...articleData,
 		});
 		res
@@ -56,6 +50,7 @@ export class ArticleController {
 	});
 
 	fetchArticle = asyncHandler(async (req, res) => {
+		console.log("user in locals", JSON.stringify(res.locals.user));
 		const id = req.params.id;
 		const userId = res.locals.user.id;
 		const { article, isViewed, isLiked } =

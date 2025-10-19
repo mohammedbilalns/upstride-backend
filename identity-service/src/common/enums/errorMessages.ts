@@ -25,4 +25,5 @@ export enum ErrorMessage {
 	MENTOR_NOT_FOUND = "Mentor not found",
 	MENTOR_ALREADY_APPROVED = "Mentor already approved",
 	MENTOR_LIMIT_REACHED = "You have reached the limit of maximum 3 mentor requests",
+	INVALID_PASSWORD = "Invalid password",
 }

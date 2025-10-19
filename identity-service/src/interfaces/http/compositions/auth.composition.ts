@@ -4,6 +4,7 @@ import {
 	OtpService,
 	TokenService,
 } from "../../../application/services";
+import { CacheService } from "../../../application/services/cache.service";
 import { PasswordResetService } from "../../../application/services/passwordReset.service";
 import { RegistrationService } from "../../../application/services/registration.service";
 import type { IEventBus } from "../../../domain/events/IEventBus";
@@ -30,6 +31,7 @@ export function createAuthController(): AuthController {
 	const tokenService: ITokenService = new TokenService(env.JWT_SECRET);
 	const otpService: IOtpService = new OtpService();
 	const eventBus: IEventBus = EventBus;
+	const cacheService = new CacheService(redisClient);
 	const registrationService = new RegistrationService(
 		userRepository,
 		cryptoService,
@@ -37,12 +39,14 @@ export function createAuthController(): AuthController {
 		tokenService,
 		otpService,
 		eventBus,
+		cacheService,
 	);
 	const authService = new AuthService(
 		userRepository,
 		verificationTokenRepository,
 		cryptoService,
 		tokenService,
+		cacheService,
 	);
 	const passwordResetService = new PasswordResetService(
 		userRepository,

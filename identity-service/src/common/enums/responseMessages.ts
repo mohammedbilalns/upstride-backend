@@ -23,5 +23,5 @@ export enum ResponseMessage {
 	SKILL_VERIFIED = "Skill verified successfully",
 	INTERESTS_FETCHED = "Interests fetched successfully",
 	INTERESTS_ADDED = "Interests added successfully",
-	PROFILE_UPDATED = "Updated profile successfully"
+	PROFILE_UPDATED = "Updated profile successfully",
 }

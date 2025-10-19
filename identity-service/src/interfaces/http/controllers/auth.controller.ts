@@ -119,6 +119,8 @@ export class AuthController {
 	});
 
 	logout = asyncHandler(async (_req, res) => {
+		const userId = res.locals.user.id;
+		this._authService.logout(userId);
 		this.clearAuthCookies(res);
 		res
 			.status(HttpStatus.OK)
