@@ -7,8 +7,8 @@ import { type IReaction, ReactionModel } from "../models/reaction.model";
 import { BaseRepository } from "./base.repository";
 
 export class ReactionRepository
-extends BaseRepository<Reaction, IReaction>
-implements IReactionRepository
+	extends BaseRepository<Reaction, IReaction>
+	implements IReactionRepository
 {
 	constructor() {
 		super(ReactionModel);
@@ -41,7 +41,6 @@ implements IReactionRepository
 
 		return articles.map((doc) => this.mapToDomain(doc as unknown as IReaction));
 	}
-
 
 	async findByResourceAndUser(
 		resourceId: string,

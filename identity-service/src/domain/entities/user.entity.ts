@@ -4,6 +4,7 @@ export interface User {
 	email: string;
 	phone: string;
 	profilePicture?: string;
+	profilePictureId?: string;
 	isBlocked: boolean;
 	googleId?: string;
 	passwordHash?: string;

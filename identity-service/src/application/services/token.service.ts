@@ -15,21 +15,33 @@ export interface GoogleTokenPayload {
 export class TokenService implements ITokenService {
 	constructor(private jwtSecret: string) {}
 
-  generateAccessToken(user: UserDTO): string {
-    return jwt.sign(
-      { id: user.id, email: user.email,name: user.name, role: user.role, type: "access" },
-      this.jwtSecret,
-      { expiresIn: parseInt(env.ACCESS_TOKEN_EXPIRY) },
-    );
-  }
+	generateAccessToken(user: UserDTO): string {
+		return jwt.sign(
+			{
+				id: user.id,
+				email: user.email,
+				name: user.name,
+				role: user.role,
+				type: "access",
+			},
+			this.jwtSecret,
+			{ expiresIn: parseInt(env.ACCESS_TOKEN_EXPIRY) },
+		);
+	}
 
-  generateRefreshToken(user: UserDTO): string {
-    return jwt.sign(
-      { id: user.id, email: user.email,name:user.name, role: user.role, type: "refresh" },
-      this.jwtSecret,
-      { expiresIn: parseInt(env.REFRESH_TOKEN_EXPIRY) },
-    );
-  }
+	generateRefreshToken(user: UserDTO): string {
+		return jwt.sign(
+			{
+				id: user.id,
+				email: user.email,
+				name: user.name,
+				role: user.role,
+				type: "refresh",
+			},
+			this.jwtSecret,
+			{ expiresIn: parseInt(env.REFRESH_TOKEN_EXPIRY) },
+		);
+	}
 
 	verifyAccessToken(token: string): {
 		id: string;

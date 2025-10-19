@@ -2,6 +2,7 @@ import {
 	ArticleReadService,
 	ArticleWriteService,
 } from "../../../application/services";
+import { CacheService } from "../../../application/services/cache.service";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
@@ -13,6 +14,7 @@ import type {
 	IArticleReadService,
 	IArticleWriteService,
 } from "../../../domain/services";
+import type { ICacheService } from "../../../domain/services/cache.service.interface";
 import { redisClient } from "../../../infrastructure/config";
 import {
 	ArticleCommentRepository,
@@ -32,11 +34,12 @@ export function createArticleController(): ArticleController {
 		new ReactionRepository();
 	const articleCommentRepository: IArticleCommentRepository =
 		new ArticleCommentRepository();
+	const cacheService: ICacheService = new CacheService(redisClient);
 	const articleReadService: IArticleReadService = new ArticleReadService(
 		articleRepository,
 		articleViewRepository,
 		articleReactionRepository,
-		redisClient,
+		cacheService,
 	);
 	const articleWriteService: IArticleWriteService = new ArticleWriteService(
 		articleRepository,
@@ -44,7 +47,7 @@ export function createArticleController(): ArticleController {
 		articleViewRepository,
 		articleCommentRepository,
 		articleReactionRepository,
-		redisClient,
+		cacheService,
 	);
 	return new ArticleController(articleReadService, articleWriteService);
 }

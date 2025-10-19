@@ -1,4 +1,4 @@
-import { Types, type ObjectId } from "mongoose";
+import { type ObjectId, Types } from "mongoose";
 import type { findAllMentorsDto } from "../../../application/dtos";
 import type { Mentor } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories";
@@ -207,15 +207,18 @@ export class MentorRepository
 		return this._model.countDocuments(finalCondition);
 	}
 
-	async findByUserId(userId: string, populate?: boolean): Promise<Mentor | null> {
+	async findByUserId(
+		userId: string,
+		populate?: boolean,
+	): Promise<Mentor | null> {
 		let query = this._model.findOne({ userId });
-		if(populate){
+		if (populate) {
 			query = query.populate([
-				{path:"expertiseId",select:"name _id"},
-				{path:"skillIds",select:"name _id"},
-			])
+				{ path: "expertiseId", select: "name _id" },
+				{ path: "skillIds", select: "name _id" },
+			]);
 		}
-		const mentor = await query 
+		const mentor = await query;
 		return mentor ? this.mapToDomain(mentor) : null;
 	}
 
@@ -245,25 +248,20 @@ export class MentorRepository
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
 
-
 	async findByExpertiseId(expertiseId: string): Promise<Mentor[]> {
-	
-        const mentors = await this._model.aggregate([
-            {
-                $match: {
-                    expertiseId: new Types.ObjectId(expertiseId),
-                    isActive: true,
-   
-                },
-            },
-            {
-                $sample: {
-                    size: 10,
-                },
-            },
-        ]);	
+		const mentors = await this._model.aggregate([
+			{
+				$match: {
+					expertiseId: new Types.ObjectId(expertiseId),
+					isActive: true,
+				},
+			},
+			{
+				$sample: {
+					size: 10,
+				},
+			},
+		]);
 		return mentors.map((doc) => this.mapToDomain(doc));
 	}
-
-
 }

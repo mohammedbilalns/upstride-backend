@@ -106,7 +106,14 @@ export class ArticleCommentRepository
 			.then((docs) => docs.map((doc) => doc._id.toString()));
 	}
 
-	async updateAuthor(authorId: string, authorName: string, authorImage: string): Promise<void> {
-	    this._model.updateMany({userId: authorId}, {userName:authorName, userImage: authorImage})
+	async updateAuthor(
+		authorId: string,
+		authorName: string,
+		authorImage: string,
+	): Promise<void> {
+		this._model.updateMany(
+			{ userId: authorId },
+			{ userName: authorName, userImage: authorImage },
+		);
 	}
 }

@@ -12,7 +12,6 @@ interface FeaturedImage {
 export interface CreateArticleDto {
 	author: string;
 	authorName: string;
-	authorImage: string;
 	authorRole: string;
 	featuredImage?: FeaturedImage;
 	title: string;

@@ -1,4 +1,3 @@
-import type Redis from "ioredis";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type { Article } from "../../domain/entities/article.entity";
 import type { PopulatedTag, Tag } from "../../domain/entities/tag.entity";
@@ -10,6 +9,7 @@ import type {
 	ITagRepository,
 } from "../../domain/repositories";
 import type { IArticleWriteService } from "../../domain/services";
+import type { ICacheService } from "../../domain/services/cache.service.interface";
 import type { CreateArticleDto, UpdateArticleDto } from "../dtos/article.dto";
 import { AppError } from "../errors/AppError";
 import { ArticleCacheConstants } from "../utils/cacheUtils";
@@ -22,31 +22,29 @@ export class ArticleWriteService implements IArticleWriteService {
 		private _articleViewRepository: IArticleViewRepository,
 		private _commentRepository: IArticleCommentRepository,
 		private _articleReactionRepository: IReactionRepository,
-		private _redisClient: Redis,
+		private _cacheService: ICacheService,
 	) {}
 
-	private async invalidateListCache(pattern: string): Promise<void> {
-		const keys = await this._redisClient.keys(pattern);
-		if (keys.length > 0) {
-			await this._redisClient.del(...keys);
-		}
+	private async invalidateListCache(): Promise<void> {
+		await this._cacheService.delByPattern(
+			`${ArticleCacheConstants.ARTICLES_LIST_CACHE_PREFIX}*`,
+		);
 	}
 
 	private async _clearArticleCache(articleId: string): Promise<void> {
 		const contentKey = `${ArticleCacheConstants.CONTENT_CACHE_PREFIX}${articleId}`;
-		const listPattern = `${ArticleCacheConstants.ARTICLES_LIST_CACHE_PREFIX}*`;
-
-		const keys = await this._redisClient.keys(listPattern);
-		const keysToDelete = [contentKey, ...keys];
-
-		if (keysToDelete.length > 0) {
-			await this._redisClient.del(...keysToDelete);
-		}
+		await this._cacheService.del(contentKey);
+		await this.invalidateListCache();
 	}
 
 	async createArticle(createAricleDto: CreateArticleDto): Promise<void> {
 		const { content, tags, author, authorRole, featuredImage, ...rest } =
 			createAricleDto;
+		const cachedAuthor: { image: string } | null = await this._cacheService.get(
+			`user:${author}`,
+		);
+		const authorImage = cachedAuthor?.image;
+
 		// check if authorRole is mentor
 		if (authorRole !== "mentor")
 			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
@@ -54,19 +52,19 @@ export class ArticleWriteService implements IArticleWriteService {
 		const tagIds = await this._tagRepository.createOrIncrement(tags);
 		// generate description
 		const description = generateDescription(content);
+
 		await this._articleRepository.create({
 			content,
 			description,
 			author,
+			authorImage,
 			featuredImage: featuredImage?.secure_url,
 			featuredImageId: featuredImage?.public_id,
 			...rest,
 			tags: tagIds,
 		});
 
-		await this.invalidateListCache(
-			`${ArticleCacheConstants.ARTICLES_LIST_CACHE_PREFIX}*`,
-		);
+		await this.invalidateListCache();
 	}
 
 	async updateArticle(updateArticleData: UpdateArticleDto): Promise<void> {

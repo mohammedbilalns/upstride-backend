@@ -5,7 +5,6 @@ export async function registerUserConsumer() {
 		"user.registered",
 		async (payload) => {
 			console.log("✅ User registered event consumed:", payload);
-
 		},
 	);
 }

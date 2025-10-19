@@ -20,6 +20,7 @@ export class UserRepository
 			email: mapped.email,
 			phone: mapped.phone,
 			profilePicture: mapped.profilePicture,
+			profilePictureId: mapped.profilePictureId,
 			passwordHash: mapped.passwordHash,
 			isBlocked: mapped.isBlocked,
 			isRequestedForMentoring: mapped.isRequestedForMentoring,
@@ -94,9 +95,10 @@ export class UserRepository
 	}
 
 	async findByUserId(userId: string): Promise<User | null> {
-		const doc = await this._model.findOne({ _id: userId })
-			.populate({path:"interestedExpertises",select:"name _id"})
-			.populate({path:"interestedSkills",select:"name _id"})
+		const doc = await this._model
+			.findOne({ _id: userId })
+			.populate({ path: "interestedExpertises", select: "name _id" })
+			.populate({ path: "interestedSkills", select: "name _id" })
 			.exec();
 		return doc ? this.mapToDomain(doc) : null;
 	}

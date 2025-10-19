@@ -1,3 +1,4 @@
+import { CACHE_TTL } from "../../common/constants/cacheOptions";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type {
 	IUserRepository,
@@ -8,6 +9,7 @@ import type {
 	ICryptoService,
 	ITokenService,
 } from "../../domain/services";
+import type { ICacheService } from "../../domain/services/cache.service.interface";
 import type { GoogleAuthResponse } from "../dtos/auth.dto";
 import type { UserDTO } from "../dtos/user.dto";
 import { AppError } from "../errors/AppError";
@@ -19,6 +21,7 @@ export class AuthService implements IAuthService {
 		private _verificationTokenRepository: IVerificationTokenRepository,
 		private _cryptoService: ICryptoService,
 		private _tokenService: ITokenService,
+		private _cacheService: ICacheService,
 	) {}
 
 	private async generateTokens(
@@ -64,6 +67,13 @@ export class AuthService implements IAuthService {
 				ErrorMessage.INVALID_CREDENTIALS,
 				HttpStatus.UNAUTHORIZED,
 			);
+
+		this._cacheService.set(
+			`user:${user.id}`,
+			{ image: user.profilePicture },
+			CACHE_TTL,
+		);
+
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
 		return {
@@ -88,6 +98,11 @@ export class AuthService implements IAuthService {
 			);
 
 		const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
+		this._cacheService.set(
+			`user:${user.id}`,
+			{ image: user.profilePicture },
+			CACHE_TTL,
+		);
 		return {
 			accessToken: newAccessToken,
 			refreshToken: newRefreshToken,
@@ -132,6 +147,11 @@ export class AuthService implements IAuthService {
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
 		const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
+		this._cacheService.set(
+			`user:${user.id}`,
+			{ image: user.profilePicture },
+			CACHE_TTL,
+		);
 		return {
 			user: publicUser,
 			accessToken: newAccessToken,
@@ -156,5 +176,9 @@ export class AuthService implements IAuthService {
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
 		return publicUser;
+	}
+
+	async logout(userId: string): Promise<void> {
+		await this._cacheService.del(`user:${userId}`);
 	}
 }

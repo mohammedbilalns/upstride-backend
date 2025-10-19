@@ -6,12 +6,11 @@ export function createProfileRoutes() {
 	const router = Router();
 	const profileController = createProfileController();
 
-
-	router.get("/:profileId", profileController.fetchProfileById);
 	router.use(authMiddleware());
-	router.use(authorizeRoles("user","mentor"));
-  router.post("/", profileController.updateProfile);
-  router.put("/change-password", profileController.changePassword);
+	router.use(authorizeRoles("user", "mentor"));
+	router.get("/:profileId", profileController.fetchProfileById);
+	router.post("/", profileController.updateProfile);
+	router.put("/change-password", profileController.changePassword);
 
 	return router;
 }
