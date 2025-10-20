@@ -5,7 +5,7 @@ export const notificationValidationSchema = z.object({
 	userId: z.string(),
 	type: z.enum(NotificationPayloadTypes),
 	triggeredBy: z.string().optional(),
-	targetResource: z.enum(["REACT"]).optional(), 
+	targetResource: z.string(),
 	time: z.string().optional(),
 });
 

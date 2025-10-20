@@ -48,7 +48,7 @@ export class ReactionService implements IReactionService {
 			userId: notificationUserId,
 			type: resourceType === "article" ? "REACT_ARTICLE" : "REACT_COMMENT",
 			triggeredBy,
-			targetId,
+			targetResource: targetId,
 		});
 	}
 

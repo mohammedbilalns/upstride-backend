@@ -10,8 +10,8 @@ export const NotificationSchema: Schema = new Schema<INotification>({
 	content: { type: String, required: true },
 	isRead: { type: Boolean, default: false },
 	link: { type: String },
-	
-});
+},{timestamps: true}
+);
 
 export const NotificationModel = model<INotification>(
 	"Notification",

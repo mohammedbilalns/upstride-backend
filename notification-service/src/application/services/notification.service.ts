@@ -26,6 +26,7 @@ export class NotificationService implements INotificationService{
 		const title = template.getTitle(triggerInfo);
 		const content = template.getContent(triggerInfo);
 		const link = template.getLink ? template.getLink(triggerInfo) : undefined;
+		console.log(link)
 
 		return { title, content, link, type: template.type };
 	}	

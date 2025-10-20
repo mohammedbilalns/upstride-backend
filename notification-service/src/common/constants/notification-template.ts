@@ -6,28 +6,28 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationPayloadTypes, Notificati
 	[NotificationPayloadTypes.REACT_ARTICLE]: {
 		getTitle: () => "New reaction on your post",
 		getContent: ({ triggeredBy }) => `${triggeredBy} reacted to your post`,
-		getLink: ({ targetResource }) => `/article/${targetResource}`,
+		getLink: ({ targetResource }) => `/articles/${targetResource}`,
 		type: "article",
 	},
 
 	[NotificationPayloadTypes.REACT_COMMENT]: {
 		getTitle: () => "New reaction on your comment",
 		getContent: ({ triggeredBy }) => `${triggeredBy} reacted to your comment`,
-		getLink: ({ targetResource }) => `/article/${targetResource}`,
+		getLink: ({ targetResource }) => `/articles/${targetResource}`,
 		type: "article",
 	},
 
 	[NotificationPayloadTypes.COMMENT_ARTICLE]: {
 		getTitle: () => "New comment on your post",
 		getContent: ({ triggeredBy }) => `${triggeredBy} commented on your post`,
-		getLink: ({ targetResource }) => `/article/${targetResource}`,
+		getLink: ({ targetResource }) => `/articles/${targetResource}`,
 		type: "article",
 	},
 
 	[NotificationPayloadTypes.REPLY_COMMENT]: {
 		getTitle: () => "New reply to your comment",
 		getContent: ({ triggeredBy }) => `${triggeredBy} replied to your comment`,
-		getLink: ({ targetResource }) => `/article/${targetResource}`,
+		getLink: ({ targetResource }) => `/articles/${targetResource}`,
 		type: "article",
 	},
 
