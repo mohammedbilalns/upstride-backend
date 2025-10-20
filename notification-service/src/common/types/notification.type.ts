@@ -1,2 +1,6 @@
-
-export type NotificationType = "article"  | "session" | "connection"| "chat" | undefined
+export type NotificationType =
+	| "article"
+	| "session"
+	| "connection"
+	| "chat"
+	| undefined;

@@ -1,7 +1,10 @@
-import { NotificationTemplate } from "../types/notification-template.type";
 import { NotificationPayloadTypes } from "../enums/notificationPayloadTypes";
+import type { NotificationTemplate } from "../types/notification-template.type";
 
-export const NOTIFICATION_TEMPLATES: Record<NotificationPayloadTypes, NotificationTemplate> = {
+export const NOTIFICATION_TEMPLATES: Record<
+	NotificationPayloadTypes,
+	NotificationTemplate
+> = {
 	/** ARTICLE RELATED */
 	[NotificationPayloadTypes.REACT_ARTICLE]: {
 		getTitle: () => "New reaction on your post",
@@ -83,4 +86,3 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationPayloadTypes, Notificati
 		type: "connection",
 	},
 };
-

@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import logger from "../../../common/utils/logger";
 import { redisClient } from "../../../infrastructure/config";
 
 export type RateLimitStrategy = "ip" | "user" | "route" | "global";
@@ -14,7 +15,7 @@ export function rateLimiter(
 			const keyParts: string[] = ["ratelimit"];
 
 			if (strategy.includes("ip")) {
-				keyParts.push(req.ip!);
+				keyParts.push(req.ip ?? "unknown");
 			}
 
 			// if (strategy.includes("user") && req.user?.id) {
@@ -46,7 +47,7 @@ export function rateLimiter(
 
 			return next();
 		} catch (err) {
-			console.error("Rate limiter error:", err);
+			logger.error("Rate limiter error:", err);
 			return res
 				.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.json({ message: ErrorMessage.SERVER_ERROR });

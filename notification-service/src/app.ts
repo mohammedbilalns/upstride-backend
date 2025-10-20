@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import express, { type Application } from "express";
 import helmet from "helmet";
+import { initializeJobs } from "./application/jobs";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitmq";
@@ -31,6 +32,7 @@ class App {
 		this._app.listen(port, () => {
 			connectRabbitMq();
 			connectToDb();
+			initializeJobs();
 			logger.info(`Notification service is listening on port ${port}`);
 		});
 	}
