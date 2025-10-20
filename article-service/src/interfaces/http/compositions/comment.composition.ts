@@ -1,4 +1,5 @@
 import { ArticleCommentService } from "../../../application/services";
+import { IEventBus } from "../../../domain/events/eventBus.interface";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
@@ -10,6 +11,7 @@ import {
 	ArticleRepository,
 	ReactionRepository,
 } from "../../../infrastructure/database/repositories";
+import EventBus from "../../../infrastructure/events/eventBus";
 import { ArticleCommentController } from "../controllers/comment.controller";
 
 export function createCommentController(): ArticleCommentController {
@@ -17,11 +19,13 @@ export function createCommentController(): ArticleCommentController {
 		new ArticleCommentRepository();
 	const articleRepository: IArticleRepository = new ArticleRepository();
 	const reactionRepository: IReactionRepository = new ReactionRepository();
+	const eventBus: IEventBus = EventBus;
 	const articleCommentService: IArticleCommentService =
 		new ArticleCommentService(
 			articleCommentRepository,
 			articleRepository,
 			reactionRepository,
+			eventBus
 		);
 	return new ArticleCommentController(articleCommentService);
 }

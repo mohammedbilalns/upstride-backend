@@ -1,4 +1,4 @@
-import { NOTIFICATION_TEMPLATES } from "../../common/constants/notificattion-template";
+import { DEFAULT_NOTIFICATION_VALUES, NOTIFICATION_TEMPLATES } from "../../common/constants";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { NotificationType } from "../../common/types/notification.type";
 import { INotificationRepository } from "../../domain/repositories/notification.repository.interface";
@@ -17,9 +17,9 @@ export class NotificationService implements INotificationService{
 
 		if (!template) {
 			return {
-				title: "New notification",
-				content: "You have a new notification",
-				type: undefined,
+				title: DEFAULT_NOTIFICATION_VALUES.title,
+				content: DEFAULT_NOTIFICATION_VALUES.content,
+				type: DEFAULT_NOTIFICATION_VALUES.type,
 			};
 		}
 
@@ -51,5 +51,4 @@ export class NotificationService implements INotificationService{
 		const { notifications, total } = await this._notificationRepository.findAll(userId, Number(page), Number(limit));
 		return { notifications, total };
 	}
-
 }

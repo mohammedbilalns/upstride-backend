@@ -14,10 +14,12 @@ export class ReactionController {
 			req.body,
 		);
 		const userId = res.locals.user.id;
+		const userName = res.locals.user.name;
 		await this._reactionService.reactToResource({
 			resourceId,
 			resourceType,
 			userId,
+			userName,
 			reaction,
 		});
 		res
