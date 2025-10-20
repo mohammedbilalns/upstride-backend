@@ -3,7 +3,9 @@ import {
 	NOTIFICATION_TEMPLATES,
 } from "../../common/constants";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
+import { QueueEvents } from "../../common/enums/queueEvents";
 import type { NotificationType } from "../../common/types/notification.type";
+import { IEventBus } from "../../domain/events/IEventBus";
 import type { INotificationRepository } from "../../domain/repositories/notification.repository.interface";
 import type { INotificationService } from "../../domain/services/notification.service.interface";
 import type {
@@ -14,7 +16,7 @@ import type {
 import { AppError } from "../errors/AppError";
 
 export class NotificationService implements INotificationService {
-	constructor(private _notificationRepository: INotificationRepository) {}
+	constructor(private _notificationRepository: INotificationRepository,private _eventBus: IEventBus  ) {}
 
 	private _generateNotificationData(triggerInfo: GenerateNotificationDto): {
 		title: string;
@@ -43,6 +45,8 @@ export class NotificationService implements INotificationService {
 		const { userId, ...triggerInfo } = notificationData;
 		const { title, content, link, type } =
 			this._generateNotificationData(triggerInfo);
+
+		this._eventBus.publish(QueueEvents.NOTIFICATION_CREATED, {userId, title, content, link, type})
 
 		await this._notificationRepository.create({
 			userId,

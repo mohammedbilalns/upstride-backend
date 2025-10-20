@@ -1,11 +1,11 @@
 import env from "../config/env";
 import { RabbitMQEventBus } from "./rabbitmq";
 
-const eventBus = new RabbitMQEventBus();
+const EventBus = new RabbitMQEventBus();
 
 export async function initEventBus() {
-	await eventBus.init(env.RABBITMQ_URL);
-	return eventBus;
+	await EventBus.init(env.RABBITMQ_URL);
+	return EventBus;
 }
 
-export default eventBus;
+export default EventBus;
