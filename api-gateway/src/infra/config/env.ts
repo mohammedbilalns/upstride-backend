@@ -17,8 +17,8 @@ const envSchema = z.object({
 	NOTIFICATION_SERVICE_URL: z.string(),
 	SESSIONS_SERVICE_URL: z.string(),
 	RABBITMQ_URL: z.string(),
-	REDIS_URL:z.string(),
-	EXCHANGE_NAME:z.string()
+	REDIS_URL: z.string(),
+	EXCHANGE_NAME: z.string(),
 });
 
 const env = envSchema.parse(process.env);

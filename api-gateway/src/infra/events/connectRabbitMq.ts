@@ -5,4 +5,3 @@ export async function connectRabbitMq() {
 	await initEventBus();
 	logger.info("RabbitMQ connected and consumers loaded");
 }
-

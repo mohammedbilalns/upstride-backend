@@ -8,6 +8,4 @@ export const notificationValidationSchema = z.object({
 	link: z.string(),
 });
 
-
 export type NotificationPayload = z.infer<typeof notificationValidationSchema>;
-

@@ -26,14 +26,16 @@ router.get("/articles/by-category", async (req, res) => {
 		url.searchParams.append("page", page);
 		url.searchParams.append("limit", limit);
 		url.searchParams.append("query", query);
-		users.forEach((id: string) => url.searchParams.append("authorIds", id));
+		users.forEach((id: string) => {
+			url.searchParams.append("authorIds", id);
+		});
 
 		// fetch the articles
 		const articleResponse = await fetch(url);
 		const articles = await articleResponse.json();
 
 		res.json(articles);
-	} catch (err: any) {
+	} catch (err) {
 		console.error(err);
 		res
 			.status(500)

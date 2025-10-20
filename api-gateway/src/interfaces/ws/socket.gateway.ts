@@ -1,11 +1,15 @@
+import type { Server as HttpServer } from "node:http";
 import { Server } from "socket.io";
-import { Server as HttpServer } from "http";
+import type { IEventBus } from "../../domain/events/eventBus.interface";
 import env from "../../infra/config/env";
 import logger from "../../utils/logger";
 import { socketAuthMiddleware } from "./middlewares/socket.middleware";
-import { IEventBus } from "../../domain/events/eventBus.interface";
+import {
+	registerChatEvents,
+	registerNotificationEvents,
+	registerWebRTCEvents,
+} from "./namespaces";
 import { SocketPublisher } from "./socket.publisher";
-import { registerChatEvents, registerWebRTCEvents, registerNotificationEvents } from "./namespaces";
 import { registerNotificationSubscriber } from "./subscribers";
 
 /**
@@ -19,8 +23,7 @@ import { registerNotificationSubscriber } from "./subscribers";
  * - Integrate with the event bus for microservice communication
  */
 
-export function initSocket(server:HttpServer,eventBus: IEventBus ) {
-
+export function initSocket(server: HttpServer, eventBus: IEventBus) {
 	logger.info("[WS] Initializing Socket.IO server...");
 
 	const io = new Server(server, {
@@ -28,7 +31,7 @@ export function initSocket(server:HttpServer,eventBus: IEventBus ) {
 	});
 
 	// publisheer for emitting socket events and publishing messages to RabbitMQ
-	const socketPublisher = new SocketPublisher(io,eventBus)
+	const socketPublisher = new SocketPublisher(io, eventBus);
 	/**
 	 * userSockets map maintains a relationship between
 	 * userId -> Set of socket IDs (a user can have multiple active tabs/devices)
@@ -36,7 +39,7 @@ export function initSocket(server:HttpServer,eventBus: IEventBus ) {
 	const userSockets = new Map<string, Set<string>>();
 
 	// Register event bus subscribers that need to trigger socket events
-	registerNotificationSubscriber(eventBus,socketPublisher)
+	registerNotificationSubscriber(eventBus, socketPublisher);
 
 	// Authenticate socket connections
 	io.use(socketAuthMiddleware);
@@ -54,10 +57,9 @@ export function initSocket(server:HttpServer,eventBus: IEventBus ) {
 		/**
 		 * Register namespace-specific event handlers
 		 */
-		registerChatEvents(io,socket,socketPublisher)
-		registerNotificationEvents(io,socket,socketPublisher)
-		registerWebRTCEvents(io,socket,socketPublisher)
-
+		registerChatEvents(io, socket, socketPublisher);
+		registerNotificationEvents(io, socket, socketPublisher);
+		registerWebRTCEvents(io, socket, socketPublisher);
 
 		/**
 		 * When a user disconnects:
@@ -73,8 +75,6 @@ export function initSocket(server:HttpServer,eventBus: IEventBus ) {
 		});
 	});
 
-
 	logger.info("[WS] Socket.IO server initialized.");
 	return io;
 }
-
