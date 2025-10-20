@@ -118,7 +118,7 @@ export class ExpertiseService implements IExpertiseService {
 			this._skillRepository.count(data.expertiseId, data.query),
 		]);
 
-		const isAdmin = data.userRole == UserRole.ADMIN || UserRole.SUPER_ADMIN;
+		const isAdmin = data.userRole === UserRole.ADMIN || UserRole.SUPER_ADMIN;
 		const mapped = skills.map((skill) => ({
 			id: skill.id,
 			name: skill.name,

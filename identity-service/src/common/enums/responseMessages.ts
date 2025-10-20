@@ -24,4 +24,6 @@ export enum ResponseMessage {
 	INTERESTS_FETCHED = "Interests fetched successfully",
 	INTERESTS_ADDED = "Interests added successfully",
 	PROFILE_UPDATED = "Updated profile successfully",
+	FOLLOWED_MENTOR = " followed mentor successfully",
+	UNFOLLOWED_MENTOR = "unfollowed mentor successfully",
 }

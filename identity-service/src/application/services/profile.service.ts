@@ -29,7 +29,7 @@ export class ProfileService implements IProfileService {
 	}
 
 	async updateProfile(userId: string, data: updateProfileDto): Promise<void> {
-		if (userId != data.id)
+		if (userId !== data.id)
 			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
 		const user = await this._userRepository.findById(userId);
 		if (!user || !user.isVerified)

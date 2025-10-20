@@ -3,7 +3,7 @@ import { createMentorController } from "../compositions/mentor.composition";
 import { rateLimiter } from "../middlewares";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
-export function createMentorRoutes() {
+export function createMentorRouter() {
 	const router = Router();
 	const mentorController = createMentorController();
 
@@ -23,6 +23,7 @@ export function createMentorRoutes() {
 		"/by-expertise-and-skill",
 		mentorController.fetchMentorsByExpertiseAndSkill,
 	);
+	router.get("/:mentorId", mentorController.fetchMentorDetails);
 
 	return router;
 }
