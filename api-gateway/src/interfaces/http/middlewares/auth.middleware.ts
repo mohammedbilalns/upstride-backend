@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { ErrorMessage,HttpStatus } from "../../../common/enums";
-import logger from "../../../utils/logger";
+import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { redisClient } from "../../../infra/config/connectRedis";
 import env from "../../../infra/config/env";
+import logger from "../../../utils/logger";
 
 export const createAuthMiddleware = (jwtSecret: string) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
@@ -74,4 +74,3 @@ export const authorizeRoles = (
 		}
 	};
 };
-

@@ -1,7 +1,7 @@
 export interface IEventBus {
-	publish(routingKey: string, message: any): Promise<void>;
-	subscribe(
+	publish<T>(routingKey: string, message: T): Promise<void>;
+	subscribe<T>(
 		routingKey: string,
-		handler: (msg: any) => Promise<void>,
+		handler: (msg: T) => Promise<void>,
 	): Promise<void>;
 }

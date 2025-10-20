@@ -1,3 +1,4 @@
+import { createServer } from "node:http";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
@@ -6,14 +7,13 @@ import env from "./infra/config/env";
 import { errorHandler } from "./interfaces/http/middlewares";
 import proxyRoutes from "./interfaces/http/router/proxyRoutes";
 import logger from "./utils/logger";
-import { createServer } from "http";
 
 class App {
 	private _app: Application;
-	private _server: ReturnType<typeof createServer >
+	private _server: ReturnType<typeof createServer>;
 	constructor() {
 		this._app = express();
-		this._server = createServer(this._app)
+		this._server = createServer(this._app);
 		this._setupMiddlewares();
 		this._setupRoutes();
 	}
@@ -35,8 +35,8 @@ class App {
 		this._app.use(errorHandler);
 	}
 
-	public get server(){
-		return this._server
+	public get server() {
+		return this._server;
 	}
 
 	public listen(port: string) {
@@ -44,7 +44,6 @@ class App {
 			logger.info(`API Gateway started on port ${port}`);
 		});
 	}
-
 }
 
 export default App;
