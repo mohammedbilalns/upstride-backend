@@ -246,4 +246,12 @@ export class MentorService implements IMentorService {
 		const mentors = await this._mentorRepository.findByExpertiseId(expertiseId);
 		return mentors.map((mentor: Mentor) => mentor.userId);
 	}
+
+	// public data of the mentor
+	async getMentorDetails(mentorId: string): Promise<Mentor | null> {
+		const mentor = await this._mentorRepository.findById(mentorId);
+		if (!mentor)
+			throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
+		return mentor;
+	}
 }

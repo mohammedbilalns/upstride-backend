@@ -9,11 +9,12 @@ import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import {
 	createAuthRouter,
+	createConnectionRouter,
 	createExpertiseRouter,
+	createMentorRouter,
+	createProfileRouter,
+	createUserManagementRouter,
 } from "./interfaces/http/routes";
-import { createMentorRoutes } from "./interfaces/http/routes/mentor.routes";
-import { createProfileRoutes } from "./interfaces/http/routes/profile.routes";
-import { createUserManagementRouter } from "./interfaces/http/routes/userManagement.routes";
 
 /**
  * Main application class for the Identity Service.
@@ -72,8 +73,9 @@ class App {
 		this._app.use("/api/auth", createAuthRouter());
 		this._app.use("/api/users", createUserManagementRouter());
 		this._app.use("/api/expertise", createExpertiseRouter());
-		this._app.use("/api/mentor", createMentorRoutes());
-		this._app.use("/api/profile", createProfileRoutes());
+		this._app.use("/api/mentor", createMentorRouter());
+		this._app.use("/api/profile", createProfileRouter());
+		this._app.use("/api/connections", createConnectionRouter());
 		this._app.use(errorHandler);
 	}
 

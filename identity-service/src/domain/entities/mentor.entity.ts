@@ -15,5 +15,6 @@ export interface Mentor {
 	rejectionReason?: string;
 	blockingReason?: string;
 	termsAccepted: boolean;
+	followers: number;
 	isActive: boolean;
 }

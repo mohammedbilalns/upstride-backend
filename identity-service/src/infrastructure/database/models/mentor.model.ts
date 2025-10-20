@@ -26,6 +26,7 @@ export const mentorSchema: Schema = new Schema(
 		blockingReason: { type: String },
 		termsAccepted: { type: Boolean, required: true },
 		isActive: { type: Boolean, default: true },
+		followers: { type: Number, default: 0 },
 	},
 	{ timestamps: true },
 );

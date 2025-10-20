@@ -2,7 +2,7 @@ import { Router } from "express";
 import { createProfileController } from "../compositions/profile.composition";
 import { authMiddleware, authorizeRoles } from "../middlewares";
 
-export function createProfileRoutes() {
+export function createProfileRouter() {
 	const router = Router();
 	const profileController = createProfileController();
 

@@ -26,4 +26,5 @@ export enum ErrorMessage {
 	MENTOR_ALREADY_APPROVED = "Mentor already approved",
 	MENTOR_LIMIT_REACHED = "You have reached the limit of maximum 3 mentor requests",
 	INVALID_PASSWORD = "Invalid password",
+	ALREADY_FOLLOWED = "You are already following this mentor",
 }

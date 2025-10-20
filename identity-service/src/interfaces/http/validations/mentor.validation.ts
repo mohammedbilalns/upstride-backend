@@ -104,3 +104,7 @@ export const rejectMentorSchema = z.object({
 	mentorId: z.string(),
 	rejectionReason: z.string().min(1).max(500),
 });
+
+export const fetchMentorParamsSchema = z.object({
+	mentorId: z.string(),
+});

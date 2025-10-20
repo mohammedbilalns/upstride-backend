@@ -13,7 +13,7 @@ const serverInstance = new App();
 async function bootstrap() {
   await EventBus.init(env.RABBITMQ_URL);
 
-  initSocket(serverInstance.server);
+  initSocket(serverInstance.server, EventBus);
 
   serverInstance.listen(PORT);
 }

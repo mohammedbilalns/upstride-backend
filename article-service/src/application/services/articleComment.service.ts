@@ -1,4 +1,6 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
+import { QueueEvents } from "../../common/enums/queueEvents";
+import { IEventBus } from "../../domain/events/eventBus.interface";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
@@ -19,6 +21,7 @@ export class ArticleCommentService implements IArticleCommentService {
 		private _articleCommentRepository: IArticleCommentRepository,
 		private _articleRepository: IArticleRepository,
 		private _reactionRepository: IReactionRepository,
+		private _eventBus: IEventBus,
 	) {}
 
 	async createComment(articleCommentDto: ArticleCommentDto): Promise<void> {
@@ -49,6 +52,12 @@ export class ArticleCommentService implements IArticleCommentService {
 				),
 			]);
 		}
+		this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
+			userId:article.author,
+			type: parentCommentId ? "REPLY_COMMENT" : "REACT_ARTICLE",
+			triggeredBy: userName,
+			targetResource: articleId,
+		})
 	}
 
 	async updateComment(

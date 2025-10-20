@@ -127,6 +127,7 @@ export class MentorRepository
 					termsAccepted: mapped.termsAccepted,
 					isRejected: mapped.isRejected,
 					isActive: mapped.isActive,
+					followers: mapped.followers,
 				};
 			} else {
 				return {
@@ -145,6 +146,7 @@ export class MentorRepository
 					isRejected: doc.isRejected,
 					termsAccepted: doc.termsAccepted,
 					isActive: doc.isActive,
+					followers: doc.followers,
 				};
 			}
 		}

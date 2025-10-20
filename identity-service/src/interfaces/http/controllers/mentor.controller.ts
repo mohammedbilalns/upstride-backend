@@ -3,6 +3,7 @@ import type { IMentorService } from "../../../domain/services";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	approveMentorSchema,
+	fetchMentorParamsSchema,
 	fetchMentorsByExpertiseAndSkillSchema,
 	fetchMentorsQuerySchema,
 	mentorRegistrationSchema,
@@ -88,5 +89,11 @@ export class MentorController {
 		const mentors =
 			await this._mentorService.getMentorByExpertiseId(expertiseId);
 		res.status(HttpStatus.OK).json(mentors);
+	});
+
+	fetchMentorDetails = asyncHandler(async (req, res) => {
+		const { mentorId } = fetchMentorParamsSchema.parse(req.params);
+		const mentor = await this._mentorService.getMentorDetails(mentorId);
+		res.status(HttpStatus.OK).json(mentor);
 	});
 }
