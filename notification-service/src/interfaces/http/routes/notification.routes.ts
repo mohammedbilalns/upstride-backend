@@ -6,7 +6,7 @@ export function createNotificationRouter() {
 	const router = Router()
 	const notificationController = createNotificationController();
 
-	router.post("/notifications", notificationController.createNotification);
+	//router.post("/notifications", notificationController.createNotification);
 	router.get("/notifications", notificationController.fetchUserNotifications);
 	router.put("/notifications/:notificationId", notificationController.markNotificationAsRead);
 

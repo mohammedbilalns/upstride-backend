@@ -1,20 +1,20 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
 import { INotificationService } from "../../../domain/services/notification.service.interface";
 import asyncHandler from "../utils/asyncHandler";
-import { fetchNotificationsValidationSchema, markNotificationAsReadValidationSchema, notificationValidationSchema } from "../validations/notification.validation";
+import { fetchNotificationsValidationSchema, markNotificationAsReadValidationSchema } from "../validations/notification.validation";
 
 
 export class NotificationController {
 	constructor(private _notificationService: INotificationService) {}
 
-		createNotification= asyncHandler( async (req, res) => {
-
-			const data = notificationValidationSchema.parse(req.body);
-
-			await this._notificationService.saveNotification({userId: res.locals.user.id, ...data});
-			return res.status(HttpStatus.OK).json({success: true, message:ResponseMessage.NOTIFICATION_CREATED});
-			
-		})
+		// createNotification= asyncHandler( async (req, res) => {
+		//
+		// 	const data = notificationValidationSchema.parse(req.body);
+		//
+		// 	await this._notificationService.saveNotification({userId: res.locals.user.id, ...data});
+		// 	return res.status(HttpStatus.OK).json({success: true, message:ResponseMessage.NOTIFICATION_CREATED});
+		//
+		// })
 
 		markNotificationAsRead = asyncHandler( async (req, res) => {
 

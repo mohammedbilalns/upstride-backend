@@ -7,6 +7,7 @@ export const NotificationSchema: Schema = new Schema<INotification>({
 	userId: { type: String, required: true },
 	type: { type: String, enum: ["chat", "article", "session", "connection"] },
 	title: { type: String, required: true },
+	content: { type: String, required: true },
 	isRead: { type: Boolean, default: false },
 	link: { type: String },
 	
