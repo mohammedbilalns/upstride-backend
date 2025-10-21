@@ -1,9 +1,11 @@
-import { PopulateOptions } from "mongoose";
+import type { PopulateOptions } from "mongoose";
 
 export interface IBaseRepository<TEntity> {
 	create(data: Partial<TEntity>): Promise<TEntity>;
-	findById(id: string,populate?: string | string[] | PopulateOptions | PopulateOptions[]
-): Promise<TEntity | null>;
+	findById(
+		id: string,
+		populate?: string | string[] | PopulateOptions | PopulateOptions[],
+	): Promise<TEntity | null>;
 	update(id: string, data: Partial<TEntity>): Promise<TEntity | null>;
 	delete(id: string): Promise<boolean>;
 }

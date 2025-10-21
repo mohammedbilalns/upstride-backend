@@ -1,6 +1,6 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { QueueEvents } from "../../common/enums/queueEvents";
-import { IEventBus } from "../../domain/events/eventBus.interface";
+import type { IEventBus } from "../../domain/events/eventBus.interface";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
@@ -52,12 +52,14 @@ export class ArticleCommentService implements IArticleCommentService {
 				),
 			]);
 		}
-		this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
-			userId:article.author,
-			type: parentCommentId ? "REPLY_COMMENT" : "COMMENT_ARTICLE",
-			triggeredBy: userName,
-			targetResource: articleId,
-		})
+		if (article.author !== userId) {
+			this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
+				userId: article.author,
+				type: parentCommentId ? "REPLY_COMMENT" : "COMMENT_ARTICLE",
+				triggeredBy: userName,
+				targetResource: articleId,
+			});
+		}
 	}
 
 	async updateComment(

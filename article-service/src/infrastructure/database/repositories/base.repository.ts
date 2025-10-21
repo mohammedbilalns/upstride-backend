@@ -12,7 +12,7 @@ export abstract class BaseRepository<TDomain, TDoc extends Document> {
 
 	async findById(
 		id: string,
-		populate?: string | string[] | PopulateOptions | PopulateOptions[]
+		populate?: string | string[] | PopulateOptions | PopulateOptions[],
 	): Promise<TDomain | null> {
 		let query = this._model.findById(id);
 
@@ -28,7 +28,7 @@ export abstract class BaseRepository<TDomain, TDoc extends Document> {
 
 		const doc = await query.exec();
 		return doc ? this.mapToDomain(doc) : null;
-	}	
+	}
 
 	async update(id: string, data: Partial<TDoc>): Promise<TDomain | null> {
 		const doc = await this._model

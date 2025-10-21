@@ -1,15 +1,18 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { QueueEvents } from "../../common/enums/queueEvents";
-import { Article, ArticleComment } from "../dtos/reaction.dto";
 import type { Reaction } from "../../domain/entities/reaction.entity";
-import { IEventBus } from "../../domain/events/eventBus.interface";
+import type { IEventBus } from "../../domain/events/eventBus.interface";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
 	IReactionRepository,
 } from "../../domain/repositories";
 import type { IReactionService } from "../../domain/services";
-import type { ReactionDto } from "../dtos/reaction.dto";
+import type {
+	Article,
+	ArticleComment,
+	ReactionDto,
+} from "../dtos/reaction.dto";
 import { AppError } from "../errors/AppError";
 
 export class ReactionService implements IReactionService {
@@ -20,11 +23,10 @@ export class ReactionService implements IReactionService {
 		private _eventBus: IEventBus,
 	) {}
 
-
 	private async sendReactionEvent(
 		resource: Article | ArticleComment,
 		resourceType: "article" | "comment",
-		triggeredBy: string
+		triggeredBy: string,
 	) {
 		let notificationUserId: string;
 		let targetId: string;
@@ -37,7 +39,10 @@ export class ReactionService implements IReactionService {
 			const comment = resource as ArticleComment;
 
 			if (!comment.articleId || typeof comment.articleId === "string") {
-				throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
+				throw new AppError(
+					ErrorMessage.ARTICLE_NOT_FOUND,
+					HttpStatus.NOT_FOUND,
+				);
 			}
 
 			notificationUserId = comment.articleId.author;
@@ -51,7 +56,6 @@ export class ReactionService implements IReactionService {
 			targetResource: targetId,
 		});
 	}
-
 
 	private getResourceHandlers(resourceType: "article" | "comment") {
 		switch (resourceType) {
@@ -73,21 +77,19 @@ export class ReactionService implements IReactionService {
 	}
 
 	async reactToResource(dto: ReactionDto): Promise<void> {
-
-		const { resourceId, resourceType, userId,userName, reaction } = dto;
-
+		const { resourceId, resourceType, userId, userName, reaction } = dto;
 		const { repository, notFoundError, alreadedReactedError } =
-		this.getResourceHandlers(resourceType);
-		// find the resource
-		const resource = await repository.findById(resourceId,resourceType === "comment" ? "articleId" : undefined);
+			this.getResourceHandlers(resourceType);
 
+		const resource = await repository.findById(
+			resourceId,
+			resourceType === "comment" ? "articleId" : undefined,
+		);
 		if (!resource) throw new AppError(notFoundError, HttpStatus.NOT_FOUND);
 
-		// fetch the existing reaction
 		const existingReaction =
 			await this._reactionRepository.findByResourceAndUser(resourceId, userId);
 
-		// handle create/update reaction
 		if (existingReaction) {
 			if (existingReaction.reaction === reaction)
 				throw new AppError(alreadedReactedError, HttpStatus.BAD_REQUEST);
@@ -103,10 +105,26 @@ export class ReactionService implements IReactionService {
 		});
 
 		if (reaction === "like") {
-			await this.sendReactionEvent(resource, resourceType, userName);
-		}	
-	}
+			let authorId: string;
 
+			if (resourceType === "article") {
+				authorId = (resource as Article).author;
+			} else {
+				const comment = resource as ArticleComment;
+				if (!comment.articleId || typeof comment.articleId === "string") {
+					throw new AppError(
+						ErrorMessage.ARTICLE_NOT_FOUND,
+						HttpStatus.NOT_FOUND,
+					);
+				}
+				authorId = comment.articleId.author;
+			}
+
+			if (authorId !== userId) {
+				await this.sendReactionEvent(resource, resourceType, userName);
+			}
+		}
+	}
 	async getReactions(
 		resourceId: string,
 		page: number,
