@@ -21,7 +21,7 @@ export class ReactionService implements IReactionService {
 	) {}
 
 
-	private async sendReactionNotification(
+	private async sendReactionEvent(
 		resource: Article | ArticleComment,
 		resourceType: "article" | "comment",
 		triggeredBy: string
@@ -103,7 +103,7 @@ export class ReactionService implements IReactionService {
 		});
 
 		if (reaction === "like") {
-			await this.sendReactionNotification(resource, resourceType, userName);
+			await this.sendReactionEvent(resource, resourceType, userName);
 		}	
 	}
 

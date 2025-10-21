@@ -22,13 +22,14 @@ export class NotificationRepository implements INotificationRepository {
 		userId: string,
 		page: number,
 		limit: number,
-	): Promise<{ notifications: Notification[]; total: number }> {
+	): Promise<{ notifications: Notification[]; total: number, unreadCount: number }> {
 		const skip = (page - 1) * limit;
-		const [notifications, total] = await Promise.all([
+		const [notifications, total, unreadCount] = await Promise.all([
 			this._model.find({ userId }).skip(skip).limit(limit).lean(),
 			this._model.countDocuments({ userId }),
+			this._model.countDocuments({userId, isRead: false}),
 		]);
-		return { notifications, total };
+		return { notifications, total, unreadCount };
 	}
 
 	async findById(id: string): Promise<Notification | null> {

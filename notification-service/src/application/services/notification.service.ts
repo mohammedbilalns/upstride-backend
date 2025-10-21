@@ -71,12 +71,12 @@ export class NotificationService implements INotificationService {
 		page: number,
 		limit: number,
 	): Promise<NotificationResponseDto> {
-		const { notifications, total } = await this._notificationRepository.findAll(
+		const { notifications, total, unreadCount } = await this._notificationRepository.findAll(
 			userId,
 			Number(page),
 			Number(limit),
 		);
-		return { notifications, total };
+		return { notifications, total, unreadCount };
 	}
 
 	async makrAllNotificationsAsRead(userId: string): Promise<void> {
