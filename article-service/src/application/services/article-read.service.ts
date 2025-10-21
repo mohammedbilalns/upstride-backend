@@ -39,7 +39,7 @@ export class ArticleReadService implements IArticleReadService {
 		if (cached) return cached;
 
 		const data = await fetchFn();
-		await this._cacheService.set(cacheKey, JSON.stringify(data), ttl);
+		await this._cacheService.set(cacheKey, data, ttl);
 		return data;
 	}
 

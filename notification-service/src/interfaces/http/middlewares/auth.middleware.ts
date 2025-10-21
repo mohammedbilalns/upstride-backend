@@ -51,7 +51,7 @@ export const authMiddleware = (jwtSecret: string = env.JWT_SECRET) => {
 };
 
 export const authorizeRoles = (
-	...allowedRoles: ("user" | "admin" | "superadmin" | "expert")[]
+	...allowedRoles: ("user" | "admin" | "superadmin" | "mentor")[]
 ) => {
 	logger.info("Hit authorize roles middleware");
 	return (_req: Request, res: Response, next: NextFunction) => {

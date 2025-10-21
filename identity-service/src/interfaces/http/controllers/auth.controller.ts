@@ -119,7 +119,8 @@ export class AuthController {
 	});
 
 	logout = asyncHandler(async (_req, res) => {
-		const userId = res.locals.user.id;
+		console.log(res.locals)
+		const userId = res.locals?.user?.id;
 		this._authService.logout(userId);
 		this.clearAuthCookies(res);
 		res
@@ -187,7 +188,7 @@ export class AuthController {
 	refreshToken = asyncHandler(async (req, res) => {
 		const refreshTokenFromCookie = req.cookies.refreshtoken;
 		if (!refreshTokenFromCookie) {
-			res.status(HttpStatus.UNAUTHORIZED).json({
+			return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
 				success: false,
 				message: ErrorMessage.INVALID_REFRESH_TOKEN,
 			});
@@ -196,7 +197,7 @@ export class AuthController {
 		const { accessToken, refreshToken } =
 			await this._authService.refreshAccessToken(refreshTokenFromCookie);
 		this.setAuthCookies(res, accessToken, refreshToken);
-		res.status(HttpStatus.OK).json({
+		return res.status(HttpStatus.OK).json({
 			success: true,
 			message: ResponseMessage.REFRESH_TOKEN_SUCCESS,
 		});

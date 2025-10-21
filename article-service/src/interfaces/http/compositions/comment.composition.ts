@@ -1,5 +1,5 @@
 import { ArticleCommentService } from "../../../application/services";
-import { IEventBus } from "../../../domain/events/eventBus.interface";
+import type { IEventBus } from "../../../domain/events/eventBus.interface";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
@@ -25,7 +25,7 @@ export function createCommentController(): ArticleCommentController {
 			articleCommentRepository,
 			articleRepository,
 			reactionRepository,
-			eventBus
+			eventBus,
 		);
 	return new ArticleCommentController(articleCommentService);
 }

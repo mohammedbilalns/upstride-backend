@@ -46,11 +46,11 @@ export function createAuthRouter() {
 		rateLimiter(5, 60, ["ip", "route"]),
 		authController.updatePassword,
 	);
-	router.post("/logout", authController.logout);
 	router.post("/google", authController.googleAuth);
 	router.post("/add-interests", authController.addInterests);
 
 	router.use(authMiddleware());
+	router.post("/logout", authController.logout);
 	router.get("/me", authController.me);
 	return router;
 }

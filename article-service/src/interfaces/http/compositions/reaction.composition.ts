@@ -1,5 +1,5 @@
 import { ReactionService } from "../../../application/services";
-import { IEventBus } from "../../../domain/events/eventBus.interface";
+import type { IEventBus } from "../../../domain/events/eventBus.interface";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
