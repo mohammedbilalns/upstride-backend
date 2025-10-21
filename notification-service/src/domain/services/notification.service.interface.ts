@@ -12,4 +12,5 @@ export interface INotificationService {
 		page: number,
 		limit: number,
 	): Promise<NotificationResponseDto>;
+	makrAllNotificationsAsRead(userId: string): Promise<void>;
 }

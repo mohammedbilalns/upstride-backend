@@ -78,4 +78,11 @@ export class NotificationService implements INotificationService {
 		);
 		return { notifications, total };
 	}
+
+	async makrAllNotificationsAsRead(userId: string): Promise<void> {
+		await this._notificationRepository.updateMany(
+			{ userId },
+			{ isRead: true },
+		);
+	}
 }

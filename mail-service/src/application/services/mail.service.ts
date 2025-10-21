@@ -10,10 +10,11 @@ export class MailService implements IMailService {
 
 	async sendEmail(to: string, subject: string, text: string) {
 		await this.transporter.sendMail({
-			from: "Skillsphere",
+			from: "Upstride",
 			to,
 			subject,
-			html: text || "<h1>Hi</h1>",
+			html: text,
 		});
 	}
+
 }

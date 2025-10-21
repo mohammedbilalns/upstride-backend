@@ -76,7 +76,7 @@ export class RegistrationService implements IRegistrationService {
 			subject: OTP_SUBJECT,
 			text: buildOtpEmailHtml(otp, otpType.register),
 		};
-		await this._eventBus.publish(QueueEvents.SEND_MAIL, message);
+		await this._eventBus.publish(QueueEvents.SEND_OTP, message);
 	}
 
 	async verifyOtp(email: string, otp: string): Promise<string> {
@@ -156,7 +156,7 @@ export class RegistrationService implements IRegistrationService {
 			subject: OTP_SUBJECT,
 			text: buildOtpEmailHtml(otp, otpType.register),
 		};
-		await this._eventBus.publish(QueueEvents.SEND_MAIL, message);
+		await this._eventBus.publish(QueueEvents.SEND_OTP, message);
 	}
 
 	async createInterests(

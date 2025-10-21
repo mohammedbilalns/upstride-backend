@@ -1,4 +1,4 @@
-import type { DeleteResult, FilterQuery } from "mongoose";
+import type { DeleteResult, FilterQuery} from "mongoose";
 import type { Notification } from "../../../domain/entities/notification.entity";
 import type { INotificationRepository } from "../../../domain/repositories/notification.repository.interface";
 import { NotificationModel } from "../models/notification.model";
@@ -37,5 +37,8 @@ export class NotificationRepository implements INotificationRepository {
 
 	async deleteMany(filter: FilterQuery<Notification>): Promise<DeleteResult> {
 		return await this._model.deleteMany(filter);
+	}
+	async updateMany(filter: FilterQuery<Notification>, data: Partial<Notification>): Promise<void> {
+		await this._model.updateMany(filter, data);
 	}
 }

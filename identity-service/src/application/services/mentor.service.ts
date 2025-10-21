@@ -201,7 +201,7 @@ export class MentorService implements IMentorService {
 			subject: APPROVE_SUBJECT,
 			text: buildMentorApprovalEmailHtml(user.name),
 		};
-		await this._eventBus.publish(QueueEvents.SEND_MAIL, message);
+		await this._eventBus.publish(QueueEvents.SEND_OTP, message);
 	}
 
 	async rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void> {
