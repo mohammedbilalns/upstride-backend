@@ -4,7 +4,7 @@ import logger from "./logger";
 
 /**
  * Creates an Express middleware that proxies incoming requests to a target service.
- * 
+ *
  * Automatically applies base proxy configuration, sets JSON headers,
  * and optionally adjusts authentication cookies for proper domain scoping.
  *
@@ -14,11 +14,14 @@ import logger from "./logger";
  * @returns Express middleware configured for proxying.
  */
 
-export function createServiceProxy(target_service: string, service_url: string, isAuth?: boolean){
-
+export function createServiceProxy(
+	target_service: string,
+	service_url: string,
+	isAuth?: boolean,
+) {
 	return proxy(service_url, {
 		...proxyOptions,
-		
+
 		// Add default Content-Type header for outgoing proxy requests
 		proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
 			proxyReqOpts.headers["Content-Type"] = "application/json";
@@ -27,12 +30,11 @@ export function createServiceProxy(target_service: string, service_url: string, 
 
 		// Modify response before sending to the client
 		userResDecorator: (proxyRes, proxyResData, _srcReq, res) => {
-
-			if(isAuth){
+			if (isAuth) {
 				const setCookieHeader = proxyRes.headers["set-cookie"];
 
 				if (setCookieHeader) {
-					console.log("cookie header detected")
+					console.log("cookie header detected");
 					const modifiedCookies = setCookieHeader.map((cookie) => {
 						let modifiedCookie = cookie.replace(/;\s*Domain=[^;]*/i, "");
 						if (!modifiedCookie.includes("Path=")) {
@@ -48,5 +50,5 @@ export function createServiceProxy(target_service: string, service_url: string, 
 			);
 			return proxyResData;
 		},
-	})
+	});
 }

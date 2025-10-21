@@ -9,4 +9,5 @@ export enum ErrorMessage {
 	VALIDATION_FAILED = "Validation failed",
 	INTERNAL_SERVER_ERROR = "Internal server error",
 	INVALID_REQUEST = "Invalid request",
+	FAILED_TO_MAP_DATA = "Failed to map data",
 }

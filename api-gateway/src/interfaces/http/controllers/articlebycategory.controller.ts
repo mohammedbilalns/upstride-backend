@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import env from "../../../infra/config/env";
 
-export const filterArticlesByCategory = async (req:Request, res: Response) => {
+export const filterArticlesByCategory = async (req: Request, res: Response) => {
 	try {
 		const category = req.query.category as string;
 		const page = (req.query.page as string) || "1";
@@ -36,4 +36,4 @@ export const filterArticlesByCategory = async (req:Request, res: Response) => {
 			.status(500)
 			.json({ message: "Internal server error", error: err?.message });
 	}
-}	
+};

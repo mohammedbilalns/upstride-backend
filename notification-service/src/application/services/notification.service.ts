@@ -46,15 +46,16 @@ export class NotificationService implements INotificationService {
 		const { title, content, link, type } =
 			this._generateNotificationData(triggerInfo);
 
-		this._eventBus.publish(QueueEvents.NOTIFICATION_CREATED, {userId, title, content, link, type})
 
-		await this._notificationRepository.create({
+		const newNotification = await this._notificationRepository.create({
 			userId,
 			title,
 			content,
 			link,
 			type,
 		});
+		if(!newNotification) return;
+		this._eventBus.publish(QueueEvents.NOTIFICATION_CREATED, {id:newNotification.id  , userId, title, content, link, type, createdAt:newNotification.createdAt})
 	}
 
 	async markNotificationAsRead(notificationId: string): Promise<void> {

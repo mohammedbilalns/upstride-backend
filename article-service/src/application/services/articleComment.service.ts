@@ -54,7 +54,7 @@ export class ArticleCommentService implements IArticleCommentService {
 		}
 		this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
 			userId:article.author,
-			type: parentCommentId ? "REPLY_COMMENT" : "REACT_ARTICLE",
+			type: parentCommentId ? "REPLY_COMMENT" : "COMMENT_ARTICLE",
 			triggeredBy: userName,
 			targetResource: articleId,
 		})

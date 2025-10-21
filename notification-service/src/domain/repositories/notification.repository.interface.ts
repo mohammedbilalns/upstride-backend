@@ -1,7 +1,7 @@
 import { FilterQuery } from "mongoose";
 import type { Notification } from "../entities/notification.entity";
 export interface INotificationRepository {
-	create(data: Partial<Notification>): Promise<void>;
+	create(data: Partial<Notification>): Promise<Notification | null>;
 	update(id: string, data: Partial<Notification>): Promise<void>;
 	findAll(
 		userId: string,
