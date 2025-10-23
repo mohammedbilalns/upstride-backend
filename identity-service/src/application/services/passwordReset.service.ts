@@ -5,12 +5,13 @@ import {
 	otpType,
 } from "../../application/utils/otp.util";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
+import { generateOtp } from "../utils/generateOtp";
 import type { IEventBus } from "../../domain/events/IEventBus";
 import type {
 	IUserRepository,
 	IVerificationTokenRepository,
 } from "../../domain/repositories";
-import type { ICryptoService, IOtpService } from "../../domain/services";
+import type { ICryptoService } from "../../domain/services";
 import type { IPasswordResetService } from "../../domain/services/passwordReset.service.interface";
 import { generateSecureToken } from "../utils/token.util";
 
@@ -19,7 +20,6 @@ export class PasswordResetService implements IPasswordResetService {
 		private _userRepository: IUserRepository,
 		private _verficationTokenRepository: IVerificationTokenRepository,
 		private _cryptoService: ICryptoService,
-		private _otpService: IOtpService,
 		private _eventBus: IEventBus,
 	) {}
 
@@ -27,7 +27,7 @@ export class PasswordResetService implements IPasswordResetService {
 		const user = await this._userRepository.findByEmail(email);
 		if (!user || !user.isVerified)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
-		const otp = await this._otpService.generateOtp();
+		const otp = generateOtp();
 		await this._verficationTokenRepository.saveOtp(
 			otp,
 			email,
@@ -95,7 +95,7 @@ export class PasswordResetService implements IPasswordResetService {
 				HttpStatus.TOO_MANY_REQUESTS,
 			);
 		}
-		const otp = await this._otpService.generateOtp();
+		const otp = generateOtp();
 		await this._verficationTokenRepository.updateOtp(otp, email, otpType.reset);
 		const message = {
 			to: email,

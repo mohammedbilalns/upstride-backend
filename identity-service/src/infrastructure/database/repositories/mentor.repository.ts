@@ -1,10 +1,12 @@
-import { type ObjectId, Types } from "mongoose";
+import { type ObjectId, Types, FilterQuery } from "mongoose";
 import type { findAllMentorsDto } from "../../../application/dtos";
 import type { Mentor } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { type IMentor, mentorModel } from "../models/mentor.model";
 import { BaseRepository } from "./base.repository";
+import { ConnectionModel } from "../models/connection.model";
+import logger from "../../../common/utils/logger";
 
 export class MentorRepository
 	extends BaseRepository<Mentor, IMentor>
@@ -76,6 +78,7 @@ export class MentorRepository
 					id: (doc.userId as any)._id?.toString() || doc.userId,
 					name: (doc.userId as any).name,
 					email: (doc.userId as any).email,
+					profilePicture: (doc.userId as any).profilePicture,
 				};
 			} else {
 				mentorObj.userId = doc.userId?.toString() || doc.userId;
@@ -90,7 +93,6 @@ export class MentorRepository
 				mentorObj.expertiseId = doc.expertiseId?.toString() || doc.expertiseId;
 			}
 
-			// Add populated skills data if available
 			if (
 				doc.skillIds &&
 				Array.isArray(doc.skillIds) &&
@@ -225,29 +227,61 @@ export class MentorRepository
 	}
 
 	async findByExpertiseandSkill(
-		expertiseId: string,
-		skillId: string,
 		page: number,
 		limit: number,
+		userId: string,
 		query?: string,
-	): Promise<Mentor[]> {
+		expertiseId?: string,
+		skillId?: string,
+
+	): Promise<{mentors: Mentor[], total: number}> {
+
+	 const existingConnections = await ConnectionModel.find({
+			followerId: userId
+		}).select('mentorId').lean();
+
+
+		const connectedMentorIds = existingConnections.map(conn => conn.mentorId);
+
 		const searchCondition = this.createSearchCondition(query);
-		const baseCondition = { expertiseId, skillIds: skillId };
+		const baseCondition: FilterQuery<Mentor> = { 
+			_id: { $nin: connectedMentorIds }, 
+			userId: { $ne: userId }, 
+			isPending: false,
+			isRejected: false,
+		};
+		if(expertiseId){
+			baseCondition.expertiseId = expertiseId
+		}
+		if(skillId){
+			baseCondition.skillIds = skillId
+		}
 
 		const finalCondition = query
 			? { $and: [baseCondition, searchCondition] }
 			: baseCondition;
 
-		const docs = await this._model
+		const [docs, total] = await Promise.all([this._model
 			.find(finalCondition)
-			.populate("userId", "name email")
-			.populate("expertiseId", "name")
+			.select("expertiseId skillIds bio yearsOfExperience userId")
+			.populate({
+				path: "userId", 
+				select: "name email profilePicture",
+				model: "User"
+			})
+			.populate({
+				path: "expertiseId", 
+				select: "name"
+			})
 			.populate("skillIds", "name")
-			.skip(page * limit)
+			.skip((page-1) * limit)
 			.limit(limit)
-			.exec();
+			.exec(), 
+			this._model.countDocuments(finalCondition)
 
-		return docs.map((doc) => this.mapToDomain(doc));
+]) 
+		logger.debug("mentors"+ docs)
+		return {mentors: docs.map((doc) => this.mapToDomain(doc)), total};	
 	}
 
 	async findByExpertiseId(expertiseId: string): Promise<Mentor[]> {

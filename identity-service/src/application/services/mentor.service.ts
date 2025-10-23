@@ -134,7 +134,6 @@ export class MentorService implements IMentorService {
 		fetchMentorDto: findAllMentorsDto,
 	): Promise<findAllMentorsResponseDto> {
 		const { page, limit, query, status } = fetchMentorDto;
-		console.log("Status from service", status);
 
 		const [mentors, totalMentos, totalPending, totalApproved, totalRejected] =
 			await Promise.all([
@@ -161,17 +160,12 @@ export class MentorService implements IMentorService {
 
 	async findByExpertiseandSkill(
 		findByExpertiseandSkillDto: findByExpertiseandSkillDto,
-	): Promise<Mentor[]> {
-		const { page, limit, query, expertiseId, skillId } =
+	): Promise<{mentors: Mentor[], total: number}> {
+		const { page, limit, query, expertiseId, skillId, userId } =
 			findByExpertiseandSkillDto;
-		const mentors = await this._mentorRepository.findByExpertiseandSkill(
-			expertiseId,
-			skillId,
-			page,
-			limit,
-			query,
-		);
-		return mentors;
+		const data = await this._mentorRepository.findByExpertiseandSkill(	
+			page,limit,userId,query,expertiseId,skillId);
+		return data 
 	}
 
 	async approveMentor(aproveMentorDto: approveMentorDto): Promise<void> {
@@ -247,6 +241,7 @@ export class MentorService implements IMentorService {
 		return mentors.map((mentor: Mentor) => mentor.userId);
 	}
 
+	
 	// public data of the mentor
 	async getMentorDetails(mentorId: string): Promise<Mentor | null> {
 		const mentor = await this._mentorRepository.findById(mentorId);

@@ -3,7 +3,6 @@ export * from "./crypto.service";
 export * from "./expertise.service";
 export * from "./interests.service";
 export * from "./mentor.service";
-export * from "./otp.service";
 export * from "./passwordReset.service";
 export * from "./registration.service";
 export * from "./token.service";
