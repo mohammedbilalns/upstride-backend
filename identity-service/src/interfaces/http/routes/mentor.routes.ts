@@ -18,11 +18,12 @@ export function createMentorRouter() {
 	router.post("/reject", mentorController.rejectMentor);
 	router.get("/details", mentorController.getMentor);
 	router.put("/", mentorController.updateMentor);
-	router.get("/", mentorController.fetchMentors);
 	router.get(
-		"/by-expertise-and-skill",
-		mentorController.fetchMentorsByExpertiseAndSkill,
+		"/user",
+		mentorController.fetchMentorsForUser,
 	);
+	router.get("/", mentorController.fetchMentors);
+
 	router.get("/:mentorId", mentorController.fetchMentorDetails);
 
 	return router;

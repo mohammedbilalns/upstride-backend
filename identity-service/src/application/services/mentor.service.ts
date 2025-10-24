@@ -134,7 +134,6 @@ export class MentorService implements IMentorService {
 		fetchMentorDto: findAllMentorsDto,
 	): Promise<findAllMentorsResponseDto> {
 		const { page, limit, query, status } = fetchMentorDto;
-		console.log("Status from service", status);
 
 		const [mentors, totalMentos, totalPending, totalApproved, totalRejected] =
 			await Promise.all([
@@ -248,6 +247,7 @@ export class MentorService implements IMentorService {
 		return mentors.map((mentor: Mentor) => mentor.userId);
 	}
 
+	
 	// public data of the mentor
 	async getMentorDetails(mentorId: string): Promise<Mentor | null> {
 		const mentor = await this._mentorRepository.findById(mentorId);

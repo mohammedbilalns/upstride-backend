@@ -65,11 +65,11 @@ export const updateMentorSchema = z.object({
 });
 
 export const fetchMentorsByExpertiseAndSkillSchema = z.object({
-	page: z.number().min(1).max(100),
-	limit: z.number().min(1).max(100),
+	page: z.coerce.number().min(0).default(0),
+	limit: z.coerce.number().min(1).max(100).default(10),
 	query: z.string().optional(),
-	expertiseId: z.string(),
-	skillId: z.string(),
+	expertiseId: z.string().optional(),
+	skillId: z.string().optional(),
 });
 
 export const approveMentorSchema = z.object({

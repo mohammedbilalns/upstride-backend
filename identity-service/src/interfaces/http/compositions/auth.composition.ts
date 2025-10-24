@@ -1,7 +1,6 @@
 import {
 	AuthService,
 	CryptoService,
-	OtpService,
 	TokenService,
 } from "../../../application/services";
 import { CacheService } from "../../../application/services/cache.service";
@@ -11,7 +10,6 @@ import type { IEventBus } from "../../../domain/events/IEventBus";
 import type { IUserRepository } from "../../../domain/repositories";
 import type {
 	ICryptoService,
-	IOtpService,
 	ITokenService,
 } from "../../../domain/services";
 import { redisClient } from "../../../infrastructure/config";
@@ -29,7 +27,6 @@ export function createAuthController(): AuthController {
 	const otpRepository = new VerificationTokenRepository(redisClient);
 	const cryptoService: ICryptoService = new CryptoService();
 	const tokenService: ITokenService = new TokenService(env.JWT_SECRET);
-	const otpService: IOtpService = new OtpService();
 	const eventBus: IEventBus = EventBus;
 	const cacheService = new CacheService(redisClient);
 	const registrationService = new RegistrationService(
@@ -37,7 +34,6 @@ export function createAuthController(): AuthController {
 		cryptoService,
 		otpRepository,
 		tokenService,
-		otpService,
 		eventBus,
 		cacheService,
 	);
@@ -52,7 +48,6 @@ export function createAuthController(): AuthController {
 		userRepository,
 		otpRepository,
 		cryptoService,
-		otpService,
 		eventBus,
 	);
 	return new AuthController(

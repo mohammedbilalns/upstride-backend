@@ -8,6 +8,7 @@ import {
 import { CACHE_TTL } from "../../common/constants/cacheOptions";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { QueueEvents } from "../../common/enums/queueEvents";
+import { generateOtp } from "../utils/generateOtp";
 import type { IEventBus } from "../../domain/events/IEventBus";
 import type {
 	IUserRepository,
@@ -15,7 +16,6 @@ import type {
 } from "../../domain/repositories";
 import type {
 	ICryptoService,
-	IOtpService,
 	ITokenService,
 } from "../../domain/services";
 import type { ICacheService } from "../../domain/services/cache.service.interface";
@@ -28,7 +28,6 @@ export class RegistrationService implements IRegistrationService {
 		private _cryptoService: ICryptoService,
 		private _verficationTokenRepository: IVerificationTokenRepository,
 		private _tokenService: ITokenService,
-		private _otpService: IOtpService,
 		private _eventBus: IEventBus,
 		private _cacheService: ICacheService,
 	) {}
@@ -64,7 +63,7 @@ export class RegistrationService implements IRegistrationService {
 			name,
 			passwordHash: hashedPassword,
 		});
-		const otp = await this._otpService.generateOtp();
+		const otp = generateOtp();
 		await this._verficationTokenRepository.saveOtp(
 			otp,
 			email,
@@ -145,7 +144,7 @@ export class RegistrationService implements IRegistrationService {
 			);
 		}
 
-		const otp = await this._otpService.generateOtp();
+		const otp = generateOtp();
 		await this._verficationTokenRepository.updateOtp(
 			otp,
 			email,

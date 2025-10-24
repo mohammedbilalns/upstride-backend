@@ -80,6 +80,7 @@ implements IMentorRepository
 					id: (doc.userId as any)._id?.toString() || doc.userId,
 					name: (doc.userId as any).name,
 					email: (doc.userId as any).email,
+					profilePicture: (doc.userId as any).profilePicture,
 				};
 			} else {
 				mentorObj.userId = doc.userId?.toString() || doc.userId;
@@ -94,7 +95,6 @@ implements IMentorRepository
 				mentorObj.expertiseId = doc.expertiseId?.toString() || doc.expertiseId;
 			}
 
-			// Add populated skills data if available
 			if (
 				doc.skillIds &&
 					Array.isArray(doc.skillIds) &&
@@ -234,6 +234,7 @@ implements IMentorRepository
 		userId: string,
 		page: number,
 		limit: number,
+		userId: string,
 		query?: string,
 
 	): Promise<{mentors: Mentor[], total: number}> {
@@ -271,10 +272,18 @@ implements IMentorRepository
 
 		const [docs, total] = await Promise.all( [this._model
 			.find(finalCondition)
-			.populate("userId", "name email")
-			.populate("expertiseId", "name")
+			.select("expertiseId skillIds bio yearsOfExperience userId")
+			.populate({
+				path: "userId", 
+				select: "name email profilePicture",
+				model: "User"
+			})
+			.populate({
+				path: "expertiseId", 
+				select: "name"
+			})
 			.populate("skillIds", "name")
-			.skip(page * limit)
+			.skip((page-1) * limit)
 			.limit(limit)
 			.exec(),
 			this._model.countDocuments(finalCondition)
