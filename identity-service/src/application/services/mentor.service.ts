@@ -163,9 +163,15 @@ export class MentorService implements IMentorService {
 	): Promise<{mentors: Mentor[], total: number}> {
 		const { page, limit, query, expertiseId, skillId, userId } =
 			findByExpertiseandSkillDto;
-		const data = await this._mentorRepository.findByExpertiseandSkill(	
-			page,limit,userId,query,expertiseId,skillId);
-		return data 
+		const mentors = await this._mentorRepository.findByExpertiseandSkill(
+			expertiseId,
+			skillId,
+			userId,
+			page,
+			limit,
+			query,
+		);
+		return mentors;
 	}
 
 	async approveMentor(aproveMentorDto: approveMentorDto): Promise<void> {

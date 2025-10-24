@@ -40,7 +40,8 @@ export class MentorController {
 		const userId = res.locals.user.id; 
 		const { page, limit, query, expertiseId, skillId } =
 			fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
-		const data = await this._mentorService.findByExpertiseandSkill({
+			const userId = res.locals.user.id
+		const mentors = await this._mentorService.findByExpertiseandSkill({
 			page,
 			limit,
 			userId,

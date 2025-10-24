@@ -103,4 +103,9 @@ export class ExpertiseController {
 			await this._expertiseService.fetchSkillsFromMulipleExpertise(data);
 		return res.status(HttpStatus.OK).json({ data: skills });
 	});
+
+	fetchActiveExpertisesAndSkills = asyncHandler(async (_req, res) => {
+		const data = await this._expertiseService.findActiveExpertisesAndSkills()
+		return res.status(HttpStatus.OK).send(data);
+	});
 }
