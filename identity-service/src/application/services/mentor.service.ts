@@ -164,13 +164,14 @@ export class MentorService implements IMentorService {
 		const { page, limit, query, expertiseId, skillId, userId } =
 			findByExpertiseandSkillDto;
 		const mentors = await this._mentorRepository.findByExpertiseandSkill(
-			expertiseId,
-			skillId,
-			userId,
 			page,
 			limit,
+			userId,
+			expertiseId,
+			skillId,
 			query,
 		);
+		
 		return mentors;
 	}
 

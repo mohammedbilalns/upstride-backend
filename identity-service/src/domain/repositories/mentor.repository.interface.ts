@@ -6,12 +6,11 @@ export interface IMentorRepository extends IBaseRepository<Mentor> {
 	findAll(params: findAllMentorsDto): Promise<Mentor[]>;
 	findByUserId(userId: string, populate?: boolean): Promise<Mentor | null>;
 	findByExpertiseandSkill(
-		expertiseId: string,
-		skillId: string,
-		userId: string,
 		page: number,
 		limit: number,
 		userId: string,
+		expertiseId?: string,
+		skillId?: string,
 		query?: string,
 	): Promise<{mentors: Mentor[], total: number}>;
 	count(query?: string, status?: string): Promise<number>;
