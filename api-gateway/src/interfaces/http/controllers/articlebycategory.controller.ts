@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import env from "../../../infra/config/env";
+import logger from "../../../utils/logger";
 
 export const filterArticlesByCategory = async (req: Request, res: Response) => {
 	try {
@@ -10,9 +11,10 @@ export const filterArticlesByCategory = async (req: Request, res: Response) => {
 
 		// retrieve the users from the identity service
 		const response = await fetch(
-			`${env.IDENTITY_SERVICE_URL}/api/mentor/${category}`,
+			`${env.IDENTITY_SERVICE_URL}/api/mentor/expertise/${category}`,
 		);
 		const users = (await response.json()) as string[];
+		logger.debug(`[HTTP] users: ${JSON.stringify(users)}`);
 
 		// build the url to fetch the articles
 		const baseUrl = `${env.ARTICLE_SERVICE_URL}/api/articles/by-users`;
@@ -21,7 +23,7 @@ export const filterArticlesByCategory = async (req: Request, res: Response) => {
 		url.searchParams.append("page", page);
 		url.searchParams.append("limit", limit);
 		url.searchParams.append("query", query);
-		users.forEach((id: string) => {
+		users?.forEach((id: string) => {
 			url.searchParams.append("authorIds", id);
 		});
 

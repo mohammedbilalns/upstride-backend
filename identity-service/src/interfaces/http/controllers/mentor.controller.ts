@@ -39,9 +39,11 @@ export class MentorController {
 	fetchMentorsByExpertiseAndSkill = asyncHandler(async (req, res) => {
 		const { page, limit, query, expertiseId, skillId } =
 			fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
+			const userId = res.locals.user.id
 		const mentors = await this._mentorService.findByExpertiseandSkill({
 			page,
 			limit,
+			userId,
 			query,
 			expertiseId,
 			skillId,

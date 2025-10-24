@@ -161,12 +161,13 @@ export class MentorService implements IMentorService {
 
 	async findByExpertiseandSkill(
 		findByExpertiseandSkillDto: findByExpertiseandSkillDto,
-	): Promise<Mentor[]> {
-		const { page, limit, query, expertiseId, skillId } =
+	): Promise<{mentors: Mentor[], total: number}> {
+		const { page, limit, query, expertiseId, skillId, userId } =
 			findByExpertiseandSkillDto;
 		const mentors = await this._mentorRepository.findByExpertiseandSkill(
 			expertiseId,
 			skillId,
+			userId,
 			page,
 			limit,
 			query,

@@ -13,7 +13,7 @@ import type {
 export interface IExpertiseService {
 	createExpertise(data: createExpertiseDto): Promise<void>;
 	updateExpertise(data: updateExpertiseDto): Promise<void>;
-	fetchExpertises(data: fetchExpertiseDto): Promise<FetchExpertisesResponse>;
+	fetchExpertises(data: fetchExpertiseDto, isForMentors? : boolean): Promise<FetchExpertisesResponse>;
 	verifyExpertise(expertiseId: string): Promise<void>;
 	createSkill(data: createSkillDto): Promise<void>;
 	updateSkill(data: updateSkillDto): Promise<void>;
@@ -21,4 +21,5 @@ export interface IExpertiseService {
 	fetchSkillsFromMulipleExpertise(
 		data: fetchSkillsFromMultipleExpertiseDto,
 	): Promise<any>;
+	findActiveExpertisesAndSkills(): Promise<{expertises: string[], skills: string[]}>;
 }

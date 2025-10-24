@@ -2,6 +2,7 @@ import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { UserRole } from "../../common/enums/userRoles";
 import type {
 	IExpertiseRepository,
+	IMentorRepository,
 	ISkillRepository,
 } from "../../domain/repositories";
 import type { IExpertiseService } from "../../domain/services";
@@ -22,6 +23,7 @@ export class ExpertiseService implements IExpertiseService {
 	constructor(
 		private _expertiseRepository: IExpertiseRepository,
 		private _skillRepository: ISkillRepository,
+		private _mentorRepository: IMentorRepository,
 	) {}
 
 	async createExpertise(data: createExpertiseDto): Promise<void> {
@@ -154,5 +156,9 @@ export class ExpertiseService implements IExpertiseService {
 		}));
 
 		return mapped;
+	}
+
+	async findActiveExpertisesAndSkills(): Promise<{expertises: string[], skills: string[]}> {
+		return this._mentorRepository.findActiveExpertisesAndSkills();
 	}
 }
