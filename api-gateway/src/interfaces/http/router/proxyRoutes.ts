@@ -64,6 +64,14 @@ router.use(
 );
 
 router.use(
+	"/connection",
+	createServiceProxy(
+		ServiceName.IDENTITY,
+		SERVICE_URL[ServiceName.IDENTITY],
+	),
+);
+
+router.use(
 	"/media",
 	createServiceProxy(ServiceName.MEDIA, SERVICE_URL[ServiceName.MEDIA]),
 );

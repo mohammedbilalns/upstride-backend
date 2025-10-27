@@ -30,9 +30,6 @@ export const userSchema: Schema = new Schema(
 	},
 	{ timestamps: true },
 );
-userSchema.index({ name: 1 });
-userSchema.index({ email: 1 });
-
 userSchema.index({ email: 1, role: 1 });
 
 export const userModel = model<IUser>("User", userSchema);

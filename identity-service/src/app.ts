@@ -15,6 +15,7 @@ import {
 	createProfileRouter,
 	createUserManagementRouter,
 } from "./interfaces/http/routes";
+import logger from "./common/utils/logger";
 
 /**
  * Main application class for the Identity Service.
@@ -75,7 +76,7 @@ class App {
 		this._app.use("/api/expertise", createExpertiseRouter());
 		this._app.use("/api/mentor", createMentorRouter());
 		this._app.use("/api/profile", createProfileRouter());
-		this._app.use("/api/connections", createConnectionRouter());
+		this._app.use("/api/connection", createConnectionRouter());
 		this._app.use(errorHandler);
 	}
 
@@ -90,7 +91,7 @@ class App {
 			connectRabbitMq();
 			connectToDb();
 			redisClient.ping;
-			console.log(`Identity service started on port ${port}`);
+			logger.info(`Identity service started on port ${port}`);
 		});
 	}
 }

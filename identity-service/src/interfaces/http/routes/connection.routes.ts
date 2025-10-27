@@ -3,21 +3,21 @@ import { createConnectionController } from "../compositions/connection.compositi
 import { authMiddleware, authorizeRoles } from "../middlewares";
 
 export function createConnectionRouter() {
-	const router = Router();
-	const connectionController = createConnectionController();
+  const router = Router();
+  const connectionController = createConnectionController();
+ 
+  router.use(authMiddleware());
+  router.get("/followers", authorizeRoles("mentor"), connectionController.fetchFollowers);
+  router.get("/recent-activity", connectionController.fetchRecentActivity);
 
-	router.use(authMiddleware());
-	router.get(
-		"/following",
-		authorizeRoles("mentor"),
-		connectionController.fetchFollowing,
-	);
+  router.use(authorizeRoles("user", "mentor"));
+  router.post("/follow", connectionController.followMentor);
+  router.get(
+    "/following",
+    connectionController.fetchFollowing,
+  );
+  router.post("/unfollow", connectionController.unfollowMentor);
 
-	router.use(authorizeRoles("user", "mentor"));
-	router.post("/follow", connectionController.followMentor);
-	router.post("/unfollow", connectionController.unfollowMentor);
-
-	router.get("/followers", connectionController.fetchFollowers);
 
 	return router;
 }

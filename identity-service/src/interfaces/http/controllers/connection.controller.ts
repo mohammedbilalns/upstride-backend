@@ -33,24 +33,29 @@ export class ConnectionController {
 	fetchFollowers = asyncHandler(async (req, res) => {
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
-
-		const { followers, total } = await this._connectionService.fetchFollowers(
+		const data = await this._connectionService.fetchFollowers(
 			userId,
 			page,
 			limit,
 		);
-		res.status(HttpStatus.OK).json({ success: true, followers, total });
+		res.status(HttpStatus.OK).send(data);
 	});
 
 	fetchFollowing = asyncHandler(async (req, res) => {
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
 
-		const { following, total } = await this._connectionService.fetchFollowing(
+		const data = await this._connectionService.fetchFollowing(
 			userId,
 			page,
 			limit,
 		);
-		res.status(HttpStatus.OK).json({ success: true, following, total });
+		res.status(HttpStatus.OK).send(data);
 	});
+
+  fetchRecentActivity = asyncHandler(async (_req, res) => {
+    const userId = res.locals.user.id;
+    const activities = await this._connectionService.fetchRecentActivity(userId);
+    res.status(HttpStatus.OK).send(activities);
+  });
 }

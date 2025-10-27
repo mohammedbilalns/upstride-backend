@@ -6,7 +6,6 @@ import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { type IMentor, mentorModel } from "../models/mentor.model";
 import { BaseRepository } from "./base.repository";
 import { ConnectionModel } from "../models/connection.model";
-import logger from "../../../common/utils/logger";
 import { AppError } from "../../../application/errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 
@@ -287,7 +286,6 @@ implements IMentorRepository
 			.exec(),
 			this._model.countDocuments(finalCondition)
 		]) 
-		logger.debug("mentors"+ docs)
 		return {mentors: docs.map((doc) => this.mapToDomain(doc)), total};	
 	}
 
