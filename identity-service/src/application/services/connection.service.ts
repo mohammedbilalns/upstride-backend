@@ -56,12 +56,14 @@ export class ConnectionService implements IConnectionService {
   }
 
   async fetchFollowers(
-    mentorId: string,
+    userId: string,
     page: number,
     limit: number,
   ): Promise<ConnectionsResponseDto> {
+    const mentor = await this._mentorRepository.findByUserId(userId)
+    if(!mentor) throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST)
     const followers =
-      await this._connectionRepository.fetchFollowers(mentorId, page, limit);
+      await this._connectionRepository.fetchFollowers(mentor.id, page, limit);
     return followers; 
   }
 

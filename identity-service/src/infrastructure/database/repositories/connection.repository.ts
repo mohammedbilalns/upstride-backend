@@ -103,7 +103,6 @@ implements IConnectionRepository
 	recentConnectedUserIds: string[],
 	limit: number = 5
 ): Promise<{ connections: PopulatedConnection[]; total: number }> {
-	// Step 1: Get mentors already followed by the current user
 	const userFollowedMentors = await ConnectionModel.find({
 		followerId: new Types.ObjectId(userId),
 	}).select("mentorId");
@@ -112,7 +111,6 @@ implements IConnectionRepository
 		conn.mentorId.toString()
 	);
 
-	// Step 2: Build aggregation pipeline to find mutual connections
 
     const pipeline: PipelineStage[] =  buildMutualMentorsPipeline(userId, userFollowedMentorIds, recentConnectedUserIds, limit);
 
