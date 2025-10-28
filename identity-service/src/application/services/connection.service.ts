@@ -1,5 +1,4 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
-import logger from "../../common/utils/logger";
 import type {
   IMentorRepository,
   IUserRepository,
@@ -61,7 +60,6 @@ export class ConnectionService implements IConnectionService {
     page: number,
     limit: number,
   ): Promise<ConnectionsResponseDto> {
-    logger.debug(mentorId+"mentorId ","fsdf");
     const followers =
       await this._connectionRepository.fetchFollowers(mentorId, page, limit);
     return followers; 
@@ -110,7 +108,8 @@ export class ConnectionService implements IConnectionService {
 
     const expertiseIds = user.interestedExpertises
     const skillIds = user.interestedSkills;
-    const suggestions = this._connectionRepository.fetchSuggestedMentors(userId,expertiseIds,skillIds, page, limit)
+
+    const suggestions = await this._mentorRepository.fetchSuggestedMentors(userId,expertiseIds,skillIds, page, limit)
     return suggestions
   }
 

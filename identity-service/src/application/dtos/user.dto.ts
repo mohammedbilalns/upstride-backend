@@ -17,3 +17,4 @@ export interface PopulatedUser extends Omit<User, 'interestedExpertises' | 'inte
 	interestedExpertises: Array<{ _id: string; name: string }>;
 	interestedSkills: Array<{ _id: string; name: string }>;
 }
+

@@ -18,6 +18,7 @@ export function createConnectionRouter() {
   );
   router.post("/unfollow", connectionController.unfollowMentor);
   router.get("/suggested", connectionController.fetchSuggestedMentors)
+  router.get("/mutual", connectionController.fetchMutualConnections)
 
 
 	return router;

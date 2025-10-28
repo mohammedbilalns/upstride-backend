@@ -1,18 +1,21 @@
 import { PipelineStage, Types } from "mongoose";
 
-export const buildSuggestionPipeline = ( expertiseIds: string[], skillIds: string[], followedMentorIds: string[],   skip: number , limit: number = 10) => {
-
+export const buildSuggestionPipeline = (
+  expertiseIds: string[],
+  skillIds: string[],
+  followedMentorIds: string[], 
+  skip: number,
+  limit: number = 10
+) => {
   const pipeline: PipelineStage[] = [
-    // Match active, approved mentors not followed by user
     {
       $match: {
-        _id: { $nin: followedMentorIds },
+        _id: { $nin: followedMentorIds.map(id => new Types.ObjectId(id)) },
         isPending: false,
         isRejected: false,
         isActive: true,
       },
     },
-    // Add match score based on expertise and skills
     {
       $addFields: {
         expertiseMatch: {
@@ -37,64 +40,63 @@ export const buildSuggestionPipeline = ( expertiseIds: string[], skillIds: strin
         },
       },
     },
-    // Calculate total match score (expertise is worth more)
     {
       $addFields: {
         matchScore: {
           $add: [
-            { $multiply: ["$expertiseMatch", 3] }, // Expertise worth 3 points
-            "$skillMatchCount", // Each skill worth 1 point
+            { $multiply: ["$expertiseMatch", 3] },
+            "$skillMatchCount",
           ],
         },
       },
     },
-    // Only include mentors with at least some match
     {
       $match: {
         matchScore: { $gt: 0 },
       },
     },
-    // Sort by match score and followers
     {
       $sort: {
         matchScore: -1,
         followers: -1,
       },
     },
-    // Populate expertise
     {
       $lookup: {
-        from: "expertises",
+        from: "expertise", 
         localField: "expertiseId",
         foreignField: "_id",
         as: "expertise",
       },
     },
     {
-      $unwind: "$expertise",
+      $unwind: {
+        path: "$expertise",
+        preserveNullAndEmptyArrays: false,
+      },
     },
-    // Populate skills
     {
       $lookup: {
-        from: "skills",
+        from: "skill", 
         localField: "skillIds",
         foreignField: "_id",
         as: "skills",
       },
     },
-    // Populate user details
     {
       $lookup: {
-        from: "users",
+        from: "users", 
         localField: "userId",
         foreignField: "_id",
         as: "user",
       },
     },
     {
-      $unwind: "$user",
+      $unwind: {
+        path: "$user",
+        preserveNullAndEmptyArrays: false,
+      },
     },
-    // Project only needed fields
     {
       $project: {
         _id: 1,
@@ -122,7 +124,6 @@ export const buildSuggestionPipeline = ( expertiseIds: string[], skillIds: strin
         },
       },
     },
-    // Facet for pagination
     {
       $facet: {
         mentors: [{ $skip: skip }, { $limit: limit }],
@@ -132,5 +133,5 @@ export const buildSuggestionPipeline = ( expertiseIds: string[], skillIds: strin
   ] as PipelineStage[];
 
   return pipeline;
+};
 
-}
