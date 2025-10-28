@@ -78,7 +78,6 @@ export interface SuggestedMentor {
 
 export interface SuggestedMentorsResponseDto {
 	mentors: SuggestedMentor[];
-	total: number;
 }
 
 

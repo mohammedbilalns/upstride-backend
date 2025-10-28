@@ -348,7 +348,7 @@ implements IMentorRepository
   skillIds: string[],
   page: number = 1,
   limit: number = 10
-): Promise<{ mentors: any[]; total: number }> {
+): Promise<{ mentors: any[]}> {
   const skip = (page - 1) * limit;
   
   const followedMentors = await ConnectionModel.find({
@@ -367,35 +367,22 @@ implements IMentorRepository
   const result = await this._model.aggregate(pipeline);
   
   const mentors = result[0]?.mentors || [];
-  const total = result[0]?.totalCount[0]?.count || 0;
   
   return {
     mentors: mentors.map((mentor: any) => ({
       id: mentor._id.toString(),
       userId: mentor.userId.toString(),
       bio: mentor.bio,
-      currentRole: mentor.currentRole,
-      organisation: mentor.organisation,
-      yearsOfExperience: mentor.yearsOfExperience,
-      educationalQualifications: mentor.educationalQualifications,
-      personalWebsite: mentor.personalWebsite,
       expertise: {
         _id: mentor.expertise._id.toString(),
         name: mentor.expertise.name,
       },
-      skills: mentor.skills.map((skill: any) => ({
-        _id: skill._id.toString(),
-        name: skill.name,
-      })),
-      followers: mentor.followers,
-      matchScore: mentor.matchScore,
       user: {
         id: mentor.user._id.toString(),
         name: mentor.user.name,
         profilePicture: mentor.user.profilePicture,
       },
     })),
-    total,
   };
 } 
 }

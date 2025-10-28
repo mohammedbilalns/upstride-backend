@@ -22,6 +22,6 @@ export interface IMentorRepository extends IBaseRepository<Mentor> {
   skillIds: string[],
   page: number ,
   limit: number
-): Promise<{ mentors: any[]; total: number }>;
+): Promise<{ mentors: any[] }>;
 	
 }
