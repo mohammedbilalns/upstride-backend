@@ -48,3 +48,40 @@ export interface PopulatedConnection {
   updatedAt: string;
   __v: number;
 }
+
+
+export interface SuggestedMentor {
+	id: string;
+	userId: string;
+	bio?: string;
+	currentRole: string;
+	organisation: string;
+	yearsOfExperience: number;
+	educationalQualifications: string[];
+	personalWebsite?: string;
+	expertise: {
+		_id: string;
+		name: string;
+	};
+	skills: Array<{
+		_id: string;
+		name: string;
+	}>;
+	followers: number;
+	matchScore: number; 
+	user?: {
+		id: string;
+		name: string;
+		profilePicture?: string;
+	};
+}
+
+export interface SuggestedMentorsResponseDto {
+	mentors: SuggestedMentor[];
+	total: number;
+}
+
+
+export interface MutualConnectionsResponseDto {}
+
+

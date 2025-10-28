@@ -24,15 +24,19 @@ export class UserRepository
 			passwordHash: mapped.passwordHash,
 			isBlocked: mapped.isBlocked,
 			isRequestedForMentoring: mapped.isRequestedForMentoring,
-			mentorRejectionReason: mapped.mentorRejectionReason,
-			mentorRegistrationCount: mapped.mentorRegistrationCount,
-			googleId: mapped.googleId,
-			role: mapped.role,
-			interestedExpertises: mapped.interestedExpertises,
-			interestedSkills: mapped.interestedSkills,
-			isVerified: mapped.isVerified,
-			createdAt: mapped.createdAt!,
-		};
+      mentorRejectionReason: mapped.mentorRejectionReason,
+      mentorRegistrationCount: mapped.mentorRegistrationCount,
+      googleId: mapped.googleId,
+      role: mapped.role,
+      interestedExpertises: Array.isArray(mapped.interestedExpertises) 
+        ? mapped.interestedExpertises.map((e: any) => typeof e === 'string' ? e : e._id?.toString() || e.toString())
+        : [],
+      interestedSkills: Array.isArray(mapped.interestedSkills)
+        ? mapped.interestedSkills.map((s: any) => typeof s === 'string' ? s : s._id?.toString() || s.toString())
+        : [],
+      isVerified: mapped.isVerified,
+      createdAt: mapped.createdAt!,
+    };
 	}
 
 	async findByEmailAndRole(email: string, role: string): Promise<User | null> {

@@ -9,7 +9,9 @@ import type { IConnectionService } from "../../domain/services/connection.servic
 import type {
   Activity,
   ConnectionsResponseDto,
-  PopulatedConnection
+  MutualConnectionsResponseDto,
+  PopulatedConnection,
+  SuggestedMentorsResponseDto
 } from "../dtos/connection.dto";
 import { AppError } from "../errors/AppError";
 
@@ -101,4 +103,61 @@ export class ConnectionService implements IConnectionService {
 
     return transformedActivities;
   }
+
+  async fetchSuggestedMentors(userId: string, page: number, limit: number): Promise<SuggestedMentorsResponseDto>{
+    const user = await this._userRepository.findById(userId);
+    if (!user) throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST);
+
+    const expertiseIds = user.interestedExpertises
+    const skillIds = user.interestedSkills;
+    const suggestions = this._connectionRepository.fetchSuggestedMentors(userId,expertiseIds,skillIds, page, limit)
+    return suggestions
+  }
+
+  async fetchMutualConnections(userId: string): Promise<MutualConnectionsResponseDto> {
+    const recentConnections = await this._connectionRepository.fetchRecentActivity(
+      userId,
+    );
+
+    if (recentConnections.length === 0) {
+      return {
+        connections: [],
+        total: 0,
+      };
+    }
+
+    const recentConnectedUsersSet = new Set<string>();
+
+    recentConnections.forEach((connection) => {
+      if (connection.mentorId._id.toString() === userId) {
+        recentConnectedUsersSet.add(connection.followerId._id.toString());
+      }
+      // If user is the follower, add the mentor's user ID
+      else {
+        recentConnectedUsersSet.add(connection.mentorId.userId.toString());
+      }
+    });
+
+    const recentConnectedUsers = Array.from(recentConnectedUsersSet);
+
+    if (recentConnectedUsers.length === 0) {
+      return {
+        connections: [],
+        total: 0,
+      };
+    }
+
+    // Fetch mutual connections
+    const { connections, total } =
+      await this._connectionRepository.fetchMutualConnections(
+        userId,
+        recentConnectedUsers,
+        5 // Limit to 5 suggestions
+      );
+
+    return {
+      connections,
+      total,
+    };
+  } 
 }

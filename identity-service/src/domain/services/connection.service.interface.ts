@@ -1,5 +1,8 @@
 import type {
+    Activity,
   ConnectionsResponseDto,
+  MutualConnectionsResponseDto,
+  SuggestedMentorsResponseDto,
 } from "../../application/dtos/connection.dto";
 
 export interface IConnectionService {
@@ -15,5 +18,7 @@ export interface IConnectionService {
 		page: number,
 		limit: number,
 	): Promise<ConnectionsResponseDto>;
-  fetchRecentActivity(userId: string): Promise<any>;
+  fetchRecentActivity(userId: string): Promise<Activity[]>;
+  fetchSuggestedMentors(userId: string, page: number, limit: number): Promise<SuggestedMentorsResponseDto>;
+  fetchMutualConnections(userId: string, page?: number, limit?: number): Promise<MutualConnectionsResponseDto>;
 }

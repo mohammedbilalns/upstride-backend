@@ -58,4 +58,19 @@ export class ConnectionController {
     const activities = await this._connectionService.fetchRecentActivity(userId);
     res.status(HttpStatus.OK).send(activities);
   });
+
+  fetchSuggestedMentors = asyncHandler(async (req, res) => {
+    const userId = res.locals.user.id;
+    const {page, limit} = paginationQuerySchema.parse(req.query);
+    const mentors = await this._connectionService.fetchSuggestedMentors(userId,page,limit);
+    res.status(HttpStatus.OK).send(mentors);
+  });
+
+  fetchMutualConnections = asyncHandler(async (_req, res) => {
+    const userId = res.locals.user.id;
+    const mentors = await this._connectionService.fetchMutualConnections(userId);
+    res.status(HttpStatus.OK).send(mentors);
+  });
+
+  
 }

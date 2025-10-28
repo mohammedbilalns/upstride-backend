@@ -1,10 +1,12 @@
-import { Types } from "mongoose";
+import { PipelineStage, Types } from "mongoose";
 import type { Connection } from "../../../domain/entities/connection.entity";
 import type { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ConnectionModel, type IConnection } from "../models/connection.model";
 import { BaseRepository } from "./base.repository";
 import  { PopulatedConnection } from "../../../application/dtos/connection.dto";
+import { buildSuggestionPipeline } from "../../../domain/utils/buildSuggestionPipeline";
+import { buildMutualMentorsPipeline } from "../../../domain/utils/buildMutualMentorsPipeline";
 
 export class ConnectionRepository
 extends BaseRepository<Connection, IConnection>
@@ -96,5 +98,104 @@ implements IConnectionRepository
 
     return recentActivities;
   }
+
+  async fetchSuggestedMentors(
+	userId: string,
+	expertiseIds: string[],
+	skillIds: string[],
+	page: number = 1,
+	limit: number = 10
+): Promise<{ mentors: PopulatedConnection[]; total: number }> {
+	const skip = (page - 1) * limit;
+
+	const followedMentors = await ConnectionModel.find({
+		followerId: new Types.ObjectId(userId),
+	}).select("mentorId");
+
+	const followedMentorIds = followedMentors.map((conn) => conn.mentorId);
+
+	const pipeline: PipelineStage[] = buildSuggestionPipeline(expertiseIds,skillIds, followedMentorIds,skip,limit) 
+	const result = await this._model.aggregate(pipeline);
+
+	const mentors = result[0]?.mentors || [];
+	const total = result[0]?.totalCount[0]?.count || 0;
+
+	return {
+		mentors: mentors.map((mentor: any) => ({
+			id: mentor._id.toString(),
+			userId: mentor.userId.toString(),
+			bio: mentor.bio,
+			currentRole: mentor.currentRole,
+			organisation: mentor.organisation,
+			yearsOfExperience: mentor.yearsOfExperience,
+			educationalQualifications: mentor.educationalQualifications,
+			personalWebsite: mentor.personalWebsite,
+			expertise: {
+				_id: mentor.expertise._id.toString(),
+				name: mentor.expertise.name,
+			},
+			skills: mentor.skills.map((skill: any) => ({
+				_id: skill._id.toString(),
+				name: skill.name,
+			})),
+			followers: mentor.followers,
+			matchScore: mentor.matchScore,
+			user: {
+				id: mentor.user._id.toString(),
+				name: mentor.user.name,
+				profilePicture: mentor.user.profilePicture,
+			},
+		})),
+		total,
+	};
+}
+  
+  async fetchMutualConnections(
+	userId: string,
+	recentConnectedUserIds: string[],
+	limit: number = 5
+): Promise<{ connections: PopulatedConnection[]; total: number }> {
+	// Step 1: Get mentors already followed by the current user
+	const userFollowedMentors = await ConnectionModel.find({
+		followerId: new Types.ObjectId(userId),
+	}).select("mentorId");
+
+	const userFollowedMentorIds = userFollowedMentors.map((conn) =>
+		conn.mentorId.toString()
+	);
+
+	// Step 2: Build aggregation pipeline to find mutual connections
+
+    const pipeline: PipelineStage[] =  buildMutualMentorsPipeline(userId, userFollowedMentorIds, recentConnectedUserIds, limit);
+
+	const result = await ConnectionModel.aggregate(pipeline);
+
+	const connections = result[0]?.connections || [];
+	const total = result[0]?.totalCount[0]?.count || 0;
+
+	return {
+		connections: connections.map((conn: any) => ({
+			id: conn._id.toString(),
+			userId: conn.mentorUserId.toString(),
+			name: conn.userName,
+			profilePicture: conn.profilePicture,
+			currentRole: conn.currentRole,
+			organisation: conn.organisation,
+			yearsOfExperience: conn.yearsOfExperience,
+			followers: conn.followers,
+			mutualConnectionCount: conn.mutualConnectionCount,
+			mutualConnections: conn.mutualFollowers.map((f: any) => ({
+				id: f.id.toString(),
+				name: f.name,
+				profilePicture: f.profilePicture,
+			})),
+			expertise: {
+				_id: conn.expertise._id.toString(),
+				name: conn.expertise.name,
+			},
+		})),
+		total,
+	};
+}
 
 }
