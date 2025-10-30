@@ -1,3 +1,4 @@
+import { PopulatedDoc } from "mongoose";
 import type { User } from "../entities/user.entity";
 import type { IBaseRepository } from "./base.repository.interface";
 
@@ -13,5 +14,5 @@ export interface IUserRepository extends IBaseRepository<User> {
 	): Promise<User[]>;
 	count(allowedRoles: string[]): Promise<number>;
 	findByIds(ids: string[]): Promise<User[]>;
-	findByUserId(userId: string): Promise<User | null>;
+	findByUserId(userId: string): Promise<PopulatedDoc<User> | null>;
 }

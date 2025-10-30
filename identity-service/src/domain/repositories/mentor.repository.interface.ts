@@ -16,5 +16,12 @@ export interface IMentorRepository extends IBaseRepository<Mentor> {
 	count(query?: string, status?: string): Promise<number>;
 	findByExpertiseId(expertiseId: string): Promise<Mentor[]>;
 	findActiveExpertisesAndSkills(): Promise<{expertises: string[], skills: string[]}>;
+  fetchSuggestedMentors(
+  userId: string,
+  expertiseIds: string[],
+  skillIds: string[],
+  page: number ,
+  limit: number
+): Promise<{ mentors: any[] }>;
 	
 }

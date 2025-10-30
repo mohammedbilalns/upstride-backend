@@ -1,4 +1,4 @@
-import type { Response } from "express";
+import type { Response as Response } from "express";
 import { COOKIE_OPTIONS } from "../../../common/constants/cookieOptions";
 import {
 	ErrorMessage,

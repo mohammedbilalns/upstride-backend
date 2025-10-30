@@ -19,8 +19,13 @@ export class ProfileService implements IProfileService {
 
 	async fetchProfileById(profileId: string): Promise<fetchProfileResponseDto> {
 		const user = await this._userRepository.findByUserId(profileId);
-		if (!user)
+		if (!user )
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    
+    // NOTE: Type checking is added to avoid typescript error
+    if (typeof user !== 'object' || !('isVerified' in user))
+      throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+
 		if (!user.isVerified)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 		const { passwordHash, isBlocked, ...userData } = user;
