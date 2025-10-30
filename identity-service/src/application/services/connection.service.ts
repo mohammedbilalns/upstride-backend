@@ -114,46 +114,12 @@ export class ConnectionService implements IConnectionService {
     const suggestions = await this._mentorRepository.fetchSuggestedMentors(userId,expertiseIds,skillIds, page, limit)
     return suggestions
   }
-
   async fetchMutualConnections(userId: string): Promise<MutualConnectionsResponseDto> {
-    const recentConnections = await this._connectionRepository.fetchRecentActivity(
-      userId,
-    );
 
-    if (recentConnections.length === 0) {
-      return {
-        connections: [],
-        total: 0,
-      };
-    }
-
-    const recentConnectedUsersSet = new Set<string>();
-
-    recentConnections.forEach((connection) => {
-      if (connection.mentorId._id.toString() === userId) {
-        recentConnectedUsersSet.add(connection.followerId._id.toString());
-      }
-      // If user is the follower, add the mentor's user ID
-      else {
-        recentConnectedUsersSet.add(connection.mentorId.userId.toString());
-      }
-    });
-
-    const recentConnectedUsers = Array.from(recentConnectedUsersSet);
-
-    if (recentConnectedUsers.length === 0) {
-      return {
-        connections: [],
-        total: 0,
-      };
-    }
-
-    // Fetch mutual connections
     const { connections, total } =
       await this._connectionRepository.fetchMutualConnections(
         userId,
-        recentConnectedUsers,
-        5 // Limit to 5 suggestions
+        5 
       );
 
     return {

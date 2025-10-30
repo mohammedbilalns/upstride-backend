@@ -18,5 +18,5 @@ export interface IConnectionRepository extends IBaseRepository<Connection> {
 		mentorId: string,
 	): Promise<Connection | null>;
 	fetchRecentActivity(userId: string): Promise<PopulatedConnection[]>;
-  fetchMutualConnections(userId: string,recentConnectedUsers: string[], limit: number): Promise<{ connections: any[]; total: number }> ;
+  fetchMutualConnections(userId: string, limit: number): Promise<{ connections: any[]; total: number }> ;
 }

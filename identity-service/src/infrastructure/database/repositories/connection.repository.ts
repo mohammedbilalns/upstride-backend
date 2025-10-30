@@ -1,4 +1,4 @@
-import { PipelineStage, Types } from "mongoose";
+import { Types } from "mongoose";
 import type { Connection } from "../../../domain/entities/connection.entity";
 import type { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
@@ -98,50 +98,65 @@ implements IConnectionRepository
     return recentActivities;
   }
 
+
   async fetchMutualConnections(
-	userId: string,
-	recentConnectedUserIds: string[],
-	limit: number = 5
-): Promise<{ connections: PopulatedConnection[]; total: number }> {
-	const userFollowedMentors = await ConnectionModel.find({
-		followerId: new Types.ObjectId(userId),
-	}).select("mentorId");
+    userId: string,
+    limit: number = 5
+  ): Promise<{ connections: PopulatedConnection[]; total: number }> {
 
-	const userFollowedMentorIds = userFollowedMentors.map((conn) =>
-		conn.mentorId.toString()
-	);
+    // Get mentors already followed by the user
+    const userFollowedMentors = await this._model.find({
+      followerId: new Types.ObjectId(userId),
+    }).select("mentorId");
 
+    const userFollowedMentorIds = userFollowedMentors.map((conn) =>
+      conn.mentorId.toString()
+    );
 
-    const pipeline: PipelineStage[] =  buildMutualMentorsPipeline(userId, userFollowedMentorIds, recentConnectedUserIds, limit);
+    //  Find who else follows the user  
+    const othersFollowingSameMentors = await this._model.find({
+      mentorId: { $in: userFollowedMentorIds.map(id => new Types.ObjectId(id)) },
+      followerId: { $ne: new Types.ObjectId(userId) },
+    }).lean();
 
-	const result = await ConnectionModel.aggregate(pipeline);
+    if (othersFollowingSameMentors.length === 0) {
+      return { connections: [], total: 0 };
+    }
 
-	const connections = result[0]?.connections || [];
-	const total = result[0]?.totalCount[0]?.count || 0;
+    const otherFollowerIds = othersFollowingSameMentors.map(c => c.followerId);
 
-	return {
-		connections: connections.map((conn: any) => ({
-			id: conn._id.toString(),
-			userId: conn.mentorUserId.toString(),
-			name: conn.userName,
-			profilePicture: conn.profilePicture,
-			currentRole: conn.currentRole,
-			organisation: conn.organisation,
-			yearsOfExperience: conn.yearsOfExperience,
-			followers: conn.followers,
-			mutualConnectionCount: conn.mutualConnectionCount,
-			mutualConnections: conn.mutualFollowers.map((f: any) => ({
-				id: f.id.toString(),
-				name: f.name,
-				profilePicture: f.profilePicture,
-			})),
-			expertise: {
-				_id: conn.expertise._id.toString(),
-				name: conn.expertise.name,
-			},
-		})),
-		total,
-	};
-}
+    const theirMentors = await ConnectionModel.find({
+      followerId: { $in: otherFollowerIds },
+      mentorId: { $nin: userFollowedMentorIds.map(id => new Types.ObjectId(id)) },
+    }).lean();
+
+    if (theirMentors.length === 0) {
+      return { connections: [], total: 0 };
+    }
+
+    const result = await ConnectionModel.aggregate(buildMutualMentorsPipeline(userId, userFollowedMentorIds,limit));
+
+    const connections = result[0]?.connections || [];
+    const total = result[0]?.totalCount[0]?.count || 0;
+
+    return {
+      connections: connections.map((conn: any) => ({
+        id: conn._id.toString(),
+        userId: conn.mentorUserId.toString(),
+        name: conn.userName,
+        profilePicture: conn.profilePicture,
+        currentRole: conn.currentRole,
+        organisation: conn.organisation,
+        yearsOfExperience: conn.yearsOfExperience,
+        followers: conn.followers,
+        mutualConnectionCount: conn.mutualConnectionCount,
+        expertise: {
+          _id: conn.expertise._id.toString(),
+          name: conn.expertise.name,
+        },
+      })),
+      total,
+    };
+  }
 
 }
