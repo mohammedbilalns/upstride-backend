@@ -1,14 +1,13 @@
-
 export interface Message {
+  id: string;
 	chatId: string;
-	sender: string;
-	receiver: string;
+	senderId: string;
 	content: string;
-	media:{
-		url: string; 
-		type: string;
-	}
-	replyTo: string;
+  type: "TEXT" | "IMAGE" | "FILE" 
+  attachments?: string[];
+  repliedTo?: string;
 	status: "send"| "delivered"| "read";
 	createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 }
