@@ -4,19 +4,19 @@ import type { IConnectionRepository } from "../../../domain/repositories/connect
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ConnectionModel, type IConnection } from "../models/connection.model";
 import { BaseRepository } from "./base.repository";
-import  { PopulatedConnection } from "../../../application/dtos/connection.dto";
+import { PopulatedConnection } from "../../../application/dtos/connection.dto";
 import { buildMutualMentorsPipeline } from "../utils/buildMutualMentorsPipeline";
 
 export class ConnectionRepository
-extends BaseRepository<Connection, IConnection>
-implements IConnectionRepository
+  extends BaseRepository<Connection, IConnection>
+  implements IConnectionRepository
 {
   constructor() {
     super(ConnectionModel);
   }
 
   protected mapToDomain(doc: IConnection): Connection {
-    const mapped = mapMongoDocument(doc)!
+    const mapped = mapMongoDocument(doc)!;
     return {
       id: mapped.id,
       mentorId: mapped.mentorId,
@@ -40,7 +40,7 @@ implements IConnectionRepository
       })
       .skip(skip)
       .limit(limit)
-      .exec()
+      .exec();
     return docs.map((doc) => this.mapToDomain(doc));
   }
 
@@ -50,23 +50,22 @@ implements IConnectionRepository
     limit: number,
   ): Promise<Connection[]> {
     const skip = (page - 1) * limit;
-    const docs = await	this._model
+    const docs = await this._model
       .find({ followerId: userId })
       .populate({
         path: "mentorId",
-        select:
-        "bio currentRole yearsOfExperience userId",
+        select: "bio currentRole yearsOfExperience userId",
         populate: [
           { path: "skillIds", select: "name -_id" },
           { path: "expertiseId", select: "name -_id" },
-          {path: "userId", select: "name email profilePicture"},
+          { path: "userId", select: "name email profilePicture" },
         ],
       })
       .skip(skip)
       .limit(limit)
-      .exec()
+      .exec();
     const mapped = docs.map((doc) => this.mapToDomain(doc));
-    return mapped
+    return mapped;
   }
   async fetchByUserAndMentor(
     userId: string,
@@ -81,60 +80,67 @@ implements IConnectionRepository
   async fetchRecentActivity(userId: string): Promise<PopulatedConnection[]> {
     const objectId = new Types.ObjectId(userId);
     const recentActivities = await ConnectionModel.find({
-      $or: [
-        { followerId: objectId }, 
-        { "mentorId.userId": objectId }, 
-      ],
+      $or: [{ followerId: objectId }, { "mentorId.userId": objectId }],
     })
-    .populate({
-      path: "mentorId",
-      populate: { path: "userId", select: "name profilePicture" }, 			
-    })
-    .populate("followerId", "name profilePicture") 
-    .sort({ createdAt: -1 }) 
-    .limit(5)
-    .lean<PopulatedConnection[]>(); 
+      .populate({
+        path: "mentorId",
+        populate: { path: "userId", select: "name profilePicture" },
+      })
+      .populate("followerId", "name profilePicture")
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean<PopulatedConnection[]>();
 
     return recentActivities;
   }
 
-
   async fetchMutualConnections(
     userId: string,
-    limit: number = 5
+    limit: number = 5,
   ): Promise<{ connections: PopulatedConnection[]; total: number }> {
-
     // Get mentors already followed by the user
-    const userFollowedMentors = await this._model.find({
-      followerId: new Types.ObjectId(userId),
-    }).select("mentorId");
+    const userFollowedMentors = await this._model
+      .find({
+        followerId: new Types.ObjectId(userId),
+      })
+      .select("mentorId");
 
     const userFollowedMentorIds = userFollowedMentors.map((conn) =>
-      conn.mentorId.toString()
+      conn.mentorId.toString(),
     );
 
-    //  Find who else follows the user  
-    const othersFollowingSameMentors = await this._model.find({
-      mentorId: { $in: userFollowedMentorIds.map(id => new Types.ObjectId(id)) },
-      followerId: { $ne: new Types.ObjectId(userId) },
-    }).lean();
+    //  Find who else follows the user
+    const othersFollowingSameMentors = await this._model
+      .find({
+        mentorId: {
+          $in: userFollowedMentorIds.map((id) => new Types.ObjectId(id)),
+        },
+        followerId: { $ne: new Types.ObjectId(userId) },
+      })
+      .lean();
 
     if (othersFollowingSameMentors.length === 0) {
       return { connections: [], total: 0 };
     }
 
-    const otherFollowerIds = othersFollowingSameMentors.map(c => c.followerId);
+    const otherFollowerIds = othersFollowingSameMentors.map(
+      (c) => c.followerId,
+    );
 
     const theirMentors = await ConnectionModel.find({
       followerId: { $in: otherFollowerIds },
-      mentorId: { $nin: userFollowedMentorIds.map(id => new Types.ObjectId(id)) },
+      mentorId: {
+        $nin: userFollowedMentorIds.map((id) => new Types.ObjectId(id)),
+      },
     }).lean();
 
     if (theirMentors.length === 0) {
       return { connections: [], total: 0 };
     }
 
-    const result = await ConnectionModel.aggregate(buildMutualMentorsPipeline(userId, userFollowedMentorIds,limit));
+    const result = await ConnectionModel.aggregate(
+      buildMutualMentorsPipeline(userId, userFollowedMentorIds, limit),
+    );
 
     const connections = result[0]?.connections || [];
     const total = result[0]?.totalCount[0]?.count || 0;
@@ -158,5 +164,4 @@ implements IConnectionRepository
       total,
     };
   }
-
 }
