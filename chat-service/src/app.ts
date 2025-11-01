@@ -37,11 +37,12 @@ class App {
 	}
 
 	public listen(port: string) {
-		this._app.listen(port, () => {
-			connectRabbitMq();
-			connectToDb();
+		const server = this._app.listen(port, async () => {
+			await connectRabbitMq();
+			await connectToDb();
 			logger.info(`Chat service is listening on port ${port}`);
 		});
+		return server;
 	}
 }
 
