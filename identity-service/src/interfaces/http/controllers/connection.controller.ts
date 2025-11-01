@@ -1,5 +1,4 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import logger from "../../../common/utils/logger";
 import type { IConnectionService } from "../../../domain/services/connection.service.interface";
 import asyncHandler from "../utils/asyncHandler";
 import {
@@ -62,10 +61,8 @@ export class ConnectionController {
 
   fetchSuggestedMentors = asyncHandler(async (req, res) => {
     const userId = res.locals.user.id;
-    logger.debug(`fetchSuggestedMentors userId: ${userId}`);
     const {page, limit} = paginationQuerySchema.parse(req.query);
     const mentors = await this._connectionService.fetchSuggestedMentors(userId,page,limit);
-    logger.debug(`fetchSuggestedMentors mentors: ${mentors}`);
     res.status(HttpStatus.OK).send(mentors);
   });
 
