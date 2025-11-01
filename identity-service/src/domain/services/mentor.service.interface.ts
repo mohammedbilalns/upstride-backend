@@ -18,7 +18,7 @@ export interface IMentorService {
 	): Promise<findAllMentorsResponseDto>;
 	findByExpertiseandSkill(
 		findByExpertiseandSkillDto: findByExpertiseandSkillDto,
-	): Promise<{mentors: Mentor[], total: number}>;
+	): Promise<{ mentors: Mentor[]; total: number }>;
 	approveMentor(aproveMentorDto: approveMentorDto): Promise<void>;
 	rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void>;
 	getMentorByExpertiseId(expertiseId: string): Promise<string[]>;

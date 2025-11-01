@@ -7,4 +7,3 @@ export async function connectRabbitMq() {
 	await loadConsumers();
 	logger.info("RabbitMQ connected and consumers loaded");
 }
-

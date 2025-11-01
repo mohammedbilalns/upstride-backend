@@ -12,16 +12,18 @@ export interface IMentorRepository extends IBaseRepository<Mentor> {
 		expertiseId?: string,
 		skillId?: string,
 		query?: string,
-	): Promise<{mentors: Mentor[], total: number}>;
+	): Promise<{ mentors: Mentor[]; total: number }>;
 	count(query?: string, status?: string): Promise<number>;
 	findByExpertiseId(expertiseId: string): Promise<Mentor[]>;
-	findActiveExpertisesAndSkills(): Promise<{expertises: string[], skills: string[]}>;
-  fetchSuggestedMentors(
-  userId: string,
-  expertiseIds: string[],
-  skillIds: string[],
-  page: number ,
-  limit: number
-): Promise<{ mentors: any[] }>;
-	
+	findActiveExpertisesAndSkills(): Promise<{
+		expertises: string[];
+		skills: string[];
+	}>;
+	fetchSuggestedMentors(
+		userId: string,
+		expertiseIds: string[],
+		skillIds: string[],
+		page: number,
+		limit: number,
+	): Promise<{ mentors: any[] }>;
 }

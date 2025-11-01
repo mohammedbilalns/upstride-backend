@@ -12,8 +12,8 @@ import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { buildSuggestionPipeline } from "../utils/buildSuggestionPipeline";
 
 export class MentorRepository
-extends BaseRepository<Mentor, IMentor>
-implements IMentorRepository
+	extends BaseRepository<Mentor, IMentor>
+	implements IMentorRepository
 {
 	constructor() {
 		super(mentorModel);
@@ -32,15 +32,14 @@ implements IMentorRepository
 		};
 	}
 
-
 	protected mapToDomain(doc: IMentor): Mentor {
 		if (
 			(doc.userId && isPopulatedDocument(doc.userId)) ||
-				(doc.expertiseId && isPopulatedDocument(doc.expertiseId)) ||
-				(doc.skillIds &&
-					Array.isArray(doc.skillIds) &&
-					doc.skillIds.length > 0 &&
-					isPopulatedDocument(doc.skillIds[0]))
+			(doc.expertiseId && isPopulatedDocument(doc.expertiseId)) ||
+			(doc.skillIds &&
+				Array.isArray(doc.skillIds) &&
+				doc.skillIds.length > 0 &&
+				isPopulatedDocument(doc.skillIds[0]))
 		) {
 			const mentorObj: any = {
 				id: doc._id?.toString() || doc.id,
@@ -80,9 +79,9 @@ implements IMentorRepository
 
 			if (
 				doc.skillIds &&
-					Array.isArray(doc.skillIds) &&
-					doc.skillIds.length > 0 &&
-					isPopulatedDocument(doc.skillIds[0])
+				Array.isArray(doc.skillIds) &&
+				doc.skillIds.length > 0 &&
+				isPopulatedDocument(doc.skillIds[0])
 			) {
 				mentorObj.skills = (doc.skillIds as any[]).map((skill) => ({
 					id: skill._id?.toString() || skill,
@@ -156,7 +155,7 @@ implements IMentorRepository
 
 		const finalCondition =
 			Object.keys(searchCondition).length > 0 ||
-				Object.keys(statusCondition).length > 0
+			Object.keys(statusCondition).length > 0
 				? { $and: [searchCondition, statusCondition] }
 				: {};
 
@@ -189,7 +188,7 @@ implements IMentorRepository
 
 		const finalCondition =
 			Object.keys(searchCondition).length > 0 ||
-				Object.keys(statusCondition).length > 0
+			Object.keys(statusCondition).length > 0
 				? { $and: [searchCondition, statusCondition] }
 				: {};
 
@@ -215,62 +214,62 @@ implements IMentorRepository
 		page: number,
 		limit: number,
 		userId: string,
-		expertiseId?: string, 
+		expertiseId?: string,
 		skillId?: string,
 		query?: string,
-
-	): Promise<{mentors: Mentor[], total: number}> {
-
+	): Promise<{ mentors: Mentor[]; total: number }> {
 		const existingConnections = await ConnectionModel.find({
-			followerId: userId
-		}).select('mentorId').lean();
+			followerId: userId,
+		})
+			.select("mentorId")
+			.lean();
 
-
-		const connectedMentorIds = existingConnections.map(conn => conn.mentorId);
+		const connectedMentorIds = existingConnections.map((conn) => conn.mentorId);
 
 		const searchCondition = this.createSearchCondition(query);
-		const baseCondition: FilterQuery<Mentor> = { 
-			_id: { $nin: connectedMentorIds }, 
-			userId: { $ne: userId }, 
+		const baseCondition: FilterQuery<Mentor> = {
+			_id: { $nin: connectedMentorIds },
+			userId: { $ne: userId },
 			isPending: false,
 			isRejected: false,
 		};
-		if(expertiseId){
-			if(!Types.ObjectId.isValid(expertiseId)){
-				throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST)
+		if (expertiseId) {
+			if (!Types.ObjectId.isValid(expertiseId)) {
+				throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST);
 			}
-			baseCondition.expertiseId = expertiseId
+			baseCondition.expertiseId = expertiseId;
 		}
-		if(skillId){
-			if(!Types.ObjectId.isValid(skillId)){
-				throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST)
+		if (skillId) {
+			if (!Types.ObjectId.isValid(skillId)) {
+				throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST);
 			}
-			baseCondition.skillIds = skillId
+			baseCondition.skillIds = skillId;
 		}
 
 		const finalCondition = query
 			? { $and: [baseCondition, searchCondition] }
 			: baseCondition;
 
-		const [docs, total] = await Promise.all( [this._model
-			.find(finalCondition)
-			.select("expertiseId skillIds bio yearsOfExperience userId")
-			.populate({
-				path: "userId", 
-				select: "name email profilePicture",
-				model: "User"
-			})
-			.populate({
-				path: "expertiseId", 
-				select: "name"
-			})
-			.populate("skillIds", "name")
-			.skip((page-1) * limit)
-			.limit(limit)
-			.exec(),
-			this._model.countDocuments(finalCondition)
-		]) 
-		return {mentors: docs.map((doc) => this.mapToDomain(doc)), total};	
+		const [docs, total] = await Promise.all([
+			this._model
+				.find(finalCondition)
+				.select("expertiseId skillIds bio yearsOfExperience userId")
+				.populate({
+					path: "userId",
+					select: "name email profilePicture",
+					model: "User",
+				})
+				.populate({
+					path: "expertiseId",
+					select: "name",
+				})
+				.populate("skillIds", "name")
+				.skip((page - 1) * limit)
+				.limit(limit)
+				.exec(),
+			this._model.countDocuments(finalCondition),
+		]);
+		return { mentors: docs.map((doc) => this.mapToDomain(doc)), total };
 	}
 
 	async findByExpertiseId(expertiseId: string): Promise<Mentor[]> {
@@ -290,7 +289,10 @@ implements IMentorRepository
 		return mentors.map((doc) => this.mapToDomain(doc));
 	}
 
-	async findActiveExpertisesAndSkills(): Promise<{expertises: string[], skills: string[]}> {
+	async findActiveExpertisesAndSkills(): Promise<{
+		expertises: string[];
+		skills: string[];
+	}> {
 		const result = await this._model.aggregate([
 			{
 				$match: {
@@ -305,7 +307,7 @@ implements IMentorRepository
 						{ $group: { _id: "$expertiseId" } },
 						{
 							$lookup: {
-								from: "expertise", 
+								from: "expertise",
 								localField: "_id",
 								foreignField: "_id",
 								as: "expertise",
@@ -320,14 +322,14 @@ implements IMentorRepository
 						{ $group: { _id: "$skillIds" } },
 						{
 							$lookup: {
-								from: "skills", 
+								from: "skills",
 								localField: "_id",
 								foreignField: "_id",
 								as: "skill",
 							},
 						},
 						{ $unwind: "$skill" },
-							{ $match: { "skill.isVerified": true } },
+						{ $match: { "skill.isVerified": true } },
 						{ $replaceRoot: { newRoot: "$skill" } },
 						{ $limit: 30 },
 					],
@@ -336,53 +338,62 @@ implements IMentorRepository
 		]);
 
 		const { expertises, skills } = result[0];
-		const expertisesData = expertises.map((expertise:{_id: string, name: string}) => ({id: expertise._id, name: expertise.name}))
-		const skillsData = skills.map((skill:{_id: string, name: string}) => ({id: skill._id, name: skill.name}))
+		const expertisesData = expertises.map(
+			(expertise: { _id: string; name: string }) => ({
+				id: expertise._id,
+				name: expertise.name,
+			}),
+		);
+		const skillsData = skills.map((skill: { _id: string; name: string }) => ({
+			id: skill._id,
+			name: skill.name,
+		}));
 		return { expertises: expertisesData, skills: skillsData };
 	}
 
+	async fetchSuggestedMentors(
+		userId: string,
+		expertiseIds: string[],
+		skillIds: string[],
+		page: number = 1,
+		limit: number = 10,
+	): Promise<{ mentors: any[] }> {
+		const skip = (page - 1) * limit;
 
- async fetchSuggestedMentors(
-  userId: string,
-  expertiseIds: string[],
-  skillIds: string[],
-  page: number = 1,
-  limit: number = 10
-): Promise<{ mentors: any[]}> {
-  const skip = (page - 1) * limit;
-  
-  const followedMentors = await ConnectionModel.find({
-    followerId: new Types.ObjectId(userId),
-  }).select("mentorId");
-  
-  const followedMentorIds = followedMentors.map((conn) => conn.mentorId.toString());
-  
-  const pipeline: PipelineStage[] = buildSuggestionPipeline(
-    expertiseIds,
-    skillIds,
-    followedMentorIds,
-    skip,
-    limit
-  );
-  const result = await this._model.aggregate(pipeline);
-  
-  const mentors = result[0]?.mentors || [];
-  
-  return {
-    mentors: mentors.map((mentor: any) => ({
-      id: mentor._id.toString(),
-      userId: mentor.userId.toString(),
-      bio: mentor.bio,
-      expertise: {
-        _id: mentor.expertise._id.toString(),
-        name: mentor.expertise.name,
-      },
-      user: {
-        id: mentor.user._id.toString(),
-        name: mentor.user.name,
-        profilePicture: mentor.user.profilePicture,
-      },
-    })),
-  };
-} 
+		const followedMentors = await ConnectionModel.find({
+			followerId: new Types.ObjectId(userId),
+		}).select("mentorId");
+
+		const followedMentorIds = followedMentors.map((conn) =>
+			conn.mentorId.toString(),
+		);
+
+		const pipeline: PipelineStage[] = buildSuggestionPipeline(
+			expertiseIds,
+			skillIds,
+			followedMentorIds,
+			skip,
+			limit,
+		);
+		const result = await this._model.aggregate(pipeline);
+
+		const mentors = result[0]?.mentors || [];
+
+		return {
+			mentors: mentors.map((mentor: any) => ({
+				id: mentor._id.toString(),
+				userId: mentor.userId.toString(),
+				bio: mentor.bio,
+				expertise: {
+					_id: mentor.expertise._id.toString(),
+					name: mentor.expertise.name,
+				},
+				user: {
+					id: mentor.user._id.toString(),
+					name: mentor.user.name,
+					profilePicture: mentor.user.profilePicture,
+				},
+			})),
+		};
+	}
 }

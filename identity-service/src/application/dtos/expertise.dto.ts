@@ -54,7 +54,7 @@ interface AdminExpertiseResponse {
 type ExpertiseResponse = BaseExpertiseResponse &
 	Partial<AdminExpertiseResponse>;
 
-export type FetchExpertisesResponse ={
+export type FetchExpertisesResponse = {
 	data: ExpertiseResponse[];
 	total: number;
-} 
+};

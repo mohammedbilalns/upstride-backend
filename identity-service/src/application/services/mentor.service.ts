@@ -160,7 +160,7 @@ export class MentorService implements IMentorService {
 
 	async findByExpertiseandSkill(
 		findByExpertiseandSkillDto: findByExpertiseandSkillDto,
-	): Promise<{mentors: Mentor[], total: number}> {
+	): Promise<{ mentors: Mentor[]; total: number }> {
 		const { page, limit, query, expertiseId, skillId, userId } =
 			findByExpertiseandSkillDto;
 		const mentors = await this._mentorRepository.findByExpertiseandSkill(
@@ -171,7 +171,7 @@ export class MentorService implements IMentorService {
 			skillId,
 			query,
 		);
-		
+
 		return mentors;
 	}
 
@@ -248,7 +248,6 @@ export class MentorService implements IMentorService {
 		return mentors.map((mentor: Mentor) => mentor.userId);
 	}
 
-	
 	// public data of the mentor
 	async getMentorDetails(mentorId: string): Promise<Mentor | null> {
 		const mentor = await this._mentorRepository.findById(mentorId);

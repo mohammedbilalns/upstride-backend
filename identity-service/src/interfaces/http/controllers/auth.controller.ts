@@ -119,7 +119,7 @@ export class AuthController {
 	});
 
 	logout = asyncHandler(async (_req, res) => {
-		console.log(res.locals)
+		console.log(res.locals);
 		const userId = res.locals?.user?.id;
 		this._authService.logout(userId);
 		this.clearAuthCookies(res);

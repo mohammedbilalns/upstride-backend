@@ -8,7 +8,10 @@ import { NotificationController } from "../controllers/notification.controller";
 export function createNotificationController(): NotificationController {
 	const notificationRepository: INotificationRepository =
 		new NotificationRepository();
-	const eventBus: IEventBus  = EventBus 
-	const notificationService = new NotificationService(notificationRepository, eventBus);
+	const eventBus: IEventBus = EventBus;
+	const notificationService = new NotificationService(
+		notificationRepository,
+		eventBus,
+	);
 	return new NotificationController(notificationService);
 }

@@ -37,10 +37,10 @@ export class MentorController {
 	});
 
 	fetchMentorsForUser = asyncHandler(async (req, res) => {
-		const userId = res.locals.user.id; 
+		const userId = res.locals.user.id;
 		const { page, limit, query, expertiseId, skillId } =
-		fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
-		const data = await this._mentorService.findByExpertiseandSkill({	
+			fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
+		const data = await this._mentorService.findByExpertiseandSkill({
 			expertiseId,
 			skillId,
 			userId,
@@ -48,7 +48,7 @@ export class MentorController {
 			limit,
 			query,
 		});
-		res.status(HttpStatus.OK).send(data)
+		res.status(HttpStatus.OK).send(data);
 	});
 
 	appoveMentor = asyncHandler(async (req, res) => {

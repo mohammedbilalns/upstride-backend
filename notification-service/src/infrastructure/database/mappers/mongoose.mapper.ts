@@ -18,4 +18,3 @@ export const mapMongoDocument = <T extends Document>(
 		id: _id.toString(),
 	} as DocumentToPlain<T>;
 };
-

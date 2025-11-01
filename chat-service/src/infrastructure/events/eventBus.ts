@@ -9,4 +9,3 @@ export async function initEventBus() {
 }
 
 export default EventBus;
-

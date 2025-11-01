@@ -105,7 +105,7 @@ export class ExpertiseController {
 	});
 
 	fetchActiveExpertisesAndSkills = asyncHandler(async (_req, res) => {
-		const data = await this._expertiseService.findActiveExpertisesAndSkills()
+		const data = await this._expertiseService.findActiveExpertisesAndSkills();
 		return res.status(HttpStatus.OK).send(data);
 	});
 }

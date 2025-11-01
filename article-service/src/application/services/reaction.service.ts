@@ -96,7 +96,7 @@ export class ReactionService implements IReactionService {
 			await this._reactionRepository.update(existingReaction.id, { reaction });
 		} else {
 			await this._reactionRepository.create({ resourceId, userId, reaction });
-	}
+		}
 
 		// update likes count in the resource
 		const likesChanged = reaction === "like" ? 1 : -1;

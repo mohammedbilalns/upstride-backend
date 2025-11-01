@@ -6,5 +6,5 @@ export interface Notification {
 	content: string;
 	link?: string;
 	isRead: boolean;
-	createdAt: Date
+	createdAt: Date;
 }

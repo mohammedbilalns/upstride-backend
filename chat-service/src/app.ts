@@ -8,39 +8,39 @@ import env from "./infrastructure/config/env";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 
-
 class App {
-  private _app: Application;
-  constructor() {
-    this._app = express();
-    this._setupMiddlewares()
-    this._setupRoutes()
-  }
+	private _app: Application;
+	constructor() {
+		this._app = express();
+		this._setupMiddlewares();
+		this._setupRoutes();
+	}
 
-  private _setupMiddlewares() {
-    this._app.use(helmet());
-    this._app.use(cors({
-      origin : [env.CLIENT_URL, env.GATEWAY_URL],
-      credentials: true
-    }));
+	private _setupMiddlewares() {
+		this._app.use(helmet());
+		this._app.use(
+			cors({
+				origin: [env.CLIENT_URL, env.GATEWAY_URL],
+				credentials: true,
+			}),
+		);
 
-    this._app.use(express.json());
-    this._app.use(cookieParser());
-    this._app.use(requestLogger);
-  }
+		this._app.use(express.json());
+		this._app.use(cookieParser());
+		this._app.use(requestLogger);
+	}
 
-  private _setupRoutes() {
+	private _setupRoutes() {
+		this._app.use(errorHandler);
+	}
 
-    this._app.use(errorHandler);
-  }
-
-  public listen(port: string) {
-    this._app.listen(port, () => {
-      connectRabbitMq()
-      connectToDb();
-      logger.info(`Chat service is listening on port ${port}`)
-    } )
-  }
+	public listen(port: string) {
+		this._app.listen(port, () => {
+			connectRabbitMq();
+			connectToDb();
+			logger.info(`Chat service is listening on port ${port}`);
+		});
+	}
 }
 
 export default App;

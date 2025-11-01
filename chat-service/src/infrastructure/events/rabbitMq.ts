@@ -1,4 +1,4 @@
-import * as amqp from "amqplib"
+import * as amqp from "amqplib";
 import logger from "../../common/utils/logger";
 import type { IEventBus } from "../../domain/events/eventBus.interface";
 import env from "../config/env";
@@ -45,4 +45,3 @@ export class RabbitMQEventBus implements IEventBus {
 		});
 	}
 }
-

@@ -65,10 +65,7 @@ router.use(
 
 router.use(
 	"/connection",
-	createServiceProxy(
-		ServiceName.IDENTITY,
-		SERVICE_URL[ServiceName.IDENTITY],
-	),
+	createServiceProxy(ServiceName.IDENTITY, SERVICE_URL[ServiceName.IDENTITY]),
 );
 
 router.use(

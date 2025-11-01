@@ -45,7 +45,6 @@ export class ExpertiseService implements IExpertiseService {
 	}
 
 	async updateExpertise(data: updateExpertiseDto): Promise<void> {
-
 		const updateData: Partial<Omit<updateExpertiseDto, "expertiseId">> = {};
 		if (data.name) updateData.name = data.name;
 		if (data.description) updateData.description = data.description;
@@ -57,7 +56,6 @@ export class ExpertiseService implements IExpertiseService {
 	async fetchExpertises(
 		data: fetchExpertiseDto,
 	): Promise<FetchExpertisesResponse> {
-
 		const [expertises, total] = await Promise.all([
 			this._expertiseRepository.findAll(data.page, data.limit, data.query),
 			this._expertiseRepository.count(data.query),
@@ -76,7 +74,6 @@ export class ExpertiseService implements IExpertiseService {
 	}
 
 	async verifyExpertise(expertiseId: string): Promise<void> {
-
 		await this._expertiseRepository.update(expertiseId, { isVerified: true });
 
 		const skills = await this._skillRepository.findAll(expertiseId);
@@ -88,7 +85,6 @@ export class ExpertiseService implements IExpertiseService {
 	}
 
 	async createSkill(data: createSkillDto): Promise<void> {
-
 		const isExists = await this._skillRepository.exists(
 			data.name,
 			data.expertiseId,
@@ -108,7 +104,6 @@ export class ExpertiseService implements IExpertiseService {
 	}
 
 	async updateSkill(data: updateSkillDto): Promise<void> {
-
 		const updateData: Partial<Omit<updateSkillDto, "skillId">> = {};
 		if (data.name) updateData.name = data.name;
 		if (data.isVerified) updateData.isVerified = data.isVerified;
@@ -116,7 +111,6 @@ export class ExpertiseService implements IExpertiseService {
 	}
 
 	async fetchSkills(data: fetchSkillsDto): Promise<FetchSkillsResponse> {
-
 		const [skills, total] = await Promise.all([
 			this._skillRepository.findAll(
 				data.expertiseId,
@@ -143,7 +137,6 @@ export class ExpertiseService implements IExpertiseService {
 	async fetchSkillsFromMulipleExpertise(
 		data: fetchSkillsFromMultipleExpertiseDto,
 	): Promise<any> {
-
 		const skills = [];
 		for (const expertise of data.expertise) {
 			const skillsFromExpertise =
@@ -158,7 +151,10 @@ export class ExpertiseService implements IExpertiseService {
 		return mapped;
 	}
 
-	async findActiveExpertisesAndSkills(): Promise<{expertises: string[], skills: string[]}> {
+	async findActiveExpertisesAndSkills(): Promise<{
+		expertises: string[];
+		skills: string[];
+	}> {
 		return this._mentorRepository.findActiveExpertisesAndSkills();
 	}
 }

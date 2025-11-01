@@ -27,4 +27,3 @@ export abstract class BaseRepository<TDomain, TDoc extends Document> {
 		return !!doc;
 	}
 }
-
