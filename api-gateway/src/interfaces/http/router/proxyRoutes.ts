@@ -101,4 +101,9 @@ router.use(
 	),
 );
 
+router.use(
+	"/chat",
+	createServiceProxy(ServiceName.CHAT, SERVICE_URL[ServiceName.CHAT]),
+);
+
 export default router;

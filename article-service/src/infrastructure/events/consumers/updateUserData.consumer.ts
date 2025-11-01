@@ -11,8 +11,6 @@ export async function createUpdateUserDataConsumer(
 		name: string;
 		profilePicrure: string;
 	}>("update.profile", async (payload) => {
-		console.log("update profile event consumed");
-		console.log("udpate profile payload", JSON.stringify(payload));
 		try {
 			const { userId, name, profilePicture } =
 				updateUserPayloadSchema.parse(payload);

@@ -7,6 +7,7 @@ import { connectToDb } from "./infrastructure/config/connectDb";
 import env from "./infrastructure/config/env";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import { createChatRoutes } from "./interfaces/http/routes/chat.routes";
 
 class App {
 	private _app: Application;
@@ -31,6 +32,7 @@ class App {
 	}
 
 	private _setupRoutes() {
+		this._app.use("/api/chat", createChatRoutes());
 		this._app.use(errorHandler);
 	}
 
