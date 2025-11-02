@@ -32,6 +32,7 @@ async function gracefulShutdown(signal: string) {
 
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGHUP", () => gracefulShutdown("SIGHUP"));
 
 process.on("uncaughtException", (error: Error) => {
 	logger.error("Uncaught Exception:", error);

@@ -20,7 +20,7 @@ export class MessageRepository
 			senderId: mapped.senderId,
 			content: mapped.content,
 			type: mapped.type,
-			attachments: mapped.attachments,
+			attachment: mapped.attachment,
 			repliedTo: mapped.repliedTo,
 			status: mapped.status,
 			createdAt: mapped.createdAt,
@@ -33,12 +33,12 @@ export class MessageRepository
 		chatId: string,
 		page: number,
 		limit: number,
-	): Promise<Message[]> {
+	): Promise<{ messages: Message[]; total: number }> {
 		const skip = (page - 1) * limit;
-		const messages = await this._model
-			.find({ chatId: chatId })
-			.skip(skip)
-			.limit(limit);
-		return messages ? messages.map(this.mapToDomain) : [];
+		const [messages, total] = await Promise.all([
+			this._model.find({ chatId: chatId }).skip(skip).limit(limit),
+			this._model.countDocuments({ chatId: chatId }),
+		]);
+		return { messages: messages ? messages.map(this.mapToDomain) : [], total };
 	}
 }

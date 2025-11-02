@@ -1,11 +1,8 @@
 export interface Chat {
 	id: string;
-	type: "DIRECT" | "GROUP";
-	name?: string;
-	description?: string;
-	avatar?: string;
+	userIds: string[];
 	lastMessage?: string;
-	isArchived: boolean;
+	isArchived?: boolean;
 	createdAt: Date;
 	updatedAt: Date;
 }

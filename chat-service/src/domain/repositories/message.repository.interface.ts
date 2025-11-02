@@ -6,5 +6,5 @@ export interface IMessageRepository extends IBaseRepository<Message> {
 		chatId: string,
 		page: number,
 		limit: number,
-	): Promise<Message[]>;
+	): Promise<{ messages: Message[]; total: number }>;
 }

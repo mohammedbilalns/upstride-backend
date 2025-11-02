@@ -31,6 +31,7 @@ async function shutdown(signal: string) {
 
 process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGHUP", () => shutdown("SIGHUP"));
 
 process.on("uncaughtException", (err) => {
 	logger.error("❌ Uncaught Exception:", err);

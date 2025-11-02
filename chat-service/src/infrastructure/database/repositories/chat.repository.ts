@@ -16,13 +16,29 @@ export class ChatRepository
 		const mapped = mapMongoDocument(doc)!;
 		return {
 			id: mapped.id,
-			type: mapped.type,
-			name: mapped?.name,
-			description: mapped?.description,
-			avatar: mapped?.avatar,
+			userIds: mapped.userIds,
+			lastMessage: mapped.lastMessage,
 			isArchived: mapped.isArchived,
 			createdAt: mapped.createdAt,
 			updatedAt: mapped.updatedAt,
 		};
+	}
+
+	async getChatByUserIds(userIds: string[]): Promise<Chat | null> {
+		const chat = await this._model.findOne({ userIds: { $all: userIds } });
+		return chat ? this.mapToDomain(chat) : null;
+	}
+	async getUserChats(
+		userId: string,
+		page: number,
+		limit: number,
+	): Promise<{ chats: Chat[]; total: number }> {
+		const skip = (page - 1) * limit;
+		const [chats, total] = await Promise.all([
+			this._model.find({ userIds: userId }).skip(skip).limit(limit),
+			this._model.countDocuments({ userIds: userId }),
+		]);
+
+		return { chats: chats ? chats.map(this.mapToDomain) : [], total };
 	}
 }

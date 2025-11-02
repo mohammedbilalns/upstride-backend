@@ -1,5 +1,5 @@
-import { Message } from "../entities/message.entity";
+import { getChatDto, getChatResult } from "../../application/dtos/getChat.dto";
 
 export interface IGetChatUC {
-	execute(userIds: string[], page: number, limit: number): Promise<Message[]>;
+	execute(dto: getChatDto): Promise<getChatResult>;
 }

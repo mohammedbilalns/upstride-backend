@@ -57,6 +57,7 @@ export class NotificationService implements INotificationService {
 			type,
 		});
 		if (!newNotification) return;
+
 		this._eventBus.publish(QueueEvents.NOTIFICATION_CREATED, {
 			id: newNotification.id,
 			userId,
