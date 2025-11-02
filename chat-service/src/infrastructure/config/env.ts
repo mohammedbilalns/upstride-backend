@@ -14,6 +14,7 @@ const envSchema = z.object({
 	REDIS_URL: z.string(),
 	CLIENT_URL: z.string(),
 	GATEWAY_URL: z.string(),
+	USERS_ENDPOINT: z.string(),
 });
 
 const env = envSchema.parse(process.env);

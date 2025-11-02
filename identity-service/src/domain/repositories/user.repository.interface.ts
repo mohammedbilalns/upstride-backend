@@ -15,4 +15,5 @@ export interface IUserRepository extends IBaseRepository<User> {
 	count(allowedRoles: string[]): Promise<number>;
 	findByIds(ids: string[]): Promise<User[]>;
 	findByUserId(userId: string): Promise<PopulatedDoc<User> | null>;
+	findByUserIds(userIds: string[]): Promise<User[]>;
 }

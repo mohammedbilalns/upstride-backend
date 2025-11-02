@@ -10,4 +10,5 @@ export enum ErrorMessage {
 	INTERNAL_SERVER_ERROR = "Internal server error",
 	INVALID_INPUT = "Invalid input",
 	CHAT_NOT_FOUND = "Chat not found",
+	FAILED_TO_FETCH_USERS = "Failed to fetch users",
 }

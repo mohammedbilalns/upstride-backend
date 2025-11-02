@@ -107,4 +107,12 @@ export class UserRepository
 			.exec();
 		return doc ? this.mapToDomain(doc) : null;
 	}
+
+	async findByUserIds(userIds: string[]): Promise<User[]> {
+		const docs = await this._model
+			.find({ _id: { $in: userIds } })
+			.select("_id name profilePicture");
+
+		return docs ? docs.map(this.mapToDomain) : [];
+	}
 }
