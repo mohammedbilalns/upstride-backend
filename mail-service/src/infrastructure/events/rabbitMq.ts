@@ -44,4 +44,19 @@ export class RabbitMQEventBus implements IEventBus {
 			}
 		});
 	}
+
+	async disconnect() {
+		try {
+			if (this.channel) {
+				await this.channel.close();
+				logger.info("🧹 RabbitMQ channel closed");
+			}
+			if (this.connection) {
+				await this.connection.close();
+				logger.info("🧹 RabbitMQ connection closed");
+			}
+		} catch (err) {
+			logger.error("❌ Error during RabbitMQ disconnect:", err);
+		}
+	}
 }

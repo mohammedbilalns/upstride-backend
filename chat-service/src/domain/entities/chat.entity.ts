@@ -4,6 +4,7 @@ export interface Chat {
 	name?: string;
 	description?: string;
 	avatar?: string;
+	lastMessage?: string;
 	isArchived: boolean;
 	createdAt: Date;
 	updatedAt: Date;

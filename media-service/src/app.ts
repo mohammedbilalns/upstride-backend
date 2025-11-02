@@ -33,11 +33,12 @@ class App {
 	}
 
 	public listen(port: string) {
-		this._app.listen(port, () => {
+		const server = this._app.listen(port, () => {
 			connectRabbitMq();
 			connectToDb();
 			logger.info(`Media service is listening on port ${port}`);
 		});
+		return server;
 	}
 }
 

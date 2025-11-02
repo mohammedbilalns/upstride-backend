@@ -28,4 +28,17 @@ export class MessageRepository
 			deletedAt: mapped.deletedAt,
 		};
 	}
+
+	async getChatMessages(
+		chatId: string,
+		page: number,
+		limit: number,
+	): Promise<Message[]> {
+		const skip = (page - 1) * limit;
+		const messages = await this._model
+			.find({ chatId: chatId })
+			.skip(skip)
+			.limit(limit);
+		return messages ? messages.map(this.mapToDomain) : [];
+	}
 }

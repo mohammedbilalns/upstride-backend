@@ -12,6 +12,7 @@ export const chatSchema: Schema = new Schema(
 		},
 		name: { type: String },
 		description: { type: String },
+		lastMessage: { type: Schema.Types.ObjectId, ref: "Message" },
 		avatar: { type: String },
 		isArchived: { type: Boolean, default: false },
 	},

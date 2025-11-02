@@ -3,6 +3,7 @@ import App from "./app";
 import env from "./infrastructure/config/env";
 import logger from "./utils/logger";
 import { disconnectFromDb } from "./infrastructure/config";
+import { disconnectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 
 configDotenv();
 const PORT = env.PORT;
@@ -18,6 +19,7 @@ async function gracefulShutdown(signal: string) {
 
 	try {
 		await disconnectFromDb();
+		await disconnectRabbitMq();
 		logger.info("Database disconnected");
 
 		logger.info("Graceful shutdown completed");

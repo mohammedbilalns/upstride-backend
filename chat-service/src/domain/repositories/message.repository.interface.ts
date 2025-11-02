@@ -1,4 +1,10 @@
 import { Message } from "../entities/message.entity";
 import { IBaseRepository } from "./base.repository.interface";
 
-export interface IMessageRepository extends IBaseRepository<Message> {}
+export interface IMessageRepository extends IBaseRepository<Message> {
+	getChatMessages(
+		chatId: string,
+		page: number,
+		limit: number,
+	): Promise<Message[]>;
+}
