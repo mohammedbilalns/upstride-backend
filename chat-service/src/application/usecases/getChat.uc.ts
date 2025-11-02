@@ -17,7 +17,7 @@ export class GetChatUC implements IGetChatUC {
 		const chat = await this._chatRepository.getChatByUserIds(userIds);
 		if (!chat)
 			throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST);
-		// retrieve user details from using rpc call
+		// TODO: retrieve user details from using rpc call
 
 		const { messages, total } = await this._messageRepository.getChatMessages(
 			chat.id,
