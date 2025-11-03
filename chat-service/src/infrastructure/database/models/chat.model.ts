@@ -11,6 +11,7 @@ export const chatSchema: Schema = new Schema(
 		},
 		lastMessage: { type: Schema.Types.ObjectId, ref: "Message" },
 		isArchived: { type: Boolean, default: false },
+		isStarted: { type: Boolean, default: false },
 	},
 	{
 		timestamps: true,

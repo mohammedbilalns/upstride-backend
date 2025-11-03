@@ -3,6 +3,7 @@ export interface Chat {
 	userIds: string[];
 	lastMessage?: string;
 	isArchived?: boolean;
+	isStarted?: boolean;
 	createdAt: Date;
 	updatedAt: Date;
 }

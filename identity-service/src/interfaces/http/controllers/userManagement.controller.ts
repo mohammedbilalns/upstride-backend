@@ -4,6 +4,7 @@ import type { IUserManagementService } from "../../../domain/services/userManage
 import asyncHandler from "../utils/asyncHandler";
 import { paginationQuerySchema } from "../validations/pagination.validation";
 import { fetchByUserIdsParamsSchema } from "../validations/user.validations";
+import logger from "../../../common/utils/logger";
 
 export class UserManagementController {
 	constructor(private _userManagementService: IUserManagementService) {}
@@ -39,8 +40,10 @@ export class UserManagementController {
 	});
 
 	fetchByUserIds = asyncHandler(async (req: Request, res: Response) => {
+		logger.debug("End point hit");
 		const { ids } = fetchByUserIdsParamsSchema.parse(req.query);
 		const data = await this._userManagementService.fetchUsersByIds(ids);
+		logger.debug(`fetchByUserIds: ${JSON.stringify(data)}`);
 		res.send(data);
 	});
 }

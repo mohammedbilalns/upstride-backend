@@ -27,7 +27,6 @@ export class GetChatsUC implements IGetChatsUC {
 		const otherUserIds = chats
 			.map((chat) => chat.userIds.find((id) => id !== userId))
 			.filter(Boolean) as string[];
-
 		// Fetch user data
 		const users = await this._userService.getUsersByIds(otherUserIds);
 		if (!users) throw new AppError(ErrorMessage.FAILED_TO_FETCH_USERS);

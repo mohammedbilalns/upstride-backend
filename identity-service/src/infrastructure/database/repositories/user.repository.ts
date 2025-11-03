@@ -4,6 +4,7 @@ import { mapPopulatedSubToDomain } from "../utils/mapPopulatedSubToDomain";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { type IUser, userModel } from "../models/user.model";
 import { BaseRepository } from "./base.repository";
+import { Types } from "mongoose";
 
 export class UserRepository
 	extends BaseRepository<User, IUser>
@@ -109,8 +110,11 @@ export class UserRepository
 	}
 
 	async findByUserIds(userIds: string[]): Promise<User[]> {
+		const idsArray = Array.isArray(userIds) ? userIds : [userIds];
+		const objectIds = idsArray.map((id) => new Types.ObjectId(id));
+
 		const docs = await this._model
-			.find({ _id: { $in: userIds } })
+			.find({ _id: { $in: objectIds } })
 			.select("_id name profilePicture");
 
 		return docs ? docs.map(this.mapToDomain) : [];

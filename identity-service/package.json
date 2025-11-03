@@ -9,7 +9,7 @@
 	"type": "commonjs",
 	"scripts": {
 		"start": "node dist/server.js",
-		"dev": "nodemon --watch src -e ts --exec 'tsc && node --inspect dist/server.js'",
+		"dev": "nodemon --watch src -e ts --exec 'tsc && node  dist/server.js'",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",
 		"lint-format": "biome check --write ",

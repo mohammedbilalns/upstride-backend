@@ -50,6 +50,7 @@ export class SendMessageUC implements ISendMessageUC {
 			this._chatRepository.update(chat.id, {
 				lastMessage: savedMessage.id,
 				updatedAt: new Date(),
+				isStarted: true,
 			}),
 			this._eventBus.publish(QueueEvents.SAVED_MESSAGE, {
 				chatId: chat.id,

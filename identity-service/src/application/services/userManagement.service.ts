@@ -1,4 +1,5 @@
 import { UserRole } from "../../common/enums/userRoles";
+import logger from "../../common/utils/logger";
 import { User } from "../../domain/entities";
 import type { IRevokedUserRepository } from "../../domain/repositories/revokeduser.repository.interface";
 import type { IUserRepository } from "../../domain/repositories/user.repository.interface";
@@ -58,6 +59,7 @@ export class UserManagementService implements IUserManagementService {
 	}
 
 	async fetchUsersByIds(userIds: string[]): Promise<User[]> {
+		logger.info(`userIds in the service: ${userIds}`);
 		const users = await this._userRepository.findByUserIds(userIds);
 		return users;
 	}

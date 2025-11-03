@@ -11,16 +11,22 @@ export class ChatController {
 	) {}
 
 	getChats = asyncHandler(async (req, res) => {
-		const userId = res.locals.user.id;
+		const userId = res?.locals?.user?.id;
 		const { page, limit } = getChatSchema.parse(req.query);
 		const data = await this._getChatsUC.execute({ userId, page, limit });
 		res.send(data);
 	});
 
 	getChat = asyncHandler(async (req, res) => {
-		const { userIds, page, limit } = getChatsSchema.parse(req.query);
-
-		const data = await this._getChatUC.execute({ userIds, page, limit });
+		const userId = res?.locals?.user?.id;
+		const { recieverId, page, limit } = getChatsSchema.parse(req.query);
+		const userIds = [userId, recieverId];
+		const data = await this._getChatUC.execute({
+			userIds,
+			currentUserId: userId,
+			page,
+			limit,
+		});
 		res.send(data);
 	});
 }
