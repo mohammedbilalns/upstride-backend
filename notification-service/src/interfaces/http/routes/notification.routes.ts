@@ -6,9 +6,8 @@ export function createNotificationRouter() {
 	const router = Router();
 	const notificationController = createNotificationController();
 
-
-	router.use(authMiddleware())
-	router.use(authorizeRoles("user","mentor"))
+	router.use(authMiddleware());
+	router.use(authorizeRoles("user", "mentor"));
 	router.get("/", notificationController.fetchUserNotifications);
 	router.post("/mark-all", notificationController.markAllNotificationsAsRead);
 	router.post(

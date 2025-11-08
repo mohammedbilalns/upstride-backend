@@ -54,8 +54,8 @@ export interface findByExpertiseandSkillDto {
 	limit: number;
 	userId: string;
 	query?: string;
-	expertiseId?: string, 
-	skillId?: string
+	expertiseId?: string;
+	skillId?: string;
 }
 
 export interface approveMentorDto {

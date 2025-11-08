@@ -1,58 +1,47 @@
-import express from "express"
-import cors from "cors"
-import helmet from "helmet"
-import { configDotenv } from "dotenv"
-import cookieParser from "cookie-parser"
-import { requestLogger } from "./interfaces/http/middlewares"
-import { errorHandler } from "./interfaces/http/middlewares"
-import { connectToDb } from "./infrastructure/config/connectDb"
-import logger from "./utils/logger"
-import env from "./infrastructure/config/env"
+import { configDotenv } from "dotenv";
+import App from "./app";
+import env from "./infrastructure/config/env";
+import logger from "./utils/logger";
+import { disconnectFromDb } from "./infrastructure/config";
+import { disconnectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 
-configDotenv()
-const app  = express()
-const PORT = env.PORT
+configDotenv();
+const PORT = env.PORT;
+const app = new App();
+const server = app.listen(PORT);
 
-app.use(helmet())
-app.use(cors())
-app.use(express.json())
-app.use(cookieParser())
-app.use(requestLogger)
+async function gracefulShutdown(signal: string) {
+	logger.info(`${signal} received, starting graceful shutdown...`);
 
+	server.close(() => {
+		logger.info("HTTP server closed");
+	});
 
-app.get('/test',(_req,res)=>{
-  res.json({message:"test from chat service"})
-})
+	try {
+		await disconnectFromDb();
+		await disconnectRabbitMq();
+		logger.info("Database disconnected");
 
+		logger.info("Graceful shutdown completed");
+		process.exit(0);
+	} catch (error) {
+		logger.error("Error during graceful shutdown:", error);
+		process.exit(1);
+	}
+}
 
-app.use(errorHandler)
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
-connectToDb()
+process.on("uncaughtException", (error: Error) => {
+	logger.error("Uncaught Exception:", error);
+	gracefulShutdown("uncaughtException");
+});
 
-app.listen(PORT, () => {
-  logger.info(`Identity service started on port ${PORT}`)
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+process.on(
+	"unhandledRejection",
+	(reason: unknown, promise: Promise<unknown>) => {
+		logger.error("Unhandled Rejection at:", promise, "reason:", reason);
+		gracefulShutdown("unhandledRejection");
+	},
+);

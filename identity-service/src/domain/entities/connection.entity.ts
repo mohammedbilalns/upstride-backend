@@ -2,5 +2,5 @@ export interface Connection {
 	id: string;
 	mentorId: string;
 	followerId: string;
-  createdAt: string; 
+	createdAt: string;
 }

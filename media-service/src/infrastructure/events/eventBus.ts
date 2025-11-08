@@ -8,4 +8,8 @@ export async function initEventBus() {
 	return eventBus;
 }
 
+export async function disconnectEventBus() {
+	await eventBus.disconnect();
+}
+
 export default eventBus;

@@ -14,10 +14,7 @@ import type {
 	IUserRepository,
 	IVerificationTokenRepository,
 } from "../../domain/repositories";
-import type {
-	ICryptoService,
-	ITokenService,
-} from "../../domain/services";
+import type { ICryptoService, ITokenService } from "../../domain/services";
 import type { ICacheService } from "../../domain/services/cache.service.interface";
 import type { IRegistrationService } from "../../domain/services/registration.service.interface";
 import { generateSecureToken } from "../utils/token.util";

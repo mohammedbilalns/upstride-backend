@@ -29,12 +29,13 @@ class App {
 	}
 
 	public listen(port: string) {
-		this._app.listen(port, () => {
+		const server = this._app.listen(port, () => {
 			connectRabbitMq();
 			connectToDb();
 			initializeJobs();
 			logger.info(`Notification service is listening on port ${port}`);
 		});
+		return server;
 	}
 }
 

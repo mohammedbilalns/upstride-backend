@@ -8,10 +8,7 @@ import { PasswordResetService } from "../../../application/services/passwordRese
 import { RegistrationService } from "../../../application/services/registration.service";
 import type { IEventBus } from "../../../domain/events/IEventBus";
 import type { IUserRepository } from "../../../domain/repositories";
-import type {
-	ICryptoService,
-	ITokenService,
-} from "../../../domain/services";
+import type { ICryptoService, ITokenService } from "../../../domain/services";
 import { redisClient } from "../../../infrastructure/config";
 import env from "../../../infrastructure/config/env";
 import { UserRepository } from "../../../infrastructure/database/repositories/user.repository";

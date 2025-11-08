@@ -50,7 +50,6 @@ export class ArticleController {
 	});
 
 	fetchArticle = asyncHandler(async (req, res) => {
-		console.log("user in locals", JSON.stringify(res.locals.user));
 		const id = req.params.id;
 		const userId = res.locals.user.id;
 		const { article, isViewed, isLiked } =
@@ -66,7 +65,6 @@ export class ArticleController {
 	});
 
 	fetchRandomArticlesByAuthors = asyncHandler(async (req, res) => {
-		console.log("query in article service", req.query);
 		const fetchArticlesParams = fetchRandomArticlesByAuthorsSchema.parse(
 			req.query,
 		);

@@ -3,6 +3,7 @@ import { HttpStatus, ResponseMessage } from "../../../common/enums";
 import type { IUserManagementService } from "../../../domain/services/userManagement.service.interface";
 import asyncHandler from "../utils/asyncHandler";
 import { paginationQuerySchema } from "../validations/pagination.validation";
+import { fetchByUserIdsParamsSchema } from "../validations/user.validations";
 
 export class UserManagementController {
 	constructor(private _userManagementService: IUserManagementService) {}
@@ -35,5 +36,11 @@ export class UserManagementController {
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.USER_UNBLOCKED });
+	});
+
+	fetchByUserIds = asyncHandler(async (req: Request, res: Response) => {
+		const { ids } = fetchByUserIdsParamsSchema.parse(req.query);
+		const data = await this._userManagementService.fetchUsersByIds(ids);
+		res.send(data);
 	});
 }

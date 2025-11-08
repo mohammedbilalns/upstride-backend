@@ -16,7 +16,10 @@ import type {
 import { AppError } from "../errors/AppError";
 
 export class NotificationService implements INotificationService {
-	constructor(private _notificationRepository: INotificationRepository,private _eventBus: IEventBus  ) {}
+	constructor(
+		private _notificationRepository: INotificationRepository,
+		private _eventBus: IEventBus,
+	) {}
 
 	private _generateNotificationData(triggerInfo: GenerateNotificationDto): {
 		title: string;
@@ -46,7 +49,6 @@ export class NotificationService implements INotificationService {
 		const { title, content, link, type } =
 			this._generateNotificationData(triggerInfo);
 
-
 		const newNotification = await this._notificationRepository.create({
 			userId,
 			title,
@@ -54,8 +56,17 @@ export class NotificationService implements INotificationService {
 			link,
 			type,
 		});
-		if(!newNotification) return;
-		this._eventBus.publish(QueueEvents.NOTIFICATION_CREATED, {id:newNotification.id  , userId, title, content, link, type, createdAt:newNotification.createdAt})
+		if (!newNotification) return;
+
+		this._eventBus.publish(QueueEvents.NOTIFICATION_CREATED, {
+			id: newNotification.id,
+			userId,
+			title,
+			content,
+			link,
+			type,
+			createdAt: newNotification.createdAt,
+		});
 	}
 
 	async markNotificationAsRead(notificationId: string): Promise<void> {
@@ -72,18 +83,16 @@ export class NotificationService implements INotificationService {
 		page: number,
 		limit: number,
 	): Promise<NotificationResponseDto> {
-		const { notifications, total, unreadCount } = await this._notificationRepository.findAll(
-			userId,
-			Number(page),
-			Number(limit),
-		);
+		const { notifications, total, unreadCount } =
+			await this._notificationRepository.findAll(
+				userId,
+				Number(page),
+				Number(limit),
+			);
 		return { notifications, total, unreadCount };
 	}
 
 	async makrAllNotificationsAsRead(userId: string): Promise<void> {
-		await this._notificationRepository.updateMany(
-			{ userId },
-			{ isRead: true },
-		);
+		await this._notificationRepository.updateMany({ userId }, { isRead: true });
 	}
 }

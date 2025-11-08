@@ -65,10 +65,7 @@ router.use(
 
 router.use(
 	"/connection",
-	createServiceProxy(
-		ServiceName.IDENTITY,
-		SERVICE_URL[ServiceName.IDENTITY],
-	),
+	createServiceProxy(ServiceName.IDENTITY, SERVICE_URL[ServiceName.IDENTITY]),
 );
 
 router.use(
@@ -102,6 +99,11 @@ router.use(
 		ServiceName.NOTIFICATION,
 		SERVICE_URL[ServiceName.NOTIFICATION],
 	),
+);
+
+router.use(
+	"/chat",
+	createServiceProxy(ServiceName.CHAT, SERVICE_URL[ServiceName.CHAT]),
 );
 
 export default router;

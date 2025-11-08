@@ -9,7 +9,7 @@
 	"type": "commonjs",
 	"scripts": {
 		"start": "node dist/server.js",
-		"dev": "nodemon --watch src -e ts --exec 'tsc && node --inspect dist/server.js'",
+		"dev": "nodemon --watch src -e ts --exec 'tsc && node  dist/server.js'",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",
 		"lint-format": "biome check --write ",
@@ -31,6 +31,7 @@
 		"morgan": "^1.10.1",
 		"uuid": "^11.1.0",
 		"winston": "^3.17.0",
+		"winston-daily-rotate-file": "^5.0.0",
 		"zod": "^4.0.17"
 	},
 	"devDependencies": {

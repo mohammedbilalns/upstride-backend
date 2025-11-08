@@ -16,5 +16,4 @@ export class MailService implements IMailService {
 			html: text,
 		});
 	}
-
 }

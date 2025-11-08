@@ -13,8 +13,8 @@ export interface AdminUserDTO extends UserDTO {
 	createdAt: Date;
 }
 
-export interface PopulatedUser extends Omit<User, 'interestedExpertises' | 'interestedSkills'> {
+export interface PopulatedUser
+	extends Omit<User, "interestedExpertises" | "interestedSkills"> {
 	interestedExpertises: Array<{ _id: string; name: string }>;
 	interestedSkills: Array<{ _id: string; name: string }>;
 }
-

@@ -1,4 +1,6 @@
 import { UserRole } from "../../common/enums/userRoles";
+import logger from "../../common/utils/logger";
+import { User } from "../../domain/entities";
 import type { IRevokedUserRepository } from "../../domain/repositories/revokeduser.repository.interface";
 import type { IUserRepository } from "../../domain/repositories/user.repository.interface";
 import type { IUserManagementService } from "../../domain/services/userManagement.service.interface";
@@ -56,15 +58,9 @@ export class UserManagementService implements IUserManagementService {
 		}
 	}
 
-	async fetchUsersByIds(ids: string[]): Promise<AdminUserDTO[]> {
-		const users = await this._userRepository.findByIds(ids);
-		return users.map((user) => ({
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			isBlocked: user.isBlocked,
-			role: user.role,
-			createdAt: user.createdAt,
-		}));
+	async fetchUsersByIds(userIds: string[]): Promise<User[]> {
+		logger.info(`userIds in the service: ${userIds}`);
+		const users = await this._userRepository.findByUserIds(userIds);
+		return users;
 	}
 }

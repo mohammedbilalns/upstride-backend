@@ -58,6 +58,7 @@ export class ExpertiseController {
 	createSkill = asyncHandler(async (req, res) => {
 		const { expertiseId } = createSkillParamsSchema.parse(req.params);
 		const { name } = createSkillSchema.parse(req.body);
+    console.log("user role", res.locals.user.role);
 		await this._expertiseService.createSkill({
 			expertiseId,
 			name,
@@ -105,7 +106,7 @@ export class ExpertiseController {
 	});
 
 	fetchActiveExpertisesAndSkills = asyncHandler(async (_req, res) => {
-		const data = await this._expertiseService.findActiveExpertisesAndSkills()
+		const data = await this._expertiseService.findActiveExpertisesAndSkills();
 		return res.status(HttpStatus.OK).send(data);
 	});
 }

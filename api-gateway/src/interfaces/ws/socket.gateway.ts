@@ -30,7 +30,7 @@ export function initSocket(server: HttpServer, eventBus: IEventBus) {
 		cors: { origin: env.CLIENT_URL, credentials: true },
 	});
 
-	// publisheer for emitting socket events and publishing messages to RabbitMQ
+	// publisher for emitting socket events and publishing messages to RabbitMQ
 	const socketPublisher = new SocketPublisher(io, eventBus);
 	/**
 	 * userSockets map maintains a relationship between

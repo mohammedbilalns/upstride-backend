@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source ~/.config/scripts/svc-helper.sh
+source svc-helper
 
 services_to_stop=("redis-server" "rabbitmq")
 services_to_start=("docker")

@@ -5,9 +5,12 @@ import EventBus from "../eventBus";
 
 export async function composeSaveNotificationConsumer() {
 	const notificationRepository = new NotificationRepository();
-	const eventBus = EventBus
+	const eventBus = EventBus;
 
-	const notificationService = new NotificationService(notificationRepository,eventBus);
+	const notificationService = new NotificationService(
+		notificationRepository,
+		eventBus,
+	);
 
 	await createSaveNotificationConsumer(notificationService);
 }

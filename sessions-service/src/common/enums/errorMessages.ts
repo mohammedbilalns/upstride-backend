@@ -9,4 +9,3 @@ export enum ErrorMessage {
 	VALIDATION_FAILED = "Validation failed",
 	INTERNAL_SERVER_ERROR = "Internal server error",
 }
-

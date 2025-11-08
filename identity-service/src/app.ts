@@ -87,12 +87,13 @@ class App {
 	 * @public
 	 */
 	public listen(port: string) {
-		this._app.listen(port, () => {
+		const server = this._app.listen(port, () => {
 			connectRabbitMq();
 			connectToDb();
 			redisClient.ping;
 			logger.info(`Identity service started on port ${port}`);
 		});
+		return server;
 	}
 }
 
