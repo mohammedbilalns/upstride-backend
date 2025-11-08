@@ -34,6 +34,7 @@ export class AuthController {
 		accessToken: string,
 		refreshToken: string,
 	) {
+  
 		res.cookie("accesstoken", accessToken, {
 			...COOKIE_OPTIONS,
 			maxAge: parseInt(env.ACCESS_TOKEN_EXPIRY),

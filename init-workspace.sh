@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ~/.config/scripts/svc-helper.sh
+source svc-helper
 
 # Services 
 services=("redis-server" "rabbitmq")

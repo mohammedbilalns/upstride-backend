@@ -95,7 +95,7 @@ export class ExpertiseService implements IExpertiseService {
 				HttpStatus.CONFLICT,
 			);
 
-		const isAdmin = data.userRole === (UserRole.ADMIN || UserRole.SUPER_ADMIN);
+    const isAdmin = [UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(data.userRole);
 		await this._skillRepository.create({
 			name: data.name,
 			expertiseId: data.expertiseId,

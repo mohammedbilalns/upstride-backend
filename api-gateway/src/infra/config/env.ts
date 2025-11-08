@@ -7,7 +7,6 @@ const envSchema = z.object({
 	JWT_SECRET: z.string().min(1),
 	PORT: z.string(),
 	NODE_ENV: z.string(),
-	MONGODB_URI: z.string(),
 	CLIENT_URL: z.string(),
 	IDENTITY_SERVICE_URL: z.string(),
 	ARTICLE_SERVICE_URL: z.string(),

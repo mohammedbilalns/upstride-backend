@@ -9,7 +9,7 @@ export function createChatRoutes() {
 	router.use(authMiddleware());
 
 	router.get("/", chatController.getChats);
-	router.get("/single", chatController.getChat);
+	router.get("/:chatId", chatController.getChat);
 
 	return router;
 }

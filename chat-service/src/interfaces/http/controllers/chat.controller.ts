@@ -2,7 +2,7 @@ import { IGetChatUC } from "../../../domain/useCases/getChat.uc.interface";
 import { IGetChatsUC } from "../../../domain/useCases/getChats.uc.interface";
 import asyncHandler from "../utils/asyncHandler";
 import { getChatSchema } from "../validations/getChat.schema";
-import { getChatsSchema } from "../validations/getChats.schema";
+import { getChatsParamsSchema, getChatsSchema } from "../validations/getChats.schema";
 
 export class ChatController {
 	constructor(
@@ -19,8 +19,9 @@ export class ChatController {
 
 	getChat = asyncHandler(async (req, res) => {
 		const userId = res?.locals?.user?.id;
-		const { recieverId, page, limit } = getChatsSchema.parse(req.query);
-		const userIds = [userId, recieverId];
+    const { chatId } = getChatsParamsSchema.parse(req.params);
+		const { page, limit } = getChatsSchema.parse(req.query);
+		const userIds = [userId, chatId];
 		const data = await this._getChatUC.execute({
 			userIds,
 			currentUserId: userId,

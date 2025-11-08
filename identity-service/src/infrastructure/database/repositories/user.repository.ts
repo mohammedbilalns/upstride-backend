@@ -55,6 +55,7 @@ export class UserRepository
 		return doc ? this.mapToDomain(doc) : null;
 	}
 
+  // FIX : include query in the count filter 
 	async findAll(
 		page: number,
 		limit: number,
