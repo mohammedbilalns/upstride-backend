@@ -1,7 +1,7 @@
 import {
 	IUserService,
-	userData,
 } from "../../domain/services/user.service.interface";
+import { userData } from "../../common/types/user.types";
 import env from "../config/env";
 import { ICacheService } from "../../domain/services/cache.service.interface";
 import { AppError } from "../../application/errors/AppError";
@@ -13,10 +13,13 @@ export class UserService implements IUserService {
 
 	constructor(private cacheService: ICacheService) {}
 
+  // FIX: Sometimes  user data is not there if cache hit 
 	async getUserById(userId: string): Promise<userData> {
 		try {
 			const cacheKey = `user:${userId}`;
+      logger.debug(`cache key : ${cacheKey}`)
 			const cached = await this.cacheService.get<userData>(cacheKey);
+      logger.debug(`cached data : ${JSON.stringify(cached)}`)
 			if (cached) return cached;
 
 			const res = await fetch(`${this.baseUrl}/${userId}`);
@@ -29,6 +32,7 @@ export class UserService implements IUserService {
 			}
 
 			const data = (await res.json()) as userData;
+      logger.debug(`data from service : ${JSON.stringify(data)}`)
 			await this.cacheService.set(cacheKey, data, 60 * 5);
 			return data;
 		} catch (error) {
@@ -50,9 +54,11 @@ export class UserService implements IUserService {
 
 			for (const id of userIds) {
 				const cached = await this.cacheService.get<userData>(`user:${id}`);
+        logger.debug(`cached data : ${JSON.stringify(cached)}`)
 				if (cached) results.push(cached);
 				else missingIds.push(id);
 			}
+      logger.info(`missing ids : ${JSON.stringify(missingIds)}`)
 
 			if (missingIds.length) {
 				const query = missingIds
@@ -85,6 +91,7 @@ export class UserService implements IUserService {
 
 				// Cache the fetched users
 				for (const user of fetched) {
+          logger.info(`caching user : ${JSON.stringify(user)}`)
 					await this.cacheService.set(`user:${user.id}`, user, 60 * 5);
 				}
 

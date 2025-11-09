@@ -182,7 +182,7 @@ export class RegistrationService implements IRegistrationService {
 			user;
 		this._cacheService.set(
 			`user:${user.id}`,
-			{ image: user.profilePicture },
+			{ profilePicture: user.profilePicture, name: user.name },
 			CACHE_TTL,
 		);
 		return {

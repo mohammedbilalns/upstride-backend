@@ -11,6 +11,7 @@ export const messageSchema = z.object({
 	to: z.string().min(1, "Recipient ID is required"),
 	message: z.string().min(1, "Message cannot be empty"),
 	media: mediaSchema.optional(),
+  type: z.string(),
 	replyTo: z.string().optional(),
 });
 

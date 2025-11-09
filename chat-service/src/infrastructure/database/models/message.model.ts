@@ -24,8 +24,6 @@ export const messageSchema: Schema = new Schema(
 			enum: ["send", "delivered", "read"],
 			default: "send",
 		},
-		createdAt: { type: Date, required: true },
-		updatedAt: { type: Date, required: true },
 		deletedAt: { type: Date },
 	},
 	{

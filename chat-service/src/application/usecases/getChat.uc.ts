@@ -29,8 +29,7 @@ export class GetChatUC implements IGetChatUC {
 
 		// Get user details for all participants
 		const users = await this._userService.getUsersByIds(userIds);
-    debugger
-		logger.debug(`users: ${JSON.stringify(users)}`);
+    logger.debug(`users : ${JSON.stringify(users)}`)
 
 		if (!users || !users.length) {
 			throw new AppError(
@@ -77,8 +76,6 @@ export class GetChatUC implements IGetChatUC {
 				};
 			});
 		}
-		debugger;
-		logger.debug(`participant: ${JSON.stringify(participant)}`);
 
 		return {
 			chat: {

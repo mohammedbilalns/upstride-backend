@@ -7,6 +7,7 @@ import { QueueEvents } from "../../common/enums/queueEvents";
 import { IUserService } from "../../domain/services/user.service.interface";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage } from "../../common/enums";
+import logger from "../../utils/logger";
 
 export class SendMessageUC implements ISendMessageUC {
 	constructor(
@@ -17,13 +18,14 @@ export class SendMessageUC implements ISendMessageUC {
 	) {}
 
 	async execute(messageData: SendMessageInput): Promise<void> {
-		const { from, to, message, media, replyTo } = messageData;
+    const { from, to, message, media, replyTo } = messageData;
 
 		//  fetch sender and chat info
 		let [sender, chat] = await Promise.all([
 			this._userService.getUserById(from),
 			this._chatRepository.getChatByUserIds([from, to]),
 		]);
+
 		if (!sender) throw new AppError(ErrorMessage.FAILED_TO_FETCH_USERS);
 
 		if (!chat) {
@@ -43,9 +45,11 @@ export class SendMessageUC implements ISendMessageUC {
 			repliedTo: replyTo,
 		};
 
-		const savedMessage = await this._messageRepository.create(newMessage);
 
-		// update chat & publish message event
+		const savedMessage = await this._messageRepository.create(newMessage);
+    logger.debug(`saved Message : ${JSON.stringify(savedMessage)}`)
+
+		// update chat & publish message, notification events
 		await Promise.all([
 			this._chatRepository.update(chat.id, {
 				lastMessage: savedMessage.id,
@@ -62,6 +66,12 @@ export class SendMessageUC implements ISendMessageUC {
 				timestamp: savedMessage.createdAt,
 				type: savedMessage.type,
 			}),
+      this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
+        userId: to,
+        type:"RECIEVED_MESSAGE",
+        triggeredBy:sender.name,
+        targetResource: sender.id
+      })
 		]);
 	}
 }

@@ -40,10 +40,10 @@ export class ArticleWriteService implements IArticleWriteService {
 	async createArticle(createAricleDto: CreateArticleDto): Promise<void> {
 		const { content, tags, author, authorRole, featuredImage, ...rest } =
 			createAricleDto;
-		const cachedAuthor: { image: string } | null = await this._cacheService.get(
+		const cachedAuthor: { profilePicture: string } | null = await this._cacheService.get(
 			`user:${author}`,
 		);
-		const authorImage = cachedAuthor?.image;
+		const authorImage = cachedAuthor?.profilePicture;
 
 		// check if authorRole is mentor
 		if (authorRole !== "mentor")
