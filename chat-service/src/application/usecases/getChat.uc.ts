@@ -6,7 +6,6 @@ import { IGetChatUC } from "../../domain/useCases/getChat.uc.interface";
 import { getChatDto, getChatResult } from "../dtos/getChat.dto";
 import { Message } from "../../domain/entities";
 import { AppError } from "../errors/AppError";
-import logger from "../../utils/logger";
 
 export class GetChatUC implements IGetChatUC {
 	constructor(
@@ -29,7 +28,6 @@ export class GetChatUC implements IGetChatUC {
 
 		// Get user details for all participants
 		const users = await this._userService.getUsersByIds(userIds);
-    logger.debug(`users : ${JSON.stringify(users)}`)
 
 		if (!users || !users.length) {
 			throw new AppError(

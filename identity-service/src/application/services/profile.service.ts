@@ -46,19 +46,16 @@ export class ProfileService implements IProfileService {
 			profilePicture: profilePicture?.secure_url,
 			profilePictureId: profilePicture?.public_id,
 		});
-		console.log("profile pic", JSON.stringify(profilePicture));
 
 		if (!newUser)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 		if (data.name || data.profilePicture) {
 			const { name, profilePicture } = newUser;
-			console.log("Before publishing event ");
 			this._eventBus.publish(QueueEvents.UPDATE_PROFILE, {
 				userId: user.id,
 				name,
 				profilePicture,
 			});
-			console.log("After publishing event ");
 		}
 	}
 

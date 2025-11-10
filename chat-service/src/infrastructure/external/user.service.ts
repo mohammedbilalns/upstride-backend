@@ -17,9 +17,7 @@ export class UserService implements IUserService {
 	async getUserById(userId: string): Promise<userData> {
 		try {
 			const cacheKey = `user:${userId}`;
-      logger.debug(`cache key : ${cacheKey}`)
 			const cached = await this.cacheService.get<userData>(cacheKey);
-      logger.debug(`cached data : ${JSON.stringify(cached)}`)
 			if (cached) return cached;
 
 			const res = await fetch(`${this.baseUrl}/${userId}`);
@@ -32,7 +30,6 @@ export class UserService implements IUserService {
 			}
 
 			const data = (await res.json()) as userData;
-      logger.debug(`data from service : ${JSON.stringify(data)}`)
 			await this.cacheService.set(cacheKey, data, 60 * 5);
 			return data;
 		} catch (error) {

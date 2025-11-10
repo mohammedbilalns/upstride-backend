@@ -36,9 +36,9 @@ export class MessageRepository
 	): Promise<{ messages: Message[]; total: number }> {
 		const skip = (page - 1) * limit;
 		const [messages, total] = await Promise.all([
-			this._model.find({ chatId: chatId }).skip(skip).limit(limit),
+			this._model.find({ chatId: chatId }).sort({ createdAt: -1 }).skip(skip).limit(limit),
 			this._model.countDocuments({ chatId: chatId }),
 		]);
-		return { messages: messages ? messages.map(this.mapToDomain) : [], total };
+		return { messages: messages ? messages.reverse().map(this.mapToDomain) : [], total };
 	}
 }

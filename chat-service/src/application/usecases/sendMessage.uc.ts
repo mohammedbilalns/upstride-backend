@@ -7,7 +7,6 @@ import { QueueEvents } from "../../common/enums/queueEvents";
 import { IUserService } from "../../domain/services/user.service.interface";
 import { AppError } from "../errors/AppError";
 import { ErrorMessage } from "../../common/enums";
-import logger from "../../utils/logger";
 
 export class SendMessageUC implements ISendMessageUC {
 	constructor(
@@ -47,7 +46,6 @@ export class SendMessageUC implements ISendMessageUC {
 
 
 		const savedMessage = await this._messageRepository.create(newMessage);
-    logger.debug(`saved Message : ${JSON.stringify(savedMessage)}`)
 
 		// update chat & publish message, notification events
 		await Promise.all([
