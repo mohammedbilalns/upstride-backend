@@ -13,7 +13,6 @@ export class UserService implements IUserService {
 
 	constructor(private cacheService: ICacheService) {}
 
-  // FIX: Sometimes  user data is not there if cache hit 
 	async getUserById(userId: string): Promise<userData> {
 		try {
 			const cacheKey = `user:${userId}`;
@@ -51,19 +50,15 @@ export class UserService implements IUserService {
 
 			for (const id of userIds) {
 				const cached = await this.cacheService.get<userData>(`user:${id}`);
-        logger.debug(`cached data : ${JSON.stringify(cached)}`)
 				if (cached) results.push(cached);
 				else missingIds.push(id);
 			}
-      logger.info(`missing ids : ${JSON.stringify(missingIds)}`)
 
 			if (missingIds.length) {
 				const query = missingIds
 					.map((id) => `ids=${encodeURIComponent(id)}`)
 					.join("&");
 				const url = `${this.baseUrl}?${query}`;
-
-				logger.info(`Fetching users from: ${url}`);
 
 				const res = await fetch(url);
 

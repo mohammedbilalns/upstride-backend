@@ -1,13 +1,10 @@
 import { faker } from "@faker-js/faker";
 import argon2 from "argon2";
-import dotenv from "dotenv";
 import mongoose, { model } from "mongoose";
 import {
 	type IUser,
 	userSchema,
 } from "../src/infrastructure/database/models/user.model";
-
-dotenv.config();
 
 const UserModel = mongoose.models.User || model<IUser>("User", userSchema);
 

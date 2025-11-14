@@ -9,12 +9,12 @@
 	"type": "commonjs",
 	"scripts": {
 		"start": "node dist/server.js",
-		"dev": "nodemon --watch src -e ts --exec 'tsc && node  dist/server.js'",
+		"dev": "nodemon --watch src -e ts --exec 'tsc && node --env-file=.env  dist/server.js'",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",
 		"lint-format": "biome check --write ",
 		"test": "jest",
-		"create-admin": "ts-node scripts/createAdmin.ts"
+		"create-admin": "tsc && node node --env-file=.env dist/scripts/create-admin.js"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^10.0.0",
@@ -22,7 +22,6 @@
 		"argon2": "^0.44.0",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
-		"dotenv": "^17.2.1",
 		"express": "^5.1.0",
 		"helmet": "^8.1.0",
 		"ioredis": "^5.7.0",

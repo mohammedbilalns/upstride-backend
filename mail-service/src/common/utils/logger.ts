@@ -1,44 +1,51 @@
-import winston from "winston";
-import DailyRotateFile from "winston-daily-rotate-file";
+import pino from "pino";
+import path from "path";
 
-const logFormat = winston.format.combine(
-	winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-	winston.format.errors({ stack: true }),
-	winston.format.splat(),
-	winston.format.json(),
-);
+const isProd = process.env.NODE_ENV === "production";
 
-const logger = winston.createLogger({
-	level: process.env.NODE_ENV === "production" ? "info" : "debug",
-	format: logFormat,
-	defaultMeta: { service: "chat-service" },
-	transports: [
-		new winston.transports.Console({
-			format: winston.format.combine(
-				winston.format.colorize(),
-				winston.format.printf(({ level, message, timestamp, stack }) => {
-					return `${timestamp} [${level}]: ${stack || message}`;
-				}),
-			),
-		}),
+const transport = pino.transport({
+  targets: [
+    {
+      target: "pino-pretty",
+      level: isProd ? "info" : "debug",
+      options: {
+        colorize: true,
+        translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
+        ignore: "pid,hostname",
+      },
+    },
+    {
+      target: "pino-roll",
+      level: "info",
+      options: {
+        file: path.join("logs", "combined.log"),
+        frequency: "daily",
+        size: "20m",
+        limit: { count: 14 },
+        mkdir: true,
+      },
+    },
+    {
+      target: "pino-roll",
+      level: "error",
+      options: {
+        file: path.join("logs", "error.log"),
+        frequency: "daily",
+        size: "20m",
+        limit: { count: 14 },
+        mkdir: true,
+      },
+    }
+  ],
 
-		new DailyRotateFile({
-			filename: "logs/error-%DATE%.log",
-			datePattern: "YYYY-MM-DD",
-			level: "error",
-			maxSize: "20m",
-			maxFiles: "14d",
-			zippedArchive: true,
-		}),
-
-		new DailyRotateFile({
-			filename: "logs/combined-%DATE%.log",
-			datePattern: "YYYY-MM-DD",
-			maxSize: "20m",
-			maxFiles: "14d",
-			zippedArchive: true,
-		}),
-	],
 });
 
+const logger = pino({
+  level: isProd ? "info" : "debug",
+  base: { service: "chat-service" },
+  timestamp: pino.stdTimeFunctions.isoTime,
+  errorKey: "stack",
+}, transport);
+
 export default logger;
+

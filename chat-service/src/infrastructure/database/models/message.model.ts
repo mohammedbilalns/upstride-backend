@@ -11,8 +11,8 @@ export const messageSchema: Schema = new Schema(
 			required: true,
 		},
 		senderId: { type: String, required: true },
-		content: { type: String, required: true },
-		type: { type: String, enum: ["TEXT", "FILE"] },
+		content: { type: String },
+		type: { type: String, enum: ["TEXT",'IMAGE', "FILE"] },
 		attachment: {
 			url: { type: String },
 			fileType: { type: String },
@@ -21,7 +21,7 @@ export const messageSchema: Schema = new Schema(
 		repliedTo: { type: Schema.Types.ObjectId, ref: "Message" },
 		status: {
 			type: String,
-			enum: ["send", "delivered", "read"],
+			enum: ["send", "read"],
 			default: "send",
 		},
 		deletedAt: { type: Date },

@@ -6,13 +6,13 @@ import { QueueEvents } from "../../../common/enums/queueEvents";
 import { clientMessageSchema } from "../validations/messagePayload.validation";
 
 export function registerChatEvents(
-	//io: Server,
 	socket: Socket,
 	publisher: SocketPublisher,
 ) {
 
   socket.on(SocketEvents.SEND_MESSAGE, async (data)=> {
     try {
+      logger.debug(`clientMessage ${JSON.stringify(data)}`)
       const parsedData = clientMessageSchema.parse(data)
       const payload  = {
         ...parsedData,
@@ -30,6 +30,15 @@ export function registerChatEvents(
       
     } catch (error) {
       logger.error("Error sending message", error);
+    }
+  })
+
+  socket.on(SocketEvents.MARK_MESSAGE_READ, async (data)=> {
+    try{
+      const reciever = socket.data.user.id
+      await publisher.publishToQueue(QueueEvents.MARK_MESSAGE_READ,{...data, reciever})
+    }catch(error){
+      logger.error("Error marking message read", error);
     }
   })
 }

@@ -9,7 +9,7 @@
 	"type": "commonjs",
 	"scripts": {
 		"start": "node dist/server.js",
-		"dev": "nodemon --watch src -e ts --exec 'tsc && node dist/server.js'",
+		"dev": "nodemon --watch src -e ts --exec 'tsc && node --env-file=.env dist/server.js'",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",
 		"test": "jest",
@@ -36,7 +36,6 @@
 		"amqplib": "0.10.8",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
-		"dotenv": "^17.2.1",
 		"express": "^5.1.0",
 		"express-http-proxy": "^2.1.1",
 		"helmet": "^8.1.0",

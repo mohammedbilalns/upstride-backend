@@ -14,7 +14,7 @@ for svc in "${services[@]}"; do
 done
 
 # Launch Zellij 
-ZELLIJ_LAYOUT="$HOME/.config/zellij/upstride.kdl"
+ZELLIJ_LAYOUT="$HOME/upstride-backend/zellij-layout.kdl"
 if [ -f "$ZELLIJ_LAYOUT" ]; then
     echo "Launching Zellij with layout $ZELLIJ_LAYOUT..."
     zellij --layout "$ZELLIJ_LAYOUT"

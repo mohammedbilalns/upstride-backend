@@ -7,4 +7,6 @@ export interface IMessageRepository extends IBaseRepository<Message> {
 		page: number,
 		limit: number,
 	): Promise<{ messages: Message[]; total: number }>;
+  markMessagesAsRead(messageId: string, chatId: string, senderId: string): Promise<void>;
+
 }

@@ -6,7 +6,7 @@ type Media = {
 export interface SendMessageInput {
 	from: string;
 	to: string;
-	message: string;
+	message?: string;
   type: string;
 	media?: Media;
 	replyTo?: string;

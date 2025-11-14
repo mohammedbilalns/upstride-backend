@@ -58,6 +58,7 @@ export class SendMessageUC implements ISendMessageUC {
 				chatId: chat.id,
 				senderId: from,
 				senderName: sender.name,
+        attachment: savedMessage.attachment,
 				receiverId: to,
 				message: message,
 				messageId: savedMessage.id,
