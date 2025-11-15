@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "deno dist/server.js",
+		"start": "bun dist/server.js",
 		"dev": "nodemon --watch src -e ts --exec 'tsc && bun dist/server.js'",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",

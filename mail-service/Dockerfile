@@ -1,20 +1,32 @@
-FROM node:24-alpine
+# ---- Build Stage ----
+FROM oven/bun:latest AS builder
 
 WORKDIR /app
 
-RUN npm install -g pnpm
+# Copy package files for caching
+COPY package.json bun.lockb* ./
 
-COPY package*.json ./
+# Install dependencies
+RUN bun install
 
-RUN pnpm install
-
-COPY tsconfig.json ./
-
-COPY src ./src
-
-RUN pnpm run build
-
+# Copy source files
 COPY . .
 
-CMD ["pnpm", "run", "start"]
+# Build TypeScript -> dist/
+RUN bun run build
+
+
+# ---- Production Stage ----
+FROM oven/bun:slim
+
+WORKDIR /app
+
+# Copy only required artifacts
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+
+
+# Start application
+CMD ["bun", "dist/server.js"]
 
