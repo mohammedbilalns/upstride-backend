@@ -1,5 +1,5 @@
+import type { NextFunction, Request, Response } from "express";
 import logger from "./logger";
-import { Request, Response, NextFunction } from "express";
 
 export const requestLogger = (
 	req: Request,
@@ -10,3 +10,4 @@ export const requestLogger = (
 	logger.info(`Request body, ${req.body}`);
 	next();
 };
+

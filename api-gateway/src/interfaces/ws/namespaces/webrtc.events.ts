@@ -3,7 +3,7 @@ import type { SocketPublisher } from "../socket.publisher";
 
 export function registerWebRTCEvents(
 	io: Server,
-	socket: Socket,
+  socket: Socket,
 	publisher: SocketPublisher,
 ) {
 	console.log(io, socket, publisher);

@@ -6,8 +6,8 @@ import logger from "../../utils/logger";
 import { socketAuthMiddleware } from "./middlewares/socket.middleware";
 import {
 	registerChatEvents,
-	registerNotificationEvents,
-	registerWebRTCEvents,
+//	registerNotificationEvents,
+//	registerWebRTCEvents,
 } from "./namespaces";
 import { SocketPublisher } from "./socket.publisher";
 import { registerNotificationSubscriber } from "./subscribers";
@@ -60,8 +60,8 @@ export function initSocket(server: HttpServer, eventBus: IEventBus) {
 		 * Register namespace-specific event handlers
 		 */
 		registerChatEvents(socket, socketPublisher);
-		registerNotificationEvents(io, socket, socketPublisher);
-		registerWebRTCEvents(io, socket, socketPublisher);
+//registerNotificationEvents(io, socket, socketPublisher);
+//		registerWebRTCEvents(io, socket, socketPublisher);
 
 		/**
 		 * When a user disconnects:

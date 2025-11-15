@@ -24,11 +24,10 @@ async function gracefulShutdown(signal: string) {
 	}, 10000); 
 
 	try {
-		// Wait for server to close before disconnecting services
 		await new Promise<void>((resolve, reject) => {
 			server.close((err) => {
 				if (err) {
-					logger.error("Error closing HTTP server:", err);
+					logger.error(`Error closing http server: ${err}`);
 					reject(err);
 				} else {
 					logger.info("HTTP server closed");
@@ -60,11 +59,11 @@ process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGHUP", () => gracefulShutdown("SIGHUP"));
 
 process.on("uncaughtException", (error: Error) => {
-	logger.error("Uncaught Exception:", error);
+	logger.error(`Uncaught Exception: ${error}`);
 	gracefulShutdown("uncaughtException");
 });
 
 process.on("unhandledRejection", (reason: unknown, promise: Promise<unknown>) => {
-	logger.error("Unhandled Rejection at:", promise, "reason:", reason);
+	logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
 	gracefulShutdown("unhandledRejection");
 });

@@ -6,7 +6,7 @@ import env from "../config/env";
 import { ICacheService } from "../../domain/services/cache.service.interface";
 import { AppError } from "../../application/errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
-import logger from "../../utils/logger";
+import logger from "../../common/utils/logger";
 
 export class UserService implements IUserService {
 	private baseUrl = env.USERS_ENDPOINT;

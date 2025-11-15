@@ -17,6 +17,6 @@ export function errorHandler(
 		return res.status(500).json({ message: err.message });
 	}
 
-	logger.error("[Unknown Error]", err);
+	logger.error(`[Unknown] ${err}`);
 	return res.status(500).json({ message: "Internal server error" });
 }

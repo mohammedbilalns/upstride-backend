@@ -50,7 +50,7 @@ export function errorHandler(
 			.json({ success: false, message: err.message });
 	}
 
-	logger.error("[Unknown Error]", err);
+	logger.error(`[Unknown] ${err}`);
 	return res
 		.status(HttpStatus.INTERNAL_SERVER_ERROR)
 		.json({ success: false, message: ErrorMessage.INTERNAL_SERVER_ERROR });
