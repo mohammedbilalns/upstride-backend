@@ -9,7 +9,7 @@
 	"type": "commonjs",
 	"scripts": {
 		"start": "bun dist/server.js",
-		"dev": "nodemon --watch src -e ts --exec 'tsc && bun dist/server.js'",
+		"dev": "nodemon --watch src -e ts --exec 'tsc && bun --inspect dist/server.js'",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",
 		"test": "jest"

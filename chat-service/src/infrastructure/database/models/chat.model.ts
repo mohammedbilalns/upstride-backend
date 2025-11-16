@@ -3,6 +3,7 @@ import { Chat } from "../../../domain/entities/chat.entity";
 
 export interface IChat extends Document, Omit<Chat, "id"> {}
 
+// NOTE : unread count ?
 export const chatSchema: Schema = new Schema(
 	{
 		userIds: {

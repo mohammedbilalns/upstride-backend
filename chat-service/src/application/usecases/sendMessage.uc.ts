@@ -34,7 +34,7 @@ export class SendMessageUC implements ISendMessageUC {
 			} as Chat);
 		}
 
-		// create new message
+    
 		const newMessage: Partial<Message> = {
 			chatId: chat.id,
 			senderId: from,

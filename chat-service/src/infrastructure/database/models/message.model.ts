@@ -15,6 +15,7 @@ export const messageSchema: Schema = new Schema(
 		type: { type: String, enum: ["TEXT",'IMAGE', "FILE"] },
 		attachment: {
 			url: { type: String },
+      name: {type: String},
 			fileType: { type: String },
 			size: { type: Number },
 		},

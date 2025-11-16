@@ -1,7 +1,8 @@
 type Media = {
 	url: string;
-	fileType?: string;
-	size?: number;
+  name: string;
+	fileType: string;
+	size: number;
 };
 export interface SendMessageInput {
 	from: string;

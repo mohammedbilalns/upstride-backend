@@ -4,6 +4,7 @@ export const mediaSchema = z.object({
 	url: z.url(),
 	fileType: z.string().optional(),
 	size: z.number().optional(),
+  name: z.string()
 });
 
 export const messagePayloadSchema = z.object({

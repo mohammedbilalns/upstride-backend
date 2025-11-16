@@ -19,7 +19,11 @@ export function createServiceProxy(
 	service_url: string,
 	isAuth?: boolean,
 ) {
-	return proxy(service_url, {
+
+
+  const domainRegex = /;\s*Domain=[^;]*/i;
+	
+  return proxy(service_url, {
 		...proxyOptions,
 
 		// Add default Content-Type header for outgoing proxy requests
@@ -34,9 +38,8 @@ export function createServiceProxy(
 				const setCookieHeader = proxyRes.headers["set-cookie"];
 
 				if (setCookieHeader) {
-					console.log("cookie header detected");
 					const modifiedCookies = setCookieHeader.map((cookie) => {
-						let modifiedCookie = cookie.replace(/;\s*Domain=[^;]*/i, "");
+						let modifiedCookie = cookie.replace(domainRegex, "");
 						if (!modifiedCookie.includes("Path=")) {
 							modifiedCookie += "; Path=/";
 						}

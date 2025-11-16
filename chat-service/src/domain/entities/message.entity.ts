@@ -4,7 +4,7 @@ export interface Message {
 	senderId: string;
 	content?: string;
 	type: "TEXT"|"IMAGE"|"FILE";
-	attachment?: { url: string; fileType?: string; size?: number };
+	attachment?: { url: string; name: string; fileType: string; size: number };
 	repliedTo?: string;
 	status: "send"  | "read";
 	createdAt: Date;

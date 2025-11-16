@@ -41,7 +41,7 @@ export class ChatRepository
       .select("_id userIds")
       .populate({
         path: 'lastMessage',
-        select:"content type createdAt",
+        select:"content type createdAt senderId type status",
       })
       .skip(skip)
       .limit(limit),

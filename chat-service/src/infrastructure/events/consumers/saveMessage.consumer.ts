@@ -12,11 +12,15 @@ export async function createSaveMessageConsumer(sendMessageUC: ISendMessageUC) {
 		QueueEvents.SEND_MESSAGE,
 		async (payload) => {
 			try {
+        logger.debug(`payload, ${JSON.stringify(payload)}`)
 				const messageData = messageSchema.parse(payload);
+        logger.debug(`parsed message, ${JSON.stringify(messageData)}`)
 				await sendMessageUC.execute(messageData);
 			} catch (err) {
-				logger.error("Error saving chat message ", err);
-        logger.error("Error stack", err.stack)
+				logger.error(`Error saving chat message ${err}`);
+        logger.error(`Error stack: ${JSON.stringify(err.stack)}`)
+        logger.error(`Error saving chat message ${JSON.stringify(payload)}`)
+        
         
 			}
 		},
