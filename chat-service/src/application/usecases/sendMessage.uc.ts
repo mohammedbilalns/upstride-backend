@@ -17,7 +17,7 @@ export class SendMessageUC implements ISendMessageUC {
 	) {}
 
 	async execute(messageData: SendMessageInput): Promise<void> {
-    const { from, to, message, media, replyTo } = messageData;
+		const { from, to, message, media, replyTo } = messageData;
 
 		//  fetch sender and chat info
 		let [sender, chat] = await Promise.all([
@@ -34,7 +34,6 @@ export class SendMessageUC implements ISendMessageUC {
 			} as Chat);
 		}
 
-    
 		const newMessage: Partial<Message> = {
 			chatId: chat.id,
 			senderId: from,
@@ -44,8 +43,9 @@ export class SendMessageUC implements ISendMessageUC {
 			repliedTo: replyTo,
 		};
 
-
 		const savedMessage = await this._messageRepository.create(newMessage);
+
+		const prev = chat.unreadCount?.get(to) ?? 0;
 
 		// update chat & publish message, notification events
 		await Promise.all([
@@ -53,24 +53,25 @@ export class SendMessageUC implements ISendMessageUC {
 				lastMessage: savedMessage.id,
 				updatedAt: new Date(),
 				isStarted: true,
+				unreadCount: { ...chat.unreadCount, [to]: prev + 1 },
 			}),
 			this._eventBus.publish(QueueEvents.SAVED_MESSAGE, {
 				chatId: chat.id,
 				senderId: from,
 				senderName: sender.name,
-        attachment: savedMessage.attachment,
+				attachment: savedMessage.attachment,
 				receiverId: to,
 				message: message,
 				messageId: savedMessage.id,
 				timestamp: savedMessage.createdAt,
 				type: savedMessage.type,
 			}),
-      this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
-        userId: to,
-        type:"RECIEVED_MESSAGE",
-        triggeredBy:sender.name,
-        targetResource: sender.id
-      })
+			this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
+				userId: to,
+				type: "RECIEVED_MESSAGE",
+				triggeredBy: sender.name,
+				targetResource: sender.id,
+			}),
 		]);
 	}
 }

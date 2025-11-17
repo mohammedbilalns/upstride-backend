@@ -1,6 +1,4 @@
-import {
-	IUserService,
-} from "../../domain/services/user.service.interface";
+import { IUserService } from "../../domain/services/user.service.interface";
 import { userData } from "../../common/types/user.types";
 import env from "../config/env";
 import { ICacheService } from "../../domain/services/cache.service.interface";
@@ -83,7 +81,7 @@ export class UserService implements IUserService {
 
 				// Cache the fetched users
 				for (const user of fetched) {
-          logger.info(`caching user : ${JSON.stringify(user)}`)
+					logger.info(`caching user : ${JSON.stringify(user)}`);
 					await this.cacheService.set(`user:${user.id}`, user, 60 * 5);
 				}
 

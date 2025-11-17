@@ -10,7 +10,7 @@ const serverInstance = new App();
 /**
  * Bootstraps the Gateway service.
  *
- * - Initialize the event bus connection 
+ * - Initialize the event bus connection
  * - Initialize WebSocket Gateway
  * - Start the HTTP server
  *
@@ -27,6 +27,5 @@ async function bootstrap() {
  */
 bootstrap().catch((err) => {
 	logger.error("Failed to bootstrap Gateway", err);
-	process.exit(1); 
+	process.exit(1);
 });
-

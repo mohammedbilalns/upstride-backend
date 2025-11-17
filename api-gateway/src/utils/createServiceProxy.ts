@@ -19,11 +19,9 @@ export function createServiceProxy(
 	service_url: string,
 	isAuth?: boolean,
 ) {
+	const domainRegex = /;\s*Domain=[^;]*/i;
 
-
-  const domainRegex = /;\s*Domain=[^;]*/i;
-	
-  return proxy(service_url, {
+	return proxy(service_url, {
 		...proxyOptions,
 
 		// Add default Content-Type header for outgoing proxy requests

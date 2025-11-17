@@ -3,7 +3,7 @@ import { composeMarkMessageReadConsumer } from "./compositions/markMessageRead.c
 import { composeSendMessageConsumer } from "./compositions/sendMessage.composition";
 
 export async function loadConsumers() {
-  await composeSendMessageConsumer()
-  await composeMarkMessageReadConsumer()
-  logger.info("Event consumers loaded");
+	await composeSendMessageConsumer();
+	await composeMarkMessageReadConsumer();
+	logger.info("Event consumers loaded");
 }

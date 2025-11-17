@@ -10,4 +10,3 @@ export const requestLogger = (
 	logger.info(`Request body, ${req.body}`);
 	next();
 };
-

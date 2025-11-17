@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const mediaSchema = z.object({
 	url: z.url(),
-  name: z.string(),
+	name: z.string(),
 	fileType: z.string(),
 	size: z.number(),
 });
@@ -12,7 +12,7 @@ export const messageSchema = z.object({
 	to: z.string().min(1, "Recipient ID is required"),
 	message: z.string().min(1, "Message cannot be empty").optional(),
 	media: mediaSchema.optional(),
-  type: z.string(),
+	type: z.string(),
 	replyTo: z.string().optional(),
 });
 

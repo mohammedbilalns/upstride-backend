@@ -19,4 +19,3 @@ export const requestLogger = (
 	// Continue to next middleware or route
 	next();
 };
-

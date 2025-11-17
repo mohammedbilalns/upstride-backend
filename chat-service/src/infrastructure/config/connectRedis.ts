@@ -5,4 +5,6 @@ import logger from "../../common/utils/logger";
 export const redisClient = new Redis(env.REDIS_URL);
 
 redisClient.on("connect", () => logger.info("Redis connected"));
-redisClient.on("error", (err) => logger.error(`Redis connection error: ${err}`));
+redisClient.on("error", (err) =>
+	logger.error(`Redis connection error: ${err}`),
+);

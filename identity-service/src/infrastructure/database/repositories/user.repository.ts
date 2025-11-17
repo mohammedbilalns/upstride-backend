@@ -30,7 +30,7 @@ export class UserRepository
 			mentorRegistrationCount: mapped.mentorRegistrationCount,
 			googleId: mapped.googleId,
 			role: mapped.role,
-      // FIX : remove the alternative empty array 
+			// FIX : remove the alternative empty array
 			interestedExpertises: Array.isArray(mapped.interestedExpertises)
 				? mapped.interestedExpertises.map(mapPopulatedSubToDomain)
 				: [],
@@ -56,7 +56,7 @@ export class UserRepository
 		return doc ? this.mapToDomain(doc) : null;
 	}
 
-  // FIX : include query in the count filter 
+	// FIX : include query in the count filter
 	async findAll(
 		page: number,
 		limit: number,

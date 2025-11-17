@@ -21,7 +21,7 @@ async function gracefulShutdown(signal: string) {
 	const forceExitTimeout = setTimeout(() => {
 		logger.error("Graceful shutdown timeout, forcing exit");
 		process.exit(1);
-	}, 10000); 
+	}, 10000);
 
 	try {
 		// Wait for server to close before disconnecting services
@@ -38,14 +38,11 @@ async function gracefulShutdown(signal: string) {
 		});
 
 		// disconnect from services
-		await Promise.all([
-			disconnectFromDb(),
-			disconnectRabbitMq()
-		]);
-		
+		await Promise.all([disconnectFromDb(), disconnectRabbitMq()]);
+
 		logger.info("All services disconnected");
 		logger.info("Graceful shutdown completed");
-		
+
 		clearTimeout(forceExitTimeout);
 		process.exit(0);
 	} catch (error) {
@@ -64,7 +61,10 @@ process.on("uncaughtException", (error: Error) => {
 	gracefulShutdown("uncaughtException");
 });
 
-process.on("unhandledRejection", (reason: unknown, promise: Promise<unknown>) => {
-	logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
-	gracefulShutdown("unhandledRejection");
-});
+process.on(
+	"unhandledRejection",
+	(reason: unknown, promise: Promise<unknown>) => {
+		logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
+		gracefulShutdown("unhandledRejection");
+	},
+);

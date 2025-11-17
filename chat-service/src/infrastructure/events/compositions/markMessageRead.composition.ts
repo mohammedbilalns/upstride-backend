@@ -4,11 +4,14 @@ import { MessageRepository } from "../../database/repositories/message.repositor
 import { createMarkMessageReadConsumer } from "../consumers/markMessageRead.consumer";
 import EventBus from "../eventBus";
 
+export async function composeMarkMessageReadConsumer() {
+	const messageRepository = new MessageRepository();
+	const chatRepository = new ChatRepository();
 
-export async function composeMarkMessageReadConsumer(){
-  const messageRepository = new MessageRepository()
-  const chatRepository  = new ChatRepository()
-  
-  const markMessageReadUsecase = new MarkMessageAsReadUC(messageRepository,chatRepository, EventBus)
-  await createMarkMessageReadConsumer(markMessageReadUsecase)
+	const markMessageReadUsecase = new MarkMessageAsReadUC(
+		messageRepository,
+		chatRepository,
+		EventBus,
+	);
+	await createMarkMessageReadConsumer(markMessageReadUsecase);
 }

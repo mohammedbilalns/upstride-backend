@@ -3,10 +3,10 @@ export interface Message {
 	chatId: string;
 	senderId: string;
 	content?: string;
-	type: "TEXT"|"IMAGE"|"FILE";
+	type: "TEXT" | "IMAGE" | "FILE";
 	attachment?: { url: string; name: string; fileType: string; size: number };
 	repliedTo?: string;
-	status: "send"  | "read";
+	status: "send" | "read";
 	createdAt: Date;
 	updatedAt: Date;
 	deletedAt: Date;

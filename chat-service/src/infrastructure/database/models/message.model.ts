@@ -12,10 +12,10 @@ export const messageSchema: Schema = new Schema(
 		},
 		senderId: { type: String, required: true },
 		content: { type: String },
-		type: { type: String, enum: ["TEXT",'IMAGE', "FILE"] },
+		type: { type: String, enum: ["TEXT", "IMAGE", "FILE"] },
 		attachment: {
 			url: { type: String },
-      name: {type: String},
+			name: { type: String },
 			fileType: { type: String },
 			size: { type: Number },
 		},

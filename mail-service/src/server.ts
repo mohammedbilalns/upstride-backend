@@ -33,7 +33,7 @@ async function shutdown(signal: string) {
 	try {
 		await disconnectRabbitMq();
 		logger.info("✅ Graceful shutdown complete.");
-		
+
 		clearTimeout(forceExitTimeout);
 		process.exit(0);
 	} catch (err) {

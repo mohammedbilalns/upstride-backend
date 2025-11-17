@@ -22,7 +22,7 @@ export class ProfileService implements IProfileService {
 		if (!user)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-		// NOTE: Type checking is added 
+		// NOTE: Type checking is added
 		if (typeof user !== "object" || !("isVerified" in user))
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
