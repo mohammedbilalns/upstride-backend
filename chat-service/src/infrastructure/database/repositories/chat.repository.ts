@@ -39,7 +39,7 @@ export class ChatRepository
 		const [chats, total] = await Promise.all([
 			this._model
 				.find({ userIds: userId, isArchived: false, isStarted: true })
-				.select("_id userIds")
+				.select("_id userIds unreadCount")
 				.populate({
 					path: "lastMessage",
 					select: "content type createdAt senderId type status",

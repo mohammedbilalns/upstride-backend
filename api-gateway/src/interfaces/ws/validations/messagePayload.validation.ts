@@ -30,5 +30,4 @@ export const clientMessageSchema = z.object({
 export const messageStatusPayloadSchema = z.object({
 	senderId: z.string(),
 	recieverId: z.string(),
-	messageId: z.string(),
 });

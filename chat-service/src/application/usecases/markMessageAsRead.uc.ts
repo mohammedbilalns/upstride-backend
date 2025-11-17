@@ -28,11 +28,13 @@ export class MarkMessageAsReadUC implements IMarkMessageAsReadUC {
 			throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST);
 
 		await Promise.all([
+			this._chatRepository.update(chat.id, {
+				unreadCount: { ...chat.unreadCount, [userId]: 0 },
+			}),
 			this._messageRepository.markMessagesAsRead(messageId, chat.id, senderId),
 			this._eventBus.publish(QueueEvents.MARKED_MESSAGE_READ, {
 				senderId: senderId,
-				receiverId: userId,
-				messageId,
+				recieverId: userId,
 			}),
 		]);
 	}

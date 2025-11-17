@@ -26,26 +26,23 @@ export async function registerChatSubscriber(
 
 			logger.info("[WS] Message delivered via Socket.IO");
 		} catch (error) {
-			logger.error("[WS] Failed to emit saved message", error);
+			logger.error(`[WS] Failed to emit message: ${error}`);
 		}
 	});
 
-	await eventBus.subscribe(
-		QueueEvents.UPDATED_MESSAGE_STATUS,
-		async (payload) => {
-			try {
-				logger.debug(
-					`message status payload received from the chat service: ${JSON.stringify(payload)}`,
-				);
-				const parsedPayload = messageStatusPayloadSchema.parse(payload);
-				socketPublisher.emitToUser(
-					parsedPayload.senderId,
-					SocketEvents.MARK_MESSAGE_READ,
-					parsedPayload,
-				);
-			} catch (error) {
-				logger.error("Error updating message status", error);
-			}
-		},
-	);
+	await eventBus.subscribe(QueueEvents.MARKED_MESSAGE_READ, async (payload) => {
+		try {
+			logger.debug(
+				`message status payload received from the chat service: ${JSON.stringify(payload)}`,
+			);
+			const parsedPayload = messageStatusPayloadSchema.parse(payload);
+			socketPublisher.emitToUser(
+				parsedPayload.senderId,
+				SocketEvents.MARK_MESSAGE_READ,
+				{ recieverId: parsedPayload.recieverId },
+			);
+		} catch (error) {
+			logger.error(`Error updating read status: ${error}`);
+		}
+	});
 }
