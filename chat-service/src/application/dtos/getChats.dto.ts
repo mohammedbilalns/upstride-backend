@@ -7,6 +7,6 @@ export interface getChatsDto {
 }
 
 export interface getChatsResult {
-	chats: Chat[];
+	chats: (Omit<Chat, "unreadCount"> & { unreadCount: number })[];
 	total: number;
 }

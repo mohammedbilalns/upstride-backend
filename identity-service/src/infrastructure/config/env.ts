@@ -1,7 +1,4 @@
-import { configDotenv } from "dotenv";
-import { z } from "zod";
-
-configDotenv();
+import z from "zod";
 
 const envSchema = z.object({
 	JWT_SECRET: z.string().min(1),

@@ -70,7 +70,7 @@ export class AuthService implements IAuthService {
 
 		this._cacheService.set(
 			`user:${user.id}`,
-			{ image: user.profilePicture },
+			{ id: user.id, profilePicture: user.profilePicture, name: user.name },
 			CACHE_TTL,
 		);
 
@@ -100,7 +100,7 @@ export class AuthService implements IAuthService {
 		const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
 		this._cacheService.set(
 			`user:${user.id}`,
-			{ image: user.profilePicture },
+			{ id: user.id, profilePicture: user.profilePicture, name: user.name },
 			CACHE_TTL,
 		);
 		return {
@@ -149,7 +149,7 @@ export class AuthService implements IAuthService {
 		const { newAccessToken, newRefreshToken } = await this.generateTokens(user);
 		this._cacheService.set(
 			`user:${user.id}`,
-			{ image: user.profilePicture },
+			{ id: user.id, image: user.profilePicture, name: user.name },
 			CACHE_TTL,
 		);
 		return {

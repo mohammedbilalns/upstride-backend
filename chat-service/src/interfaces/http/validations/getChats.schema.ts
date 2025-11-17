@@ -6,5 +6,5 @@ export const getChatsSchema = z.object({
 });
 
 export const getChatsParamsSchema = z.object({
-  chatId: z.string()
-})
+	chatId: z.string(),
+});

@@ -4,6 +4,7 @@ export interface Chat {
 	lastMessage?: string;
 	isArchived?: boolean;
 	isStarted?: boolean;
+	unreadCount: Map<string, number>;
 	createdAt: Date;
 	updatedAt: Date;
 }

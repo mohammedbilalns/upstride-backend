@@ -16,19 +16,27 @@ layout {
 	  }
 	  pane name="article service"{
 		cwd "~/upstride-backend/article-service"
+		command "npm"
+		args "run" "dev"
 	  }
 	  pane name="chat service"{
 		cwd "~/upstride-backend/chat-service"
+        command "npm"
+        args "run" "dev"
 	  }
 	}
 	pane { 
 	  pane name="notification service"{
 		cwd "~/upstride-backend/notification-service"
+		command "npm"
+		args "run" "dev"
 	  }
 	  pane name="sessions service" {
 		cwd "~/upstride-backend/sessions-service"
 	  }
 	  pane name="media service" {
+		command "npm"
+		args "run" "dev"
 		cwd "~/upstride-backend/media-service"
 	  }
 	  pane name="frontend"{
@@ -39,6 +47,4 @@ layout {
 	}
   }
 }
-
-
 

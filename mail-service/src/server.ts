@@ -1,11 +1,10 @@
-import { configDotenv } from "dotenv";
 import logger from "./common/utils/logger";
 import {
 	connectRabbitMq,
 	disconnectRabbitMq,
 } from "./infrastructure/events/connectRabbitMq";
 
-configDotenv();
+let isShuttingDown = false;
 
 async function bootstrap() {
 	try {
@@ -18,13 +17,28 @@ async function bootstrap() {
 }
 
 async function shutdown(signal: string) {
-	logger.info(`🛑 Received ${signal}. Starting graceful shutdown...`);
+	if (isShuttingDown) {
+		logger.warn(`Shutdown already in progress, ignoring ${signal}`);
+		return;
+	}
+	isShuttingDown = true;
+
+	logger.info(` Received ${signal}. Starting graceful shutdown...`);
+
+	const forceExitTimeout = setTimeout(() => {
+		logger.error("⏰ Graceful shutdown timeout, forcing exit");
+		process.exit(1);
+	}, 15000);
+
 	try {
 		await disconnectRabbitMq();
 		logger.info("✅ Graceful shutdown complete.");
+
+		clearTimeout(forceExitTimeout);
 		process.exit(0);
 	} catch (err) {
 		logger.error("❌ Error during shutdown:", err);
+		clearTimeout(forceExitTimeout);
 		process.exit(1);
 	}
 }
@@ -34,12 +48,12 @@ process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGHUP", () => shutdown("SIGHUP"));
 
 process.on("uncaughtException", (err) => {
-	logger.error("❌ Uncaught Exception:", err);
+	logger.error(`❌ Uncaught Exception:${err}`);
 	shutdown("uncaughtException");
 });
 
 process.on("unhandledRejection", (reason) => {
-	logger.error("❌ Unhandled Rejection:", reason);
+	logger.error(`❌ Unhandled Rejection: ${reason}`);
 	shutdown("unhandledRejection");
 });
 

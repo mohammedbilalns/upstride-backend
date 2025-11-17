@@ -24,6 +24,7 @@ export class SendMessageUC implements ISendMessageUC {
 			this._userService.getUserById(from),
 			this._chatRepository.getChatByUserIds([from, to]),
 		]);
+
 		if (!sender) throw new AppError(ErrorMessage.FAILED_TO_FETCH_USERS);
 
 		if (!chat) {
@@ -33,7 +34,6 @@ export class SendMessageUC implements ISendMessageUC {
 			} as Chat);
 		}
 
-		// create new message
 		const newMessage: Partial<Message> = {
 			chatId: chat.id,
 			senderId: from,
@@ -45,22 +45,32 @@ export class SendMessageUC implements ISendMessageUC {
 
 		const savedMessage = await this._messageRepository.create(newMessage);
 
-		// update chat & publish message event
+		const prev = chat.unreadCount?.get(to) ?? 0;
+
+		// update chat & publish message, notification events
 		await Promise.all([
 			this._chatRepository.update(chat.id, {
 				lastMessage: savedMessage.id,
 				updatedAt: new Date(),
 				isStarted: true,
+				unreadCount: { ...chat.unreadCount, [to]: prev + 1 },
 			}),
 			this._eventBus.publish(QueueEvents.SAVED_MESSAGE, {
 				chatId: chat.id,
 				senderId: from,
 				senderName: sender.name,
+				attachment: savedMessage.attachment,
 				receiverId: to,
 				message: message,
 				messageId: savedMessage.id,
 				timestamp: savedMessage.createdAt,
 				type: savedMessage.type,
+			}),
+			this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
+				userId: to,
+				type: "RECIEVED_MESSAGE",
+				triggeredBy: sender.name,
+				targetResource: sender.id,
 			}),
 		]);
 	}

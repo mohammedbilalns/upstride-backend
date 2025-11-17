@@ -34,10 +34,13 @@ export class GetChatsUC implements IGetChatsUC {
 
 		// Attach user data to each chat
 		const mappedChats = chats.map((chat) => {
+			const unread = Object.fromEntries(chat.unreadCount);
+
 			const otherUserId = chat.userIds.find((id) => id !== userId);
 			return {
 				...chat,
 				participant: otherUserId ? (userMap.get(otherUserId) ?? null) : null,
+				unreadCount: unread[userId] ?? 0,
 			};
 		});
 

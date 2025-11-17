@@ -34,11 +34,46 @@ export class MessageRepository
 		page: number,
 		limit: number,
 	): Promise<{ messages: Message[]; total: number }> {
+		// TODO: update the method to use the cursor
 		const skip = (page - 1) * limit;
 		const [messages, total] = await Promise.all([
-			this._model.find({ chatId: chatId }).skip(skip).limit(limit),
+			this._model
+				.find({ chatId: chatId })
+				.sort({ createdAt: -1 })
+				.skip(skip)
+				.limit(limit),
 			this._model.countDocuments({ chatId: chatId }),
 		]);
-		return { messages: messages ? messages.map(this.mapToDomain) : [], total };
+		return {
+			messages: messages ? messages.reverse().map(this.mapToDomain) : [],
+			total,
+		};
+	}
+
+	async markMessagesAsRead(
+		messageId: string,
+		chatId: string,
+		senderId: string,
+	): Promise<void> {
+		// mark all non read messages in the chat send before this chat as read
+		const ref = await this._model
+			.findById(messageId)
+			.select("createdAt")
+			.lean();
+		if (!ref) return;
+
+		await this._model
+			.updateMany(
+				{
+					chatId,
+					senderId,
+					createdAt: { $lte: ref.createdAt },
+					status: { $ne: "read" },
+				},
+				{
+					$set: { status: "read" },
+				},
+			)
+			.exec();
 	}
 }

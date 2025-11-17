@@ -19,6 +19,7 @@ export class ChatRepository
 			userIds: mapped.userIds,
 			lastMessage: mapped.lastMessage,
 			isArchived: mapped.isArchived,
+			unreadCount: mapped.unreadCount,
 			createdAt: mapped.createdAt,
 			updatedAt: mapped.updatedAt,
 		};
@@ -28,6 +29,7 @@ export class ChatRepository
 		const chat = await this._model.findOne({ userIds: { $all: userIds } });
 		return chat ? this.mapToDomain(chat) : null;
 	}
+
 	async getUserChats(
 		userId: string,
 		page: number,
@@ -37,7 +39,11 @@ export class ChatRepository
 		const [chats, total] = await Promise.all([
 			this._model
 				.find({ userIds: userId, isArchived: false, isStarted: true })
-				.select("_id userIds")
+				.select("_id userIds unreadCount")
+				.populate({
+					path: "lastMessage",
+					select: "content type createdAt senderId type status",
+				})
 				.skip(skip)
 				.limit(limit),
 			this._model.countDocuments({

@@ -43,67 +43,47 @@ router.use(
 	}),
 );
 
-router.use(
-	"/users",
-	createServiceProxy(ServiceName.IDENTITY, SERVICE_URL[ServiceName.IDENTITY]),
+const identityProxy = createServiceProxy(
+	ServiceName.IDENTITY,
+	SERVICE_URL[ServiceName.IDENTITY],
+);
+const articleProxy = createServiceProxy(
+	ServiceName.ARTICLE,
+	SERVICE_URL[ServiceName.ARTICLE],
+);
+const mediaProxy = createServiceProxy(
+	ServiceName.MEDIA,
+	SERVICE_URL[ServiceName.MEDIA],
+);
+const notificationProxy = createServiceProxy(
+	ServiceName.NOTIFICATION,
+	SERVICE_URL[ServiceName.NOTIFICATION],
+);
+const chatProxy = createServiceProxy(
+	ServiceName.CHAT,
+	SERVICE_URL[ServiceName.CHAT],
 );
 
-router.use(
-	"/expertise",
-	createServiceProxy(ServiceName.IDENTITY, SERVICE_URL[ServiceName.IDENTITY]),
-);
+router.use("/users", identityProxy);
+router.use("/expertise", identityProxy);
+router.use("/mentor", identityProxy);
 
-router.use(
-	"/mentor",
-	createServiceProxy(ServiceName.IDENTITY, SERVICE_URL[ServiceName.IDENTITY]),
-);
+router.use("/profile", identityProxy);
 
-router.use(
-	"/profile",
-	createServiceProxy(ServiceName.IDENTITY, SERVICE_URL[ServiceName.IDENTITY]),
-);
+router.use("/connection", identityProxy);
 
-router.use(
-	"/connection",
-	createServiceProxy(ServiceName.IDENTITY, SERVICE_URL[ServiceName.IDENTITY]),
-);
+router.use("/media", mediaProxy);
 
-router.use(
-	"/media",
-	createServiceProxy(ServiceName.MEDIA, SERVICE_URL[ServiceName.MEDIA]),
-);
+router.use("/articles", articleProxy);
 
-router.use(
-	"/articles",
-	createServiceProxy(ServiceName.ARTICLE, SERVICE_URL[ServiceName.ARTICLE]),
-);
+router.use("/tags", articleProxy);
 
-router.use(
-	"/tags",
-	createServiceProxy(ServiceName.ARTICLE, SERVICE_URL[ServiceName.ARTICLE]),
-);
+router.use("/comments", articleProxy);
 
-router.use(
-	"/comments",
-	createServiceProxy(ServiceName.ARTICLE, SERVICE_URL[ServiceName.ARTICLE]),
-);
+router.use("/reactions", articleProxy);
 
-router.use(
-	"/reactions",
-	createServiceProxy(ServiceName.ARTICLE, SERVICE_URL[ServiceName.ARTICLE]),
-);
+router.use("/notifications", notificationProxy);
 
-router.use(
-	"/notifications",
-	createServiceProxy(
-		ServiceName.NOTIFICATION,
-		SERVICE_URL[ServiceName.NOTIFICATION],
-	),
-);
-
-router.use(
-	"/chat",
-	createServiceProxy(ServiceName.CHAT, SERVICE_URL[ServiceName.CHAT]),
-);
+router.use("/chat", chatProxy);
 
 export default router;
