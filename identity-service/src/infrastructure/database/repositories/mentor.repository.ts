@@ -396,4 +396,14 @@ export class MentorRepository
 			})),
 		};
 	}
+
+	async findByMentorId(mentorId: string): Promise<Mentor | null> {
+		const mentor = await this._model
+			.findOne({ _id: mentorId, isPending: false, isRejected: false })
+			.populate("userId", "name email")
+			.populate("expertiseId", "name")
+			.populate("skillIds", "name")
+			.select("-resumeId -blockingReason -isPending -isRejected -isActive");
+		return mentor ? this.mapToDomain(mentor) : null;
+	}
 }

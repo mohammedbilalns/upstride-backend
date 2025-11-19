@@ -80,3 +80,5 @@ export interface findAllMentorsResponseDto {
 	totalApproved: number;
 	totalRejected: number;
 }
+
+export type MentorDetailsDto = Mentor & { isFollowing: boolean };

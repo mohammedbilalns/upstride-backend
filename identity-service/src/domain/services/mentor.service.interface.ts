@@ -3,6 +3,7 @@ import type {
 	findAllMentorsDto,
 	findAllMentorsResponseDto,
 	findByExpertiseandSkillDto,
+	MentorDetailsDto,
 	MentorRegistrationDTO,
 	rejectMentorDto,
 	updateMentoDto,
@@ -22,5 +23,5 @@ export interface IMentorService {
 	approveMentor(aproveMentorDto: approveMentorDto): Promise<void>;
 	rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void>;
 	getMentorByExpertiseId(expertiseId: string): Promise<string[]>;
-	getMentorDetails(mentorId: string): Promise<Mentor | null>;
+	getMentorDetails(mentorId: string, userId: string): Promise<MentorDetailsDto>;
 }

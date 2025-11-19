@@ -21,7 +21,9 @@ export function createMentorRouter() {
 	router.post("/reject", mentorController.rejectMentor);
 	router.get("/details", mentorController.getMentor);
 	router.put("/", mentorController.updateMentor);
+	// normal user
 	router.get("/user", mentorController.fetchMentorsForUser);
+	// admin
 	router.get("/", mentorController.fetchMentors);
 
 	router.get("/:mentorId", mentorController.fetchMentorDetails);
