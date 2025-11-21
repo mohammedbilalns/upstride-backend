@@ -14,17 +14,32 @@ import { ConnectionRepository } from "../../../infrastructure/database/repositor
 import EventBus from "../../../infrastructure/events/eventBus";
 import { MentorController } from "../controllers/mentor.controller";
 
+/**
+ * Factory function to assemble the MentorController with DI
+ */
 export function createMentorController(): MentorController {
+	// ─────────────────────────────────────────────
+	// Repositories
+	// ─────────────────────────────────────────────
 	const mentorRepository: IMentorRepository = new MentorRepository();
 	const userRepository: IUserRepository = new UserRepository();
 	const connectionRepository: IConnectionRepository =
 		new ConnectionRepository();
+	// ─────────────────────────────────────────────
+	// Event system
+	// ─────────────────────────────────────────────
 	const eventBus: IEventBus = EventBus;
+	// ─────────────────────────────────────────────
+	// Services
+	// ─────────────────────────────────────────────
 	const mentorService: IMentorService = new MentorService(
 		mentorRepository,
 		userRepository,
 		connectionRepository,
 		eventBus,
 	);
+	// ─────────────────────────────────────────────
+	// Controller
+	// ─────────────────────────────────────────────
 	return new MentorController(mentorService);
 }

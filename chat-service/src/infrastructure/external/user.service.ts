@@ -30,7 +30,7 @@ export class UserService implements IUserService {
 			await this.cacheService.set(cacheKey, data, 60 * 5);
 			return data;
 		} catch (error) {
-			logger.error("Failed to fetch user data", error);
+			console.log(`error: ${JSON.stringify(error)}`);
 			if (error instanceof AppError) {
 				throw error;
 			}
@@ -62,6 +62,12 @@ export class UserService implements IUserService {
 
 				if (!res.ok) {
 					const errorText = await res.text();
+					if (res.status === 404) {
+						throw new AppError(
+							ErrorMessage.CHAT_NOT_FOUND,
+							HttpStatus.NOT_FOUND,
+						);
+					}
 					logger.error(
 						`Failed to fetch users: ${res.status} ${res.statusText} - ${errorText}`,
 					);
