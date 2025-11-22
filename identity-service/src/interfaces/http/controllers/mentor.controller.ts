@@ -94,8 +94,9 @@ export class MentorController {
 	});
 
 	fetchMentorDetails = asyncHandler(async (req, res) => {
+		const userId = res.locals.user.id;
 		const { mentorId } = fetchMentorParamsSchema.parse(req.params);
-		const mentor = await this._mentorService.getMentorDetails(mentorId);
+		const mentor = await this._mentorService.getMentorDetails(mentorId, userId);
 		res.status(HttpStatus.OK).json(mentor);
 	});
 }

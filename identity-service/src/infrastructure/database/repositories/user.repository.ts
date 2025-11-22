@@ -5,6 +5,8 @@ import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { type IUser, userModel } from "../models/user.model";
 import { BaseRepository } from "./base.repository";
 import { Types } from "mongoose";
+import { checkObjectId } from "../utils/checkObjectId";
+import { ErrorMessage } from "../../../common/enums";
 
 export class UserRepository
 	extends BaseRepository<User, IUser>
@@ -47,6 +49,7 @@ export class UserRepository
 		return doc ? this.mapToDomain(doc) : null;
 	}
 	async finddByIdAndRole(id: string, role: string): Promise<User | null> {
+		checkObjectId(id, ErrorMessage.USER_NOT_FOUND);
 		const doc = await this._model.findOne({ id, role }).exec();
 		return doc ? this.mapToDomain(doc) : null;
 	}
@@ -96,13 +99,17 @@ export class UserRepository
 		return this._model.countDocuments(filter);
 	}
 
-	async findByIds(ids: string[]): Promise<User[]> {
-		const filter = { id: { $in: ids } };
+	async findByIds(userIds: string[]): Promise<User[]> {
+		userIds.forEach((userId) => {
+			checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
+		});
+		const filter = { id: { $in: userIds } };
 		const docs = await this._model.find(filter).exec();
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
 
 	async findByUserId(userId: string): Promise<User | null> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		const doc = await this._model
 			.findOne({ _id: userId })
 			.populate({ path: "interestedExpertises", select: "name _id" })
@@ -112,6 +119,9 @@ export class UserRepository
 	}
 
 	async findByUserIds(userIds: string[]): Promise<User[]> {
+		userIds.forEach((userId) => {
+			checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
+		});
 		const idsArray = Array.isArray(userIds) ? userIds : [userIds];
 		const objectIds = idsArray.map((id) => new Types.ObjectId(id));
 

@@ -26,4 +26,6 @@ export interface IMentorRepository extends IBaseRepository<Mentor> {
 		page: number,
 		limit: number,
 	): Promise<{ mentors: any[] }>;
+
+	findByMentorId(mentorId: string): Promise<Mentor | null>;
 }
