@@ -1,7 +1,7 @@
-import { Chat } from "../../../domain/entities/chat.entity";
-import { IChatRepository } from "../../../domain/repositories/chat.repository.interface";
+import type { Chat } from "../../../domain/entities/chat.entity";
+import type { IChatRepository } from "../../../domain/repositories/chat.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import { chatModel, IChat } from "../models/chat.model";
+import { chatModel, type IChat } from "../models/chat.model";
 import { BaseRepository } from "./base.repository";
 
 export class ChatRepository

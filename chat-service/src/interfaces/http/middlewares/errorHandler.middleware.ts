@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import logger from "../../../common/utils/logger";
+import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { AppError } from "../../../application/errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import logger from "../../../common/utils/logger";
 
 export function errorHandler(
 	err: unknown,

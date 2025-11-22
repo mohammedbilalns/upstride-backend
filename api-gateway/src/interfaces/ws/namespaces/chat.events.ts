@@ -1,8 +1,8 @@
 import type { Socket } from "socket.io";
-import { SocketPublisher } from "../socket.publisher";
+import { QueueEvents } from "../../../common/enums/queueEvents";
 import { SocketEvents } from "../../../common/enums/socketEvents";
 import logger from "../../../utils/logger";
-import { QueueEvents } from "../../../common/enums/queueEvents";
+import type { SocketPublisher } from "../socket.publisher";
 import { clientMessageSchema } from "../validations/messagePayload.validation";
 
 export function registerChatEvents(socket: Socket, publisher: SocketPublisher) {

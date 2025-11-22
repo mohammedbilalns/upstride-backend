@@ -1,4 +1,4 @@
-import { Message } from "../../domain/entities/message.entity";
+import type { Message } from "../../domain/entities/message.entity";
 
 export interface getChatDto {
 	userIds: string[];

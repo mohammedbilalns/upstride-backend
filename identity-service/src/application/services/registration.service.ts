@@ -8,7 +8,6 @@ import {
 import { CACHE_TTL } from "../../common/constants/cacheOptions";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { QueueEvents } from "../../common/enums/queueEvents";
-import { generateOtp } from "../utils/generateOtp";
 import type { IEventBus } from "../../domain/events/IEventBus";
 import type {
 	IUserRepository,
@@ -17,6 +16,7 @@ import type {
 import type { ICryptoService, ITokenService } from "../../domain/services";
 import type { ICacheService } from "../../domain/services/cache.service.interface";
 import type { IRegistrationService } from "../../domain/services/registration.service.interface";
+import { generateOtp } from "../utils/generateOtp";
 import { generateSecureToken } from "../utils/token.util";
 
 export class RegistrationService implements IRegistrationService {

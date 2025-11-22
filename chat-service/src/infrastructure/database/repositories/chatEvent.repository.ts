@@ -1,7 +1,7 @@
-import { ChatEvent } from "../../../domain/entities/chatEvent.entity";
-import { IChatEventRepository } from "../../../domain/repositories/chatEvent.repository.interface";
+import type { ChatEvent } from "../../../domain/entities/chatEvent.entity";
+import type { IChatEventRepository } from "../../../domain/repositories/chatEvent.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import { ChatEventModel, IChatEvent } from "../models/chatEvent.model";
+import { ChatEventModel, type IChatEvent } from "../models/chatEvent.model";
 import { BaseRepository } from "./base.repository";
 
 export class ChatEventRepository

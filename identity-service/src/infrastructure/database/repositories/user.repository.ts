@@ -1,10 +1,10 @@
+import { Types } from "mongoose";
 import type { User } from "../../../domain/entities/user.entity";
 import type { IUserRepository } from "../../../domain/repositories/user.repository.interface";
-import { mapPopulatedSubToDomain } from "../utils/mapPopulatedSubToDomain";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { type IUser, userModel } from "../models/user.model";
+import { mapPopulatedSubToDomain } from "../utils/mapPopulatedSubToDomain";
 import { BaseRepository } from "./base.repository";
-import { Types } from "mongoose";
 
 export class UserRepository
 	extends BaseRepository<User, IUser>

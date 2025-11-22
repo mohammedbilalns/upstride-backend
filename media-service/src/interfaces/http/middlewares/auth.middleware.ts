@@ -22,7 +22,7 @@ export const createAuthMiddleware = (jwtSecret: string) => {
 			};
 
 			const isRevoked = await redisClient.exists(`revokedUser:${decoded.id}`);
-			if (isRevoked == 1) {
+			if (isRevoked === 1) {
 				return res.status(HttpStatus.FORBIDDEN).json({
 					success: false,
 					message: ErrorMessage.BLOCKED_FROM_PLATFORM,

@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import env from "../../../infrastructure/config/env";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
-import { redisClient } from "../../../infrastructure/config/connectRedis";
 import logger from "../../../common/utils/logger";
+import { redisClient } from "../../../infrastructure/config/connectRedis";
+import env from "../../../infrastructure/config/env";
 
 export const createAuthMiddleware = (jwtSecret: string) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
@@ -22,7 +22,7 @@ export const createAuthMiddleware = (jwtSecret: string) => {
 			};
 
 			const isRevoked = await redisClient.exists(`revokedUser:${decoded.id}`);
-			if (isRevoked == 1) {
+			if (isRevoked === 1) {
 				return res.status(HttpStatus.FORBIDDEN).json({
 					success: false,
 					message: ErrorMessage.BLOCKED_FROM_PLATFORM,

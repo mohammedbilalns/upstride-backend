@@ -1,10 +1,10 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
-import { IChatRepository } from "../../domain/repositories/chat.repository.interface";
-import { IMessageRepository } from "../../domain/repositories/message.repository.interface";
-import { IUserService } from "../../domain/services/user.service.interface";
-import { IGetChatUC } from "../../domain/useCases/getChat.uc.interface";
-import { getChatDto, getChatResult } from "../dtos/getChat.dto";
-import { Message } from "../../domain/entities";
+import type { Message } from "../../domain/entities";
+import type { IChatRepository } from "../../domain/repositories/chat.repository.interface";
+import type { IMessageRepository } from "../../domain/repositories/message.repository.interface";
+import type { IUserService } from "../../domain/services/user.service.interface";
+import type { IGetChatUC } from "../../domain/useCases/getChat.uc.interface";
+import type { getChatDto, getChatResult } from "../dtos/getChat.dto";
 import { AppError } from "../errors/AppError";
 
 export class GetChatUC implements IGetChatUC {

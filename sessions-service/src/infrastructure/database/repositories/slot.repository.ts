@@ -1,7 +1,7 @@
-import { Slot } from "../../../domain/entities/slot.entity";
-import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
+import type { Slot } from "../../../domain/entities/slot.entity";
+import type { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import { ISlot, slotModel } from "../models/slot.model";
+import { type ISlot, slotModel } from "../models/slot.model";
 import { BaseRepository } from "./base.repository";
 
 export class SlotRepository

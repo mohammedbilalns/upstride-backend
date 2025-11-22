@@ -1,8 +1,11 @@
-import { IAvailability, availabilityModel } from "../models/availability.model";
-import { BaseRepository } from "./base.repository";
-import { Availability } from "../../../domain/entities/availability.entity";
-import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
+import type { Availability } from "../../../domain/entities/availability.entity";
+import type { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
+import {
+	availabilityModel,
+	type IAvailability,
+} from "../models/availability.model";
+import { BaseRepository } from "./base.repository";
 
 export class AvailabilityRepository
 	extends BaseRepository<Availability, IAvailability>

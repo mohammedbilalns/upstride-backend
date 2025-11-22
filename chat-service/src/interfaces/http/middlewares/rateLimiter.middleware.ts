@@ -1,5 +1,5 @@
+import type { NextFunction, Request, Response } from "express";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
-import { Request, Response, NextFunction } from "express";
 import { redisClient } from "../../../infrastructure/config";
 
 export type RateLimitStrategy = "ip" | "user" | "route" | "global";
@@ -11,7 +11,7 @@ export function rateLimiter(
 ) {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			let keyParts: string[] = ["ratelimit"];
+			const keyParts: string[] = ["ratelimit"];
 
 			if (strategy.includes("ip")) {
 				keyParts.push(req.ip!);

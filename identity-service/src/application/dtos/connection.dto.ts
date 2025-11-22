@@ -1,5 +1,5 @@
+import type { Types } from "mongoose";
 import type { Connection } from "../../domain/entities/connection.entity";
-import { Types } from "mongoose";
 
 export type ConnectionsResponseDto = Connection[];
 
@@ -78,4 +78,4 @@ export interface SuggestedMentorsResponseDto {
 	mentors: SuggestedMentor[];
 }
 
-export interface MutualConnectionsResponseDto {}
+export type MutualConnectionsResponseDto = {};

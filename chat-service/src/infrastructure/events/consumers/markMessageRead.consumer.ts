@@ -1,9 +1,9 @@
-import { MarkMessageAsReadUC } from "../../../application/usecases/markMessageAsRead.uc";
+import type { MarkMessageAsReadUC } from "../../../application/usecases/markMessageAsRead.uc";
 import { QueueEvents } from "../../../common/enums/queueEvents";
 import logger from "../../../common/utils/logger";
 import EventBus from "../eventBus";
 import {
-	MarkMessageDataPayload,
+	type MarkMessageDataPayload,
 	markMessageDataSchema,
 } from "../validations/markMessageData.validation";
 

@@ -1,5 +1,5 @@
-import { Message } from "../entities/message.entity";
-import { IBaseRepository } from "./base.repository.interface";
+import type { Message } from "../entities/message.entity";
+import type { IBaseRepository } from "./base.repository.interface";
 
 export interface IMessageRepository extends IBaseRepository<Message> {
 	getChatMessages(

@@ -1,11 +1,10 @@
-import { Application } from "express";
-import express from "express";
-import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import express, { type Application } from "express";
+import helmet from "helmet";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 
 class App {
 	private _app: Application;

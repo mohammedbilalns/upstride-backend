@@ -1,8 +1,8 @@
-import { BaseRepository } from "./base.repository";
-import { Booking } from "../../../domain/entities/booking.entity";
-import { IBooking, bookingModel } from "../models/booking.model";
-import { IBookingRepository } from "../../../domain/repositories/booking.repository.interface";
+import type { Booking } from "../../../domain/entities/booking.entity";
+import type { IBookingRepository } from "../../../domain/repositories/booking.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
+import { bookingModel, type IBooking } from "../models/booking.model";
+import { BaseRepository } from "./base.repository";
 
 export class BookingRepository
 	extends BaseRepository<Booking, IBooking>

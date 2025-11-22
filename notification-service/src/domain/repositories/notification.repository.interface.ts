@@ -1,4 +1,4 @@
-import { FilterQuery } from "mongoose";
+import type { FilterQuery } from "mongoose";
 import type { Notification } from "../entities/notification.entity";
 export interface INotificationRepository {
 	create(data: Partial<Notification>): Promise<Notification | null>;

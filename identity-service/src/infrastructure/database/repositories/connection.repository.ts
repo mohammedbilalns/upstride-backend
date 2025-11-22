@@ -1,11 +1,11 @@
 import { Types } from "mongoose";
+import type { PopulatedConnection } from "../../../application/dtos/connection.dto";
 import type { Connection } from "../../../domain/entities/connection.entity";
 import type { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ConnectionModel, type IConnection } from "../models/connection.model";
-import { BaseRepository } from "./base.repository";
-import { PopulatedConnection } from "../../../application/dtos/connection.dto";
 import { buildMutualMentorsPipeline } from "../utils/buildMutualMentorsPipeline";
+import { BaseRepository } from "./base.repository";
 
 export class ConnectionRepository
 	extends BaseRepository<Connection, IConnection>

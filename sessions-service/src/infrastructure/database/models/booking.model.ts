@@ -1,5 +1,5 @@
-import { Document, model, Schema, Types } from "mongoose";
-import { Booking } from "../../../domain/entities/booking.entity";
+import { type Document, model, Schema, Types } from "mongoose";
+import type { Booking } from "../../../domain/entities/booking.entity";
 
 export interface IBooking extends Document, Omit<Booking, "id"> {}
 

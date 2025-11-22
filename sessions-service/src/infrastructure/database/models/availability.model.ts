@@ -1,5 +1,5 @@
-import { Document, model, Schema } from "mongoose";
-import { Availability } from "../../../domain/entities/availability.entity";
+import { type Document, model, Schema } from "mongoose";
+import type { Availability } from "../../../domain/entities/availability.entity";
 
 export interface IAvailability extends Document, Omit<Availability, "id"> {}
 

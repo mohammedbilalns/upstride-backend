@@ -1,10 +1,13 @@
 import type { DeleteResult, FilterQuery } from "mongoose";
-import type { Notification } from "../../../domain/entities/notification.entity";
-import type { INotificationRepository } from "../../../domain/repositories/notification.repository.interface";
-import { INotification, NotificationModel } from "../models/notification.model";
-import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { AppError } from "../../../application/errors/AppError";
 import { ErrorMessage } from "../../../common/enums";
+import type { Notification } from "../../../domain/entities/notification.entity";
+import type { INotificationRepository } from "../../../domain/repositories/notification.repository.interface";
+import { mapMongoDocument } from "../mappers/mongoose.mapper";
+import {
+	type INotification,
+	NotificationModel,
+} from "../models/notification.model";
 
 export class NotificationRepository implements INotificationRepository {
 	private _model: typeof NotificationModel;

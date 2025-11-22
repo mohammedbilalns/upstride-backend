@@ -1,8 +1,8 @@
 import { QueueEvents } from "../../../common/enums/queueEvents";
 import { SocketEvents } from "../../../common/enums/socketEvents";
-import { IEventBus } from "../../../domain/events/eventBus.interface";
+import type { IEventBus } from "../../../domain/events/eventBus.interface";
 import logger from "../../../utils/logger";
-import { SocketPublisher } from "../socket.publisher";
+import type { SocketPublisher } from "../socket.publisher";
 import {
 	messagePayloadSchema,
 	messageStatusPayloadSchema,

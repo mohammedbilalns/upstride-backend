@@ -1,5 +1,5 @@
-import pino from "pino";
 import path from "path";
+import pino from "pino";
 
 const isProd = process.env.NODE_ENV === "production";
 

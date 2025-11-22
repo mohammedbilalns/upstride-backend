@@ -1,5 +1,5 @@
-import { Document, model, Schema, Types } from "mongoose";
-import { Slot } from "../../../domain/entities/slot.entity";
+import { type Document, model, Schema, Types } from "mongoose";
+import type { Slot } from "../../../domain/entities/slot.entity";
 
 export interface ISlot extends Document, Omit<Slot, "id"> {}
 

@@ -1,10 +1,10 @@
-import { IUserService } from "../../domain/services/user.service.interface";
-import { userData } from "../../common/types/user.types";
-import env from "../config/env";
-import { ICacheService } from "../../domain/services/cache.service.interface";
 import { AppError } from "../../application/errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
+import type { userData } from "../../common/types/user.types";
 import logger from "../../common/utils/logger";
+import type { ICacheService } from "../../domain/services/cache.service.interface";
+import type { IUserService } from "../../domain/services/user.service.interface";
+import env from "../config/env";
 
 export class UserService implements IUserService {
 	private baseUrl = env.USERS_ENDPOINT;

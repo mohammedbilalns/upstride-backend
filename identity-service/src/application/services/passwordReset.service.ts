@@ -5,7 +5,6 @@ import {
 	otpType,
 } from "../../application/utils/otp.util";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
-import { generateOtp } from "../utils/generateOtp";
 import type { IEventBus } from "../../domain/events/IEventBus";
 import type {
 	IUserRepository,
@@ -13,6 +12,7 @@ import type {
 } from "../../domain/repositories";
 import type { ICryptoService } from "../../domain/services";
 import type { IPasswordResetService } from "../../domain/services/passwordReset.service.interface";
+import { generateOtp } from "../utils/generateOtp";
 import { generateSecureToken } from "../utils/token.util";
 
 export class PasswordResetService implements IPasswordResetService {

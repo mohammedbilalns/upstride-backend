@@ -1,12 +1,15 @@
-import { ISendMessageUC } from "../../domain/useCases/sendMessage.uc.interface";
-import { IChatRepository, IMessageRepository } from "../../domain/repositories";
-import { SendMessageInput } from "../dtos/sendMessage.dto";
-import { Chat, Message } from "../../domain/entities";
-import { IEventBus } from "../../domain/events/eventBus.interface";
-import { QueueEvents } from "../../common/enums/queueEvents";
-import { IUserService } from "../../domain/services/user.service.interface";
-import { AppError } from "../errors/AppError";
 import { ErrorMessage } from "../../common/enums";
+import { QueueEvents } from "../../common/enums/queueEvents";
+import type { Chat, Message } from "../../domain/entities";
+import type { IEventBus } from "../../domain/events/eventBus.interface";
+import type {
+	IChatRepository,
+	IMessageRepository,
+} from "../../domain/repositories";
+import type { IUserService } from "../../domain/services/user.service.interface";
+import type { ISendMessageUC } from "../../domain/useCases/sendMessage.uc.interface";
+import type { SendMessageInput } from "../dtos/sendMessage.dto";
+import { AppError } from "../errors/AppError";
 
 export class SendMessageUC implements ISendMessageUC {
 	constructor(

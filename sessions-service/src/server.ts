@@ -1,7 +1,7 @@
-import env from "./infrastructure/config/env";
 import App from "./app";
 import logger from "./common/utils/logger";
 import { disconnectFromDb } from "./infrastructure/config/connectDb";
+import env from "./infrastructure/config/env";
 import { disconnectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 
 const PORT = env.PORT;

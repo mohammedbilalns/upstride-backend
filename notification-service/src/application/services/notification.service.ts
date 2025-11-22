@@ -5,7 +5,7 @@ import {
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { QueueEvents } from "../../common/enums/queueEvents";
 import type { NotificationType } from "../../common/types/notification.type";
-import { IEventBus } from "../../domain/events/IEventBus";
+import type { IEventBus } from "../../domain/events/IEventBus";
 import type { INotificationRepository } from "../../domain/repositories/notification.repository.interface";
 import type { INotificationService } from "../../domain/services/notification.service.interface";
 import type {

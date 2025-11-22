@@ -13,7 +13,7 @@ export interface Slot {
 	generatedFrom: string;
 	//capacity: Number;
 	status: SlotStatus;
-	price: Number;
+	price: number;
 	participantId: string;
 	//metadata: {};
 	cancelledAt: Date;
