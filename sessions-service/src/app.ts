@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
+import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 
 class App {
 	private _app: Application;
@@ -28,6 +29,7 @@ class App {
 	public listen(port: string) {
 		const server = this._app.listen(port, () => {
 			connectToDb();
+			connectRabbitMq();
 			logger.info(`Sesssions service is listening on port ${port}`);
 		});
 		return server;
