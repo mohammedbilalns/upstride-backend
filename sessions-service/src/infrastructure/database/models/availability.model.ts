@@ -9,13 +9,15 @@ export const availabilitySchema: Schema = new Schema(
 			type: String,
 			required: true,
 		},
-		recurringRules: {
-			weekDay: { type: Number, min: 1, max: 7 },
-			startTime: { type: Date },
-			endTime: { type: Date },
-			slotDuration: { type: Number },
-			isActve: { type: Boolean },
-		},
+		recurringRules: [
+			{
+				weekDay: { type: Number, min: 1, max: 7 },
+				startTime: { type: Date },
+				endTime: { type: Date },
+				slotDuration: { type: Number },
+				isActve: { type: Boolean },
+			},
+		],
 		customRanges: {
 			startAt: { type: Date },
 			endAt: { type: Date },
