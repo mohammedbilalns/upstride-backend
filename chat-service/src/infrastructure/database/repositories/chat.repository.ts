@@ -1,5 +1,6 @@
 import type { Chat } from "../../../domain/entities/chat.entity";
 import type { IChatRepository } from "../../../domain/repositories/chat.repository.interface";
+import mongoose from "mongoose";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { chatModel, type IChat } from "../models/chat.model";
 import { BaseRepository } from "./base.repository";

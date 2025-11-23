@@ -5,6 +5,8 @@ import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import type { Mentor } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
+import { BaseRepository } from "./base.repository";
+import { isPopulatedDocument } from "../utils/common";
 import { ConnectionModel } from "../models/connection.model";
 import { type IMentor, mentorModel } from "../models/mentor.model";
 import { buildSuggestionPipeline } from "../utils/buildSuggestionPipeline";

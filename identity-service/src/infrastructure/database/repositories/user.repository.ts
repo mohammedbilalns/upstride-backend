@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import type { User } from "../../../domain/entities/user.entity";
 import type { IUserRepository } from "../../../domain/repositories/user.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
