@@ -5,7 +5,8 @@ import type { IConnectionRepository } from "../../../domain/repositories/connect
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ConnectionModel, type IConnection } from "../models/connection.model";
 import { buildMutualMentorsPipeline } from "../utils/buildMutualMentorsPipeline";
-import { BaseRepository } from "./base.repository";
+import { checkObjectId } from "../utils/checkObjectId";
+import { ErrorMessage } from "../../../common/enums";
 
 export class ConnectionRepository
 	extends BaseRepository<Connection, IConnection>
@@ -30,6 +31,7 @@ export class ConnectionRepository
 		page: number,
 		limit: number,
 	): Promise<Connection[]> {
+		checkObjectId(mentorId, ErrorMessage.MENTOR_NOT_FOUND);
 		const skip = (page - 1) * limit;
 
 		const docs = await this._model
@@ -49,6 +51,7 @@ export class ConnectionRepository
 		page: number,
 		limit: number,
 	): Promise<Connection[]> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		const skip = (page - 1) * limit;
 		const docs = await this._model
 			.find({ followerId: userId })
@@ -71,6 +74,7 @@ export class ConnectionRepository
 		userId: string,
 		mentorId: string,
 	): Promise<Connection | null> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		const doc = await this._model
 			.findOne({ mentorId, followerId: userId })
 			.exec();
@@ -78,6 +82,7 @@ export class ConnectionRepository
 	}
 
 	async fetchRecentActivity(userId: string): Promise<PopulatedConnection[]> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		const objectId = new Types.ObjectId(userId);
 		const recentActivities = await ConnectionModel.find({
 			$or: [{ followerId: objectId }, { "mentorId.userId": objectId }],
@@ -98,6 +103,7 @@ export class ConnectionRepository
 		userId: string,
 		limit: number = 5,
 	): Promise<{ connections: PopulatedConnection[]; total: number }> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		// Get mentors already followed by the user
 		const userFollowedMentors = await this._model
 			.find({

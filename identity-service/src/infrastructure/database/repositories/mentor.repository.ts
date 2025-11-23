@@ -8,8 +8,7 @@ import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ConnectionModel } from "../models/connection.model";
 import { type IMentor, mentorModel } from "../models/mentor.model";
 import { buildSuggestionPipeline } from "../utils/buildSuggestionPipeline";
-import { isPopulatedDocument } from "../utils/common";
-import { BaseRepository } from "./base.repository";
+import { checkObjectId } from "../utils/checkObjectId";
 
 export class MentorRepository
 	extends BaseRepository<Mentor, IMentor>
@@ -54,6 +53,7 @@ export class MentorRepository
 				isRejected: doc.isRejected,
 				isActive: doc.isActive,
 				createdAt: doc.createdAt,
+				followers: doc.followers,
 			};
 
 			// Add populated user data if available
@@ -199,6 +199,7 @@ export class MentorRepository
 		userId: string,
 		populate?: boolean,
 	): Promise<Mentor | null> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		let query = this._model.findOne({ userId });
 		if (populate) {
 			query = query.populate([
@@ -218,6 +219,7 @@ export class MentorRepository
 		skillId?: string,
 		query?: string,
 	): Promise<{ mentors: Mentor[]; total: number }> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		const existingConnections = await ConnectionModel.find({
 			followerId: userId,
 		})
@@ -358,6 +360,10 @@ export class MentorRepository
 		page: number = 1,
 		limit: number = 10,
 	): Promise<{ mentors: any[] }> {
+		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
+		skillIds.forEach((skillId) =>
+			checkObjectId(skillId, ErrorMessage.SKILL_NOT_FOUND),
+		);
 		const skip = (page - 1) * limit;
 
 		const followedMentors = await ConnectionModel.find({
@@ -395,5 +401,16 @@ export class MentorRepository
 				},
 			})),
 		};
+	}
+
+	async findByMentorId(mentorId: string): Promise<Mentor | null> {
+		checkObjectId(mentorId, ErrorMessage.MENTOR_NOT_FOUND);
+		const mentor = await this._model
+			.findOne({ _id: mentorId, isPending: false, isRejected: false })
+			.populate("userId", "name email profilePicture")
+			.populate("expertiseId", "name")
+			.populate("skillIds", "name")
+			.select("-resumeId -blockingReason -isPending -isRejected -isActive");
+		return mentor ? this.mapToDomain(mentor) : null;
 	}
 }

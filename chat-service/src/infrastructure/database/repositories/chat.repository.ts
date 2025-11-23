@@ -3,6 +3,8 @@ import type { IChatRepository } from "../../../domain/repositories/chat.reposito
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { chatModel, type IChat } from "../models/chat.model";
 import { BaseRepository } from "./base.repository";
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage, HttpStatus } from "../../../common/enums";
 
 export class ChatRepository
 	extends BaseRepository<Chat, IChat>
@@ -35,6 +37,9 @@ export class ChatRepository
 		page: number,
 		limit: number,
 	): Promise<{ chats: Chat[]; total: number }> {
+		if (!mongoose.isValidObjectId(userId)) {
+			throw new AppError(ErrorMessage.CHAT_NOT_FOUND, HttpStatus.NOT_FOUND);
+		}
 		const skip = (page - 1) * limit;
 		const [chats, total] = await Promise.all([
 			this._model

@@ -257,11 +257,11 @@ export class ArticleRepository
 		};
 	}
 
-	async findByArticleId(id: string): Promise<Article | null> {
-		if (!mongoose.isValidObjectId(id))
+	async findByArticleId(articleId: string): Promise<Article | null> {
+		if (!mongoose.isValidObjectId(articleId))
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 		const doc = await this._model
-			.findOne({ _id: id, isActive: true, isArchived: false })
+			.findOne({ _id: articleId, isActive: true, isArchived: false })
 			.populate("tags", "id name")
 			.exec();
 		return doc ? this.mapToDomain(doc) : null;
