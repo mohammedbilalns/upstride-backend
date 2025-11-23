@@ -1,5 +1,5 @@
-import { Document, model, Schema } from "mongoose";
-import { ChatEvent } from "../../../domain/entities/chatEvent.entity";
+import { type Document, model, Schema } from "mongoose";
+import type { ChatEvent } from "../../../domain/entities/chatEvent.entity";
 
 export interface IChatEvent extends Document, Omit<ChatEvent, "id"> {}
 

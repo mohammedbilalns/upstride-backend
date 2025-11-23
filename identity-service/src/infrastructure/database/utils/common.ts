@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import type { ObjectId } from "mongoose";
 
 export function isObjectId(value: any): value is ObjectId {
 	return (

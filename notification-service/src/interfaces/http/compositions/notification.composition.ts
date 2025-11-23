@@ -1,5 +1,5 @@
 import { NotificationService } from "../../../application/services/notification.service";
-import { IEventBus } from "../../../domain/events/IEventBus";
+import type { IEventBus } from "../../../domain/events/IEventBus";
 import type { INotificationRepository } from "../../../domain/repositories/notification.repository.interface";
 import { NotificationRepository } from "../../../infrastructure/database/repositories/notification.repository";
 import EventBus from "../../../infrastructure/events/eventBus";

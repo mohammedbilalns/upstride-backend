@@ -1,4 +1,4 @@
-import { Chat } from "../../domain/entities";
+import type { Chat } from "../../domain/entities";
 
 export interface getChatsDto {
 	userId: string;

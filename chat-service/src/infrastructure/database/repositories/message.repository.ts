@@ -1,7 +1,7 @@
-import { Message } from "../../../domain/entities/message.entity";
-import { IMessageRepository } from "../../../domain/repositories/message.repository.interface";
+import type { Message } from "../../../domain/entities/message.entity";
+import type { IMessageRepository } from "../../../domain/repositories/message.repository.interface";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import { MessageModel, IMessage } from "../models/message.model";
+import { type IMessage, MessageModel } from "../models/message.model";
 import { BaseRepository } from "./base.repository";
 
 export class MessageRepository

@@ -1,5 +1,5 @@
-import { Chat } from "../entities/chat.entity";
-import { IBaseRepository } from "./base.repository.interface";
+import type { Chat } from "../entities/chat.entity";
+import type { IBaseRepository } from "./base.repository.interface";
 
 export interface IChatRepository extends IBaseRepository<Chat> {
 	getChatByUserIds(userIds: string[]): Promise<Chat | null>;

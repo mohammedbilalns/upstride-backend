@@ -1,4 +1,4 @@
-import { PopulatedDoc } from "mongoose";
+import type { PopulatedDoc } from "mongoose";
 import type { User } from "../entities/user.entity";
 import type { IBaseRepository } from "./base.repository.interface";
 

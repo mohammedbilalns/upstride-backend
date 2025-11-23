@@ -3,6 +3,7 @@ import cors from "cors";
 import type { Application } from "express";
 import express from "express";
 import helmet from "helmet";
+import logger from "./common/utils/logger";
 import { connectToDb, redisClient } from "./infrastructure/config";
 import env from "./infrastructure/config/env";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
@@ -15,7 +16,6 @@ import {
 	createProfileRouter,
 	createUserManagementRouter,
 } from "./interfaces/http/routes";
-import logger from "./common/utils/logger";
 
 /**
  * Main application class for the Identity Service.

@@ -1,9 +1,9 @@
-import { IChatRepository } from "../../domain/repositories";
-import { IGetChatsUC } from "../../domain/useCases/getChats.uc.interface";
-import { getChatsDto, getChatsResult } from "../dtos/getChats.dto";
-import { IUserService } from "../../domain/services/user.service.interface";
-import { AppError } from "../errors/AppError";
 import { ErrorMessage } from "../../common/enums";
+import type { IChatRepository } from "../../domain/repositories";
+import type { IUserService } from "../../domain/services/user.service.interface";
+import type { IGetChatsUC } from "../../domain/useCases/getChats.uc.interface";
+import type { getChatsDto, getChatsResult } from "../dtos/getChats.dto";
+import { AppError } from "../errors/AppError";
 
 export class GetChatsUC implements IGetChatsUC {
 	constructor(

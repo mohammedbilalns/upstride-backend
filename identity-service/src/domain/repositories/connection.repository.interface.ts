@@ -1,6 +1,6 @@
+import type { PopulatedConnection } from "../../application/dtos/connection.dto";
 import type { Connection } from "../entities/connection.entity";
 import type { IBaseRepository } from "./base.repository.interface";
-import { PopulatedConnection } from "../../application/dtos/connection.dto";
 
 export interface IConnectionRepository extends IBaseRepository<Connection> {
 	fetchFollowers(

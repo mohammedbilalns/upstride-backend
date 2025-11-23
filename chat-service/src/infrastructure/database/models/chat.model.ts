@@ -1,5 +1,5 @@
-import { Document, model, Schema } from "mongoose";
-import { Chat } from "../../../domain/entities/chat.entity";
+import { type Document, model, Schema } from "mongoose";
+import type { Chat } from "../../../domain/entities/chat.entity";
 
 export interface IChat extends Document, Omit<Chat, "id"> {}
 

@@ -1,6 +1,6 @@
 import { UserRole } from "../../common/enums/userRoles";
 import logger from "../../common/utils/logger";
-import { User } from "../../domain/entities";
+import type { User } from "../../domain/entities";
 import type { IRevokedUserRepository } from "../../domain/repositories/revokeduser.repository.interface";
 import type { IUserRepository } from "../../domain/repositories/user.repository.interface";
 import type { IUserManagementService } from "../../domain/services/userManagement.service.interface";

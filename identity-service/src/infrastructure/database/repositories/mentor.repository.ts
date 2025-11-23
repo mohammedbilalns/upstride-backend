@@ -1,14 +1,12 @@
-import { FilterQuery, PipelineStage, Types } from "mongoose";
+import { type FilterQuery, type PipelineStage, Types } from "mongoose";
 import type { findAllMentorsDto } from "../../../application/dtos";
+import { AppError } from "../../../application/errors/AppError";
+import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import type { Mentor } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
-import { type IMentor, mentorModel } from "../models/mentor.model";
-import { BaseRepository } from "./base.repository";
 import { ConnectionModel } from "../models/connection.model";
-import { isPopulatedDocument } from "../utils/common";
-import { AppError } from "../../../application/errors/AppError";
-import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import { type IMentor, mentorModel } from "../models/mentor.model";
 import { buildSuggestionPipeline } from "../utils/buildSuggestionPipeline";
 import { checkObjectId } from "../utils/checkObjectId";
 

@@ -1,4 +1,4 @@
-import {
+import type {
 	getChatsDto,
 	getChatsResult,
 } from "../../application/dtos/getChats.dto";

@@ -1,8 +1,11 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { QueueEvents } from "../../common/enums/queueEvents";
-import { IEventBus } from "../../domain/events/eventBus.interface";
-import { IChatRepository, IMessageRepository } from "../../domain/repositories";
-import { IMarkMessageAsReadUC } from "../../domain/useCases/markMessageAsReac.uc.interface";
+import type { IEventBus } from "../../domain/events/eventBus.interface";
+import type {
+	IChatRepository,
+	IMessageRepository,
+} from "../../domain/repositories";
+import type { IMarkMessageAsReadUC } from "../../domain/useCases/markMessageAsReac.uc.interface";
 import { AppError } from "../errors/AppError";
 
 export class MarkMessageAsReadUC implements IMarkMessageAsReadUC {

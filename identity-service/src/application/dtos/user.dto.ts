@@ -1,4 +1,4 @@
-import { User } from "../../domain/entities";
+import type { User } from "../../domain/entities";
 
 export interface UserDTO {
 	id: string;

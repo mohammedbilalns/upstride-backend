@@ -1,5 +1,5 @@
-import { IGetChatUC } from "../../../domain/useCases/getChat.uc.interface";
-import { IGetChatsUC } from "../../../domain/useCases/getChats.uc.interface";
+import type { IGetChatUC } from "../../../domain/useCases/getChat.uc.interface";
+import type { IGetChatsUC } from "../../../domain/useCases/getChats.uc.interface";
 import asyncHandler from "../utils/asyncHandler";
 import { getChatSchema } from "../validations/getChat.schema";
 import {

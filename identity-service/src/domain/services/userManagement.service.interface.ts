@@ -1,5 +1,5 @@
 import type { AdminUserDTO } from "../../application/dtos/user.dto";
-import { User } from "../entities";
+import type { User } from "../entities";
 
 export interface IUserManagementService {
 	fetchUsers(

@@ -1,5 +1,5 @@
-import { Document, model, Schema } from "mongoose";
-import { Message } from "../../../domain/entities/message.entity";
+import { type Document, model, Schema } from "mongoose";
+import type { Message } from "../../../domain/entities/message.entity";
 
 export interface IMessage extends Document, Omit<Message, "id"> {}
 

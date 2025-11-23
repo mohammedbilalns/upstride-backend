@@ -1,10 +1,12 @@
-import { Application } from "express";
-import express from "express";
-import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import express, { type Application } from "express";
+import helmet from "helmet";
 import logger from "./common/utils/logger";
 import { connectToDb } from "./infrastructure/config/connectDb";
+import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import { createSessionRoutes } from "./interfaces/http/routes/session.route";
+import { createSlotRoutes } from "./interfaces/http/routes/slot.route";
 
 class App {
 	private _app: Application;
@@ -23,11 +25,14 @@ class App {
 
 	private _setupRoutes() {
 		this._app.use(errorHandler);
+		this._app.use("/api/sessions", createSessionRoutes());
+		this._app.use("/api/slots", createSlotRoutes());
 	}
 
 	public listen(port: string) {
 		const server = this._app.listen(port, () => {
 			connectToDb();
+			connectRabbitMq();
 			logger.info(`Sesssions service is listening on port ${port}`);
 		});
 		return server;

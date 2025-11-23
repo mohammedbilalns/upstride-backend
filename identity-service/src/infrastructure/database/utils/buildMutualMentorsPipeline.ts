@@ -1,4 +1,4 @@
-import { PipelineStage, Types } from "mongoose";
+import { type PipelineStage, Types } from "mongoose";
 
 export function buildMutualMentorsPipeline(
 	userId: string,
