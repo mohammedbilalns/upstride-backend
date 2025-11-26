@@ -8,9 +8,8 @@ export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
 	constructor(private _availabilityRepository: IAvailabilityRepository) {}
 
 	async execute(dto: disableRecurringRuleDto): Promise<void> {
-		console.log(dto);
-		//TODO: implement
 		const { mentorId, ruleId } = dto;
+
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(mentorId);
 		if (!existingAvailabilityRule)

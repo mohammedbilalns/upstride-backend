@@ -34,4 +34,19 @@ export class SlotRepository
 		const data = await this._model.find({ mentorId });
 		return data.map(this.mapToDomain);
 	}
+
+	async findOverlappingSlots(
+		mentorId: string,
+		startAt: Date,
+		endAt: Date,
+	): Promise<Slot | null> {
+		const docs = await this._model
+			.findOne({
+				mentorId,
+				$and: [{ startAt: { $lte: endAt } }, { endAt: { $gte: startAt } }],
+			})
+			.exec();
+
+		return docs ? this.mapToDomain(docs) : null;
+	}
 }

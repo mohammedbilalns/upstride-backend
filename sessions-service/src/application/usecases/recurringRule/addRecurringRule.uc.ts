@@ -10,6 +10,7 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 
 	async execute(dto: addRecurringRuleDto): Promise<void> {
 		const { mentorId, rule } = dto;
+
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(mentorId);
 		if (!existingAvailabilityRule)
