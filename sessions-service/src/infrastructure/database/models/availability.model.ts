@@ -16,7 +16,7 @@ export const availabilitySchema: Schema = new Schema(
 				startTime: { type: Date },
 				endTime: { type: Date },
 				slotDuration: { type: Number },
-				isActve: { type: Boolean },
+				isActive: { type: Boolean, default: true },
 			},
 		],
 		exceptionRanges: [

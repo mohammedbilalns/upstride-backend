@@ -26,4 +26,9 @@ export class AvailabilityRepository
 			createdAt: mapped.createdAt,
 		};
 	}
+
+	async findByMentorId(mentorId: string): Promise<Availability | null> {
+		const doc = await this._model.findOne({ mentorId });
+		return doc ? this.mapToDomain(doc) : null;
+	}
 }

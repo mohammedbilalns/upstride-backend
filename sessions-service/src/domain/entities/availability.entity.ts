@@ -7,8 +7,8 @@ export interface Availability {
 		startTime: Date;
 		endTime: Date;
 		slotDuration: number;
-		isActive: boolean;
-	};
+		isActive?: boolean;
+	}[];
 	exeptionRanges: [
 		{
 			startAt: Date;
