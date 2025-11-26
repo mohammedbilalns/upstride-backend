@@ -10,4 +10,5 @@ export enum ErrorMessage {
 	INTERNAL_SERVER_ERROR = "Internal server error",
 	AVAILABILITY_NOT_FOUND = "Availability not found",
 	SLOT_DURATION_OVERLAP = "There is already a slot overlapping the duration",
+	SLOT_NOT_FOUND = "Slot not found",
 }

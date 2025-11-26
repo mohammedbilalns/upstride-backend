@@ -17,7 +17,11 @@ export const slotSchema: Schema = new Schema(
 		price: { type: Number },
 		participantId: { type: String },
 		cancelledAt: { type: Date, default: null },
-		cancelledBy: { type: String, default: null },
+		cancelledBy: {
+			type: String,
+			enum: ["Mentor", "Participant"],
+			optional: true,
+		},
 		cancelReason: { type: String, default: null },
 	},
 	{

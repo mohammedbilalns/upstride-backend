@@ -1,8 +1,12 @@
-enum SlotStatus {
+export enum SlotStatus {
 	OPEN = "OPEN",
 	FULL = "FULL",
 	CANCELLED = "CANCELLED",
 	COMPLETED = "COMPLETED",
+}
+export enum CancelledBy {
+	MENTOR = "Mentor",
+	PARTICIPANT = "Participant",
 }
 
 export interface Slot {
@@ -15,7 +19,7 @@ export interface Slot {
 	price: number;
 	participantId: string;
 	cancelledAt: Date;
-	cancelledBy: string;
+	cancelledBy: CancelledBy;
 	cancelReason: string;
 	createdAt: Date;
 }
