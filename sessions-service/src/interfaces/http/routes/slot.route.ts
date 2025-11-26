@@ -9,20 +9,24 @@ export function createSlotRoutes() {
 		"/:mentorId/availability/recurring",
 		slotsController.createRecurringRule,
 	);
-	router.post(
+	router.patch(
 		"/:mentorId/availability/recurring/:ruleId",
 		slotsController.updateRecurringRule,
+	);
+	router.post(
+		"/:mentorId/availability/recurring/:ruleId/exeption",
+		slotsController.addRecurringRule,
 	);
 	router.patch(
 		"/:mentorId/availability/recurring/:ruleId/exeption",
 		slotsController.disableRecurringRule,
 	);
 	router.post(
-		"/:mentorId/availability/customRanges",
-		slotsController.createCustomAvailability,
+		"/:mentorId/availability/custom",
+		slotsController.createCustomSlot,
 	);
 	router.get("/:mentorId/slots", slotsController.getMentorSlots);
-	router.post("/:slotId/cancel", slotsController.cancelSlot);
+	router.post("/:mentorId/:slotId/cancel", slotsController.cancelSlot);
 
 	return router;
 }

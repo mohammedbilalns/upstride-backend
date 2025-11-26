@@ -2,15 +2,10 @@ export interface Availability {
 	id: string;
 	mentorId: string;
 	recurringRules: {
+		ruleId: string;
 		weekDay: number;
 		startTime: Date;
 		endTime: Date;
-		slotDuration: number;
-		isActive: boolean;
-	};
-	customRanges: {
-		startAt: Date;
-		endAt: Date;
 		slotDuration: number;
 		isActive: boolean;
 	};
@@ -18,7 +13,6 @@ export interface Availability {
 		{
 			startAt: Date;
 			endAt: Date;
-			// reason and weekdays needed  ?
 		},
 	];
 	price: number;

@@ -21,7 +21,6 @@ export class AvailabilityRepository
 			id: mapped.id,
 			mentorId: mapped.mentorId,
 			recurringRules: mapped.recurringRules,
-			customRanges: mapped.customRanges,
 			exeptionRanges: mapped.exeptionRanges,
 			price: mapped.price,
 			createdAt: mapped.createdAt,

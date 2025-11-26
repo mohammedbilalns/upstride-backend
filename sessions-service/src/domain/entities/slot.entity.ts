@@ -11,11 +11,9 @@ export interface Slot {
 	startAt: Date;
 	endAt: Date;
 	generatedFrom: string;
-	//capacity: Number;
 	status: SlotStatus;
 	price: number;
 	participantId: string;
-	//metadata: {};
 	cancelledAt: Date;
 	cancelledBy: string;
 	cancelReason: string;

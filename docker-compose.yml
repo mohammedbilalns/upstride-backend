@@ -13,6 +13,14 @@ services:
         condition: service_started
       article-service:
         condition: service_started
+      mail-service:
+        condition: service_started
+      media-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+      sessions-service:
+        condition: service_started
     environment:
       - RABBITMQ_URL=amqp://rabbitmq:5672
 
@@ -129,4 +137,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-

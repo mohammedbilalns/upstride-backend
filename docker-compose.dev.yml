@@ -1,0 +1,64 @@
+services:
+  api-gateway:
+    volumes:
+      - ./api-gateway/src:/app/src
+      - ./api-gateway/package.json:/app/package.json
+      - ./api-gateway/tsconfig.json:/app/tsconfig.json
+      - ./api-gateway/.env.docker:/app/.env
+    command: sh -c "pnpm run dev"
+
+  identity-service:
+    volumes:
+      - ./identity-service/src:/app/src
+      - ./identity-service/package.json:/app/package.json
+      - ./identity-service/tsconfig.json:/app/tsconfig.json
+      - ./identity-service/.env.docker:/app/.env
+    command: sh -c "pnpm run dev"
+
+  article-service:
+    volumes:
+      - ./article-service/src:/app/src
+      - ./article-service/package.json:/app/package.json
+      - ./article-service/tsconfig.json:/app/tsconfig.json
+      - ./article-service/.env.docker:/app/.env
+    command: sh -c "pnpm run dev"
+
+  chat-service:
+    volumes:
+      - ./chat-service/src:/app/src
+      - ./chat-service/package.json:/app/package.json
+      - ./chat-service/tsconfig.json:/app/tsconfig.json
+      - ./chat-service/.env.docker:/app/.env
+    command: sh -c "bun run dev"
+
+  mail-service:
+    volumes:
+      - ./mail-service/src:/app/src
+      - ./mail-service/package.json:/app/package.json
+      - ./mail-service/tsconfig.json:/app/tsconfig.json
+      - ./mail-service/.env.docker:/app/.env
+    command: sh -c "bun run dev"
+
+  media-service:
+    volumes:
+      - ./media-service/src:/app/src
+      - ./media-service/package.json:/app/package.json
+      - ./media-service/tsconfig.json:/app/tsconfig.json
+      - ./media-service/.env.docker:/app/.env
+    command: sh -c "bun run dev"
+
+  notification-service:
+    volumes:
+      - ./notification-service/src:/app/src
+      - ./notification-service/package.json:/app/package.json
+      - ./notification-service/tsconfig.json:/app/tsconfig.json
+      - ./notification-service/.env.docker:/app/.env
+    command: sh -c "bun run dev"
+
+  sessions-service:
+    volumes:
+      - ./sessions-service/src:/app/src
+      - ./sessions-service/package.json:/app/package.json
+      - ./sessions-service/tsconfig.json:/app/tsconfig.json
+      - ./sessions-service/.env.docker:/app/.env
+    command: sh -c "pnpm run dev"

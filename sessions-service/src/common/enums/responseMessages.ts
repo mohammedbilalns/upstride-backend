@@ -5,6 +5,7 @@ export enum ResponseMessage {
 	SESSION_INITIATED = "Session initiated successfully",
 	MARKED_SESSION_AS_COMPLETE = "Session marked as complete successfully",
 	RECURRING_RULE_UPDATED = "Recurring rule updated successfully",
+	RECURRING_RULE_ADDED = "Recurring rule added successfully",
 	CANCELLED_BOOKING = "Booking cancelled successfully",
 	CANCEL_MENTOR_SLOTS = "Mentor slots cancelled successfully",
 	CANCELLED_SLOT = "Cancelled slots successfully",

@@ -1,22 +1,18 @@
-FROM node:24-alpine
+FROM oven/bun:1-alpine
 
 WORKDIR /app
 
-RUN npm install -g pnpm
+COPY package.json  ./
 
-COPY package*.json ./
-
-RUN pnpm install
+RUN bun install --frozen-lockfile
 
 COPY tsconfig.json ./
-
 COPY src ./src
 
-RUN pnpm run build
+RUN bun run build
 
 COPY . .
 
 EXPOSE 3005
 
-CMD ["pnpm", "run", "start"]
-
+CMD ["bun", "run", "start"]

@@ -29,4 +29,9 @@ export class SlotRepository
 			createdAt: mapped.createdAt,
 		};
 	}
+
+	async find(mentorId: string): Promise<Slot[]> {
+		const data = await this._model.find({ mentorId });
+		return data.map(this.mapToDomain);
+	}
 }

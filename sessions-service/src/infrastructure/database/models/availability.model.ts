@@ -11,6 +11,7 @@ export const availabilitySchema: Schema = new Schema(
 		},
 		recurringRules: [
 			{
+				ruleId: { type: String, required: true },
 				weekDay: { type: Number, min: 1, max: 7 },
 				startTime: { type: Date },
 				endTime: { type: Date },
@@ -18,12 +19,6 @@ export const availabilitySchema: Schema = new Schema(
 				isActve: { type: Boolean },
 			},
 		],
-		customRanges: {
-			startAt: { type: Date },
-			endAt: { type: Date },
-			slotDuration: { type: Number },
-			isActve: { type: Boolean },
-		},
 		exceptionRanges: [
 			{
 				startAt: { type: Date },

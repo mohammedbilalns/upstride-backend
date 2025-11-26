@@ -7,8 +7,8 @@ export function createSessionRoutes() {
 
 	router.post("/:slotId/booking", sessionsController.bookSession);
 	router.post("/bookings/:bookingId/cancel", sessionsController.cancelBooking);
-	router.post("/:slotId/start", sessionsController.initiateSession);
-	router.post("/:slotId/complete", sessionsController.markSessionAsComplete);
+	router.post("/:sessionId/start", sessionsController.initiateSession);
+	router.post("/:sessionId/complete", sessionsController.markSessionAsComplete);
 
 	return router;
 }
