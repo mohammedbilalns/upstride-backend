@@ -5,9 +5,9 @@ import { getMentorSlotsDto, getMentorSlotsResponse } from "../../dtos/slot.dto";
 export class GetMentorSlotsUC implements IGetMentorSlotsUC {
 	constructor(private _slotRepository: ISlotRepository) {}
 
+	// fetch for the mentor
 	async execute(dto: getMentorSlotsDto): Promise<getMentorSlotsResponse> {
-		const slots = await this._slotRepository.find(dto.mentorId);
-
+		const slots = await this._slotRepository.find({ mentorId: dto.mentorId });
 		return { slots };
 	}
 }

@@ -1,4 +1,4 @@
-enum SlotStatus {
+export enum BookingStatus {
 	PENDING = "PENDING",
 	CONFIRMED = "CONFIRMED",
 	CANCELLED = "CANCELLED",
@@ -8,7 +8,7 @@ export interface Booking {
 	id: string;
 	slotId: string;
 	userId: string;
-	status: SlotStatus;
+	status: BookingStatus;
 	paymentId: string;
 	createdAt: Date;
 }

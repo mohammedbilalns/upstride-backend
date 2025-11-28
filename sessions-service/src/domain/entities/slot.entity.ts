@@ -2,6 +2,7 @@ export enum SlotStatus {
 	OPEN = "OPEN",
 	FULL = "FULL",
 	CANCELLED = "CANCELLED",
+	STARTED = "STARTED",
 	COMPLETED = "COMPLETED",
 }
 export enum CancelledBy {

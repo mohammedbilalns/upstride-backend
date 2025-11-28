@@ -29,8 +29,9 @@ export function createSlotController() {
 	);
 	const addRecurringRuleUC = new AddRecurringRuleUC(availabilityRepository);
 	const createCustomSlotUC = new CreateCustomSlot(slotRepository);
-	const getMentorSlotsUC = new GetMentorSlotsUC(slotRepository);
 	const cancelSlotUC = new CancelSlotUC(slotRepository);
+
+	const getMentorSlotsUC = new GetMentorSlotsUC(slotRepository);
 
 	return new SlotsController(
 		createCustomSlotUC,

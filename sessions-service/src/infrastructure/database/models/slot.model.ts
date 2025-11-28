@@ -11,7 +11,7 @@ export const slotSchema: Schema = new Schema(
 		generatedFrom: { type: Types.ObjectId, ref: "Availability", default: null },
 		status: {
 			type: String,
-			enum: ["OPEN", "FULL", "CANCELLED", "COMPLETED"],
+			enum: ["OPEN", "FULL", "CANCELLED", "STARTED", "COMPLETED"],
 			default: "OPEN",
 		},
 		price: { type: Number },

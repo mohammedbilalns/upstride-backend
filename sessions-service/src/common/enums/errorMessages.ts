@@ -11,4 +11,7 @@ export enum ErrorMessage {
 	AVAILABILITY_NOT_FOUND = "Availability not found",
 	SLOT_DURATION_OVERLAP = "There is already a slot overlapping the duration",
 	SLOT_NOT_FOUND = "Slot not found",
+	SESSION_NOT_FOUND = "Session not found",
+	BOOKING_NOT_FOUND = "Booking not found",
+	SLOT_IS_ALREADY_TAKEN = "Slot is already taken",
 }

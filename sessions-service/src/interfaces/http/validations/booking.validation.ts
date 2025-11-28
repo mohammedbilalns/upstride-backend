@@ -9,7 +9,7 @@ export const bookSessionValidationPayloadSchema = z.object({});
 
 // cancel booking
 export const cancelBookingValidationParamsSchema = z.object({
-	slotId: z.string(),
+	bookingId: z.string(),
 });
 
 export const cancelBookingValidationPayloadSchema = z.object({});

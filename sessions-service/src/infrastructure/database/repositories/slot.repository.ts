@@ -30,8 +30,8 @@ export class SlotRepository
 		};
 	}
 
-	async find(mentorId: string): Promise<Slot[]> {
-		const data = await this._model.find({ mentorId });
+	async find(filter: Partial<Slot>): Promise<Slot[]> {
+		const data = await this._model.find(filter);
 		return data.map(this.mapToDomain);
 	}
 

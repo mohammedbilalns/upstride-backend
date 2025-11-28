@@ -31,9 +31,9 @@ export class SessionController {
 
 	cancelBooking = asyncHandler((req, res) => {
 		const userId = res.locals.user.id;
-		const { slotId } = cancelBookingValidationParamsSchema.parse(req.params);
+		const { bookingId } = cancelBookingValidationParamsSchema.parse(req.params);
 
-		this._cancelBookingUC.execute({ userId, slotId });
+		this._cancelBookingUC.execute({ userId, bookingId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.CANCELLED_BOOKING });

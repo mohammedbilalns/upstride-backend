@@ -5,5 +5,5 @@ export interface bookSessionDto {
 
 export interface cancelBookingDto {
 	userId: string;
-	slotId: string;
+	bookingId: string;
 }
