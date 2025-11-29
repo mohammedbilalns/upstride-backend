@@ -1,6 +1,7 @@
 import { AddRecurringRuleUC } from "../../../application/usecases/recurringRule/addRecurringRule.uc";
 import { CreateRecurringRuleUC } from "../../../application/usecases/recurringRule/createRecurringRule.uc";
 import { DisableRecurringRuleUC } from "../../../application/usecases/recurringRule/disableRecurringRule.uc";
+import { GetRuleUC } from "../../../application/usecases/recurringRule/getRule.uc";
 import { UpdateRecurringRuleUC } from "../../../application/usecases/recurringRule/updateRecurringRule.uc";
 import { CancelSlotUC } from "../../../application/usecases/slots/cancelSlot.uc";
 import { CreateCustomSlot } from "../../../application/usecases/slots/createCustomSlot.uc";
@@ -32,6 +33,7 @@ export function createSlotController() {
 	const cancelSlotUC = new CancelSlotUC(slotRepository);
 
 	const getMentorSlotsUC = new GetMentorSlotsUC(slotRepository);
+	const getMentorRulesUC = new GetRuleUC(availabilityRepository);
 
 	return new SlotsController(
 		createCustomSlotUC,
@@ -41,5 +43,6 @@ export function createSlotController() {
 		disableRecurringRuleUC,
 		getMentorSlotsUC,
 		cancelSlotUC,
+		getMentorRulesUC,
 	);
 }

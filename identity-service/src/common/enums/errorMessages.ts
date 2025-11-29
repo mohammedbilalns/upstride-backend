@@ -11,6 +11,7 @@ export const ErrorMessage = {
 	REGISTERED_WITH_GOOGLE_ID:
 		"Cannot update password as you are registered with Google",
 	INVALID_PASSWORD: "Invalid password",
+	INVALID_USERID: "Invalid userId",
 
 	// Account restrictions
 	BLOCKED_FROM_PLATFORM:

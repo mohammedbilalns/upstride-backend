@@ -63,27 +63,29 @@ const chatProxy = createServiceProxy(
 	ServiceName.CHAT,
 	SERVICE_URL[ServiceName.CHAT],
 );
+const sessionsProxy = createServiceProxy(
+	ServiceName.SESSIONS,
+	SERVICE_URL[ServiceName.SESSIONS],
+);
 
 router.use("/users", identityProxy);
 router.use("/expertise", identityProxy);
 router.use("/mentor", identityProxy);
-
 router.use("/profile", identityProxy);
-
 router.use("/connection", identityProxy);
 
 router.use("/media", mediaProxy);
 
 router.use("/articles", articleProxy);
-
 router.use("/tags", articleProxy);
-
 router.use("/comments", articleProxy);
-
 router.use("/reactions", articleProxy);
 
 router.use("/notifications", notificationProxy);
 
 router.use("/chat", chatProxy);
+
+router.use("/sessions", sessionsProxy);
+router.use("/slots", sessionsProxy);
 
 export default router;

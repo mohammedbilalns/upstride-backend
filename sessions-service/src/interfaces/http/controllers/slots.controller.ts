@@ -14,7 +14,10 @@ import {
 	addRecurringRuleParamsSchema,
 	addRecurringRulePayloadSchema,
 } from "../validations/recurringRule.validation";
-import { getMentorSlotsParamsSchema } from "../validations/getMentorSlots.validation";
+import {
+	getMentorRulesParamsSchema,
+	getMentorSlotsParamsSchema,
+} from "../validations/getMentorSlots.validation";
 import { ICreateRecurringRuleUC } from "../../../domain/useCases/recurringRule/createRecurringRule.uc.interface";
 import { IUpdateRecurringRuleUC } from "../../../domain/useCases/recurringRule/updateRecurringRule.uc.interface";
 import { IAddRecurringRuleUC } from "../../../domain/useCases/recurringRule/addRecurringRule.uc.interface";
@@ -22,6 +25,7 @@ import { IDisableRecurringRuleUC } from "../../../domain/useCases/recurringRule/
 import { IGetMentorSlotsUC } from "../../../domain/useCases/slots/getMentorSlots.uc.interface";
 import { ICancleSlotUC } from "../../../domain/useCases/slots/cancelSlot.uc.interface";
 import { ICreateCustomSlotUC } from "../../../domain/useCases/slots/createCustomSlot.uc.interface";
+import { IGetRulesUC } from "../../../domain/useCases/recurringRule/getRule.uc.interface";
 
 export class SlotsController {
 	constructor(
@@ -32,6 +36,7 @@ export class SlotsController {
 		private _disableRecurringRuleUC: IDisableRecurringRuleUC,
 		private _getMentorSlotsUC: IGetMentorSlotsUC,
 		private _cancelSlotUC: ICancleSlotUC,
+		private _getMentorRuleUC: IGetRulesUC,
 	) {}
 
 	createCustomSlot = asyncHandler((req, res) => {
@@ -105,5 +110,11 @@ export class SlotsController {
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.CANCELLED_SLOT });
+	});
+
+	getMentorRules = asyncHandler((req, res) => {
+		const { mentorId } = getMentorRulesParamsSchema.parse(req.params);
+		const data = this._getMentorRuleUC.execute({ mentorId });
+		res.status(HttpStatus.OK).send(data);
 	});
 }

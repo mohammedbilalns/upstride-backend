@@ -27,32 +27,9 @@ export class MediaController {
 
 	deleteMedia = asyncHandler(async (req, res) => {
 		const { publicId, mediaType } = deleteMediaParamsSchema.parse(req.params);
-		console.log("publicId in params");
 		await this._mediaService.deleteMedia(publicId, mediaType);
 		res
 			.status(HttpStatus.OK)
 			.json({ message: ResponseMessage.MEDIA_DELETED_SUCCESSFULLY });
 	});
-	// getMedia = asyncHandler(async (req, res) => {
-	//   const { publicId, articleId, chatMessageId, mentorId } = req.body;
-	//   const data = {
-	//     publicId,
-	//     articleId,
-	//     chatMessageId,
-	//     mentorId,
-	//     userId: res.locals.user.id,
-	//   };
-	//   const media = await this._mediaService.getMedia(data);
-	//   res.status(HttpStatus.OK).json({ data: media });
-	// });
-
-	// getMedias = asyncHandler(async (req, res) => {
-	//   const { publicIds } = req.body;
-	//   const data = {
-	//     publicIds,
-	//     userId: res.locals.user.id,
-	//   };
-	//   const medias = await this._mediaService.getMedias(data);
-	//   res.status(HttpStatus.OK).json({ data: medias });
-	// });
 }

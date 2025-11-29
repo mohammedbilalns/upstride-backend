@@ -14,4 +14,5 @@ export enum ErrorMessage {
 	SESSION_NOT_FOUND = "Session not found",
 	BOOKING_NOT_FOUND = "Booking not found",
 	SLOT_IS_ALREADY_TAKEN = "Slot is already taken",
+	NO_RULES_CONFIGURED = "No rules configured",
 }

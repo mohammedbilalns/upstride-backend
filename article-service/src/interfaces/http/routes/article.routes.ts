@@ -9,10 +9,10 @@ export function createArticleRoutes() {
 	router.get("/by-users", articleController.fetchRandomArticlesByAuthors);
 	router.use(authMiddleware());
 
-	router.get("/:id", articleController.fetchArticle);
+	router.get("/:articleId", articleController.fetchArticle);
 	router.get("/", articleController.fetchArticles);
 	router.post("/", articleController.create);
 	router.put("/", articleController.update);
-	router.delete("/:id", articleController.delete);
+	router.delete("/:articleId", articleController.delete);
 	return router;
 }

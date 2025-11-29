@@ -6,6 +6,8 @@ import type {
 import asyncHandler from "../utils/asyncHandler";
 import {
 	createArticleSchema,
+	deleteArticleParamsSchema,
+	fetchArticleParamsSchema,
 	fetchArticlesSchema,
 	fetchRandomArticlesByAuthorsSchema,
 	updateArticleSchema,
@@ -42,18 +44,20 @@ export class ArticleController {
 
 	delete = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
-		const id = req.params.id;
-		await this._articleWriteService.deleteArticle(id, userId);
+		const { articleId } = deleteArticleParamsSchema.parse(req.params);
+		await this._articleWriteService.deleteArticle(articleId, userId);
 		res
 			.status(HttpStatus.OK)
 			.send({ success: true, message: ResponseMessage.ARTICLE_DELETED });
 	});
 
 	fetchArticle = asyncHandler(async (req, res) => {
-		const id = req.params.id;
 		const userId = res.locals.user.id;
+		const { articleId } = fetchArticleParamsSchema.parse(req.params);
+
 		const { article, isViewed, isLiked } =
-			await this._articleReadService.getArticleById(id, userId);
+			await this._articleReadService.getArticleById(articleId, userId);
+
 		res.status(HttpStatus.OK).json({ article, isViewed, isLiked });
 	});
 

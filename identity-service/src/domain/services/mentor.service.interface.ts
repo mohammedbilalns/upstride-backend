@@ -13,7 +13,6 @@ import type { Mentor } from "../entities";
 export interface IMentorService {
 	createMentor(createMentorDto: MentorRegistrationDTO): Promise<void>;
 	updateMentor(updateMentorDto: updateMentoDto): Promise<void>;
-	getMentor(userId: string): Promise<Mentor>;
 	fetchMentors(
 		fetchMentorDto: findAllMentorsDto,
 	): Promise<findAllMentorsResponseDto>;
@@ -24,4 +23,5 @@ export interface IMentorService {
 	rejectMentor(rejectMentorDto: rejectMentorDto): Promise<void>;
 	getMentorByExpertiseId(expertiseId: string): Promise<string[]>;
 	getMentorDetails(mentorId: string, userId: string): Promise<MentorDetailsDto>;
+	getMe(userId: string): Promise<Mentor>;
 }

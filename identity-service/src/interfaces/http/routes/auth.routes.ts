@@ -13,7 +13,6 @@ export function createAuthRouter() {
 		rateLimiter(5, 60, ["ip", "route"]),
 		authController.register,
 	);
-	router.post("/google-auth", authController.googleAuth);
 	router.post(
 		"/verify-otp",
 		rateLimiter(10, 60, ["ip", "route"]),

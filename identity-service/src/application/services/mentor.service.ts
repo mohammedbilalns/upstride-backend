@@ -227,25 +227,6 @@ export class MentorService implements IMentorService {
 		]);
 	}
 
-	async getMentor(userId: string): Promise<Mentor> {
-		const user = await this._userRepository.findById(userId);
-		if (!user)
-			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-		if (
-			user.isRequestedForMentoring &&
-			user.isRequestedForMentoring === "approved"
-		)
-			throw new AppError(
-				ErrorMessage.MENTOR_ALREADY_APPROVED,
-				HttpStatus.CONFLICT,
-			);
-		const mentor = await this._mentorRepository.findByUserId(userId);
-
-		if (!mentor)
-			throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
-		return mentor;
-	}
-
 	async getMentorByExpertiseId(expertiseId: string): Promise<string[]> {
 		const mentors = await this._mentorRepository.findByExpertiseId(expertiseId);
 		return mentors.map((mentor: Mentor) => mentor.userId);
@@ -266,5 +247,12 @@ export class MentorService implements IMentorService {
 		if (!mentor)
 			throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
 		return { ...mentor, isFollowing };
+	}
+
+	async getMe(userId: string): Promise<Mentor> {
+		const mentor = await this._mentorRepository.findByUserId(userId);
+		if (!mentor)
+			throw new AppError(ErrorMessage.INVALID_USERID, HttpStatus.BAD_REQUEST);
+		return mentor;
 	}
 }

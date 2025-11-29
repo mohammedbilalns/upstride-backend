@@ -19,3 +19,6 @@ export interface cancelSlotDto {
 	mentorId: string;
 	slotId: string;
 }
+export interface getMentorRule {
+	mentorId: string;
+}

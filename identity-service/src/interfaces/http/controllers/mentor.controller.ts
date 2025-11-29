@@ -67,12 +67,6 @@ export class MentorController {
 			.json({ success: true, message: ResponseMessage.MENTOR_REJECTED });
 	});
 
-	getMentor = asyncHandler(async (_req, res) => {
-		const userId = res.locals.user.id;
-		const mentor = await this._mentorService.getMentor(userId);
-		res.status(HttpStatus.OK).json({ success: true, mentor });
-	});
-
 	updateMentor = asyncHandler(async (req, res) => {
 		const data = updateMentorSchema.parse(req.body);
 		const userId = res.locals.user.id;
@@ -98,5 +92,11 @@ export class MentorController {
 		const { mentorId } = fetchMentorParamsSchema.parse(req.params);
 		const mentor = await this._mentorService.getMentorDetails(mentorId, userId);
 		res.status(HttpStatus.OK).json(mentor);
+	});
+
+	getMe = asyncHandler(async (_req, res) => {
+		const userId = res.locals.user.id;
+		const data = await this._mentorService.getMe(userId);
+		res.status(HttpStatus.OK).send(data);
 	});
 }

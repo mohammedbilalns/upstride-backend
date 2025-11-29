@@ -57,3 +57,11 @@ export const fetchRandomArticlesByAuthorsSchema = z.object({
 	limit: z.coerce.number().min(1).max(100).default(10),
 	sortBy: z.string().optional(),
 });
+
+export const deleteArticleParamsSchema = z.object({
+	articleId: z.string(),
+});
+
+export const fetchArticleParamsSchema = z.object({
+	articleId: z.string(),
+});
