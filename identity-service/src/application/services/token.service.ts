@@ -90,4 +90,14 @@ export class TokenService implements ITokenService {
 	} {
 		return jwt.decode(token) as GoogleTokenPayload;
 	}
+
+	public async generateTokens(
+		user: UserDTO,
+	): Promise<{ newAccessToken: string; newRefreshToken: string }> {
+		const [newAccessToken, newRefreshToken] = await Promise.all([
+			this.generateAccessToken(user),
+			this.generateRefreshToken(user),
+		]);
+		return { newAccessToken, newRefreshToken };
+	}
 }

@@ -4,5 +4,4 @@ export * from "./expertise.service";
 export * from "./interests.service";
 export * from "./mentor.service";
 export * from "./passwordReset.service";
-export * from "./registration.service";
 export * from "./token.service";

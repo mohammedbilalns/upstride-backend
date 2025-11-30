@@ -8,7 +8,6 @@ import {
 import type {
 	IAuthService,
 	IPasswordResetService,
-	IRegistrationService,
 } from "../../../domain/services";
 
 import env from "../../../infrastructure/config/env";
@@ -16,14 +15,11 @@ import asyncHandler from "../utils/asyncHandler";
 
 import {
 	loginSchema,
-	registerSchema,
 	resendOtpSchema,
 	resetSchema,
 	updatePasswordSchema,
 	verifyOtpSchema,
 } from "../validations/auth.validation";
-
-import { addInterestsSchema } from "../validations/interests.validation";
 
 /**
  * AuthController
@@ -32,7 +28,6 @@ import { addInterestsSchema } from "../validations/interests.validation";
 export class AuthController {
 	constructor(
 		private _authService: IAuthService,
-		private _registrationService: IRegistrationService,
 		private _passwordResetService: IPasswordResetService,
 	) {}
 
@@ -142,17 +137,6 @@ export class AuthController {
 	// Registration
 	// ─────────────────────────────────────────────────────────────
 
-	/** Register new user & send OTP */
-	register = asyncHandler(async (req, res) => {
-		const { name, email, phone, password } = registerSchema.parse(req.body);
-
-		await this._registrationService.registerUser(name, email, phone, password);
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.OTP_SENT });
-	});
-
 	/** Google OAuth flow */
 	googleAuth = asyncHandler(async (req, res) => {
 		const { credential } = req.body;
@@ -178,59 +162,6 @@ export class AuthController {
 		return res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
-	});
-
-	// ─────────────────────────────────────────────────────────────
-	// Registration OTP Flow
-	// ─────────────────────────────────────────────────────────────
-
-	/** Verify registration OTP */
-	verifyOtp = asyncHandler(async (req, res) => {
-		const { email, otp } = verifyOtpSchema.parse(req.body);
-		const token = await this._registrationService.verifyOtp(email, otp);
-
-		this.setTokenCookie(res, "register", token);
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.OTP_VERIFIED });
-	});
-
-	/** Resend registration OTP */
-	resendOtp = asyncHandler(async (req, res) => {
-		const { email } = resendOtpSchema.parse(req.body);
-
-		await this._registrationService.resendRegisterOtp(email);
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.OTP_RESENT });
-	});
-
-	// ─────────────────────────────────────────────────────────────
-	// User Interests
-	// ─────────────────────────────────────────────────────────────
-
-	/** Add interests after OTP verification */
-	addInterests = asyncHandler(async (req, res) => {
-		const { selectedAreas, selectedTopics, email } = addInterestsSchema.parse(
-			req.body,
-		);
-
-		const token = req.cookies.registertoken;
-
-		await this._registrationService.createInterests(
-			email,
-			selectedAreas,
-			selectedTopics,
-			token,
-		);
-
-		this.clearTokenCookie(res, "register");
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.INTERESTS_ADDED });
 	});
 
 	// ─────────────────────────────────────────────────────────────

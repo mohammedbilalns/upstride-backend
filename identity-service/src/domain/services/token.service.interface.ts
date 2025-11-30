@@ -15,4 +15,7 @@ export interface ITokenService {
 		name: string;
 		picture: string;
 	};
+	generateTokens(
+		user: UserDTO,
+	): Promise<{ newAccessToken: string; newRefreshToken: string }>;
 }

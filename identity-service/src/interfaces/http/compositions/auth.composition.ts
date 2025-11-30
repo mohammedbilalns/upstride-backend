@@ -5,7 +5,6 @@ import {
 } from "../../../application/services";
 import { CacheService } from "../../../application/services/cache.service";
 import { PasswordResetService } from "../../../application/services/passwordReset.service";
-import { RegistrationService } from "../../../application/services/registration.service";
 
 import type { IEventBus } from "../../../domain/events/IEventBus";
 import type { IUserRepository } from "../../../domain/repositories";
@@ -46,14 +45,6 @@ export function createAuthController(): AuthController {
 	// ─────────────────────────────────────────────
 	// Application Services
 	// ─────────────────────────────────────────────
-	const registrationService = new RegistrationService(
-		userRepository,
-		cryptoService,
-		otpRepository,
-		tokenService,
-		eventBus,
-		cacheService,
-	);
 
 	const authService = new AuthService(
 		userRepository,
@@ -73,9 +64,5 @@ export function createAuthController(): AuthController {
 	// ─────────────────────────────────────────────
 	// Controller
 	// ─────────────────────────────────────────────
-	return new AuthController(
-		authService,
-		registrationService,
-		passwordResetService,
-	);
+	return new AuthController(authService, passwordResetService);
 }
