@@ -1,4 +1,4 @@
-import { ConnectionsResponseDto } from "../../application/dtos/connection.dto";
+import { ConnectionsResponseDto } from "../../../application/dtos/connection.dto";
 
 export interface IFetchFollowersUC {
 	execute(

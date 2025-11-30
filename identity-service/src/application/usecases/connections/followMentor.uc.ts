@@ -1,7 +1,7 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
 import { IConnectionValidationService } from "../../../domain/services/connectionValidation.service.interface";
-import { IFollowMentorUC } from "../../../domain/useCases/followMentor.uc.interface";
+import { IFollowMentorUC } from "../../../domain/useCases/connections/followMentor.uc.interface";
 import { AppError } from "../../errors/AppError";
 
 export class FollowMentorUC implements IFollowMentorUC {

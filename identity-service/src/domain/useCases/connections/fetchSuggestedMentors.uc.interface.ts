@@ -1,4 +1,4 @@
-import { SuggestedMentorsResponseDto } from "../../application/dtos/connection.dto";
+import { SuggestedMentorsResponseDto } from "../../../application/dtos/connection.dto";
 
 export interface IFetchSuggestedMentorsUC {
 	execute(

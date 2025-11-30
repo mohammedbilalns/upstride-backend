@@ -1,5 +1,5 @@
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
-import { IFetchFollowingUC } from "../../../domain/useCases/fetchFollowing.uc.interface";
+import { IFetchFollowingUC } from "../../../domain/useCases/connections/fetchFollowing.uc.interface";
 import { ConnectionsResponseDto } from "../../dtos/connection.dto";
 
 export class FetchFollowingUC implements IFetchFollowingUC {

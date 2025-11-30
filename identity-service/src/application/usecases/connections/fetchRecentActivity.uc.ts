@@ -1,5 +1,5 @@
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
-import { IFetchRecentActivityUC } from "../../../domain/useCases/fetchRecentActivity.uc.interface";
+import { IFetchRecentActivityUC } from "../../../domain/useCases/connections/fetchRecentActivity.uc.interface";
 import { Activity, PopulatedConnection } from "../../dtos/connection.dto";
 
 export class FetchRecentActivityUC implements IFetchRecentActivityUC {

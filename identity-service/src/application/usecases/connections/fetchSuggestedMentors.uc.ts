@@ -3,7 +3,7 @@ import {
 	IMentorRepository,
 	IUserRepository,
 } from "../../../domain/repositories";
-import { IFetchSuggestedMentorsUC } from "../../../domain/useCases/fetchSuggestedMentors.uc.interface";
+import { IFetchSuggestedMentorsUC } from "../../../domain/useCases/connections/fetchSuggestedMentors.uc.interface";
 import { SuggestedMentorsResponseDto } from "../../dtos/connection.dto";
 import { AppError } from "../../errors/AppError";
 

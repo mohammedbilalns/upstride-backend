@@ -1,7 +1,7 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IMentorRepository } from "../../../domain/repositories";
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
-import { IFetchFollowersUC } from "../../../domain/useCases/fetchFollowers.uc.interface";
+import { IFetchFollowersUC } from "../../../domain/useCases/connections/fetchFollowers.uc.interface";
 import { ConnectionsResponseDto } from "../../dtos/connection.dto";
 import { AppError } from "../../errors/AppError";
 

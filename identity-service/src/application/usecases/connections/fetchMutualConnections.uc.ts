@@ -1,5 +1,5 @@
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
-import { IFetchMutualConnectionsUC } from "../../../domain/useCases/fetchMutualConnections.uc.interface";
+import { IFetchMutualConnectionsUC } from "../../../domain/useCases/connections/fetchMutualConnections.uc.interface";
 import { MutualConnectionsResponseDto } from "../../dtos/connection.dto";
 
 export class FetchMutualConnectionsUC implements IFetchMutualConnectionsUC {
