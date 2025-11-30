@@ -13,6 +13,7 @@ export enum CancelledBy {
 export interface Slot {
 	id: string;
 	mentorId: string;
+	description?: string;
 	startAt: Date;
 	endAt: Date;
 	generatedFrom: string;

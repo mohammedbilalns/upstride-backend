@@ -4,7 +4,11 @@ import type { IBaseRepository } from "./base.repository.interface";
 
 export interface IMentorRepository extends IBaseRepository<Mentor> {
 	findAll(params: findAllMentorsDto): Promise<Mentor[]>;
-	findByUserId(userId: string, populate?: boolean): Promise<Mentor | null>;
+	findByUserId(
+		userId: string,
+		populate?: boolean,
+		forDashboard?: boolean,
+	): Promise<Mentor | null>;
 	findByExpertiseandSkill(
 		page: number,
 		limit: number,

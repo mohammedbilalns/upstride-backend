@@ -17,6 +17,7 @@ export class SlotRepository
 		return {
 			id: mapped.id,
 			mentorId: mapped.mentorId,
+			description: mapped.description,
 			startAt: mapped.startAt,
 			endAt: mapped.endAt,
 			generatedFrom: mapped.generatedFrom,

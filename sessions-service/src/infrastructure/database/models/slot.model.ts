@@ -6,6 +6,7 @@ export interface ISlot extends Document, Omit<Slot, "id"> {}
 export const slotSchema: Schema = new Schema(
 	{
 		mentorId: { type: String, required: true },
+		description: { type: String },
 		startAt: { type: Date, required: true },
 		endAt: { type: Date, required: true },
 		generatedFrom: { type: Types.ObjectId, ref: "Availability", default: null },

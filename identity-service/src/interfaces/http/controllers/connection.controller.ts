@@ -1,5 +1,13 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import type { IConnectionService } from "../../../domain/services/connection.service.interface";
+import {
+	IFetchFollowersUC,
+	IFetchFollowingUC,
+	IFetchMutualConnectionsUC,
+	IFetchRecentActivityUC,
+	IFetchSuggestedMentorsUC,
+	IFollowMentorUC,
+	IUnfollowMentorUC,
+} from "../../../domain/useCases";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	followMentorSchema,
@@ -8,13 +16,21 @@ import {
 import { paginationQuerySchema } from "../validations/pagination.validation";
 
 export class ConnectionController {
-	constructor(private _connectionService: IConnectionService) {}
+	constructor(
+		private _followMentorUC: IFollowMentorUC,
+		private _unfollowMentorUC: IUnfollowMentorUC,
+		private _fetchFollowersUC: IFetchFollowersUC,
+		private _fetchfollowingUC: IFetchFollowingUC,
+		private _fetchMutualConnectionsUC: IFetchMutualConnectionsUC,
+		private _fetchrecentActivity: IFetchRecentActivityUC,
+		private _fetchSuggestedMentorsUC: IFetchSuggestedMentorsUC,
+	) {}
 
 	followMentor = asyncHandler(async (req, res) => {
 		const { mentorId } = followMentorSchema.parse(req.body);
 		const userId = res.locals.user.id;
 
-		await this._connectionService.follow(userId, mentorId);
+		await this._followMentorUC.execute(userId, mentorId);
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.FOLLOWED_MENTOR });
@@ -23,7 +39,7 @@ export class ConnectionController {
 	unfollowMentor = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { mentorId } = unfollowMentorSchema.parse(req.body);
-		await this._connectionService.unfollow(userId, mentorId);
+		await this._unfollowMentorUC.execute(userId, mentorId);
 
 		res
 			.status(HttpStatus.OK)
@@ -33,11 +49,7 @@ export class ConnectionController {
 	fetchFollowers = asyncHandler(async (req, res) => {
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
-		const data = await this._connectionService.fetchFollowers(
-			userId,
-			page,
-			limit,
-		);
+		const data = await this._fetchFollowersUC.execute(userId, page, limit);
 		res.status(HttpStatus.OK).send(data);
 	});
 
@@ -45,25 +57,20 @@ export class ConnectionController {
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
 
-		const data = await this._connectionService.fetchFollowing(
-			userId,
-			page,
-			limit,
-		);
+		const data = await this._fetchfollowingUC.execute(userId, page, limit);
 		res.status(HttpStatus.OK).send(data);
 	});
 
 	fetchRecentActivity = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
-		const activities =
-			await this._connectionService.fetchRecentActivity(userId);
+		const activities = await this._fetchrecentActivity.execute(userId);
 		res.status(HttpStatus.OK).send(activities);
 	});
 
 	fetchSuggestedMentors = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { page, limit } = paginationQuerySchema.parse(req.query);
-		const mentors = await this._connectionService.fetchSuggestedMentors(
+		const mentors = await this._fetchSuggestedMentorsUC.execute(
 			userId,
 			page,
 			limit,
@@ -73,8 +80,7 @@ export class ConnectionController {
 
 	fetchMutualConnections = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
-		const mentors =
-			await this._connectionService.fetchMutualConnections(userId);
+		const mentors = await this._fetchMutualConnectionsUC.execute(userId);
 		res.status(HttpStatus.OK).send(mentors);
 	});
 }

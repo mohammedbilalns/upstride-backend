@@ -200,11 +200,17 @@ export class MentorRepository
 	async findByUserId(
 		userId: string,
 		populate?: boolean,
+		forDashboard?: boolean,
 	): Promise<Mentor | null> {
 		checkObjectId(userId, ErrorMessage.USER_NOT_FOUND);
 		let query = this._model.findOne({ userId });
+
+		if (forDashboard) {
+			query.select("-resumeId -isPending -isRejected -isActive");
+		}
 		if (populate) {
 			query = query.populate([
+				{ path: "userId", select: "name profilePicture role email" },
 				{ path: "expertiseId", select: "name _id" },
 				{ path: "skillIds", select: "name _id" },
 			]);

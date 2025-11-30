@@ -37,9 +37,10 @@ export class ConnectionRepository
 
 		const docs = await this._model
 			.find({ mentorId })
+			.select("-createdAt")
 			.populate({
 				path: "followerId",
-				select: "name email phone profilePicture",
+				select: "name email profilePicture",
 			})
 			.skip(skip)
 			.limit(limit)
@@ -56,11 +57,11 @@ export class ConnectionRepository
 		const skip = (page - 1) * limit;
 		const docs = await this._model
 			.find({ followerId: userId })
+			.select("-createdAt")
 			.populate({
 				path: "mentorId",
 				select: "bio currentRole yearsOfExperience userId",
 				populate: [
-					{ path: "skillIds", select: "name -_id" },
 					{ path: "expertiseId", select: "name -_id" },
 					{ path: "userId", select: "name email profilePicture" },
 				],

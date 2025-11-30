@@ -1,6 +1,6 @@
+import { getMentorRuleResponse } from "../../../application/dtos/recurringRule.dto";
 import { getMentorRule } from "../../../application/dtos/slot.dto";
-import { Availability } from "../../entities/availability.entity";
 
 export interface IGetRulesUC {
-	execute(dto: getMentorRule): Promise<Availability>;
+	execute(dto: getMentorRule): Promise<getMentorRuleResponse>;
 }

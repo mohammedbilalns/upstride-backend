@@ -1,3 +1,5 @@
+import { Availability } from "../../domain/entities/availability.entity";
+
 type Rule = {
 	weekDay: number;
 	startTime: Date;
@@ -25,3 +27,5 @@ export interface disableRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
 }
+
+export type getMentorRuleResponse = Availability | null;

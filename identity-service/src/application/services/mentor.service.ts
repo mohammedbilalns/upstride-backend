@@ -250,7 +250,11 @@ export class MentorService implements IMentorService {
 	}
 
 	async getMe(userId: string): Promise<Mentor> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
+		const mentor = await this._mentorRepository.findByUserId(
+			userId,
+			true,
+			true,
+		);
 		if (!mentor)
 			throw new AppError(ErrorMessage.INVALID_USERID, HttpStatus.BAD_REQUEST);
 		return mentor;
