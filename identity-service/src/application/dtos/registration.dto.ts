@@ -7,7 +7,7 @@ export type createInterestsParam = {
 	token: string;
 };
 
-export type createInterestsReturn = {
+export type LoginReturn = {
 	accessToken: string;
 	refreshToken: string;
 	user: UserDTO;

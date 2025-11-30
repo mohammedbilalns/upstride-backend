@@ -7,10 +7,7 @@ import {
 import { ITokenService } from "../../../domain/services";
 import { ICacheService } from "../../../domain/services/cache.service.interface";
 import { ICreateInterestsUC } from "../../../domain/useCases/userRegistration/createInterests.uc.interface";
-import {
-	createInterestsParam,
-	createInterestsReturn,
-} from "../../dtos/registration.dto";
+import { createInterestsParam, LoginReturn } from "../../dtos/registration.dto";
 import { AppError } from "../../errors/AppError";
 
 export class CreateInterestsUC implements ICreateInterestsUC {
@@ -23,7 +20,7 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 
 	async execute(
 		createinterestsParams: createInterestsParam,
-	): Promise<createInterestsReturn> {
+	): Promise<LoginReturn> {
 		const { email, expertises, skills, token } = createinterestsParams;
 		const [validToken, user] = await Promise.all([
 			this._verficationTokenRepository.getToken(token, "register"),

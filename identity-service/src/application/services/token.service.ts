@@ -43,26 +43,6 @@ export class TokenService implements ITokenService {
 		);
 	}
 
-	verifyAccessToken(token: string): {
-		id: string;
-		email: string;
-		role: string;
-	} {
-		const decoded = jwt.verify(token, this.jwtSecret) as {
-			id: string;
-			email: string;
-			role: string;
-			type: string;
-		};
-		if (decoded.type !== "access") {
-			throw new AppError(
-				ErrorMessage.INVALID_TOKEN_TYPE,
-				HttpStatus.UNAUTHORIZED,
-			);
-		}
-		return decoded;
-	}
-
 	verifyRefreshToken(token: string): {
 		id: string;
 		email: string;

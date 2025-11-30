@@ -1,9 +1,12 @@
-import {
-	AuthService,
-	CryptoService,
-	TokenService,
-} from "../../../application/services";
+import { CryptoService, TokenService } from "../../../application/services";
 import { CacheService } from "../../../application/services/cache.service";
+import {
+	GetUserUC,
+	GoogleAuthenticateUC,
+	LoginUserUC,
+	LogoutUC,
+	RefreshTokenUC,
+} from "../../../application/usecases/auth";
 import type { IUserRepository } from "../../../domain/repositories";
 import type { ICryptoService, ITokenService } from "../../../domain/services";
 
@@ -34,20 +37,35 @@ export function createAuthController(): AuthController {
 	const tokenService: ITokenService = new TokenService(env.JWT_SECRET);
 	const cacheService = new CacheService(redisClient);
 
-	// ─────────────────────────────────────────────
-	// Application Services
-	// ─────────────────────────────────────────────
-
-	const authService = new AuthService(
+	// Use cases
+	const loginUserUC = new LoginUserUC(
 		userRepository,
-		verificationTokenRepository,
+		cacheService,
 		cryptoService,
+		tokenService,
+	);
+	const logoutUC = new LogoutUC(cacheService);
+	const refreshTokenUC = new RefreshTokenUC(
+		userRepository,
 		tokenService,
 		cacheService,
 	);
+	const googleAuthenticateUC = new GoogleAuthenticateUC(
+		userRepository,
+		verificationTokenRepository,
+		tokenService,
+		cacheService,
+	);
+	const getUserUC = new GetUserUC(userRepository);
 
 	// ─────────────────────────────────────────────
 	// Controller
 	// ─────────────────────────────────────────────
-	return new AuthController(authService);
+	return new AuthController(
+		loginUserUC,
+		logoutUC,
+		refreshTokenUC,
+		googleAuthenticateUC,
+		getUserUC,
+	);
 }

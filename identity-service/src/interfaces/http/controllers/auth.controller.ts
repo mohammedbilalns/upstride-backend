@@ -5,19 +5,31 @@ import {
 	HttpStatus,
 	ResponseMessage,
 } from "../../../common/enums";
-import type { IAuthService } from "../../../domain/services";
 
 import env from "../../../infrastructure/config/env";
 import asyncHandler from "../utils/asyncHandler";
 
 import { loginSchema } from "../validations/auth.validation";
+import {
+	IGetUserUC,
+	IGoogleAuthenticateUC,
+	ILoginUserUC,
+	ILogoutUC,
+	IRefreshTokenUC,
+} from "../../../domain/useCases/auth";
 
 /**
  * AuthController
  * Handles all authentication, registration and password-reset related routes.
  */
 export class AuthController {
-	constructor(private _authService: IAuthService) {}
+	constructor(
+		private _loginUserUC: ILoginUserUC,
+		private _logoutUC: ILogoutUC,
+		private _refreshTokenUC: IRefreshTokenUC,
+		private _googleAuthenticateUC: IGoogleAuthenticateUC,
+		private _getUserUC: IGetUserUC,
+	) {}
 
 	// ─────────────────────────────────────────────────────────────
 	// Cookie Helpers
@@ -66,8 +78,10 @@ export class AuthController {
 	/** Login user & set tokens */
 	login = asyncHandler(async (req, res) => {
 		const { email, password } = loginSchema.parse(req.body);
-		const { user, accessToken, refreshToken } =
-			await this._authService.loginUser(email, password);
+		const { user, accessToken, refreshToken } = await this._loginUserUC.execute(
+			email,
+			password,
+		);
 
 		this.setAuthCookies(res, accessToken, refreshToken);
 
@@ -79,7 +93,7 @@ export class AuthController {
 	/** Logout user & clear cookies */
 	logout = asyncHandler(async (_req, res) => {
 		const userId = res.locals?.user?.id;
-		this._authService.logout(userId);
+		this._logoutUC.execute(userId);
 		this.clearAuthCookies(res);
 
 		res
@@ -98,8 +112,9 @@ export class AuthController {
 			});
 		}
 
-		const { accessToken, refreshToken } =
-			await this._authService.refreshAccessToken(refreshTokenFromCookie);
+		const { accessToken, refreshToken } = await this._refreshTokenUC.execute(
+			refreshTokenFromCookie,
+		);
 
 		this.setAuthCookies(res, accessToken, refreshToken);
 
@@ -112,7 +127,7 @@ export class AuthController {
 	/** Returns logged-in user's profile */
 	me = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
-		const user = await this._authService.getUser(userId);
+		const user = await this._getUserUC.execute(userId);
 		res.status(HttpStatus.OK).json({ success: true, user });
 	});
 
@@ -124,7 +139,7 @@ export class AuthController {
 	googleAuth = asyncHandler(async (req, res) => {
 		const { credential } = req.body;
 
-		const result = await this._authService.googleAuthenticate(credential);
+		const result = await this._googleAuthenticateUC.execute(credential);
 
 		if ("token" in result) {
 			// New Google user → store registration token
