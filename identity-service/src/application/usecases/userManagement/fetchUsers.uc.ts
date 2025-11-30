@@ -1,0 +1,41 @@
+import { UserRole } from "../../../common/enums/userRoles";
+import { IUserRepository } from "../../../domain/repositories";
+import { IFetchUsersUC } from "../../../domain/useCases/userManagement/fetchUsers.uc.interface";
+import { AdminUserDTO } from "../../dtos";
+
+export class FetchUsersUC implements IFetchUsersUC {
+	constructor(private _userRepository: IUserRepository) {}
+
+	async execute(
+		userRole: string,
+		page: number,
+		limit: number,
+		query?: string,
+	): Promise<{ users: AdminUserDTO[]; total: number }> {
+		let allowedRoles: string[] = [];
+
+		if (userRole === UserRole.ADMIN) {
+			allowedRoles = [UserRole.USER, UserRole.MENTOR];
+		} else if (userRole === UserRole.SUPER_ADMIN) {
+			allowedRoles = [UserRole.ADMIN, UserRole.USER, UserRole.MENTOR];
+		}
+
+		const [users, total] = await Promise.all([
+			this._userRepository.findAll(page, limit, allowedRoles, query),
+			this._userRepository.count(allowedRoles),
+		]);
+
+		const safeUsers: AdminUserDTO[] = users.map(
+			({ id, name, email, role, isBlocked, createdAt }) => ({
+				id,
+				name,
+				email,
+				isBlocked,
+				role,
+				createdAt,
+			}),
+		);
+
+		return { users: safeUsers, total };
+	}
+}

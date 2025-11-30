@@ -6,4 +6,3 @@ export * from "./mentor.service";
 export * from "./passwordReset.service";
 export * from "./registration.service";
 export * from "./token.service";
-export * from "./userManagement.service";
