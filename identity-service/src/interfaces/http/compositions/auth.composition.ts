@@ -4,9 +4,6 @@ import {
 	TokenService,
 } from "../../../application/services";
 import { CacheService } from "../../../application/services/cache.service";
-import { PasswordResetService } from "../../../application/services/passwordReset.service";
-
-import type { IEventBus } from "../../../domain/events/IEventBus";
 import type { IUserRepository } from "../../../domain/repositories";
 import type { ICryptoService, ITokenService } from "../../../domain/services";
 
@@ -15,7 +12,6 @@ import env from "../../../infrastructure/config/env";
 
 import { UserRepository } from "../../../infrastructure/database/repositories/user.repository";
 import { VerificationTokenRepository } from "../../../infrastructure/database/repositories/verficationToken.repository";
-import EventBus from "../../../infrastructure/events/eventBus";
 
 import { AuthController } from "../controllers/auth.controller";
 
@@ -30,7 +26,6 @@ export function createAuthController(): AuthController {
 	const verificationTokenRepository = new VerificationTokenRepository(
 		redisClient,
 	);
-	const otpRepository = new VerificationTokenRepository(redisClient);
 
 	// ─────────────────────────────────────────────
 	// Services
@@ -38,9 +33,6 @@ export function createAuthController(): AuthController {
 	const cryptoService: ICryptoService = new CryptoService();
 	const tokenService: ITokenService = new TokenService(env.JWT_SECRET);
 	const cacheService = new CacheService(redisClient);
-
-	// Event system
-	const eventBus: IEventBus = EventBus;
 
 	// ─────────────────────────────────────────────
 	// Application Services
@@ -54,15 +46,8 @@ export function createAuthController(): AuthController {
 		cacheService,
 	);
 
-	const passwordResetService = new PasswordResetService(
-		userRepository,
-		otpRepository,
-		cryptoService,
-		eventBus,
-	);
-
 	// ─────────────────────────────────────────────
 	// Controller
 	// ─────────────────────────────────────────────
-	return new AuthController(authService, passwordResetService);
+	return new AuthController(authService);
 }

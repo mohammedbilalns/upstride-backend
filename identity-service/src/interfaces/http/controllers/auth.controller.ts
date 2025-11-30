@@ -5,31 +5,19 @@ import {
 	HttpStatus,
 	ResponseMessage,
 } from "../../../common/enums";
-import type {
-	IAuthService,
-	IPasswordResetService,
-} from "../../../domain/services";
+import type { IAuthService } from "../../../domain/services";
 
 import env from "../../../infrastructure/config/env";
 import asyncHandler from "../utils/asyncHandler";
 
-import {
-	loginSchema,
-	resendOtpSchema,
-	resetSchema,
-	updatePasswordSchema,
-	verifyOtpSchema,
-} from "../validations/auth.validation";
+import { loginSchema } from "../validations/auth.validation";
 
 /**
  * AuthController
  * Handles all authentication, registration and password-reset related routes.
  */
 export class AuthController {
-	constructor(
-		private _authService: IAuthService,
-		private _passwordResetService: IPasswordResetService,
-	) {}
+	constructor(private _authService: IAuthService) {}
 
 	// ─────────────────────────────────────────────────────────────
 	// Cookie Helpers
@@ -63,11 +51,6 @@ export class AuthController {
 			...COOKIE_OPTIONS,
 			maxAge: parseInt(env.RESET_TOKEN_EXPIRY),
 		});
-	}
-
-	/** Clears registration or reset OTP cookies */
-	private clearTokenCookie(res: Response, type: "reset" | "register") {
-		res.clearCookie(type === "reset" ? "resettoken" : "registertoken");
 	}
 
 	/** Clears authentication cookies */
@@ -162,63 +145,5 @@ export class AuthController {
 		return res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
-	});
-
-	// ─────────────────────────────────────────────────────────────
-	// Password Reset
-	// ─────────────────────────────────────────────────────────────
-
-	/** Initiate password reset → send OTP */
-	reset = asyncHandler(async (req, res) => {
-		const { email } = resetSchema.parse(req.body);
-
-		await this._passwordResetService.initiatePasswordReset(email);
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.OTP_SENT });
-	});
-
-	/** Verify password reset OTP */
-	verifyResetOtp = asyncHandler(async (req, res) => {
-		const { email, otp } = verifyOtpSchema.parse(req.body);
-
-		const token = await this._passwordResetService.verifyResetOtp(email, otp);
-
-		this.setTokenCookie(res, "reset", token);
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.OTP_VERIFIED });
-	});
-
-	/** Resend password reset OTP */
-	resendResetOtp = asyncHandler(async (req, res) => {
-		const { email } = resendOtpSchema.parse(req.body);
-
-		await this._passwordResetService.resendResetOtp(email);
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.OTP_SENT });
-	});
-
-	/** Update password after reset */
-	updatePassword = asyncHandler(async (req, res) => {
-		const resetToken = req.cookies.resettoken;
-
-		const { email, newPassword } = updatePasswordSchema.parse(req.body);
-
-		await this._passwordResetService.updatePassword(
-			email,
-			newPassword,
-			resetToken,
-		);
-
-		this.clearTokenCookie(res, "reset");
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.PASSWORD_UPDATED });
 	});
 }

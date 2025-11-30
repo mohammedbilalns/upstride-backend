@@ -3,11 +3,13 @@ import { createAuthController } from "../compositions/auth.composition";
 import { authMiddleware } from "../middlewares";
 import { rateLimiter } from "../middlewares/rateLimiter.middleware";
 import { createRegistrationController } from "../compositions/registration.composition";
+import { createPasswordResetController } from "../compositions/passwordReset.composition";
 
 export function createAuthRouter() {
 	const router = Router();
 	const authController = createAuthController();
 	const registrationController = createRegistrationController();
+	const passwordResetController = createPasswordResetController();
 
 	router.post("/login", authController.login);
 	router.post(
@@ -34,18 +36,18 @@ export function createAuthRouter() {
 	router.post(
 		"/reset-password",
 		rateLimiter(5, 60, ["ip", "route"]),
-		authController.reset,
+		passwordResetController.reset,
 	);
 	router.post(
 		"/verify-reset-otp",
 		rateLimiter(5, 60, ["ip", "route"]),
-		authController.verifyResetOtp,
+		passwordResetController.verifyResetOtp,
 	);
-	router.post("/resend-reset-otp", authController.resendResetOtp);
+	router.post("/resend-reset-otp", passwordResetController.resendResetOtp);
 	router.post(
 		"/update-password",
 		rateLimiter(5, 60, ["ip", "route"]),
-		authController.updatePassword,
+		passwordResetController.updatePassword,
 	);
 	router.post("/google", authController.googleAuth);
 	router.post("/add-interests", registrationController.addInterests);
