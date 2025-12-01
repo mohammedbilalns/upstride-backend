@@ -1,9 +1,9 @@
-import { InterestsService } from "../../../application/services/interests.service";
+import { FetchInterestsUC } from "../../../application/usecases/userInterestManagement/fetchInterests.uc";
 import { UserRepository } from "../../../infrastructure/database/repositories/user.repository";
 import { InterestsController } from "../controllers/interests.controller";
 
 export function createInterestsController() {
 	const userRepository = new UserRepository();
-	const interestsService = new InterestsService(userRepository);
-	return new InterestsController(interestsService);
+	const fetchInterestsUC = new FetchInterestsUC(userRepository);
+	return new InterestsController(fetchInterestsUC);
 }

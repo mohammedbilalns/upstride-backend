@@ -1,11 +1,12 @@
-import { ErrorMessage, HttpStatus } from "../../common/enums";
-import type { IUserRepository } from "../../domain/repositories";
-import { AppError } from "../errors/AppError";
+import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import { IUserRepository } from "../../../domain/repositories";
+import { IFetchInterestsUC } from "../../../domain/useCases/userInterestManagement/fetchInterests.uc.interface";
+import { AppError } from "../../errors/AppError";
 
-//TODO: convert to usecase
-export class InterestsService implements InterestsService {
+export class FetchInterestsUC implements IFetchInterestsUC {
 	constructor(private _userRepository: IUserRepository) {}
-	async fetchInterests(
+
+	async execute(
 		userId: string,
 	): Promise<{ expertises: string[]; skills: string[] }> {
 		const user = await this._userRepository.findById(userId);
