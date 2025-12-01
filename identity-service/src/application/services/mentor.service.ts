@@ -22,6 +22,7 @@ import {
 	APPROVE_SUBJECT,
 	buildMentorApprovalEmailHtml,
 } from "../utils/mentor.util";
+// TODO: convert to usecase
 export class MentorService implements IMentorService {
 	constructor(
 		private _mentorRepository: IMentorRepository,

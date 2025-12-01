@@ -2,6 +2,7 @@ import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type { IUserRepository } from "../../domain/repositories";
 import { AppError } from "../errors/AppError";
 
+//TODO: convert to usecase
 export class InterestsService implements InterestsService {
 	constructor(private _userRepository: IUserRepository) {}
 	async fetchInterests(
