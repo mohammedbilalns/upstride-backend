@@ -12,6 +12,10 @@ export const ErrorMessage = {
 		"Cannot update password as you are registered with Google",
 	INVALID_PASSWORD: "Invalid password",
 	INVALID_USERID: "Invalid userId",
+	TOO_MANY_NEW_EXPERTISES: "Too many new expertises",
+	TOO_MANY_NEW_TOPICS: "Too many new topics",
+	INVALID_INPUT: "Invalid input data",
+	FAILED_TO_CREATE_EXPERTISES: "Failed to create expertises",
 
 	// Account restrictions
 	BLOCKED_FROM_PLATFORM:
@@ -28,7 +32,6 @@ export const ErrorMessage = {
 	TOKEN_EXPIRED: "Token expired",
 
 	// Validation
-	INVALID_INPUT: "Invalid input data",
 	VALIDATION_FAILED: "Validation failed",
 
 	// OTP

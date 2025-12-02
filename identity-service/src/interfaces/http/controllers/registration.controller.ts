@@ -78,9 +78,8 @@ export class RegistrationController {
 
 	/** Add interests after OTP verification */
 	public addInterests = asyncHandler(async (req, res) => {
-		const { selectedAreas, selectedTopics, email } = addInterestsSchema.parse(
-			req.body,
-		);
+		const { selectedAreas, selectedTopics, email, newAreas, newTopics } =
+			addInterestsSchema.parse(req.body);
 
 		const token = req.cookies.registertoken;
 
@@ -88,6 +87,8 @@ export class RegistrationController {
 			email,
 			expertises: selectedAreas,
 			skills: selectedTopics,
+			newExpertises: newAreas,
+			newTopics: newTopics,
 			token,
 		});
 

@@ -5,8 +5,14 @@ import {
 	IResendRegisterOtpUC,
 	ICreateInterestsUC,
 } from "../../../domain/useCases/userRegistration";
-import { UserRepository } from "../../../infrastructure/database/repositories";
 import {
+	ExpertiseRepository,
+	SkillRepository,
+	UserRepository,
+} from "../../../infrastructure/database/repositories";
+import {
+	IExpertiseRepository,
+	ISkillRepository,
 	IUserRepository,
 	IVerificationTokenRepository,
 } from "../../../domain/repositories";
@@ -30,7 +36,8 @@ export function createRegistrationController(): RegistrationController {
 	const userRepository: IUserRepository = new UserRepository();
 	const verificationTokenRepository: IVerificationTokenRepository =
 		new VerificationTokenRepository(redisClient);
-
+	const expertiseRepository: IExpertiseRepository = new ExpertiseRepository();
+	const skillRepostiory: ISkillRepository = new SkillRepository();
 	// services
 	const cacheService: ICacheService = new CacheService(redisClient);
 	const tokenService: ITokenService = new TokenService(env.JWT_SECRET);
@@ -40,6 +47,8 @@ export function createRegistrationController(): RegistrationController {
 	const createInterestsUC: ICreateInterestsUC = new CreateInterestsUC(
 		userRepository,
 		verificationTokenRepository,
+		expertiseRepository,
+		skillRepostiory,
 		cacheService,
 		tokenService,
 	);
