@@ -1,4 +1,5 @@
 import { ErrorMessage, HttpStatus, QueueEvents } from "../../../common/enums";
+import { MailType } from "../../../common/enums/mailTypes";
 import { IEventBus } from "../../../domain/events/IEventBus";
 import {
 	IUserRepository,
@@ -7,7 +8,7 @@ import {
 import { IResendRegisterOtpUC } from "../../../domain/useCases/userRegistration/resendRegisterOtp.uc.interface";
 import { AppError } from "../../errors/AppError";
 import { generateOtp } from "../../utils/generateOtp";
-import { buildOtpEmailHtml, OTP_SUBJECT, otpType } from "../../utils/otp.util";
+import { OTP_SUBJECT, otpType } from "../../utils/mail.util";
 
 export class ResendRegisterOtpUC implements IResendRegisterOtpUC {
 	constructor(
@@ -42,8 +43,9 @@ export class ResendRegisterOtpUC implements IResendRegisterOtpUC {
 		const message = {
 			to: email,
 			subject: OTP_SUBJECT,
-			text: buildOtpEmailHtml(otp, otpType.register),
+			mailType: MailType.REGISTER_OTP,
+			otp,
 		};
-		await this._eventBus.publish(QueueEvents.SEND_OTP, message);
+		await this._eventBus.publish(QueueEvents.SEND_MAIL, message);
 	}
 }

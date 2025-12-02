@@ -12,9 +12,19 @@ export class RefreshTokenUC implements IRefreshTokenUC {
 		private _tokenService: ITokenService,
 		private _cacheService: ICacheService,
 	) {}
+
+	/**
+	 * Generates new access & refresh tokens using a valid refresh token.
+	 * responsibilities:
+	 *  1. Verify provided refresh token
+	 *  2. Validate user existence and status
+	 *  3. Issue new access + refresh tokens
+	 *  4. Cache user info for
+	 */
 	async execute(
 		refreshToken: string,
 	): Promise<{ accessToken: string; refreshToken: string }> {
+		// validate and decode refresh token
 		const decoded = this._tokenService.verifyRefreshToken(refreshToken);
 		const { id } = decoded;
 		const user = await this._userRepository.findById(id);
@@ -26,13 +36,17 @@ export class RefreshTokenUC implements IRefreshTokenUC {
 				HttpStatus.FORBIDDEN,
 			);
 
+		// generate new tokens
 		const { newAccessToken, newRefreshToken } =
 			await this._tokenService.generateTokens(user);
+
+		// cache user info
 		this._cacheService.set(
 			`user:${user.id}`,
 			{ id: user.id, profilePicture: user.profilePicture, name: user.name },
 			CACHE_TTL,
 		);
+
 		return {
 			accessToken: newAccessToken,
 			refreshToken: newRefreshToken,

@@ -6,14 +6,16 @@ import { mailPayloadSchema } from "../validations/mailPayload";
 
 export async function createSendOtpConsumer(mailService: IMailService) {
 	await eventBus.subscribe<{ to: string; subject: string; text: string }>(
-		QueueEvents.SEND_OTP,
+		QueueEvents.SEND_EMAIL,
 		async (payload) => {
 			try {
-				const { to, subject, text } = mailPayloadSchema.parse(payload);
-				await mailService.sendEmail(to, subject, text);
-				logger.info(`Email sent to ${to} with subject: ${subject}`);
+				const parsedPayload = mailPayloadSchema.parse(payload);
+				await mailService.sendEmail(parsedPayload);
+				logger.info(
+					`Email sent to ${parsedPayload.to} with subject: ${parsedPayload.subject}`,
+				);
 			} catch (err) {
-				logger.error("Error sending email:", err);
+				logger.error(`Error sending email: ${err}`);
 			}
 		},
 	);

@@ -19,7 +19,15 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 		private _cacheService: ICacheService,
 	) {}
 
+	/**
+	 * Handles Google OAuth login / registration flow.
+	 * outcomes:
+	 *  - New Google user → create user and issue email verification token
+	 *  - Existing password-based user → attach Google login to their account
+	 *  - Existing Google user → log in and generate platform tokens
+	 */
 	async execute(token: string): Promise<GoogleAuthResponse> {
+		// verify token and credentials
 		const decodedToken = this._tokenService.decodeGoogleToken(token);
 		if (!decodedToken)
 			throw new AppError(ErrorMessage.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
@@ -34,6 +42,7 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 				profilePicture: decodedToken.picture,
 			});
 
+			// generte token and save it
 			const token = generateSecureToken();
 			this._verificationTokenRepository.saveToken(
 				token,
@@ -43,6 +52,7 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 			);
 			return { token, email: decodedToken.email };
 		} else if (!user.googleId) {
+			// update the user with Google id
 			const { id } = user;
 			user = await this._userRepository.update(id, {
 				googleId: decodedToken.sub,
@@ -56,8 +66,12 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 		}
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
+
+		// generate tokens
 		const { newAccessToken, newRefreshToken } =
 			await this._tokenService.generateTokens(user);
+
+		// cache user info
 		this._cacheService.set(
 			`user:${user.id}`,
 			{ id: user.id, image: user.profilePicture, name: user.name },

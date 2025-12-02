@@ -19,13 +19,9 @@ export class UpdateMentorUC implements IUpdateMentorUC {
 			bio,
 			currentRole,
 			organisation,
-			yearsOfExperience,
 			educationalQualifications,
 			personalWebsite,
-			resume,
-			termsAccepted,
 			skills,
-			expertise,
 		} = dto;
 
 		const user = await this._userRepository.findById(userId);
@@ -36,15 +32,10 @@ export class UpdateMentorUC implements IUpdateMentorUC {
 			bio,
 			currentRole,
 			organisation,
-			yearsOfExperience,
 			educationalQualifications,
 			personalWebsite,
-			resumeId: resume.public_id,
-			expertiseId: expertise,
 			userId,
-			termsAccepted,
 			skillIds: skills,
-			expertise,
 		};
 		const mentor = await this._mentorRepository.findByUserId(userId);
 		if (!mentor) {

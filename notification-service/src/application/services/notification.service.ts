@@ -15,7 +15,6 @@ import type {
 } from "../dtos/notification.dto";
 import { AppError } from "../errors/AppError";
 
-//TODO: convert to usecases
 //
 export class NotificationService implements INotificationService {
 	constructor(

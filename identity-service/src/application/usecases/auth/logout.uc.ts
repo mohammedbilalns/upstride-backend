@@ -4,6 +4,9 @@ import { ILogoutUC } from "../../../domain/useCases/auth/logout.uc.interface";
 export class LogoutUC implements ILogoutUC {
 	constructor(private _cacheService: ICacheService) {}
 
+	/**
+	 * Logs a user out from session.
+	 */
 	async execute(userId: string): Promise<void> {
 		await this._cacheService.del(`user:${userId}`);
 	}

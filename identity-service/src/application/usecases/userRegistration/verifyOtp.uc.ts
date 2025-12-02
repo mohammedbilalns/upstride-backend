@@ -5,7 +5,7 @@ import {
 } from "../../../domain/repositories";
 import { IVerifyOtpUC } from "../../../domain/useCases/userRegistration/verifyOtp.uc.interface";
 import { AppError } from "../../errors/AppError";
-import { otpType } from "../../utils/otp.util";
+import { otpType } from "../../utils/mail.util";
 import { generateSecureToken } from "../../utils/token.util";
 
 export class VerifyOtpUC implements IVerifyOtpUC {

@@ -1,4 +1,4 @@
 export enum QueueEvents {
-	SEND_OTP = "send.otp",
+	SEND_EMAIL = "send.mail",
 	NOTIFICATION_CREATED = "notification.created",
 }

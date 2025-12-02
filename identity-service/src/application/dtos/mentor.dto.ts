@@ -23,23 +23,12 @@ export interface MentorRegistrationDTO {
 
 export interface updateMentoDto {
 	userId: string;
-	bio: string;
-	currentRole: string;
-	organisation: string;
-	yearsOfExperience: number;
-	educationalQualifications: string[];
+	bio?: string;
+	currentRole?: string;
+	organisation?: string;
+	educationalQualifications?: string[];
 	personalWebsite?: string | "";
-	expertise: string;
-	skills: string[];
-	resume: {
-		public_id: string;
-		original_filename: string;
-		resource_type: string;
-		secure_url: string;
-		bytes: number;
-		asset_folder: string;
-	};
-	termsAccepted: boolean;
+	skills?: string[];
 }
 
 export interface fetchMentorDto {

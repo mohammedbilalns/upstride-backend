@@ -1,7 +1,5 @@
+import { updatePasswordParam } from "../../../application/dtos/updatePassword.dto";
+
 export interface IUpdatePasswordUC {
-	execute(
-		email: string,
-		newPassword: string,
-		resetToken: string,
-	): Promise<void>;
+	execute(dto: updatePasswordParam): Promise<void>;
 }

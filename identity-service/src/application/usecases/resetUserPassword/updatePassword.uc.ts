@@ -5,6 +5,7 @@ import {
 } from "../../../domain/repositories";
 import { ICryptoService } from "../../../domain/services";
 import { IUpdatePasswordUC } from "../../../domain/useCases/resetUserPassword/updatePassword.uc.interface";
+import { updatePasswordParam } from "../../dtos/updatePassword.dto";
 import { AppError } from "../../errors/AppError";
 
 export class UpdatePasswordUC implements IUpdatePasswordUC {
@@ -14,22 +15,34 @@ export class UpdatePasswordUC implements IUpdatePasswordUC {
 		private _cryptoService: ICryptoService,
 	) {}
 
-	async execute(
-		email: string,
-		newPassword: string,
-		resetToken: string,
-	): Promise<void> {
+	/**
+	 * Handles the password reset process after a valid reset token is provided.
+	 * Steps:
+	 *  1. Validate reset token and user identity
+	 *  2. Hash the new password
+	 *  3. Update user password & invalidate token
+	 */
+	async execute(dto: updatePasswordParam): Promise<void> {
+		// run token and user lookup
 		const [userEmail, user] = await Promise.all([
-			this._verficationTokenRepository.getToken(resetToken, "forgot_password"),
-			this._userRepository.findByEmail(email),
+			this._verficationTokenRepository.getToken(
+				dto.resetToken,
+				"forgot_password",
+			),
+			this._userRepository.findByEmail(dto.email),
 		]);
+
+		// validate token and user
 		if (!userEmail) {
 			throw new AppError(ErrorMessage.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
 		}
 		if (!user)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
 
-		const hashedPassword = await this._cryptoService.hash(newPassword);
+		// hash new password
+		const hashedPassword = await this._cryptoService.hash(dto.newPassword);
+
+		// update user password and invalidate token
 		await Promise.all([
 			this._userRepository.update(user.id, {
 				passwordHash: hashedPassword,

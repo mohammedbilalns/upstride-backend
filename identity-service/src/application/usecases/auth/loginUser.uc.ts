@@ -15,11 +15,18 @@ export class LoginUserUC implements ILoginUserUC {
 		private _tokenService: ITokenService,
 	) {}
 
+	/**
+	 * Validates user credentials and returns access/refresh tokens.
+	 * Also caches lightweight user data.
+	 */
 	async execute(email: string, password: string): Promise<LoginReturn> {
+		// verify user identity
 		const user = await this._userRepository.findByEmail(email);
 
 		if (!user || !user.isVerified)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
+
+		// prevent user registered only via googleId
 		if (user.googleId && !user.passwordHash) {
 			throw new AppError(
 				ErrorMessage.ALERADY_WITH_GOOGLE_ID,
@@ -36,6 +43,8 @@ export class LoginUserUC implements ILoginUserUC {
 				ErrorMessage.BLOCKED_FROM_PLATFORM,
 				HttpStatus.FORBIDDEN,
 			);
+
+		// validate password
 		const isPasswordValid = await this._cryptoService.compare(
 			password,
 			user.passwordHash,
@@ -46,6 +55,7 @@ export class LoginUserUC implements ILoginUserUC {
 				HttpStatus.UNAUTHORIZED,
 			);
 
+		// cache user data
 		this._cacheService.set(
 			`user:${user.id}`,
 			{ id: user.id, profilePicture: user.profilePicture, name: user.name },
@@ -54,6 +64,8 @@ export class LoginUserUC implements ILoginUserUC {
 
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
+
+		// generate tokens
 		return {
 			accessToken: this._tokenService.generateAccessToken(user),
 			refreshToken: this._tokenService.generateRefreshToken(user),

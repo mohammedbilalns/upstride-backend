@@ -1,4 +1,5 @@
 import { ErrorMessage, HttpStatus, QueueEvents } from "../../../common/enums";
+import { MailType } from "../../../common/enums/mailTypes";
 import { IEventBus } from "../../../domain/events/IEventBus";
 import {
 	IMentorRepository,
@@ -7,10 +8,7 @@ import {
 import { IApproveMentorUC } from "../../../domain/useCases/mentorManagement/approveMentor.uc.interface";
 import { approveMentorDto } from "../../dtos";
 import { AppError } from "../../errors/AppError";
-import {
-	APPROVE_SUBJECT,
-	buildMentorApprovalEmailHtml,
-} from "../../utils/mentor.util";
+import { APPROVE_SUBJECT } from "../../utils/mail.util";
 
 export class ApproveMentorUC implements IApproveMentorUC {
 	constructor(
@@ -42,9 +40,9 @@ export class ApproveMentorUC implements IApproveMentorUC {
 		const message = {
 			to: user.email,
 			subject: APPROVE_SUBJECT,
-			text: buildMentorApprovalEmailHtml(user.name),
+			mailType: MailType.APPROVED_MENTOR,
+			userName: user.name,
 		};
-		// FIX: rename the event to generic mail
-		await this._eventBus.publish(QueueEvents.SEND_OTP, message);
+		await this._eventBus.publish(QueueEvents.SEND_MAIL, message);
 	}
 }

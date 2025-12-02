@@ -1,3 +1,5 @@
+import { verifyResetOtpParam } from "../../../application/dtos/updatePassword.dto";
+
 export interface IVerifyResetOtpUC {
-	execute(email: string, otp: string): Promise<string>;
+	execute(dto: verifyResetOtpParam): Promise<string>;
 }

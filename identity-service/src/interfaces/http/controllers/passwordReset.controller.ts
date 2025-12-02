@@ -66,9 +66,9 @@ export class PasswordResetController {
 
 	/** Verify password reset OTP */
 	public verifyResetOtp = asyncHandler(async (req, res) => {
-		const { email, otp } = verifyOtpSchema.parse(req.body);
+		const parsedPayload = verifyOtpSchema.parse(req.body);
 
-		const token = await this._verifyResetOtpUC.execute(email, otp);
+		const token = await this._verifyResetOtpUC.execute(parsedPayload);
 
 		this.setTokenCookie(res, "reset", token);
 
@@ -81,9 +81,9 @@ export class PasswordResetController {
 	public updatePassword = asyncHandler(async (req, res) => {
 		const resetToken = req.cookies.resettoken;
 
-		const { email, newPassword } = updatePasswordSchema.parse(req.body);
+		const parsedPayload = updatePasswordSchema.parse(req.body);
 
-		await this._updatePasswordUC.execute(email, newPassword, resetToken);
+		await this._updatePasswordUC.execute({ ...parsedPayload, resetToken });
 
 		this.clearTokenCookie(res, "reset");
 

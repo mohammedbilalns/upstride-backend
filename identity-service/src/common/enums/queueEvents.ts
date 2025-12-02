@@ -1,5 +1,5 @@
 export enum QueueEvents {
-	SEND_OTP = "send.otp",
+	SEND_MAIL = "send.mail",
 	SAVE_MEDIA = "save.media",
 	UPDATE_PROFILE = "update.profile",
 }
