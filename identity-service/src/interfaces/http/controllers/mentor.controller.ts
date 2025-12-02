@@ -1,5 +1,15 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import type { IMentorService } from "../../../domain/services";
+import {
+	IApproveMentorUC,
+	IFetchMentorByExpertiseUC,
+	IFetchMentorDetailsUC,
+	IFetchMentorsUC,
+	IFetchSelfUC,
+	IFindMentorByExpertiseandSkillUC,
+	IRegisterAsMentorUC,
+	IRejectMentorUC,
+	IUpdateMentorUC,
+} from "../../../domain/useCases/mentorManagement";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	approveMentorSchema,
@@ -12,12 +22,22 @@ import {
 } from "../validations/mentor.validation";
 
 export class MentorController {
-	constructor(private _mentorService: IMentorService) {}
+	constructor(
+		private _registerAsMentorUC: IRegisterAsMentorUC,
+		private _fetchMentorsUC: IFetchMentorsUC,
+		private _findMentorByExpertiseandSkillUC: IFindMentorByExpertiseandSkillUC,
+		private _approveMentorUC: IApproveMentorUC,
+		private _rejectMentorUC: IRejectMentorUC,
+		private _updateMentorUC: IUpdateMentorUC,
+		private _fetchMentorByExpertiseUC: IFetchMentorByExpertiseUC,
+		private _fetchMentorDetailsUC: IFetchMentorDetailsUC,
+		private _fetchSelfUC: IFetchSelfUC,
+	) {}
 
 	createMentor = asyncHandler(async (req, res) => {
 		const data = mentorRegistrationSchema.parse(req.body);
 		const userId = res.locals.user.id;
-		await this._mentorService.createMentor({ ...data, userId });
+		await this._registerAsMentorUC.execute({ ...data, userId });
 		res
 			.status(HttpStatus.CREATED)
 			.json({ success: true, message: ResponseMessage.REQUEST_FOR_MENTORING });
@@ -27,7 +47,7 @@ export class MentorController {
 		const { page, limit, query, status } = fetchMentorsQuerySchema.parse(
 			req.query,
 		);
-		const data = await this._mentorService.fetchMentors({
+		const data = await this._fetchMentorsUC.execute({
 			page,
 			limit,
 			query,
@@ -40,7 +60,7 @@ export class MentorController {
 		const userId = res.locals.user.id;
 		const { page, limit, query, expertiseId, skillId } =
 			fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
-		const data = await this._mentorService.findByExpertiseandSkill({
+		const data = await this._findMentorByExpertiseandSkillUC.execute({
 			expertiseId,
 			skillId,
 			userId,
@@ -53,7 +73,7 @@ export class MentorController {
 
 	appoveMentor = asyncHandler(async (req, res) => {
 		const { mentorId } = approveMentorSchema.parse(req.body);
-		await this._mentorService.approveMentor({ mentorId });
+		await this._approveMentorUC.execute({ mentorId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.MENTOR_APPROVED });
@@ -61,7 +81,7 @@ export class MentorController {
 
 	rejectMentor = asyncHandler(async (req, res) => {
 		const { mentorId, rejectionReason } = rejectMentorSchema.parse(req.body);
-		await this._mentorService.rejectMentor({ mentorId, rejectionReason });
+		await this._rejectMentorUC.execute({ mentorId, rejectionReason });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.MENTOR_REJECTED });
@@ -70,7 +90,7 @@ export class MentorController {
 	updateMentor = asyncHandler(async (req, res) => {
 		const data = updateMentorSchema.parse(req.body);
 		const userId = res.locals.user.id;
-		await this._mentorService.updateMentor({
+		await this._updateMentorUC.execute({
 			...data,
 			userId,
 		});
@@ -82,21 +102,20 @@ export class MentorController {
 	// update to fetch the mentors by userInterest later
 	fetchMentorsByExpertiseId = asyncHandler(async (req, res) => {
 		const { expertiseId } = req.params;
-		const mentors =
-			await this._mentorService.getMentorByExpertiseId(expertiseId);
+		const mentors = await this._fetchMentorByExpertiseUC.execute(expertiseId);
 		res.status(HttpStatus.OK).json(mentors);
 	});
 
 	fetchMentorDetails = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { mentorId } = fetchMentorParamsSchema.parse(req.params);
-		const mentor = await this._mentorService.getMentorDetails(mentorId, userId);
+		const mentor = await this._fetchMentorDetailsUC.execute(mentorId, userId);
 		res.status(HttpStatus.OK).json(mentor);
 	});
 
 	getMe = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
-		const data = await this._mentorService.getMe(userId);
+		const data = await this._fetchSelfUC.execute(userId);
 		res.status(HttpStatus.OK).send(data);
 	});
 }

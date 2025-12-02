@@ -1,11 +1,31 @@
-import { MentorService } from "../../../application/services/mentor.service";
+import {
+	ApproveMentorUC,
+	FetchMentorByExpertiseUC,
+	FetchMentorDetailsUC,
+	FetchMentorsUC,
+	FetchSelfUC,
+	FindMentorByExpertiseandSkillUC,
+	RegisterAsMentorUC,
+	RejectMentorUC,
+	UpdateMentorUC,
+} from "../../../application/usecases/mentorManagement";
 import type { IEventBus } from "../../../domain/events/IEventBus";
 import type {
 	IMentorRepository,
 	IUserRepository,
 } from "../../../domain/repositories";
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
-import type { IMentorService } from "../../../domain/services";
+import {
+	IApproveMentorUC,
+	IFetchMentorByExpertiseUC,
+	IFetchMentorDetailsUC,
+	IUpdateMentorUC,
+	IRejectMentorUC,
+	IFindMentorByExpertiseandSkillUC,
+	IFetchSelfUC,
+	IFetchMentorsUC,
+	IRegisterAsMentorUC,
+} from "../../../domain/useCases/mentorManagement";
 import {
 	MentorRepository,
 	UserRepository,
@@ -30,16 +50,48 @@ export function createMentorController(): MentorController {
 	// ─────────────────────────────────────────────
 	const eventBus: IEventBus = EventBus;
 	// ─────────────────────────────────────────────
-	// Services
+	// UseCases
 	// ─────────────────────────────────────────────
-	const mentorService: IMentorService = new MentorService(
-		mentorRepository,
+	const approveMentorUC: IApproveMentorUC = new ApproveMentorUC(
 		userRepository,
-		connectionRepository,
+		mentorRepository,
 		eventBus,
 	);
+	const fetchMentorByExpertiseUC: IFetchMentorByExpertiseUC =
+		new FetchMentorByExpertiseUC(mentorRepository);
+	const fetchMentorDetailsUC: IFetchMentorDetailsUC = new FetchMentorDetailsUC(
+		mentorRepository,
+		connectionRepository,
+	);
+	const fetchMentorsUC: IFetchMentorsUC = new FetchMentorsUC(mentorRepository);
+	const fetchSelfUC: IFetchSelfUC = new FetchSelfUC(mentorRepository);
+	const findMentorByExpertiseandSkillUC: IFindMentorByExpertiseandSkillUC =
+		new FindMentorByExpertiseandSkillUC(mentorRepository);
+	const registerAsMentorUC: IRegisterAsMentorUC = new RegisterAsMentorUC(
+		userRepository,
+		mentorRepository,
+	);
+	const rejectMentorUC: IRejectMentorUC = new RejectMentorUC(
+		userRepository,
+		mentorRepository,
+	);
+	const updateMentorUC: IUpdateMentorUC = new UpdateMentorUC(
+		userRepository,
+		mentorRepository,
+	);
+
 	// ─────────────────────────────────────────────
 	// Controller
 	// ─────────────────────────────────────────────
-	return new MentorController(mentorService);
+	return new MentorController(
+		registerAsMentorUC,
+		fetchMentorsUC,
+		findMentorByExpertiseandSkillUC,
+		approveMentorUC,
+		rejectMentorUC,
+		updateMentorUC,
+		fetchMentorByExpertiseUC,
+		fetchMentorDetailsUC,
+		fetchSelfUC,
+	);
 }
