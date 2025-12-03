@@ -12,6 +12,11 @@ import { AppError } from "../../errors/AppError";
 import { generateOtp } from "../../utils/generateOtp";
 import { OTP_SUBJECT, otpType } from "../../utils/mail.util";
 
+/**
+ * RegisterUser Use Case
+ * Handles user signup, stores hashed password,
+ * generates OTP and triggers email event for verification.
+ */
 export class RegisterUserUC implements IRegisterUserUC {
 	constructor(
 		private _userRepository: IUserRepository,
@@ -20,10 +25,9 @@ export class RegisterUserUC implements IRegisterUserUC {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(registerUserParam: registerUserParam): Promise<void> {
-		const { name, email, phone, password } = registerUserParam;
-
-		const existingUser = await this._userRepository.findByEmail(email);
+	async execute(dto: registerUserParam): Promise<void> {
+		// verify the user doesn't exist
+		const existingUser = await this._userRepository.findByEmail(dto.email);
 		if (existingUser?.isVerified)
 			throw new AppError(
 				ErrorMessage.EMAIL_ALREADY_EXISTS,
@@ -33,22 +37,26 @@ export class RegisterUserUC implements IRegisterUserUC {
 		if (existingUser && !existingUser?.isVerified)
 			await this._userRepository.delete(existingUser.id);
 
-		const hashedPassword = await this._cryptoService.hash(password);
+		// hash the password
+		const hashedPassword = await this._cryptoService.hash(dto.password);
+		// create the user
 		await this._userRepository.create({
-			email,
-			phone,
-			name,
+			email: dto.email,
+			phone: dto.phone,
+			name: dto.name,
 			passwordHash: hashedPassword,
 		});
+		// generate and save the OTP
 		const otp = generateOtp();
 		await this._verficationTokenRepository.saveOtp(
 			otp,
-			email,
+			dto.email,
 			otpType.register,
 			300,
 		);
+		// send the OTP to the user
 		const message = {
-			to: email,
+			to: dto.email,
 			subject: OTP_SUBJECT,
 			mailType: MailType.REGISTER_OTP,
 			otp: otp,

@@ -1,4 +1,5 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import logger from "../../../common/utils/logger";
 import {
 	IUserRepository,
 	IVerificationTokenRepository,
@@ -59,6 +60,7 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 			"register",
 			15 * 60,
 		);
+		logger.debug(`token in the veify otp usecase: ${token}`);
 
 		return token;
 	}

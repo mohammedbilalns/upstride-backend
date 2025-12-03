@@ -26,6 +26,7 @@ export class RabbitMQEventBus implements IEventBus {
 		logger.info(`📤 Published event: ${routingKey}`);
 	}
 
+	//NOTE : unused method
 	async subscribe<T>(
 		routingKey: string,
 		handler: (payload: T) => Promise<void>,

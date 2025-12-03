@@ -37,6 +37,22 @@ export class RegistrationController {
 		});
 	}
 
+	private setAuthCookies(
+		res: Response,
+		accessToken: string,
+		refreshToken: string,
+	) {
+		res.cookie("accesstoken", accessToken, {
+			...COOKIE_OPTIONS,
+			maxAge: parseInt(env.ACCESS_TOKEN_EXPIRY),
+		});
+
+		res.cookie("refreshtoken", refreshToken, {
+			...COOKIE_OPTIONS,
+			maxAge: parseInt(env.REFRESH_TOKEN_EXPIRY),
+		});
+	}
+
 	/** Clears registration OTP cookies */
 	private clearTokenCookie(res: Response, type: "reset" | "register") {
 		res.clearCookie(type === "reset" ? "resettoken" : "registertoken");
@@ -58,7 +74,9 @@ export class RegistrationController {
 		const { email, otp } = verifyOtpSchema.parse(req.body);
 		const token = await this._verifyOtpUC.execute(email, otp);
 
+		console.log("Setting token cookie");
 		this.setTokenCookie(res, "register", token);
+		console.log("Token cookie set");
 
 		res
 			.status(HttpStatus.OK)
@@ -83,19 +101,21 @@ export class RegistrationController {
 
 		const token = req.cookies.registertoken;
 
-		await this._createInterestsUC.execute({
-			email,
-			expertises: selectedAreas,
-			skills: selectedTopics,
-			newExpertises: newAreas,
-			newTopics: newTopics,
-			token,
-		});
+		const { accessToken, refreshToken, user } =
+			await this._createInterestsUC.execute({
+				email,
+				expertises: selectedAreas,
+				skills: selectedTopics,
+				newExpertises: newAreas,
+				newTopics: newTopics,
+				token,
+			});
 
 		this.clearTokenCookie(res, "register");
+		this.setAuthCookies(res, accessToken, refreshToken);
 
 		res
 			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.INTERESTS_ADDED });
+			.json({ success: true, message: ResponseMessage.INTERESTS_ADDED, user });
 	});
 }

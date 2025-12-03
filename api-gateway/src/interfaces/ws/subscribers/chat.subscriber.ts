@@ -14,9 +14,6 @@ export async function registerChatSubscriber(
 ) {
 	await eventBus.subscribe(QueueEvents.SAVED_MESSAGE, async (payload) => {
 		try {
-			logger.debug(
-				`message payload received from the chat service: ${JSON.stringify(payload)}`,
-			);
 			const parsedPayload = messagePayloadSchema.parse(payload);
 			socketPublisher.emitToUser(
 				parsedPayload.receiverId,
@@ -32,9 +29,6 @@ export async function registerChatSubscriber(
 
 	await eventBus.subscribe(QueueEvents.MARKED_MESSAGE_READ, async (payload) => {
 		try {
-			logger.debug(
-				`message status payload received from the chat service: ${JSON.stringify(payload)}`,
-			);
 			const parsedPayload = messageStatusPayloadSchema.parse(payload);
 			socketPublisher.emitToUser(
 				parsedPayload.senderId,

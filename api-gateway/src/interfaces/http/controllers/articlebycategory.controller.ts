@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import env from "../../../infra/config/env";
-import logger from "../../../utils/logger";
 
 export const filterArticlesByCategory = async (req: Request, res: Response) => {
 	try {
@@ -14,7 +13,6 @@ export const filterArticlesByCategory = async (req: Request, res: Response) => {
 			`${env.IDENTITY_SERVICE_URL}/api/mentor/expertise/${category}`,
 		);
 		const users = (await response.json()) as string[];
-		logger.debug(`[HTTP] users: ${JSON.stringify(users)}`);
 
 		// build the url to fetch the articles
 		const baseUrl = `${env.ARTICLE_SERVICE_URL}/api/articles/by-users`;
