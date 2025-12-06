@@ -51,6 +51,16 @@ export class ExpertiseRepository
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
 
+	async createIfNotExists(expertise: Partial<Expertise>): Promise<Expertise> {
+		const doc = await this._model.findOneAndUpdate(
+			{ name: expertise.name },
+			{ $setOnInsert: expertise },
+			{ upsert: true, new: true },
+		);
+
+		return this.mapToDomain(doc!);
+	}
+
 	async count(query?: string, isUser?: boolean): Promise<number> {
 		const filter: any = {};
 		if (isUser) {

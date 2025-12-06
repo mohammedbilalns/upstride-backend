@@ -19,6 +19,7 @@ export interface MentorRegistrationDTO {
 		asset_folder: string;
 	};
 	termsAccepted: boolean;
+	newSkills?: string[];
 }
 
 export interface updateMentoDto {
@@ -29,6 +30,7 @@ export interface updateMentoDto {
 	educationalQualifications?: string[];
 	personalWebsite?: string | "";
 	skills?: string[];
+	newSkills?: string[];
 }
 
 export interface fetchMentorDto {

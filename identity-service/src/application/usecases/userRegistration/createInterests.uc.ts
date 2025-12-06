@@ -40,12 +40,13 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		// create new expertises
 		const createdExpertises = await Promise.all(
 			newExpertises.map((expertise) => {
-				return this._expertiseRepository.create({
+				return this._expertiseRepository.createIfNotExists({
 					name: expertise,
 					isVerified: false,
 				});
 			}),
 		);
+		createdExpertises.filter((expertise) => expertise !== null);
 
 		if (!createdExpertises)
 			throw new AppError(
@@ -87,7 +88,10 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 
 		const newSkillIds = await Promise.all(
 			mappedTopics.map((topic) =>
-				this._skillRepository.create({ ...topic, isVerified: false }),
+				this._skillRepository.createIfNotExists({
+					...topic,
+					isVerified: false,
+				}),
 			),
 		);
 		return newSkillIds.map((skillId) => skillId.id);

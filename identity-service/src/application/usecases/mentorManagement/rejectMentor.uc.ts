@@ -14,8 +14,7 @@ export class RejectMentorUC implements IRejectMentorUC {
 	) {}
 
 	async execute(dto: rejectMentorDto): Promise<void> {
-		const { rejectionReason, mentorId } = dto;
-		const mentor = await this._mentorRepository.findById(mentorId);
+		const mentor = await this._mentorRepository.findById(dto.mentorId);
 		if (!mentor)
 			throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
 
@@ -27,7 +26,7 @@ export class RejectMentorUC implements IRejectMentorUC {
 				isActive: false,
 				isRejected: true,
 				isPending: false,
-				rejectionReason,
+				rejectionReason: dto.rejectionReason,
 			}),
 		]);
 	}

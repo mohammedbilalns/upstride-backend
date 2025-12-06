@@ -30,6 +30,7 @@ export const mentorRegistrationSchema = z.object({
 	termsAccepted: z.boolean().refine((val) => val === true, {
 		message: "You must accept the terms and conditions",
 	}),
+	newSkills: z.array(z.string()).optional(),
 });
 
 export const updateMentorSchema = z.object({
@@ -58,6 +59,7 @@ export const updateMentorSchema = z.object({
 		.array(z.string())
 		.min(1, { message: "At least one skill is required" })
 		.optional(),
+	newSkills: z.array(z.string()).optional(),
 });
 
 export const fetchMentorsByExpertiseAndSkillSchema = z.object({

@@ -1,3 +1,4 @@
+import { ExpertiseHelperService } from "../../../application/services/expertiseHelper.service";
 import {
 	ApproveMentorUC,
 	FetchMentorByExpertiseUC,
@@ -12,9 +13,11 @@ import {
 import type { IEventBus } from "../../../domain/events/IEventBus";
 import type {
 	IMentorRepository,
+	ISkillRepository,
 	IUserRepository,
 } from "../../../domain/repositories";
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
+import { IExpertiseHelperService } from "../../../domain/services/expertiseHelper.service.interface";
 import {
 	IApproveMentorUC,
 	IFetchMentorByExpertiseUC,
@@ -28,6 +31,7 @@ import {
 } from "../../../domain/useCases/mentorManagement";
 import {
 	MentorRepository,
+	SkillRepository,
 	UserRepository,
 } from "../../../infrastructure/database/repositories";
 import { ConnectionRepository } from "../../../infrastructure/database/repositories/connection.repository";
@@ -45,6 +49,11 @@ export function createMentorController(): MentorController {
 	const userRepository: IUserRepository = new UserRepository();
 	const connectionRepository: IConnectionRepository =
 		new ConnectionRepository();
+	const skillRepository: ISkillRepository = new SkillRepository();
+
+	//services
+	const expertiseHelperService: IExpertiseHelperService =
+		new ExpertiseHelperService(skillRepository);
 	// ─────────────────────────────────────────────
 	// Event system
 	// ─────────────────────────────────────────────
@@ -70,6 +79,7 @@ export function createMentorController(): MentorController {
 	const registerAsMentorUC: IRegisterAsMentorUC = new RegisterAsMentorUC(
 		userRepository,
 		mentorRepository,
+		expertiseHelperService,
 	);
 	const rejectMentorUC: IRejectMentorUC = new RejectMentorUC(
 		userRepository,
@@ -78,6 +88,7 @@ export function createMentorController(): MentorController {
 	const updateMentorUC: IUpdateMentorUC = new UpdateMentorUC(
 		userRepository,
 		mentorRepository,
+		expertiseHelperService,
 	);
 
 	// ─────────────────────────────────────────────

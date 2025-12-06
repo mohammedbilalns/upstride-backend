@@ -3,6 +3,7 @@ import {
 	IMentorRepository,
 	IUserRepository,
 } from "../../../domain/repositories";
+import { IExpertiseHelperService } from "../../../domain/services/expertiseHelper.service.interface";
 import { IRegisterAsMentorUC } from "../../../domain/useCases/mentorManagement/registerAsMentor.uc.interface";
 import { MentorRegistrationDTO } from "../../dtos";
 import { AppError } from "../../errors/AppError";
@@ -11,24 +12,11 @@ export class RegisterAsMentorUC implements IRegisterAsMentorUC {
 	constructor(
 		private _userRepository: IUserRepository,
 		private _mentorRepository: IMentorRepository,
+		private _expertiseHelperService: IExpertiseHelperService,
 	) {}
 
 	async execute(dto: MentorRegistrationDTO): Promise<void> {
-		const {
-			userId,
-			bio,
-			currentRole,
-			organisation,
-			yearsOfExperience,
-			educationalQualifications,
-			personalWebsite,
-			resume,
-			termsAccepted,
-			skills,
-			expertise,
-		} = dto;
-
-		const user = await this._userRepository.findById(userId);
+		const user = await this._userRepository.findById(dto.userId);
 		if (!user || !user.isVerified)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
@@ -44,23 +32,30 @@ export class RegisterAsMentorUC implements IRegisterAsMentorUC {
 				HttpStatus.BAD_REQUEST,
 			);
 		}
+		const newSkillsIds: string[] =
+			await this._expertiseHelperService.processNewSkills(
+				dto.newSkills ? dto.newSkills : [],
+				dto.expertise,
+			);
+
 		const mentorDetails = {
-			bio,
-			currentRole,
-			organisation,
-			yearsOfExperience,
-			educationalQualifications,
-			personalWebsite,
-			resumeId: resume.public_id,
-			expertiseId: expertise,
-			userId,
-			termsAccepted,
-			skillIds: skills,
-			expertise,
+			bio: dto.bio,
+			currentRole: dto.currentRole,
+			organisation: dto.organisation,
+			yearsOfExperience: dto.yearsOfExperience,
+			educationalQualifications: dto.educationalQualifications,
+			personalWebsite: dto.personalWebsite,
+			resumeId: dto.resume.public_id,
+			expertiseId: dto.expertise,
+			userId: dto.userId,
+			termsAccepted: dto.termsAccepted,
+			skillIds: [...dto.skills, ...newSkillsIds],
+			expertise: dto.expertise,
 		};
+
 		await Promise.all([
 			this._mentorRepository.create({ ...mentorDetails, isPending: true }),
-			this._userRepository.update(userId, {
+			this._userRepository.update(dto.userId, {
 				isRequestedForMentoring: "pending",
 				mentorRegistrationCount: (user.mentorRegistrationCount || 0) + 1,
 			}),

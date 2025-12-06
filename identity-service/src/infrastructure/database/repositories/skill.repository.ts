@@ -82,4 +82,13 @@ export class SkillRepository
 		const total = await this._model.countDocuments(filter).exec();
 		return total;
 	}
+	async createIfNotExists(skill: Skill): Promise<Skill> {
+		const doc = await this._model.findOneAndUpdate(
+			{ name: skill.name },
+			{ $setOnInsert: skill },
+			{ upsert: true, new: true },
+		);
+
+		return this.mapToDomain(doc);
+	}
 }

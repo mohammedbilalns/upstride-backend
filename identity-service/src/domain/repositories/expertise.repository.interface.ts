@@ -8,5 +8,6 @@ export interface IExpertiseRepository extends IBaseRepository<Expertise> {
 		query?: string,
 		isUser?: boolean,
 	): Promise<Expertise[]>;
+	createIfNotExists(expertise: Partial<Expertise>): Promise<Expertise>;
 	count(query?: string, isUser?: boolean): Promise<number>;
 }
