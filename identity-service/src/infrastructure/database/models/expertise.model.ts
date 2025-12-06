@@ -9,7 +9,7 @@ export const userSchema: Schema = new Schema({
 		required: true,
 		unique: [true, "Expertise with the same name already exists"],
 	},
-	description: { type: String, required: true },
+	description: { type: String },
 	isVerified: { type: Boolean, required: true },
 });
 

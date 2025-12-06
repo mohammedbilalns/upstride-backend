@@ -6,18 +6,21 @@ import { fetchSkillsDto, FetchSkillsResponse } from "../../dtos";
 export class FetchSkillsUC implements IFetchSkillsUC {
 	constructor(private _skillRepository: ISkillRepository) {}
 
-	async execute(data: fetchSkillsDto): Promise<FetchSkillsResponse> {
+	async execute(dto: fetchSkillsDto): Promise<FetchSkillsResponse> {
+		const isAdmin =
+			dto.userRole === UserRole.ADMIN || dto.userRole === UserRole.SUPER_ADMIN;
+
 		const [skills, total] = await Promise.all([
 			this._skillRepository.findAll(
-				data.expertiseId,
-				data.page,
-				data.limit,
-				data.query,
+				dto.expertiseId,
+				dto.page,
+				dto.limit,
+				dto.query,
+				!isAdmin,
 			),
-			this._skillRepository.count(data.expertiseId, data.query),
+			this._skillRepository.count(dto.expertiseId, dto.query),
 		]);
 
-		const isAdmin = data.userRole === UserRole.ADMIN || UserRole.SUPER_ADMIN;
 		const mapped = skills.map((skill) => ({
 			id: skill.id,
 			name: skill.name,

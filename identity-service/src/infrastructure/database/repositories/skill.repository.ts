@@ -22,17 +22,24 @@ export class SkillRepository
 		};
 	}
 
+	//NOTE : unused pagination ?
 	async findAll(
 		expertiseId: string,
 		page?: number,
 		limit?: number,
 		query?: string,
+		isUser?: boolean,
 	): Promise<Skill[]> {
 		const filter: any = {};
 
 		if (expertiseId) {
 			filter.expertiseId = expertiseId;
 		}
+		// only fetch verified skills if isForUser is true
+		if (isUser) {
+			filter.isVerified = true;
+		}
+
 		if (query) {
 			filter.$or = [
 				{ name: { $regex: query, $options: "i" } },

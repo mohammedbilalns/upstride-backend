@@ -1,5 +1,4 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
-import logger from "../../../common/utils/logger";
 import {
 	IUserRepository,
 	IVerificationTokenRepository,
@@ -9,6 +8,11 @@ import { AppError } from "../../errors/AppError";
 import { otpType } from "../../utils/mail.util";
 import { generateSecureToken } from "../../utils/token.util";
 
+/**
+ * VerifyOtp Use Case
+ * Validates OTP submitted during user registration and, if valid,
+ * creates a short-lived secure token for the next step.
+ */
 export class VerifyOtpUC implements IVerifyOtpUC {
 	constructor(
 		private _userRepository: IUserRepository,
@@ -16,6 +20,7 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 	) {}
 
 	async execute(email: string, otp: string): Promise<string> {
+		// verify resend count doesn't exceed the limit
 		const count =
 			(await this._verficationTokenRepository.getResendCount(
 				email,
@@ -30,6 +35,7 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 			);
 		}
 
+		// save otp and update count
 		const savedOtp = await this._verficationTokenRepository.getOtp(
 			email,
 			otpType.register,
@@ -44,15 +50,18 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 			);
 			throw new AppError(ErrorMessage.INVALID_OTP, HttpStatus.UNAUTHORIZED);
 		}
+		// verify user exists
 		const user = await this._userRepository.findByEmailAndRole(email, "user")!;
 		if (!user)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
 
+		// update user and delete otp
 		await Promise.all([
 			this._userRepository.update(user.id, { isVerified: false }),
 			this._verficationTokenRepository.deleteOtp(email, otpType.register),
 		]);
 
+		// generate and save temp token
 		const token = generateSecureToken();
 		await this._verficationTokenRepository.saveToken(
 			token,
@@ -60,7 +69,6 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 			"register",
 			15 * 60,
 		);
-		logger.debug(`token in the veify otp usecase: ${token}`);
 
 		return token;
 	}

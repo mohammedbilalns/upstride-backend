@@ -74,9 +74,7 @@ export class RegistrationController {
 		const { email, otp } = verifyOtpSchema.parse(req.body);
 		const token = await this._verifyOtpUC.execute(email, otp);
 
-		console.log("Setting token cookie");
 		this.setTokenCookie(res, "register", token);
-		console.log("Token cookie set");
 
 		res
 			.status(HttpStatus.OK)
@@ -96,7 +94,7 @@ export class RegistrationController {
 
 	/** Add interests after OTP verification */
 	public addInterests = asyncHandler(async (req, res) => {
-		const { selectedAreas, selectedTopics, email, newAreas, newTopics } =
+		const { selectedAreas, selectedTopics, email, newExpertises, newTopics } =
 			addInterestsSchema.parse(req.body);
 
 		const token = req.cookies.registertoken;
@@ -106,7 +104,7 @@ export class RegistrationController {
 				email,
 				expertises: selectedAreas,
 				skills: selectedTopics,
-				newExpertises: newAreas,
+				newExpertises,
 				newTopics: newTopics,
 				token,
 			});

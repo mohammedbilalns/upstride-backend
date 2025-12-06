@@ -6,17 +6,24 @@ import { fetchExpertiseDto, FetchExpertisesResponse } from "../../dtos";
 export class FetchExpertisesUC implements IFetchExpertisesUC {
 	constructor(private _expertiseRepository: IExpertiseRepository) {}
 
-	async execute(data: fetchExpertiseDto): Promise<FetchExpertisesResponse> {
+	async execute(dto: fetchExpertiseDto): Promise<FetchExpertisesResponse> {
+		const isAdmin =
+			dto.userRole === UserRole.ADMIN || dto.userRole === UserRole.SUPER_ADMIN;
+
 		const [expertises, total] = await Promise.all([
-			this._expertiseRepository.findAll(data.page, data.limit, data.query),
-			this._expertiseRepository.count(data.query),
+			this._expertiseRepository.findAll(
+				dto.page,
+				dto.limit,
+				dto.query,
+				!isAdmin,
+			),
+			this._expertiseRepository.count(dto.query, !isAdmin),
 		]);
-		const isAdmin = data.userRole === UserRole.ADMIN || UserRole.SUPER_ADMIN;
 		const mapped = expertises.map((expertise) => ({
 			id: expertise.id,
 			name: expertise.name,
+			description: expertise.description,
 			...(isAdmin && {
-				description: expertise.description,
 				isVerified: expertise.isVerified,
 			}),
 		}));

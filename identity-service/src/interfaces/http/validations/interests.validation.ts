@@ -3,7 +3,7 @@ import { z } from "zod";
 export const addInterestsSchema = z.object({
 	selectedAreas: z.array(z.string()),
 	selectedTopics: z.array(z.string()),
-	newAreas: z.array(z.string()).optional(),
+	newExpertises: z.array(z.string()).optional(),
 	newTopics: z
 		.array(
 			z

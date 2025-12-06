@@ -7,6 +7,7 @@ export interface ISkillRepository extends IBaseRepository<Skill> {
 		page?: number,
 		limit?: number,
 		query?: string,
+		isForUser?: boolean,
 	): Promise<Skill[]>;
 	exists(name: string, expertiseId: string): Promise<boolean>;
 	count(expertiseId?: string, query?: string): Promise<number>;

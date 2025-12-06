@@ -118,12 +118,14 @@ export class ExpertiseController {
 		res.status(HttpStatus.OK).json({ data: expertises, total });
 	});
 
+	//NOTE: unused
 	fetchSkillsFromMultipleExpertise = asyncHandler(async (req, res) => {
 		const data = fetchSkillSFromMultipleExpertiseSchema.parse(req.body);
 		const skills = await this._fetchSkillsFromMulipleExpertiseUC.execute(data);
 		return res.status(HttpStatus.OK).json({ data: skills });
 	});
 
+	//NOTE: unused
 	fetchActiveExpertisesAndSkills = asyncHandler(async (_req, res) => {
 		const data = await this._findActiveExpertisesAndSkillsUC.execute();
 		return res.status(HttpStatus.OK).send(data);

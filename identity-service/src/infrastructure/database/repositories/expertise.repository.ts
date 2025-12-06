@@ -26,13 +26,18 @@ export class ExpertiseRepository
 		page: number,
 		limit: number,
 		query?: string,
+		isUser?: boolean,
 	): Promise<Expertise[]> {
 		const filter: any = {};
+
+		if (isUser) {
+			filter.isVerified = true;
+		}
 
 		if (query) {
 			filter.$or = [
 				{ name: { $regex: query, $options: "i" } },
-				{ email: { $regex: query, $options: "i" } },
+				{ description: { $regex: query, $options: "i" } },
 			];
 		}
 		const skip = (page - 1) * limit;
@@ -46,13 +51,21 @@ export class ExpertiseRepository
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
 
-	async count(query?: string): Promise<number> {
+	async count(query?: string, isUser?: boolean): Promise<number> {
 		const filter: any = {};
+		if (isUser) {
+			filter.isVerified = true;
+		}
 
 		if (query) {
-			filter.$or = [
-				{ name: { $regex: query, $options: "i" } },
-				{ description: { $regex: query, $options: "i" } },
+			filter.$and = [
+				...(isUser ? [{ isVerified: true }] : []),
+				{
+					$or: [
+						{ name: { $regex: query, $options: "i" } },
+						{ description: { $regex: query, $options: "i" } },
+					],
+				},
 			];
 		}
 

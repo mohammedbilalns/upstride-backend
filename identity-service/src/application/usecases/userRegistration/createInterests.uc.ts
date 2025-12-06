@@ -86,7 +86,9 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		});
 
 		const newSkillIds = await Promise.all(
-			mappedTopics.map((topic) => this._skillRepository.create(topic)),
+			mappedTopics.map((topic) =>
+				this._skillRepository.create({ ...topic, isVerified: false }),
+			),
 		);
 		return newSkillIds.map((skillId) => skillId.id);
 	}
