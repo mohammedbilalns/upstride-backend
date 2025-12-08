@@ -31,12 +31,12 @@ export class SlotRepository
 		};
 	}
 
-	async find(filter: Partial<Slot>): Promise<Slot[]> {
+	public async find(filter: Partial<Slot>): Promise<Slot[]> {
 		const data = await this._model.find(filter);
 		return data.map(this.mapToDomain);
 	}
 
-	async findOverlappingSlots(
+	public async findOverlappingSlots(
 		mentorId: string,
 		startAt: Date,
 		endAt: Date,

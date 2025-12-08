@@ -40,7 +40,7 @@ export class ExpertiseController {
 		private _verifyExpertiseUC: IVerifyExpertiseUC,
 	) {}
 
-	createExpertise = asyncHandler(async (req, res) => {
+	public createExpertise = asyncHandler(async (req, res) => {
 		const data = createExpertiseSchema.parse(req.body);
 		await this._createExpertiseUC.execute(data);
 		res
@@ -48,7 +48,7 @@ export class ExpertiseController {
 			.json({ success: true, message: ResponseMessage.EXPERTISE_CREATED });
 	});
 
-	udpateExpertise = asyncHandler(async (req, res) => {
+	public updateExpertise = asyncHandler(async (req, res) => {
 		const { expertiseId } = updateExpertiseParamsSchema.parse(req.params);
 		const data = updateExpertiseSchema.parse(req.body);
 		await this._updateExpertiseUC.execute({ expertiseId, ...data });
@@ -57,7 +57,7 @@ export class ExpertiseController {
 			.json({ success: true, message: ResponseMessage.EXPERTISE_UPDATED });
 	});
 
-	fetchExpertises = asyncHandler(async (req, res) => {
+	public fetchExpertises = asyncHandler(async (req, res) => {
 		const filterData = fetchExpertisesSchema.parse(req.query);
 		const userRole = res.locals.user?.role;
 		const { data, total } = await this._fetchExpertisesUC.execute({
@@ -67,7 +67,7 @@ export class ExpertiseController {
 		res.status(HttpStatus.OK).json({ expertises: data, total });
 	});
 
-	verifyExpertise = asyncHandler(async (req, res) => {
+	public verifyExpertise = asyncHandler(async (req, res) => {
 		const { expertiseId } = verifyExpertiseParamsSchema.parse(req.params);
 		await this._verifyExpertiseUC.execute(expertiseId);
 		res
@@ -75,7 +75,7 @@ export class ExpertiseController {
 			.json({ success: true, message: ResponseMessage.EXPERTISE_VERIFIED });
 	});
 
-	createSkill = asyncHandler(async (req, res) => {
+	public createSkill = asyncHandler(async (req, res) => {
 		const { expertiseId } = createSkillParamsSchema.parse(req.params);
 		const { name } = createSkillSchema.parse(req.body);
 		console.log("user role", res.locals.user.role);
@@ -89,7 +89,7 @@ export class ExpertiseController {
 			.json({ success: true, message: ResponseMessage.SKILL_CREATED });
 	});
 
-	updateSkill = asyncHandler(async (req, res) => {
+	public updateSkill = asyncHandler(async (req, res) => {
 		const { skillId } = updateSkillparamsSchema.parse(req.params);
 		const data = updateSkillSchema.parse(req.body);
 		await this._updateSkillUC.execute({ skillId, ...data });
@@ -98,7 +98,7 @@ export class ExpertiseController {
 			.json({ success: true, message: ResponseMessage.SKILL_UPDATED });
 	});
 
-	verifySkill = asyncHandler(async (req, res) => {
+	public verifySkill = asyncHandler(async (req, res) => {
 		const { skillId } = verifySkillParamsSchema.parse(req.params);
 		await this._updateSkillUC.execute({ skillId, isVerified: true });
 		res
@@ -106,7 +106,7 @@ export class ExpertiseController {
 			.json({ success: true, message: ResponseMessage.SKILL_VERIFIED });
 	});
 
-	fetchSkills = asyncHandler(async (req, res) => {
+	public fetchSkills = asyncHandler(async (req, res) => {
 		const data = fetchSkillSchema.parse(req.query);
 		const { expertiseId } = fetchSkillsParamsSchema.parse(req.params);
 		const { expertises, total } = await this._fetchSkillsUC.execute({
@@ -119,14 +119,14 @@ export class ExpertiseController {
 	});
 
 	//NOTE: unused
-	fetchSkillsFromMultipleExpertise = asyncHandler(async (req, res) => {
+	public fetchSkillsFromMultipleExpertise = asyncHandler(async (req, res) => {
 		const data = fetchSkillSFromMultipleExpertiseSchema.parse(req.body);
 		const skills = await this._fetchSkillsFromMulipleExpertiseUC.execute(data);
 		return res.status(HttpStatus.OK).json({ data: skills });
 	});
 
 	//NOTE: unused
-	fetchActiveExpertisesAndSkills = asyncHandler(async (_req, res) => {
+	public fetchActiveExpertisesAndSkills = asyncHandler(async (_req, res) => {
 		const data = await this._findActiveExpertisesAndSkillsUC.execute();
 		return res.status(HttpStatus.OK).send(data);
 	});

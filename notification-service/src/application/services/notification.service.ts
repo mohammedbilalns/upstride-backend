@@ -45,7 +45,9 @@ export class NotificationService implements INotificationService {
 		return { title, content, link, type: template.type };
 	}
 
-	async saveNotification(notificationData: NotificationDto): Promise<void> {
+	public async saveNotification(
+		notificationData: NotificationDto,
+	): Promise<void> {
 		const { userId, ...triggerInfo } = notificationData;
 		const { title, content, link, type } =
 			this._generateNotificationData(triggerInfo);
@@ -70,7 +72,7 @@ export class NotificationService implements INotificationService {
 		});
 	}
 
-	async markNotificationAsRead(notificationId: string): Promise<void> {
+	public async markNotificationAsRead(notificationId: string): Promise<void> {
 		const notification =
 			await this._notificationRepository.findById(notificationId);
 		if (!notification)
@@ -79,7 +81,7 @@ export class NotificationService implements INotificationService {
 		await this._notificationRepository.update(notificationId, { isRead: true });
 	}
 
-	async fetchUserNotifications(
+	public async fetchUserNotifications(
 		userId: string,
 		page: number,
 		limit: number,
@@ -93,7 +95,7 @@ export class NotificationService implements INotificationService {
 		return { notifications, total, unreadCount };
 	}
 
-	async makrAllNotificationsAsRead(userId: string): Promise<void> {
+	public async makrAllNotificationsAsRead(userId: string): Promise<void> {
 		await this._notificationRepository.updateMany({ userId }, { isRead: true });
 	}
 }

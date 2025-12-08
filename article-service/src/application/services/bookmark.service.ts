@@ -5,7 +5,7 @@ import type { IBookMarkService } from "../../domain/services/bookmark.service.in
 export class BookMarkService implements IBookMarkService {
 	constructor(private _bookMarkRepository: IBookMarkRepository) {}
 
-	async fetchBookMarkedArticles(
+	public async fetchBookMarkedArticles(
 		userId: string,
 		page: number,
 		limit: number,
@@ -24,11 +24,15 @@ export class BookMarkService implements IBookMarkService {
 			total,
 		};
 	}
-	async saveArticle(userId: string, articleId: string): Promise<void> {
+
+	public async saveArticle(userId: string, articleId: string): Promise<void> {
 		await this._bookMarkRepository.create({ userId, articleId });
 	}
 
-	async deleteBookMark(userId: string, articleId: string): Promise<void> {
+	public async deleteBookMark(
+		userId: string,
+		articleId: string,
+	): Promise<void> {
 		await this._bookMarkRepository.deleteByUserIdAndArticleId(
 			userId,
 			articleId,

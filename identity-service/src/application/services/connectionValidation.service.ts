@@ -13,7 +13,10 @@ export class ConnectionValidationService
 		private _connectionRepository: IConnectionRepository,
 	) {}
 
-	async validate(userId: string, mentorId: string): Promise<false | string> {
+	public async validate(
+		userId: string,
+		mentorId: string,
+	): Promise<false | string> {
 		const [user, mentor, connection] = await Promise.all([
 			this._userRepository.findById(userId),
 			this._mentorRepository.findById(mentorId),

@@ -9,7 +9,7 @@ import {
 export class NotificationController {
 	constructor(private _notificationService: INotificationService) {}
 
-	markNotificationAsRead = asyncHandler(async (req, res) => {
+	public markNotificationAsRead = asyncHandler(async (req, res) => {
 		const { notificationId } = markNotificationAsReadValidationSchema.parse(
 			req.params,
 		);
@@ -20,7 +20,7 @@ export class NotificationController {
 			.json({ success: true, message: ResponseMessage.NOTIFICAION_READ });
 	});
 
-	fetchUserNotifications = asyncHandler(async (req, res) => {
+	public fetchUserNotifications = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { page, limit } = fetchNotificationsValidationSchema.parse(req.query);
 		const { notifications, total, unreadCount } =
@@ -34,7 +34,7 @@ export class NotificationController {
 			.send({ notifications, total, unreadCount });
 	});
 
-	markAllNotificationsAsRead = asyncHandler(async (_req, res) => {
+	public markAllNotificationsAsRead = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
 		await this._notificationService.makrAllNotificationsAsRead(userId);
 		return res

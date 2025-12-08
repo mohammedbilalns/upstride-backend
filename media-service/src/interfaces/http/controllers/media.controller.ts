@@ -9,12 +9,12 @@ import {
 export class MediaController {
 	constructor(private _mediaService: IMediaMangementService) {}
 
-	generateSignature = asyncHandler(async (_req, res) => {
+	public generateSignature = asyncHandler(async (_req, res) => {
 		const signatureData = await this._mediaService.createSignature();
 		res.status(HttpStatus.OK).json({ data: signatureData });
 	});
 
-	streamMedia = asyncHandler(async (req, res) => {
+	public streamMedia = asyncHandler(async (req, res) => {
 		const { publicId, mediaType } = getSignedUrlBodySchema.parse(req.body);
 		const { stream, contentType } = await this._mediaService.streamMedia(
 			publicId,
@@ -25,7 +25,7 @@ export class MediaController {
 		stream.pipe(res);
 	});
 
-	deleteMedia = asyncHandler(async (req, res) => {
+	public deleteMedia = asyncHandler(async (req, res) => {
 		const { publicId, mediaType } = deleteMediaParamsSchema.parse(req.params);
 		await this._mediaService.deleteMedia(publicId, mediaType);
 		res

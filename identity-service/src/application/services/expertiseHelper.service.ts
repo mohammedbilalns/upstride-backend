@@ -4,7 +4,7 @@ import { IExpertiseHelperService } from "../../domain/services/expertiseHelper.s
 export class ExpertiseHelperService implements IExpertiseHelperService {
 	constructor(private _skillRepository: ISkillRepository) {}
 
-	async processNewSkills(
+	public async processNewSkills(
 		skillNames: string[],
 		expertiseId: string,
 	): Promise<string[]> {

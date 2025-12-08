@@ -18,13 +18,13 @@ export class ProfileController {
 		private _changePasswordUc: IChangePasswordUC,
 	) {}
 
-	fetchProfileById = asyncHandler(async (req, res) => {
+	public fetchProfileById = asyncHandler(async (req, res) => {
 		const { profileId } = fetchProfileSchema.parse(req.params);
 		const data = await this._fetchProfileUc.execute(profileId);
 		res.status(HttpStatus.OK).json(data);
 	});
 
-	updateProfile = asyncHandler(async (req, res) => {
+	public updateProfile = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const data = updateProfileSchema.parse(req.body);
 		await this._updateProfileUc.execute(userId, data);
@@ -34,7 +34,7 @@ export class ProfileController {
 			.json({ success: true, message: ResponseMessage.PROFILE_UPDATED });
 	});
 
-	changePassword = asyncHandler(async (req, res) => {
+	public changePassword = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { oldPassword, newPassword } = changePasswordSchema.parse(req.body);
 		await this._changePasswordUc.execute(userId, {

@@ -43,7 +43,7 @@ export class ArticleReadService implements IArticleReadService {
 		return data;
 	}
 
-	async getArticleById(
+	public async getArticleById(
 		id: string,
 		userId: string,
 	): Promise<{
@@ -106,7 +106,7 @@ export class ArticleReadService implements IArticleReadService {
 		};
 	}
 
-	async fetchArticles(
+	public async fetchArticles(
 		fetchDto: FetchArticlesDto,
 	): Promise<FetchArticlesResponseDto> {
 		const cacheKey = `${ArticleCacheConstants.ARTICLES_LIST_CACHE_PREFIX}${JSON.stringify(fetchDto)}`;
@@ -155,7 +155,7 @@ export class ArticleReadService implements IArticleReadService {
 		);
 	}
 
-	async getRandomArticlesByAuthors(
+	public async getRandomArticlesByAuthors(
 		fetchDto: FetchRandomArticlesByAuthorsDto,
 	): Promise<FetchArticlesResponseDto> {
 		if (!fetchDto.authorIds) return { articles: [], total: 0 };

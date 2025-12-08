@@ -37,7 +37,7 @@ export class ArticleWriteService implements IArticleWriteService {
 		await this.invalidateListCache();
 	}
 
-	async createArticle(createAricleDto: CreateArticleDto): Promise<void> {
+	public async createArticle(createAricleDto: CreateArticleDto): Promise<void> {
 		const { content, tags, author, authorRole, featuredImage, ...rest } =
 			createAricleDto;
 		const cachedAuthor: { profilePicture: string } | null =
@@ -66,7 +66,9 @@ export class ArticleWriteService implements IArticleWriteService {
 		await this.invalidateListCache();
 	}
 
-	async updateArticle(updateArticleData: UpdateArticleDto): Promise<void> {
+	public async updateArticle(
+		updateArticleData: UpdateArticleDto,
+	): Promise<void> {
 		const { id, content, tags, userId, featuredImage, ...rest } =
 			updateArticleData;
 
@@ -122,7 +124,7 @@ export class ArticleWriteService implements IArticleWriteService {
 		await this._clearArticleCache(id);
 	}
 
-	async deleteArticle(articleId: string, userId: string): Promise<void> {
+	public async deleteArticle(articleId: string, userId: string): Promise<void> {
 		const article = await this._articleRepository.findByArticleId(articleId);
 		if (!article) {
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);

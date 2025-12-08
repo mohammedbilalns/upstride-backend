@@ -76,7 +76,7 @@ export class AuthController {
 	// ─────────────────────────────────────────────────────────────
 
 	/** Login user & set tokens */
-	login = asyncHandler(async (req, res) => {
+	public login = asyncHandler(async (req, res) => {
 		const { email, password } = loginSchema.parse(req.body);
 		const { user, accessToken, refreshToken } = await this._loginUserUC.execute(
 			email,
@@ -91,7 +91,7 @@ export class AuthController {
 	});
 
 	/** Logout user & clear cookies */
-	logout = asyncHandler(async (_req, res) => {
+	public logout = asyncHandler(async (_req, res) => {
 		const userId = res.locals?.user?.id;
 		this._logoutUC.execute(userId);
 		this.clearAuthCookies(res);
@@ -102,7 +102,7 @@ export class AuthController {
 	});
 
 	/** Refresh access token */
-	refreshToken = asyncHandler(async (req, res) => {
+	public refreshToken = asyncHandler(async (req, res) => {
 		const refreshTokenFromCookie = req.cookies.refreshtoken;
 
 		if (!refreshTokenFromCookie) {
@@ -125,7 +125,7 @@ export class AuthController {
 	});
 
 	/** Returns logged-in user's profile */
-	me = asyncHandler(async (_req, res) => {
+	public me = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
 		const user = await this._getUserUC.execute(userId);
 		res.status(HttpStatus.OK).json({ success: true, user });
@@ -136,7 +136,7 @@ export class AuthController {
 	// ─────────────────────────────────────────────────────────────
 
 	/** Google OAuth flow */
-	googleAuth = asyncHandler(async (req, res) => {
+	public googleAuth = asyncHandler(async (req, res) => {
 		const { credential } = req.body;
 
 		const result = await this._googleAuthenticateUC.execute(credential);

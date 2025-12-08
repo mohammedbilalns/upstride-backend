@@ -19,7 +19,7 @@ export class ArticleController {
 		private _articleWriteService: IArticleWriteService,
 	) {}
 
-	create = asyncHandler(async (req, res) => {
+	public create = asyncHandler(async (req, res) => {
 		const articleData = createArticleSchema.parse(req.body);
 		const { id: author, name: authorName, role: authorRole } = res.locals.user;
 		await this._articleWriteService.createArticle({
@@ -33,7 +33,7 @@ export class ArticleController {
 			.send({ success: true, message: ResponseMessage.ARTICLE_CREATED });
 	});
 
-	update = asyncHandler(async (req, res) => {
+	public update = asyncHandler(async (req, res) => {
 		const articleData = updateArticleSchema.parse(req.body);
 		const userId = res.locals.user.id;
 		await this._articleWriteService.updateArticle({ userId, ...articleData });
@@ -42,7 +42,7 @@ export class ArticleController {
 			.send({ success: true, message: ResponseMessage.ARTICLE_CREATED });
 	});
 
-	delete = asyncHandler(async (req, res) => {
+	public delete = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { articleId } = deleteArticleParamsSchema.parse(req.params);
 		await this._articleWriteService.deleteArticle(articleId, userId);
@@ -51,7 +51,7 @@ export class ArticleController {
 			.send({ success: true, message: ResponseMessage.ARTICLE_DELETED });
 	});
 
-	fetchArticle = asyncHandler(async (req, res) => {
+	public fetchArticle = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { articleId } = fetchArticleParamsSchema.parse(req.params);
 
@@ -61,14 +61,14 @@ export class ArticleController {
 		res.status(HttpStatus.OK).json({ article, isViewed, isLiked });
 	});
 
-	fetchArticles = asyncHandler(async (req, res) => {
+	public fetchArticles = asyncHandler(async (req, res) => {
 		const fetchArticleParams = fetchArticlesSchema.parse(req.query);
 		const articles =
 			await this._articleReadService.fetchArticles(fetchArticleParams);
 		res.status(HttpStatus.OK).send(articles);
 	});
 
-	fetchRandomArticlesByAuthors = asyncHandler(async (req, res) => {
+	public fetchRandomArticlesByAuthors = asyncHandler(async (req, res) => {
 		const fetchArticlesParams = fetchRandomArticlesByAuthorsSchema.parse(
 			req.query,
 		);

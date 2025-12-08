@@ -24,7 +24,9 @@ export class ArticleCommentService implements IArticleCommentService {
 		private _eventBus: IEventBus,
 	) {}
 
-	async createComment(articleCommentDto: ArticleCommentDto): Promise<void> {
+	public async createComment(
+		articleCommentDto: ArticleCommentDto,
+	): Promise<void> {
 		const { articleId, userId, userName, userImage, content, parentCommentId } =
 			articleCommentDto;
 		const article = await this._articleRepository.findById(articleId);
@@ -62,7 +64,7 @@ export class ArticleCommentService implements IArticleCommentService {
 		}
 	}
 
-	async updateComment(
+	public async updateComment(
 		articleCommentUpdateDto: ArticleCommentUpdateDto,
 	): Promise<void> {
 		const { commentId, content, userId } = articleCommentUpdateDto;
@@ -77,7 +79,7 @@ export class ArticleCommentService implements IArticleCommentService {
 		await this._articleCommentRepository.update(commentId, { content });
 	}
 
-	async getComments(
+	public async getComments(
 		fetchCommentsDto: fetchCommentsDto,
 	): Promise<fetchCommentsResponseDto> {
 		const {
@@ -137,7 +139,7 @@ export class ArticleCommentService implements IArticleCommentService {
 		};
 	}
 
-	async deleteComment(id: string, userId: string): Promise<void> {
+	public async deleteComment(id: string, userId: string): Promise<void> {
 		const comment = await this._articleCommentRepository.findById(id);
 		if (!comment)
 			throw new AppError(

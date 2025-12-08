@@ -9,7 +9,7 @@ import {
 export class BookMarkController {
 	constructor(private _bookMarkService: IBookMarkService) {}
 
-	fetchBookMarks = asyncHandler(async (req, res) => {
+	public fetchBookMarks = asyncHandler(async (req, res) => {
 		const { id: userId } = res.locals.user;
 		const { page, limit, query } = fetchBookMarksParamsSchema.parse(req.query);
 		const bookmarks = await this._bookMarkService.fetchBookMarkedArticles(
@@ -21,7 +21,7 @@ export class BookMarkController {
 		res.status(HttpStatus.OK).json(bookmarks);
 	});
 
-	createBookMark = asyncHandler(async (req, res) => {
+	public createBookMark = asyncHandler(async (req, res) => {
 		const { id: userId } = res.locals.user;
 		const { articleId } = createBookMarkSchema.parse(req.body);
 		await this._bookMarkService.saveArticle(userId, articleId);
@@ -30,7 +30,7 @@ export class BookMarkController {
 			.json({ succes: true, message: ResponseMessage.BOOKMARK_CREATED });
 	});
 
-	deleteBookMark = asyncHandler(async (req, res) => {
+	public deleteBookMark = asyncHandler(async (req, res) => {
 		const { userId, articleId } = req.params;
 		await this._bookMarkService.deleteBookMark(userId, articleId);
 		res.status(200).json({ message: ResponseMessage.BOOKMARK_DELETED });

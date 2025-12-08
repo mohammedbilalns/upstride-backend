@@ -37,6 +37,7 @@ export class MediaManagementService implements IMediaMangementService {
 			upload_preset: env.CLOUDINARY_UPLOAD_PRESET,
 		};
 	}
+	//NOTE : unused
 	async saveMedia(saveMediaDto: SaveMediaDto): Promise<void> {
 		const {
 			resource_type,
@@ -64,7 +65,7 @@ export class MediaManagementService implements IMediaMangementService {
 		});
 	}
 
-	async streamMedia(
+	public async streamMedia(
 		publicId: string,
 		mediaType: string,
 	): Promise<{ stream: Readable; contentType: string }> {
@@ -90,6 +91,7 @@ export class MediaManagementService implements IMediaMangementService {
 		};
 	}
 
+	//NOTE: unused
 	async getMedia(data: getMediaData): Promise<Media> {
 		const media: Media = await this._mediaRepository.findOne(data);
 		if (!media) {
@@ -98,6 +100,7 @@ export class MediaManagementService implements IMediaMangementService {
 		return media;
 	}
 
+	//NOTE: unused
 	async getMedias(data: getMediasDto): Promise<Partial<Media>[]> {
 		const medias = await this._mediaRepository.findAll(data);
 		if (!medias) {
@@ -106,7 +109,10 @@ export class MediaManagementService implements IMediaMangementService {
 		return medias;
 	}
 
-	async deleteMedia(publicId: string, resource_type: string): Promise<void> {
+	public async deleteMedia(
+		publicId: string,
+		resource_type: string,
+	): Promise<void> {
 		await cloudinary.uploader.destroy(publicId, { resource_type });
 	}
 }

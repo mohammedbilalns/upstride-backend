@@ -76,7 +76,7 @@ export class ReactionService implements IReactionService {
 		}
 	}
 
-	async reactToResource(dto: ReactionDto): Promise<void> {
+	public async reactToResource(dto: ReactionDto): Promise<void> {
 		const { resourceId, resourceType, userId, userName, reaction } = dto;
 		const { repository, notFoundError, alreadedReactedError } =
 			this.getResourceHandlers(resourceType);
@@ -125,7 +125,8 @@ export class ReactionService implements IReactionService {
 			}
 		}
 	}
-	async getReactions(
+
+	public async getReactions(
 		resourceId: string,
 		page: number,
 		limit: number,

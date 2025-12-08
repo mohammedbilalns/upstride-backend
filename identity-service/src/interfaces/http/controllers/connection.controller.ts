@@ -26,7 +26,7 @@ export class ConnectionController {
 		private _fetchSuggestedMentorsUC: IFetchSuggestedMentorsUC,
 	) {}
 
-	followMentor = asyncHandler(async (req, res) => {
+	public followMentor = asyncHandler(async (req, res) => {
 		const { mentorId } = followMentorSchema.parse(req.body);
 		const userId = res.locals.user.id;
 
@@ -36,7 +36,7 @@ export class ConnectionController {
 			.json({ success: true, message: ResponseMessage.FOLLOWED_MENTOR });
 	});
 
-	unfollowMentor = asyncHandler(async (req, res) => {
+	public unfollowMentor = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { mentorId } = unfollowMentorSchema.parse(req.body);
 		await this._unfollowMentorUC.execute(userId, mentorId);
@@ -46,14 +46,14 @@ export class ConnectionController {
 			.json({ success: true, message: ResponseMessage.UNFOLLOWED_MENTOR });
 	});
 
-	fetchFollowers = asyncHandler(async (req, res) => {
+	public fetchFollowers = asyncHandler(async (req, res) => {
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
 		const data = await this._fetchFollowersUC.execute(userId, page, limit);
 		res.status(HttpStatus.OK).send(data);
 	});
 
-	fetchFollowing = asyncHandler(async (req, res) => {
+	public fetchFollowing = asyncHandler(async (req, res) => {
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
 
@@ -61,13 +61,13 @@ export class ConnectionController {
 		res.status(HttpStatus.OK).send(data);
 	});
 
-	fetchRecentActivity = asyncHandler(async (_req, res) => {
+	public fetchRecentActivity = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
 		const activities = await this._fetchrecentActivity.execute(userId);
 		res.status(HttpStatus.OK).send(activities);
 	});
 
-	fetchSuggestedMentors = asyncHandler(async (req, res) => {
+	public fetchSuggestedMentors = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const mentors = await this._fetchSuggestedMentorsUC.execute(
@@ -78,7 +78,7 @@ export class ConnectionController {
 		res.status(HttpStatus.OK).send(mentors);
 	});
 
-	fetchMutualConnections = asyncHandler(async (_req, res) => {
+	public fetchMutualConnections = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
 		const mentors = await this._fetchMutualConnectionsUC.execute(userId);
 		res.status(HttpStatus.OK).send(mentors);

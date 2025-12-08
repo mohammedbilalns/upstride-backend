@@ -10,7 +10,7 @@ export class AuthorService implements IAuthorService {
 		private _commentRepository: IArticleCommentRepository,
 	) {}
 
-	async updateAuthor(
+	public async updateAuthor(
 		authorId: string,
 		authorName: string,
 		authorImage: string,

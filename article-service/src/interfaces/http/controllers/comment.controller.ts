@@ -11,7 +11,7 @@ import {
 export class ArticleCommentController {
 	constructor(private _articleCommentService: IArticleCommentService) {}
 
-	createComment = asyncHandler(async (req, res) => {
+	public createComment = asyncHandler(async (req, res) => {
 		const articleCommentDto = articleCommentSchema.parse(req.body);
 		const {
 			id: userId,
@@ -29,7 +29,7 @@ export class ArticleCommentController {
 			.json({ success: true, message: ResponseMessage.COMMENT_CREATED });
 	});
 
-	updateComment = asyncHandler(async (req, res) => {
+	public updateComment = asyncHandler(async (req, res) => {
 		const articleCommentUpdateDto = articleCommentUpdateSchema.parse(req.body);
 		const userId = res.locals.user.id;
 		await this._articleCommentService.updateComment({
@@ -41,7 +41,7 @@ export class ArticleCommentController {
 			.json({ success: true, message: ResponseMessage.COMMENT_UPDATED });
 	});
 
-	deleteComment = asyncHandler(async (req, res) => {
+	public deleteComment = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { commentId } = deleteCommentSchema.parse(req.query);
 		await this._articleCommentService.deleteComment(commentId, userId);
@@ -50,7 +50,7 @@ export class ArticleCommentController {
 			.json({ success: true, message: ResponseMessage.COMMENT_DELETED });
 	});
 
-	fetch = asyncHandler(async (req, res) => {
+	public fetch = asyncHandler(async (req, res) => {
 		const { articleId, page, limit, parentCommentId } =
 			fetchCommentsQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;

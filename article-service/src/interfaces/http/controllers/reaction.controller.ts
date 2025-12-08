@@ -9,7 +9,7 @@ import {
 export class ReactionController {
 	constructor(private _reactionService: IReactionService) {}
 
-	reactArticle = asyncHandler(async (req, res) => {
+	public reactArticle = asyncHandler(async (req, res) => {
 		const { resourceId, reaction, resourceType } = reactionSchema.parse(
 			req.body,
 		);
@@ -27,7 +27,7 @@ export class ReactionController {
 			.json({ success: true, message: ResponseMessage.REACTED_ARTICLE });
 	});
 
-	fetchReactions = asyncHandler(async (req, res) => {
+	public fetchReactions = asyncHandler(async (req, res) => {
 		const { resourceId, page, limit } = fetchReactionsParams.parse(req.query);
 		const reactions = await this._reactionService.getReactions(
 			resourceId,

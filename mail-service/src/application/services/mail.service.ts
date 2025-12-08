@@ -19,7 +19,7 @@ export class MailService implements IMailService {
 	 * Sends an email based on the provided DTO.
 	 * The DTO determines the email type and required data (OTP / username).
 	 */
-	async sendEmail(dto: SendMailDTO) {
+	public async sendEmail(dto: SendMailDTO) {
 		let text: string;
 
 		// Select email template based on `mailType` and validate required data

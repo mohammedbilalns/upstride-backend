@@ -26,12 +26,14 @@ export class AvailabilityRepository
 		};
 	}
 
-	async findByMentorId(mentorId: string): Promise<Availability | null> {
+	public async findByMentorId(mentorId: string): Promise<Availability | null> {
 		const doc = await this._model.findOne({ mentorId });
 		return doc ? this.mapToDomain(doc) : null;
 	}
 
-	async fetchOrCreateByMentorId(mentorId: string): Promise<Availability> {
+	public async fetchOrCreateByMentorId(
+		mentorId: string,
+	): Promise<Availability> {
 		const doc = await this._model.findOneAndUpdate(
 			{ mentorId },
 			{ $setOnInsert: { mentorId } },

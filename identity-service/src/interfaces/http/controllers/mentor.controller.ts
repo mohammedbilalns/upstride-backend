@@ -34,7 +34,7 @@ export class MentorController {
 		private _fetchSelfUC: IFetchSelfUC,
 	) {}
 
-	createMentor = asyncHandler(async (req, res) => {
+	public createMentor = asyncHandler(async (req, res) => {
 		const data = mentorRegistrationSchema.parse(req.body);
 		const userId = res.locals.user.id;
 		await this._registerAsMentorUC.execute({ ...data, userId });
@@ -43,7 +43,7 @@ export class MentorController {
 			.json({ success: true, message: ResponseMessage.REQUEST_FOR_MENTORING });
 	});
 
-	fetchMentors = asyncHandler(async (req, res) => {
+	public fetchMentors = asyncHandler(async (req, res) => {
 		const { page, limit, query, status } = fetchMentorsQuerySchema.parse(
 			req.query,
 		);
@@ -56,7 +56,7 @@ export class MentorController {
 		res.status(HttpStatus.OK).json(data);
 	});
 
-	fetchMentorsForUser = asyncHandler(async (req, res) => {
+	public fetchMentorsForUser = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { page, limit, query, expertiseId, skillId } =
 			fetchMentorsByExpertiseAndSkillSchema.parse(req.query);
@@ -71,7 +71,7 @@ export class MentorController {
 		res.status(HttpStatus.OK).send(data);
 	});
 
-	appoveMentor = asyncHandler(async (req, res) => {
+	public appoveMentor = asyncHandler(async (req, res) => {
 		const { mentorId } = approveMentorSchema.parse(req.body);
 		await this._approveMentorUC.execute({ mentorId });
 		res
@@ -79,7 +79,7 @@ export class MentorController {
 			.json({ success: true, message: ResponseMessage.MENTOR_APPROVED });
 	});
 
-	rejectMentor = asyncHandler(async (req, res) => {
+	public rejectMentor = asyncHandler(async (req, res) => {
 		const { mentorId, rejectionReason } = rejectMentorSchema.parse(req.body);
 		await this._rejectMentorUC.execute({ mentorId, rejectionReason });
 		res
@@ -87,7 +87,7 @@ export class MentorController {
 			.json({ success: true, message: ResponseMessage.MENTOR_REJECTED });
 	});
 
-	updateMentor = asyncHandler(async (req, res) => {
+	public updateMentor = asyncHandler(async (req, res) => {
 		const data = updateMentorSchema.parse(req.body);
 		const userId = res.locals.user.id;
 		await this._updateMentorUC.execute({
@@ -100,20 +100,20 @@ export class MentorController {
 	});
 
 	// update to fetch the mentors by userInterest later
-	fetchMentorsByExpertiseId = asyncHandler(async (req, res) => {
+	public fetchMentorsByExpertiseId = asyncHandler(async (req, res) => {
 		const { expertiseId } = req.params;
 		const mentors = await this._fetchMentorByExpertiseUC.execute(expertiseId);
 		res.status(HttpStatus.OK).json(mentors);
 	});
 
-	fetchMentorDetails = asyncHandler(async (req, res) => {
+	public fetchMentorDetails = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { mentorId } = fetchMentorParamsSchema.parse(req.params);
 		const mentor = await this._fetchMentorDetailsUC.execute(mentorId, userId);
 		res.status(HttpStatus.OK).json(mentor);
 	});
 
-	getMe = asyncHandler(async (_req, res) => {
+	public getMe = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
 		const data = await this._fetchSelfUC.execute(userId);
 		res.status(HttpStatus.OK).send(data);

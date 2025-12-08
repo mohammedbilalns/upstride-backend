@@ -15,7 +15,7 @@ export interface GoogleTokenPayload {
 export class TokenService implements ITokenService {
 	constructor(private jwtSecret: string) {}
 
-	generateAccessToken(user: UserDTO): string {
+	public generateAccessToken(user: UserDTO): string {
 		return jwt.sign(
 			{
 				id: user.id,
@@ -29,7 +29,7 @@ export class TokenService implements ITokenService {
 		);
 	}
 
-	generateRefreshToken(user: UserDTO): string {
+	public generateRefreshToken(user: UserDTO): string {
 		return jwt.sign(
 			{
 				id: user.id,
@@ -43,7 +43,7 @@ export class TokenService implements ITokenService {
 		);
 	}
 
-	verifyRefreshToken(token: string): {
+	public verifyRefreshToken(token: string): {
 		id: string;
 		email: string;
 		role: string;
@@ -62,7 +62,8 @@ export class TokenService implements ITokenService {
 		}
 		return decoded;
 	}
-	decodeGoogleToken(token: string): {
+
+	public decodeGoogleToken(token: string): {
 		sub: string;
 		email: string;
 		name: string;

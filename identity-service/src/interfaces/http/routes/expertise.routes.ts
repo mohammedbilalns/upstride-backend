@@ -24,7 +24,7 @@ export function createExpertiseRouter() {
 	router.post("/", expertiseController.createExpertise);
 	router.put("/skills/:skillId/verify", expertiseController.verifySkill);
 	router.put("/:expertiseId/verify", expertiseController.verifyExpertise);
-	router.put("/:expertiseId", expertiseController.udpateExpertise);
+	router.put("/:expertiseId", expertiseController.updateExpertise);
 	router.put("/skills/:skillId", expertiseController.updateSkill);
 	router.get("/skills", expertiseController.fetchSkillsFromMultipleExpertise);
 

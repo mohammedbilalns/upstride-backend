@@ -5,7 +5,7 @@ import type { ITagService } from "../../domain/services/tag.service.interface";
 export class TagService implements ITagService {
 	constructor(private _tagRepository: ITagRepository) {}
 
-	async findMostUsedCounts(): Promise<Tag[]> {
+	public async findMostUsedCounts(): Promise<Tag[]> {
 		const limit = 8;
 		return this._tagRepository.findMostUsed(limit);
 	}
