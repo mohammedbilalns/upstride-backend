@@ -52,6 +52,13 @@ export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
 			);
 		}
 
+		if (updatedRule.endTime - updatedRule.startTime !== dto.rule.slotDuration) {
+			throw new AppError(
+				ErrorMessage.INVALID_INPUT_DATA,
+				HttpStatus.BAD_REQUEST,
+			);
+		}
+
 		// validate there is no conflicting rule
 		const conflictingRule = existingAvailabilityRule.recurringRules.find(
 			(r) => {

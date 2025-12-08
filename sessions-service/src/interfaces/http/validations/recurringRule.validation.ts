@@ -4,7 +4,12 @@ const rule = z.object({
 	weekDay: z.number().int().min(1).max(7),
 	startTime: z.string().regex(/^\d{2}:\d{2}$/),
 	endTime: z.string().regex(/^\d{2}:\d{2}$/),
-	slotDuration: z.number().positive(),
+	slotDuration: z.union([
+		z.literal(60),
+		z.literal(90),
+		z.literal(120),
+		z.literal(180),
+	]),
 });
 
 // create recurring rules

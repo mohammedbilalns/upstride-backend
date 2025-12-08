@@ -32,15 +32,25 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 			);
 		}
 
+		if (newRule.endTime - newRule.startTime !== dto.rule.slotDuration) {
+			throw new AppError(
+				ErrorMessage.INVALID_INPUT_DATA,
+				HttpStatus.BAD_REQUEST,
+			);
+		}
+		console.log("existingAvailabilityRule: ", existingAvailabilityRule);
+		console.log("newRule: ", newRule);
+
 		// validate there is no conflicting rule
 		const conflictingRule = existingAvailabilityRule.recurringRules.find(
 			(r) => {
 				const sameDay = r.weekDay === newRule.weekDay;
 				const overlap =
-					r.startTime < newRule.endTime && r.endTime > newRule.endTime;
+					r.startTime <= newRule.endTime && r.endTime >= newRule.endTime;
 				return sameDay && overlap;
 			},
 		);
+		console.log("conflictingRule: ", conflictingRule);
 
 		if (conflictingRule) {
 			throw new AppError(ErrorMessage.CONFLICTING_RULE, HttpStatus.CONFLICT);

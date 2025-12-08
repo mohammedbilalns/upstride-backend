@@ -15,7 +15,7 @@ export const availabilitySchema: Schema = new Schema(
 				weekDay: { type: Number, min: 1, max: 7 },
 				startTime: { type: Number, min: 0, max: 1440 },
 				endTime: { type: Number, min: 0, max: 1440 },
-				slotDuration: { type: Number },
+				slotDuration: { type: Number, enum: [60, 90, 120, 180] },
 				isActive: { type: Boolean, default: true },
 			},
 		],

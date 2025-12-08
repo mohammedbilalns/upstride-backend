@@ -6,7 +6,7 @@ export interface Availability {
 		weekDay: number;
 		startTime: number;
 		endTime: number;
-		slotDuration: number;
+		slotDuration: 60 | 90 | 120 | 180;
 		isActive?: boolean;
 	}[];
 	price: number;

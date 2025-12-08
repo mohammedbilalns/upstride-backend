@@ -25,9 +25,9 @@ class App {
 	}
 
 	private _setupRoutes() {
-		this._app.use(errorHandler);
 		this._app.use("/api/sessions", createSessionRoutes());
 		this._app.use("/api/slots", createSlotRoutes());
+		this._app.use(errorHandler);
 	}
 
 	public listen(port: string) {
