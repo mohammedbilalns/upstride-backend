@@ -15,4 +15,7 @@ export enum ErrorMessage {
 	BOOKING_NOT_FOUND = "Booking not found",
 	SLOT_IS_ALREADY_TAKEN = "Slot is already taken",
 	NO_RULES_CONFIGURED = "No rules configured",
+	START_TIME_GREATER_THAN_END_TIME = "Start time is greater than end time",
+	CONFLICTING_RULE = "There is already a rule overlapping with the given time",
+	RULE_NOT_FOUND = "Rule not found",
 }

@@ -7,6 +7,7 @@ import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import { createSessionRoutes } from "./interfaces/http/routes/session.route";
 import { createSlotRoutes } from "./interfaces/http/routes/slot.route";
+import { initializeJobs } from "./application/jobs";
 
 class App {
 	private _app: Application;
@@ -33,6 +34,7 @@ class App {
 		const server = this._app.listen(port, () => {
 			connectToDb();
 			connectRabbitMq();
+			initializeJobs();
 			logger.info(`Sesssions service is listening on port ${port}`);
 		});
 		return server;

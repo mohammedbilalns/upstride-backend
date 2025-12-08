@@ -11,10 +11,9 @@ export class BookSessionUc implements IBookSessionUC {
 		private _bookingRepository: IBookingRepository,
 		private _slotRepository: ISlotRepository,
 	) {}
-	async execute(dto: bookSessionDto): Promise<void> {
-		const { userId, slotId } = dto;
 
-		const slot = await this._slotRepository.findById(slotId);
+	async execute(dto: bookSessionDto): Promise<void> {
+		const slot = await this._slotRepository.findById(dto.slotId);
 		if (!slot)
 			throw new AppError(ErrorMessage.SLOT_NOT_FOUND, HttpStatus.BAD_REQUEST);
 		if (slot.status !== SlotStatus.OPEN) {
@@ -25,9 +24,9 @@ export class BookSessionUc implements IBookSessionUC {
 		}
 
 		await Promise.all([
-			this._slotRepository.update(slotId, {
+			this._slotRepository.update(dto.slotId, {
 				status: SlotStatus.FULL,
-				participantId: userId,
+				participantId: dto.userId,
 			}),
 			// TODO : payment verification and then save the doc
 			this._bookingRepository.create({}),

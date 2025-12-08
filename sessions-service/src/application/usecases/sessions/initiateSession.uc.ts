@@ -14,9 +14,7 @@ export class InitiateSessionUC implements IInitiateSessionUC {
 	) {}
 
 	async execute(dto: initiateSessionDto): Promise<void> {
-		const { sessionId } = dto;
-
-		const session = await this._slotRepository.findById(sessionId);
+		const session = await this._slotRepository.findById(dto.sessionId);
 		if (!session)
 			throw new AppError(
 				ErrorMessage.SESSION_NOT_FOUND,
@@ -25,7 +23,9 @@ export class InitiateSessionUC implements IInitiateSessionUC {
 
 		await Promise.all([
 			// update the slot status
-			this._slotRepository.update(sessionId, { status: SlotStatus.STARTED }),
+			this._slotRepository.update(dto.sessionId, {
+				status: SlotStatus.STARTED,
+			}),
 			//TODO: update the queue payload
 			this._eventBus.publish(QueueEvents.STARTED_SESSION, {}),
 			// send notification to the user

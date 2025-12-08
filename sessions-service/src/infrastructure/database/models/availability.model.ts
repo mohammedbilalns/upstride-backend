@@ -13,16 +13,10 @@ export const availabilitySchema: Schema = new Schema(
 			{
 				ruleId: { type: String, required: true },
 				weekDay: { type: Number, min: 1, max: 7 },
-				startTime: { type: Date },
-				endTime: { type: Date },
+				startTime: { type: Number, min: 0, max: 1440 },
+				endTime: { type: Number, min: 0, max: 1440 },
 				slotDuration: { type: Number },
 				isActive: { type: Boolean, default: true },
-			},
-		],
-		exceptionRanges: [
-			{
-				startAt: { type: Date },
-				endAt: { type: Date },
 			},
 		],
 		price: { type: Number },

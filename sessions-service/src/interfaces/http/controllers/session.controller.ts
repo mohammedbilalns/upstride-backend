@@ -18,40 +18,41 @@ export class SessionController {
 		private _bookSessionUC: IBookSessionUC,
 		private _cancelBookingUC: ICancelBookingUC,
 	) {}
-	bookSession = asyncHandler((req, res) => {
+
+	public bookSession = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { slotId } = bookSessionValidationParamsSchema.parse(req.params);
 
-		this._bookSessionUC.execute({ userId, slotId });
+		await this._bookSessionUC.execute({ userId, slotId });
 
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.SESSION_INITIATED });
 	});
 
-	cancelBooking = asyncHandler((req, res) => {
+	public cancelBooking = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { bookingId } = cancelBookingValidationParamsSchema.parse(req.params);
 
-		this._cancelBookingUC.execute({ userId, bookingId });
+		await this._cancelBookingUC.execute({ userId, bookingId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.CANCELLED_BOOKING });
 	});
 
-	initiateSession = asyncHandler((req, res) => {
+	public initiateSession = asyncHandler(async (req, res) => {
 		const { sessionId } = initiateSessionParamsSchema.parse(req.params);
 
-		this._initiateSessionUC.execute({ sessionId });
+		await this._initiateSessionUC.execute({ sessionId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.SESSION_INITIATED });
 	});
 
-	markSessionAsComplete = asyncHandler((req, res) => {
+	public markSessionAsComplete = asyncHandler(async (req, res) => {
 		const { sessionId } = markSessionAsCompleteParamsSchema.parse(req.params);
 
-		this._markSessionAsCompleteUC.execute({ sessionId });
+		await this._markSessionAsCompleteUC.execute({ sessionId });
 
 		res.status(HttpStatus.OK).json({
 			success: true,

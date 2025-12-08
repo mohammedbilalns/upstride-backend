@@ -1,10 +1,10 @@
 import z from "zod";
 
 const rule = z.object({
-	weekDay: z.number(),
-	startTime: z.date(),
-	endTime: z.date(),
-	slotDuration: z.number(),
+	weekDay: z.number().int().min(1).max(7),
+	startTime: z.string().regex(/^\d{2}:\d{2}$/),
+	endTime: z.string().regex(/^\d{2}:\d{2}$/),
+	slotDuration: z.number().positive(),
 });
 
 // create recurring rules
@@ -21,7 +21,9 @@ export const addRecurringRuleParamsSchema = z.object({
 	mentorId: z.string(),
 });
 
-export const addRecurringRulePayloadSchema = rule;
+export const addRecurringRulePayloadSchema = z.object({
+	rule,
+});
 
 //  update recurring rule
 export const updateRecurringRuleParmsSchema = z.object({

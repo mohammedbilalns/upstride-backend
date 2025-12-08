@@ -7,9 +7,9 @@ export class GetRuleUC implements IGetRulesUC {
 	constructor(private _availabilityRepository: IAvailabilityRepository) {}
 
 	async execute(dto: getMentorRule): Promise<getMentorRuleResponse> {
-		const { mentorId } = dto;
-		const recurringRule =
-			await this._availabilityRepository.findByMentorId(mentorId);
+		const recurringRule = await this._availabilityRepository.findByMentorId(
+			dto.mentorId,
+		);
 		if (!recurringRule) {
 			return null;
 		}

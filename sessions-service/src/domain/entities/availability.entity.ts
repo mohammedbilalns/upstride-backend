@@ -4,17 +4,11 @@ export interface Availability {
 	recurringRules: {
 		ruleId: string;
 		weekDay: number;
-		startTime: Date;
-		endTime: Date;
+		startTime: number;
+		endTime: number;
 		slotDuration: number;
 		isActive?: boolean;
 	}[];
-	exeptionRanges: [
-		{
-			startAt: Date;
-			endAt: Date;
-		},
-	];
 	price: number;
 	createdAt: Date;
 }

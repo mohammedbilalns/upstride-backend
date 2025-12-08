@@ -7,7 +7,8 @@ export class MarkSessionAsCompleteUC implements IMarkSessionAsCompleteUC {
 	constructor(private _slotRepository: ISlotRepository) {}
 
 	async execute(dto: markSessionAsCompleteDto): Promise<void> {
-		const { sessionId } = dto;
-		this._slotRepository.update(sessionId, { status: SlotStatus.COMPLETED });
+		this._slotRepository.update(dto.sessionId, {
+			status: SlotStatus.COMPLETED,
+		});
 	}
 }

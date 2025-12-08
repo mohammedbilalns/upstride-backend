@@ -8,10 +8,8 @@ export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
 	constructor(private _availabilityRepository: IAvailabilityRepository) {}
 
 	async execute(dto: disableRecurringRuleDto): Promise<void> {
-		const { mentorId, ruleId } = dto;
-
 		const existingAvailabilityRule =
-			await this._availabilityRepository.findByMentorId(mentorId);
+			await this._availabilityRepository.findByMentorId(dto.mentorId);
 		if (!existingAvailabilityRule)
 			throw new AppError(
 				ErrorMessage.AVAILABILITY_NOT_FOUND,
@@ -20,7 +18,7 @@ export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
 
 		const updatedRecurringRules = existingAvailabilityRule?.recurringRules.map(
 			(r) => {
-				if (r.ruleId === ruleId) {
+				if (r.ruleId === dto.ruleId) {
 					return { ...r, isActive: false };
 				}
 				return r;

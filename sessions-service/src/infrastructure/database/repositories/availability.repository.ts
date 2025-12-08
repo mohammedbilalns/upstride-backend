@@ -21,7 +21,6 @@ export class AvailabilityRepository
 			id: mapped.id,
 			mentorId: mapped.mentorId,
 			recurringRules: mapped.recurringRules,
-			exeptionRanges: mapped.exeptionRanges,
 			price: mapped.price,
 			createdAt: mapped.createdAt,
 		};
@@ -30,5 +29,15 @@ export class AvailabilityRepository
 	async findByMentorId(mentorId: string): Promise<Availability | null> {
 		const doc = await this._model.findOne({ mentorId });
 		return doc ? this.mapToDomain(doc) : null;
+	}
+
+	async fetchOrCreateByMentorId(mentorId: string): Promise<Availability> {
+		const doc = await this._model.findOneAndUpdate(
+			{ mentorId },
+			{ $setOnInsert: { mentorId } },
+			{ upsert: true, new: true },
+		);
+
+		return this.mapToDomain(doc);
 	}
 }

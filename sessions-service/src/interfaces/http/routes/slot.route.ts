@@ -8,10 +8,10 @@ export function createSlotRoutes() {
 	router.use(authMiddleware());
 
 	router.get("/rules/:mentorId", slotsController.getMentorRules);
-	router.post(
-		"/:mentorId/availability/recurring",
-		slotsController.createRecurringRule,
-	);
+	// router.post(
+	// 	"/:mentorId/availability/recurring",
+	// 	slotsController.createRecurringRule,
+	// );
 	router.patch(
 		"/:mentorId/availability/recurring/:ruleId",
 		slotsController.updateRecurringRule,

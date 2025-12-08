@@ -8,12 +8,11 @@ export class CreateCustomSlot implements ICreateCustomSlotUC {
 	constructor(private _slotRepository: ISlotRepository) {}
 
 	async execute(dto: createCustomSlotDto): Promise<void> {
-		const { mentorId, startAt, endAt } = dto;
 		// check if there is already a slot overlapping the duration
 		const overlappingSlot = await this._slotRepository.findOverlappingSlots(
-			mentorId,
-			startAt,
-			endAt,
+			dto.mentorId,
+			dto.startAt,
+			dto.endAt,
 		);
 		if (overlappingSlot)
 			throw new AppError(
@@ -21,7 +20,11 @@ export class CreateCustomSlot implements ICreateCustomSlotUC {
 				HttpStatus.BAD_REQUEST,
 			);
 
-		await this._slotRepository.create({ mentorId, startAt, endAt });
+		await this._slotRepository.create({
+			mentorId: dto.mentorId,
+			startAt: dto.startAt,
+			endAt: dto.endAt,
+		});
 		//TODO: what about the price in this case ?
 	}
 }

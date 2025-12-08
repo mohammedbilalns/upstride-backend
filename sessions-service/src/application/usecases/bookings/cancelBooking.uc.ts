@@ -12,23 +12,22 @@ export class CancelBookingUC implements ICancelBookingUC {
 		private _bookingRepository: IBookingRepository,
 		private _slotRepository: ISlotRepository,
 	) {}
-	async execute(dto: cancelBookingDto): Promise<void> {
-		const { userId, bookingId } = dto;
 
-		const booking = await this._bookingRepository.findById(bookingId);
+	async execute(dto: cancelBookingDto): Promise<void> {
+		const booking = await this._bookingRepository.findById(dto.bookingId);
 		if (!booking)
 			throw new AppError(
 				ErrorMessage.BOOKING_NOT_FOUND,
 				HttpStatus.BAD_REQUEST,
 			);
-		if (booking.userId !== userId)
+		if (booking.userId !== dto.userId)
 			throw new AppError(
 				ErrorMessage.FORBIDDEN_RESOURCE,
 				HttpStatus.BAD_REQUEST,
 			);
 
 		await Promise.all([
-			this._bookingRepository.update(bookingId, {
+			this._bookingRepository.update(dto.bookingId, {
 				status: BookingStatus.CANCELLED,
 			}),
 			this._slotRepository.update(booking.slotId, { status: SlotStatus.OPEN }),

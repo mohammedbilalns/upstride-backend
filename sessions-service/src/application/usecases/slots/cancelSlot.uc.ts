@@ -9,14 +9,12 @@ export class CancelSlotUC implements ICancleSlotUC {
 	constructor(private _slotRepository: ISlotRepository) {}
 
 	async execute(dto: cancelSlotDto): Promise<void> {
-		const { mentorId, slotId } = dto;
-
-		const existingSlot = await this._slotRepository.findById(slotId);
+		const existingSlot = await this._slotRepository.findById(dto.slotId);
 		// check if the slot exists
 		if (!existingSlot)
 			throw new AppError(ErrorMessage.SLOT_NOT_FOUND, HttpStatus.BAD_REQUEST);
 		// check if the slot belongs to the mentor
-		if (existingSlot.mentorId !== mentorId)
+		if (existingSlot.mentorId !== dto.mentorId)
 			throw new AppError(ErrorMessage.SLOT_NOT_FOUND, HttpStatus.BAD_REQUEST);
 
 		await this._slotRepository.update(existingSlot.id, {

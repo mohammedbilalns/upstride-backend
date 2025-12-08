@@ -2,8 +2,8 @@ import { Availability } from "../../domain/entities/availability.entity";
 
 type Rule = {
 	weekDay: number;
-	startTime: Date;
-	endTime: Date;
+	startTime: string;
+	endTime: string;
 	slotDuration: number;
 };
 
