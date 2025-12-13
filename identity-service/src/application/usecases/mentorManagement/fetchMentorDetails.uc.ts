@@ -28,8 +28,6 @@ export class FetchMentorDetailsUC implements IFetchMentorDetailsUC {
 			await this._connectionRepository.fetchByUserAndMentor(userId, mentorId);
 		const isFollowing = !!followConnection;
 
-		if (!mentor)
-			throw new AppError(ErrorMessage.MENTOR_NOT_FOUND, HttpStatus.NOT_FOUND);
 		// Return mentor profile details and follow status
 		return { ...mentor, isFollowing };
 	}

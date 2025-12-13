@@ -7,11 +7,15 @@ import {
 	LogoutUC,
 	RefreshTokenUC,
 } from "../../../application/usecases/auth";
-import type { IUserRepository } from "../../../domain/repositories";
+import type {
+	IMentorRepository,
+	IUserRepository,
+} from "../../../domain/repositories";
 import type { ICryptoService, ITokenService } from "../../../domain/services";
 
 import { redisClient } from "../../../infrastructure/config";
 import env from "../../../infrastructure/config/env";
+import { MentorRepository } from "../../../infrastructure/database/repositories";
 
 import { UserRepository } from "../../../infrastructure/database/repositories/user.repository";
 import { VerificationTokenRepository } from "../../../infrastructure/database/repositories/verficationToken.repository";
@@ -26,6 +30,7 @@ export function createAuthController(): AuthController {
 	// Repositories
 	// ─────────────────────────────────────────────
 	const userRepository: IUserRepository = new UserRepository();
+	const mentorRepository: IMentorRepository = new MentorRepository();
 	const verificationTokenRepository = new VerificationTokenRepository(
 		redisClient,
 	);
@@ -40,6 +45,7 @@ export function createAuthController(): AuthController {
 	// Use cases
 	const loginUserUC = new LoginUserUC(
 		userRepository,
+		mentorRepository,
 		cacheService,
 		cryptoService,
 		tokenService,
@@ -47,12 +53,14 @@ export function createAuthController(): AuthController {
 	const logoutUC = new LogoutUC(cacheService);
 	const refreshTokenUC = new RefreshTokenUC(
 		userRepository,
+		mentorRepository,
 		tokenService,
 		cacheService,
 	);
 	const googleAuthenticateUC = new GoogleAuthenticateUC(
 		userRepository,
 		verificationTokenRepository,
+		mentorRepository,
 		tokenService,
 		cacheService,
 	);

@@ -55,7 +55,6 @@ export class UpdateMentorUC implements IUpdateMentorUC {
 		await Promise.all([
 			this._mentorRepository.update(mentor.id, {
 				...mentorDetails,
-				isPending: true,
 			}),
 			this._userRepository.update(dto.userId, {
 				isRequestedForMentoring: "pending",

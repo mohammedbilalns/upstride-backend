@@ -23,6 +23,7 @@ export class TokenService implements ITokenService {
 				name: user.name,
 				role: user.role,
 				type: "access",
+				mentorId: user.mentorId,
 			},
 			this.jwtSecret,
 			{ expiresIn: parseInt(env.ACCESS_TOKEN_EXPIRY) },

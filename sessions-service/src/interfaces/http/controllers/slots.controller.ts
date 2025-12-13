@@ -1,21 +1,14 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
 import asyncHandler from "../utils/asyncHandler";
 import { cancelSlotParamsSchema } from "../validations/cancelSlot.validation";
-import {
-	createCustomAvailabilityParamsSchema,
-	createCustomAvailabilityPayloadSchema,
-} from "../validations/createCustomAvailability.validation";
+import { createCustomAvailabilityPayloadSchema } from "../validations/createCustomAvailability.validation";
 import {
 	disableRecurringRuleParmsSchema,
 	updateRecurringRuleParmsSchema,
 	updateRecurringRulePayloadSchema,
-	addRecurringRuleParamsSchema,
 	addRecurringRulePayloadSchema,
+	deleteRecurringRuleParamsSchema,
 } from "../validations/recurringRule.validation";
-import {
-	getMentorRulesParamsSchema,
-	getMentorSlotsParamsSchema,
-} from "../validations/getMentorSlots.validation";
 import { IUpdateRecurringRuleUC } from "../../../domain/useCases/recurringRule/updateRecurringRule.uc.interface";
 import { IAddRecurringRuleUC } from "../../../domain/useCases/recurringRule/addRecurringRule.uc.interface";
 import { IDisableRecurringRuleUC } from "../../../domain/useCases/recurringRule/disableRecurringRule.uc.interface";
@@ -23,6 +16,7 @@ import { IGetMentorSlotsUC } from "../../../domain/useCases/slots/getMentorSlots
 import { ICancleSlotUC } from "../../../domain/useCases/slots/cancelSlot.uc.interface";
 import { ICreateCustomSlotUC } from "../../../domain/useCases/slots/createCustomSlot.uc.interface";
 import { IGetRulesUC } from "../../../domain/useCases/recurringRule/getRule.uc.interface";
+import { IDeleteRecurringRuleUC } from "../../../domain/useCases/recurringRule/deleteRecurringRule.uc.interface";
 
 export class SlotsController {
 	constructor(
@@ -30,14 +24,15 @@ export class SlotsController {
 		private _updateRecurringRuleUC: IUpdateRecurringRuleUC,
 		private _addRecurringRuleUC: IAddRecurringRuleUC,
 		private _disableRecurringRuleUC: IDisableRecurringRuleUC,
+		private _deleteRecurringRuleUC: IDeleteRecurringRuleUC,
 		private _getMentorSlotsUC: IGetMentorSlotsUC,
 		private _cancelSlotUC: ICancleSlotUC,
 		private _getMentorRuleUC: IGetRulesUC,
 	) {}
 
 	public createCustomSlot = asyncHandler(async (req, res) => {
-		const { mentorId } = createCustomAvailabilityParamsSchema.parse(req.params);
 		const payload = createCustomAvailabilityPayloadSchema.parse(req.body);
+		const { mentorId } = res.locals.user;
 
 		await this._createCustomSlotUC.execute({ mentorId, ...payload });
 
@@ -48,9 +43,8 @@ export class SlotsController {
 	});
 
 	public updateRecurringRule = asyncHandler(async (req, res) => {
-		const { mentorId, ruleId } = updateRecurringRuleParmsSchema.parse(
-			req.params,
-		);
+		const { ruleId } = updateRecurringRuleParmsSchema.parse(req.params);
+		const { mentorId } = res.locals.user;
 		const payload = updateRecurringRulePayloadSchema.parse(req.body);
 
 		await this._updateRecurringRuleUC.execute({
@@ -65,7 +59,7 @@ export class SlotsController {
 	});
 
 	public addRecurringRule = asyncHandler(async (req, res) => {
-		const { mentorId } = addRecurringRuleParamsSchema.parse(req.params);
+		const { mentorId } = res.locals.user;
 		const payload = addRecurringRulePayloadSchema.parse(req.body);
 		await this._addRecurringRuleUC.execute({ mentorId, rule: payload.rule });
 
@@ -75,9 +69,8 @@ export class SlotsController {
 	});
 
 	public disableRecurringRule = asyncHandler(async (req, res) => {
-		const { mentorId, ruleId } = disableRecurringRuleParmsSchema.parse(
-			req.params,
-		);
+		const { ruleId } = disableRecurringRuleParmsSchema.parse(req.params);
+		const { mentorId } = res.locals.user;
 
 		await this._disableRecurringRuleUC.execute({ mentorId, ruleId });
 
@@ -86,23 +79,35 @@ export class SlotsController {
 			.json({ success: true, message: ResponseMessage.DISBLED_RECURRING_RULE });
 	});
 
-	public getMentorSlots = asyncHandler(async (req, res) => {
-		const { mentorId } = getMentorSlotsParamsSchema.parse(req.params);
+	public deleteRecurringRule = asyncHandler(async (req, res) => {
+		const { mentorId } = res.locals.user;
+		const { ruleId } = deleteRecurringRuleParamsSchema.parse(req.params);
+
+		await this._deleteRecurringRuleUC.execute({ mentorId, ruleId });
+
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.DELETED_RECURRING_RULE });
+	});
+
+	public getMentorSlots = asyncHandler(async (_req, res) => {
+		const { mentorId } = res.locals.user;
 		const data = await this._getMentorSlotsUC.execute({ mentorId });
 
 		res.send(data);
 	});
 
 	public cancelSlot = asyncHandler(async (req, res) => {
-		const { mentorId, slotId } = cancelSlotParamsSchema.parse(req.params);
+		const { slotId } = cancelSlotParamsSchema.parse(req.params);
+		const { mentorId } = res.locals.user;
 		await this._cancelSlotUC.execute({ mentorId, slotId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.CANCELLED_SLOT });
 	});
 
-	public getMentorRules = asyncHandler(async (req, res) => {
-		const { mentorId } = getMentorRulesParamsSchema.parse(req.params);
+	public getMentorRules = asyncHandler(async (_req, res) => {
+		const { mentorId } = res.locals.user;
 		const data = await this._getMentorRuleUC.execute({ mentorId });
 		res.status(HttpStatus.OK).send(data);
 	});

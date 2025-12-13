@@ -21,18 +21,16 @@ export const createRecurringRulePayloadSchema = z.object({
 	rules: z.array(rule),
 });
 
-// add recurring rule
-export const addRecurringRuleParamsSchema = z.object({
-	mentorId: z.string(),
-});
-
 export const addRecurringRulePayloadSchema = z.object({
 	rule,
 });
 
 //  update recurring rule
 export const updateRecurringRuleParmsSchema = z.object({
-	mentorId: z.string(),
+	ruleId: z.string(),
+});
+
+export const deleteRecurringRuleParamsSchema = z.object({
 	ruleId: z.string(),
 });
 
@@ -40,6 +38,5 @@ export const updateRecurringRulePayloadSchema = rule.partial();
 
 // disable recurring rule
 export const disableRecurringRuleParmsSchema = z.object({
-	mentorId: z.string(),
 	ruleId: z.string(),
 });

@@ -28,4 +28,9 @@ export interface disableRecurringRuleDto {
 	ruleId: string;
 }
 
+export interface deleteRecurringRuleDto {
+	mentorId: string;
+	ruleId: string;
+}
+
 export type getMentorRuleResponse = Availability | null;

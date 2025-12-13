@@ -1,6 +1,8 @@
 import { CACHE_TTL } from "../../../common/constants/cacheOptions";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import { UserRole } from "../../../common/enums/userRoles";
 import {
+	IMentorRepository,
 	IUserRepository,
 	IVerificationTokenRepository,
 } from "../../../domain/repositories";
@@ -15,6 +17,7 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 	constructor(
 		private _userRepository: IUserRepository,
 		private _verificationTokenRepository: IVerificationTokenRepository,
+		private _mentorRepository: IMentorRepository,
 		private _tokenService: ITokenService,
 		private _cacheService: ICacheService,
 	) {}
@@ -66,10 +69,16 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 		}
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
+		let mentorId: string | undefined;
+
+		if (user.role === UserRole.MENTOR) {
+			const mentor = await this._mentorRepository.findByUserId(user.id);
+			mentorId = mentor?.id;
+		}
 
 		// generate tokens
 		const { newAccessToken, newRefreshToken } =
-			await this._tokenService.generateTokens(user);
+			await this._tokenService.generateTokens({ ...user, mentorId });
 
 		// cache user info
 		this._cacheService.set(

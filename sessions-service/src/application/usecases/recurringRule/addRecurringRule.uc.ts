@@ -38,8 +38,6 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 				HttpStatus.BAD_REQUEST,
 			);
 		}
-		console.log("existingAvailabilityRule: ", existingAvailabilityRule);
-		console.log("newRule: ", newRule);
 
 		// validate there is no conflicting rule
 		const conflictingRule = existingAvailabilityRule.recurringRules.find(
@@ -50,7 +48,6 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 				return sameDay && overlap;
 			},
 		);
-		console.log("conflictingRule: ", conflictingRule);
 
 		if (conflictingRule) {
 			throw new AppError(ErrorMessage.CONFLICTING_RULE, HttpStatus.CONFLICT);

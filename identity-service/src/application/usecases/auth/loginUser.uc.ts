@@ -1,6 +1,10 @@
 import { CACHE_TTL } from "../../../common/constants/cacheOptions";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
-import { IUserRepository } from "../../../domain/repositories";
+import { UserRole } from "../../../common/enums/userRoles";
+import {
+	IMentorRepository,
+	IUserRepository,
+} from "../../../domain/repositories";
 import { ICryptoService, ITokenService } from "../../../domain/services";
 import { ICacheService } from "../../../domain/services/cache.service.interface";
 import { ILoginUserUC } from "../../../domain/useCases/auth/loginUser.uc.interface";
@@ -10,6 +14,7 @@ import { AppError } from "../../errors/AppError";
 export class LoginUserUC implements ILoginUserUC {
 	constructor(
 		private _userRepository: IUserRepository,
+		private _mentorRepository: IMentorRepository,
 		private _cacheService: ICacheService,
 		private _cryptoService: ICryptoService,
 		private _tokenService: ITokenService,
@@ -65,9 +70,19 @@ export class LoginUserUC implements ILoginUserUC {
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;
 
+		let mentorId: string | undefined;
+
+		if (user.role === UserRole.MENTOR) {
+			const mentor = await this._mentorRepository.findByUserId(user.id);
+			mentorId = mentor?.id;
+		}
+
 		// generate tokens
 		return {
-			accessToken: this._tokenService.generateAccessToken(user),
+			accessToken: this._tokenService.generateAccessToken({
+				...user,
+				mentorId,
+			}),
 			refreshToken: this._tokenService.generateRefreshToken(user),
 			user: publicUser,
 		};

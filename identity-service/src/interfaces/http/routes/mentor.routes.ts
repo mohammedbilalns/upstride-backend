@@ -23,8 +23,9 @@ export function createMentorRouter() {
 	// normal user
 	router.get("/user", mentorController.fetchMentorsForUser);
 	// admin
-	router.get("/", mentorController.fetchMentors);
+
 	router.get("/getMe", mentorController.getMe);
+	router.get("/", mentorController.fetchMentors);
 	router.get("/:mentorId", mentorController.fetchMentorDetails);
 
 	return router;

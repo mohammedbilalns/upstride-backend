@@ -1,6 +1,10 @@
 import { CACHE_TTL } from "../../../common/constants/cacheOptions";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
-import { IUserRepository } from "../../../domain/repositories";
+import { UserRole } from "../../../common/enums/userRoles";
+import {
+	IMentorRepository,
+	IUserRepository,
+} from "../../../domain/repositories";
 import { ITokenService } from "../../../domain/services";
 import { ICacheService } from "../../../domain/services/cache.service.interface";
 import { IRefreshTokenUC } from "../../../domain/useCases/auth/refreshToken.uc.interface";
@@ -9,6 +13,7 @@ import { AppError } from "../../errors/AppError";
 export class RefreshTokenUC implements IRefreshTokenUC {
 	constructor(
 		private _userRepository: IUserRepository,
+		private _mentorRepository: IMentorRepository,
 		private _tokenService: ITokenService,
 		private _cacheService: ICacheService,
 	) {}
@@ -36,9 +41,15 @@ export class RefreshTokenUC implements IRefreshTokenUC {
 				HttpStatus.FORBIDDEN,
 			);
 
+		let mentorId: string | undefined;
+
+		if (user.role === UserRole.MENTOR) {
+			const mentor = await this._mentorRepository.findByUserId(user.id);
+			mentorId = mentor?.id;
+		}
 		// generate new tokens
 		const { newAccessToken, newRefreshToken } =
-			await this._tokenService.generateTokens(user);
+			await this._tokenService.generateTokens({ ...user, mentorId });
 
 		// cache user info
 		this._cacheService.set(

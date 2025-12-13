@@ -6,6 +6,7 @@ export interface UserDTO {
 	email: string;
 	role: "user" | "mentor" | "admin" | "superadmin";
 	profilePicture?: string;
+	mentorId?: string;
 }
 
 export interface AdminUserDTO extends UserDTO {

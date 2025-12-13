@@ -7,29 +7,30 @@ export function createSlotRoutes() {
 	const slotsController = createSlotController();
 	router.use(authMiddleware());
 
-	router.get("/rules/:mentorId", slotsController.getMentorRules);
+	router.get("/rules", slotsController.getMentorRules);
 	// router.post(
 	// 	"/:mentorId/availability/recurring",
 	// 	slotsController.createRecurringRule,
 	// );
 	router.patch(
-		"/:mentorId/availability/recurring/:ruleId",
+		"/availability/recurring/:ruleId",
 		slotsController.updateRecurringRule,
 	);
 	router.post(
-		"/:mentorId/availability/recurring/create",
+		"/availability/recurring/create",
 		slotsController.addRecurringRule,
 	);
 	router.patch(
-		"/:mentorId/availability/recurring/:ruleId/disable",
+		"/availability/recurring/:ruleId/disable",
 		slotsController.disableRecurringRule,
 	);
-	router.post(
-		"/:mentorId/availability/custom",
-		slotsController.createCustomSlot,
+	router.post("/availability/custom", slotsController.createCustomSlot);
+	router.delete(
+		"/availability/recurring/:ruleId",
+		slotsController.deleteRecurringRule,
 	);
-	router.get("/:mentorId/slots", slotsController.getMentorSlots);
-	router.post("/:mentorId/:slotId/cancel", slotsController.cancelSlot);
+	router.get("/slots", slotsController.getMentorSlots);
+	router.post("/:slotId/cancel", slotsController.cancelSlot);
 
 	return router;
 }

@@ -50,4 +50,12 @@ export class SlotRepository
 
 		return docs ? this.mapToDomain(docs) : null;
 	}
+
+	public async deleteExpiredOpenSlots(): Promise<number> {
+		const result = await this._model.deleteMany({
+			status: "OPEN",
+			endAt: { $lt: new Date() },
+		});
+		return result.deletedCount;
+	}
 }

@@ -2,6 +2,7 @@ export enum ResponseMessage {
 	CUSTOM_AVAILABILITY_CREATED = "Custom availability created successfully",
 	RECURRING_RULE_CREATED = "Recurring rule created successfully",
 	DISBLED_RECURRING_RULE = "Recurring rule disabled successfully",
+	DELETED_RECURRING_RULE = "Recurring rule deleted successfully",
 	SESSION_INITIATED = "Session initiated successfully",
 	MARKED_SESSION_AS_COMPLETE = "Session marked as complete successfully",
 	RECURRING_RULE_UPDATED = "Recurring rule updated successfully",

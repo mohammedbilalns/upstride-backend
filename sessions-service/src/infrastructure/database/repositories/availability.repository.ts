@@ -42,4 +42,9 @@ export class AvailabilityRepository
 
 		return this.mapToDomain(doc);
 	}
+
+	public async findAllActive(): Promise<Availability[]> {
+		const docs = await this._model.find({ "recurringRules.isActive": true });
+		return docs.map((doc) => this.mapToDomain(doc));
+	}
 }
