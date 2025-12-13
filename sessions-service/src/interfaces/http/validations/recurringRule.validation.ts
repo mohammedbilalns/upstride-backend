@@ -37,6 +37,6 @@ export const deleteRecurringRuleParamsSchema = z.object({
 export const updateRecurringRulePayloadSchema = rule.partial();
 
 // disable recurring rule
-export const disableRecurringRuleParmsSchema = z.object({
+export const toggleRecurringRuleParmsSchema = z.object({
 	ruleId: z.string(),
 });

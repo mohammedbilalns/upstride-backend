@@ -18,7 +18,7 @@ export class DeleteRecurringRuleUC implements IDeleteRecurringRuleUC {
 		const updatedRule = {
 			...existingAvailabilityRule,
 			recurringRules: existingAvailabilityRule.recurringRules.filter(
-				(rule) => rule.ruleId == dto.ruleId,
+				(rule) => rule.ruleId !== dto.ruleId,
 			),
 		};
 

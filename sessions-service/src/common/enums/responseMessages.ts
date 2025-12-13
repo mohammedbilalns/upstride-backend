@@ -3,6 +3,7 @@ export enum ResponseMessage {
 	RECURRING_RULE_CREATED = "Recurring rule created successfully",
 	DISBLED_RECURRING_RULE = "Recurring rule disabled successfully",
 	DELETED_RECURRING_RULE = "Recurring rule deleted successfully",
+	ENABLED_RECURRING_RULE = "Recurring rule enabled successfully",
 	SESSION_INITIATED = "Session initiated successfully",
 	MARKED_SESSION_AS_COMPLETE = "Session marked as complete successfully",
 	RECURRING_RULE_UPDATED = "Recurring rule updated successfully",

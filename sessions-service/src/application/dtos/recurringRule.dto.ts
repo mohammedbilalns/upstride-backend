@@ -27,6 +27,10 @@ export interface disableRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
 }
+export interface enableRecurringRuleDto {
+	mentorId: string;
+	ruleId: string;
+}
 
 export interface deleteRecurringRuleDto {
 	mentorId: string;

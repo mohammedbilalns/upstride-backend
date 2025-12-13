@@ -3,11 +3,11 @@ import asyncHandler from "../utils/asyncHandler";
 import { cancelSlotParamsSchema } from "../validations/cancelSlot.validation";
 import { createCustomAvailabilityPayloadSchema } from "../validations/createCustomAvailability.validation";
 import {
-	disableRecurringRuleParmsSchema,
 	updateRecurringRuleParmsSchema,
 	updateRecurringRulePayloadSchema,
 	addRecurringRulePayloadSchema,
 	deleteRecurringRuleParamsSchema,
+	toggleRecurringRuleParmsSchema,
 } from "../validations/recurringRule.validation";
 import { IUpdateRecurringRuleUC } from "../../../domain/useCases/recurringRule/updateRecurringRule.uc.interface";
 import { IAddRecurringRuleUC } from "../../../domain/useCases/recurringRule/addRecurringRule.uc.interface";
@@ -17,6 +17,7 @@ import { ICancleSlotUC } from "../../../domain/useCases/slots/cancelSlot.uc.inte
 import { ICreateCustomSlotUC } from "../../../domain/useCases/slots/createCustomSlot.uc.interface";
 import { IGetRulesUC } from "../../../domain/useCases/recurringRule/getRule.uc.interface";
 import { IDeleteRecurringRuleUC } from "../../../domain/useCases/recurringRule/deleteRecurringRule.uc.interface";
+import { IEnableRecurringRuleUC } from "../../../domain/useCases/recurringRule/enableRecurringRule.uc.interface";
 
 export class SlotsController {
 	constructor(
@@ -24,6 +25,7 @@ export class SlotsController {
 		private _updateRecurringRuleUC: IUpdateRecurringRuleUC,
 		private _addRecurringRuleUC: IAddRecurringRuleUC,
 		private _disableRecurringRuleUC: IDisableRecurringRuleUC,
+		private _enableRecurringRuleUC: IEnableRecurringRuleUC,
 		private _deleteRecurringRuleUC: IDeleteRecurringRuleUC,
 		private _getMentorSlotsUC: IGetMentorSlotsUC,
 		private _cancelSlotUC: ICancleSlotUC,
@@ -69,7 +71,7 @@ export class SlotsController {
 	});
 
 	public disableRecurringRule = asyncHandler(async (req, res) => {
-		const { ruleId } = disableRecurringRuleParmsSchema.parse(req.params);
+		const { ruleId } = toggleRecurringRuleParmsSchema.parse(req.params);
 		const { mentorId } = res.locals.user;
 
 		await this._disableRecurringRuleUC.execute({ mentorId, ruleId });
@@ -79,6 +81,16 @@ export class SlotsController {
 			.json({ success: true, message: ResponseMessage.DISBLED_RECURRING_RULE });
 	});
 
+	public enableRecurringRule = asyncHandler(async (req, res) => {
+		const { ruleId } = toggleRecurringRuleParmsSchema.parse(req.params);
+		const { mentorId } = res.locals.user;
+
+		await this._enableRecurringRuleUC.execute({ mentorId, ruleId });
+
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.ENABLED_RECURRING_RULE });
+	});
 	public deleteRecurringRule = asyncHandler(async (req, res) => {
 		const { mentorId } = res.locals.user;
 		const { ruleId } = deleteRecurringRuleParamsSchema.parse(req.params);
