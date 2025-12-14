@@ -1,11 +1,15 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
+import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { IEnableRecurringRuleUC } from "../../../domain/useCases/recurringRule/enableRecurringRule.uc.interface";
 import { enableRecurringRuleDto } from "../../dtos/recurringRule.dto";
 import { AppError } from "../../errors/AppError";
 
 export class EnableRecurringRuleUC implements IEnableRecurringRuleUC {
-	constructor(private _availabilityRepository: IAvailabilityRepository) {}
+	constructor(
+		private _availabilityRepository: IAvailabilityRepository,
+		private _slotRepository: ISlotRepository,
+	) {}
 
 	async execute(dto: enableRecurringRuleDto): Promise<void> {
 		const existingAvailabilityRule =
@@ -25,8 +29,11 @@ export class EnableRecurringRuleUC implements IEnableRecurringRuleUC {
 			},
 		);
 
-		await this._availabilityRepository.update(existingAvailabilityRule?.id, {
-			recurringRules: updatedRecurringRules,
-		});
+		await Promise.all([
+			this._availabilityRepository.update(existingAvailabilityRule?.id, {
+				recurringRules: updatedRecurringRules,
+			}),
+			this._slotRepository.toggleSlotStatusByRuleId(dto.ruleId, true),
+		]);
 	}
 }

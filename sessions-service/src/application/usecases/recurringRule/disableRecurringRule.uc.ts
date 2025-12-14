@@ -1,15 +1,20 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
+import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { IDisableRecurringRuleUC } from "../../../domain/useCases/recurringRule/disableRecurringRule.uc.interface";
 import { disableRecurringRuleDto } from "../../dtos/recurringRule.dto";
 import { AppError } from "../../errors/AppError";
 
 export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
-	constructor(private _availabilityRepository: IAvailabilityRepository) {}
+	constructor(
+		private _availabilityRepository: IAvailabilityRepository,
+		private _slotRepository: ISlotRepository,
+	) {}
 
 	async execute(dto: disableRecurringRuleDto): Promise<void> {
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(dto.mentorId);
+
 		if (!existingAvailabilityRule)
 			throw new AppError(
 				ErrorMessage.AVAILABILITY_NOT_FOUND,
@@ -25,8 +30,11 @@ export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
 			},
 		);
 
-		await this._availabilityRepository.update(existingAvailabilityRule?.id, {
-			recurringRules: updatedRecurringRules,
-		});
+		await Promise.all([
+			this._availabilityRepository.update(existingAvailabilityRule?.id, {
+				recurringRules: updatedRecurringRules,
+			}),
+			this._slotRepository.toggleSlotStatusByRuleId(dto.ruleId, false),
+		]);
 	}
 }

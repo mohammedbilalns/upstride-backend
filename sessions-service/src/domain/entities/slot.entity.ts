@@ -23,5 +23,6 @@ export interface Slot {
 	cancelledAt: Date;
 	cancelledBy: CancelledBy;
 	cancelReason: string;
+	isActive: boolean;
 	createdAt: Date;
 }

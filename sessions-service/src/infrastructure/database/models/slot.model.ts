@@ -24,6 +24,7 @@ export const slotSchema: Schema = new Schema(
 			optional: true,
 		},
 		cancelReason: { type: String, default: null },
+		isActive: { type: Boolean, default: true },
 	},
 	{
 		timestamps: true,

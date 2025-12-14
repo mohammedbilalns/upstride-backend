@@ -25,10 +25,12 @@ export function createSlotController() {
 	);
 	const disableRecurringRuleUC = new DisableRecurringRuleUC(
 		availabilityRepository,
+		slotRepository,
 	);
 
 	const enableRecurringRuleUC = new EnableRecurringRuleUC(
 		availabilityRepository,
+		slotRepository,
 	);
 	const deleteRecurringRuleUC = new DeleteRecurringRuleUC(
 		availabilityRepository,

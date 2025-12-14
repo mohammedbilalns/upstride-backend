@@ -28,12 +28,27 @@ export class SlotRepository
 			cancelledBy: mapped.cancelledBy,
 			cancelReason: mapped.cancelReason,
 			createdAt: mapped.createdAt,
+			isActive: mapped.isActive,
 		};
 	}
 
 	public async find(filter: Partial<Slot>): Promise<Slot[]> {
 		const data = await this._model.find(filter);
 		return data.map(this.mapToDomain);
+	}
+
+	public async findUpcomingByMentor(
+		mentorId: string,
+		now: Date = new Date(),
+	): Promise<Slot[]> {
+		const docs = await this._model.find({
+			mentorId,
+			isActive: true,
+			status: "OPEN",
+			startAt: { $gt: now },
+		});
+
+		return docs.map(this.mapToDomain);
 	}
 
 	public async findOverlappingSlots(
@@ -57,5 +72,15 @@ export class SlotRepository
 			endAt: { $lt: new Date() },
 		});
 		return result.deletedCount;
+	}
+
+	public async toggleSlotStatusByRuleId(
+		ruleId: string,
+		isActive: boolean,
+	): Promise<void> {
+		await this._model.updateMany(
+			{ generatedFrom: ruleId },
+			{ $set: { isActive: isActive } },
+		);
 	}
 }
