@@ -17,6 +17,7 @@ export interface Slot {
 	startAt: Date;
 	endAt: Date;
 	generatedFrom: string;
+	ruleId?: string;
 	status: SlotStatus;
 	price: number;
 	participantId: string;

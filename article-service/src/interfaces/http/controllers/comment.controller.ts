@@ -1,5 +1,8 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import type { IArticleCommentService } from "../../../domain/services";
+import { ICreateCommentUc } from "../../../domain/useCases/comments/createComment.usecase.interface";
+import { IDeleteCommentUC } from "../../../domain/useCases/comments/deleteComment.usecase.interface";
+import { IGetCommentsUC } from "../../../domain/useCases/comments/getComments.usecase.interface";
+import { IUpdateCommentUC } from "../../../domain/useCases/comments/updateComment.usecase.interface";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	articleCommentSchema,
@@ -9,7 +12,12 @@ import {
 } from "../validations/comment.validation";
 
 export class ArticleCommentController {
-	constructor(private _articleCommentService: IArticleCommentService) {}
+	constructor(
+		private _createCommentUC: ICreateCommentUc,
+		private _updateCommentUC: IUpdateCommentUC,
+		private _deleteCommentUC: IDeleteCommentUC,
+		private _getCommentsUC: IGetCommentsUC,
+	) {}
 
 	public createComment = asyncHandler(async (req, res) => {
 		const articleCommentDto = articleCommentSchema.parse(req.body);
@@ -18,7 +26,7 @@ export class ArticleCommentController {
 			name: userName,
 			profilePicture: userImage,
 		} = res.locals.user;
-		await this._articleCommentService.createComment({
+		await this._createCommentUC.execute({
 			userId,
 			userName,
 			userImage,
@@ -32,7 +40,7 @@ export class ArticleCommentController {
 	public updateComment = asyncHandler(async (req, res) => {
 		const articleCommentUpdateDto = articleCommentUpdateSchema.parse(req.body);
 		const userId = res.locals.user.id;
-		await this._articleCommentService.updateComment({
+		await this._updateCommentUC.execute({
 			userId,
 			...articleCommentUpdateDto,
 		});
@@ -44,7 +52,7 @@ export class ArticleCommentController {
 	public deleteComment = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { commentId } = deleteCommentSchema.parse(req.query);
-		await this._articleCommentService.deleteComment(commentId, userId);
+		await this._deleteCommentUC.execute({ commentId, userId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.COMMENT_DELETED });
@@ -54,7 +62,7 @@ export class ArticleCommentController {
 		const { articleId, page, limit, parentCommentId } =
 			fetchCommentsQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
-		const comments = await this._articleCommentService.getComments({
+		const comments = await this._getCommentsUC.execute({
 			articleId,
 			userId,
 			page,

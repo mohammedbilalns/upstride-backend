@@ -1,6 +1,6 @@
 import type { ArticleComment } from "../../domain/entities/articleComment.entity";
 
-export interface ArticleCommentDto {
+export interface CreateCommentDto {
 	articleId: string;
 	userId: string;
 	parentCommentId?: string;
@@ -9,19 +9,27 @@ export interface ArticleCommentDto {
 	content: string;
 }
 
-export interface ArticleCommentUpdateDto {
+export interface UpdateCommentDto {
 	commentId: string;
 	userId: string;
 	content: string;
 }
 
-export interface fetchCommentsDto {
+export interface FetchCommentsDto {
 	userId: string;
 	articleId: string;
 	parentCommentId?: string;
 	page: number;
 	limit: number;
 }
+
+export interface DeleteCommentDto {
+	commentId: string;
+	userId: string;
+}
+
+// resp
+
 export interface fetchCommentsResponseDto {
 	comments: (Partial<ArticleComment> & { isLiked: boolean })[];
 	total: number;

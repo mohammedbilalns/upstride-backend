@@ -78,9 +78,11 @@ export class SlotRepository
 		ruleId: string,
 		isActive: boolean,
 	): Promise<void> {
+		console.log("toggling status ...");
 		await this._model.updateMany(
-			{ generatedFrom: ruleId },
+			{ ruleId: ruleId },
 			{ $set: { isActive: isActive } },
 		);
+		console.log("toggled status ...");
 	}
 }

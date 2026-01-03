@@ -10,6 +10,7 @@ export const slotSchema: Schema = new Schema(
 		startAt: { type: Date, required: true },
 		endAt: { type: Date, required: true },
 		generatedFrom: { type: Types.ObjectId, ref: "Availability", default: null },
+		ruleId: { type: String, default: null },
 		status: {
 			type: String,
 			enum: ["OPEN", "FULL", "CANCELLED", "STARTED", "COMPLETED"],
