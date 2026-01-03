@@ -28,6 +28,11 @@ export interface UpdateArticleDto {
 	content?: string;
 }
 
+export interface DeleteArticleDto {
+	articleId: string;
+	userId: string;
+}
+
 export interface FetchArticlesDto {
 	userId?: string;
 	page: number;
