@@ -1,5 +1,5 @@
-import type { GenerateNotificationDto } from "../../application/dtos/notification.dto";
 import type { NotificationType } from "./notification.type";
+import { GenerateNotificationDto } from "../../application/dtos/notification-generator.dto";
 
 export type NotificationTemplate = {
 	getTitle: (info: GenerateNotificationDto) => string;
