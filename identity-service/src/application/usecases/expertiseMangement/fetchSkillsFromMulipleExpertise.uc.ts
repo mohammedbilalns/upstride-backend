@@ -8,10 +8,10 @@ export class FetchSkillsFromMulipleExpertiseUC
 	constructor(private _skillRepository: ISkillRepository) {}
 
 	async execute(
-		data: fetchSkillsFromMultipleExpertiseDto,
+		dto: fetchSkillsFromMultipleExpertiseDto,
 	): Promise<Array<{ id: string; name: string }>> {
 		const skills = [];
-		for (const expertise of data.expertise) {
+		for (const expertise of dto.expertise) {
 			const skillsFromExpertise =
 				await this._skillRepository.findAll(expertise);
 			skills.push(...skillsFromExpertise);

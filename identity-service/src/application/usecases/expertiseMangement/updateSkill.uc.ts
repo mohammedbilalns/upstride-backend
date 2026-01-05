@@ -5,10 +5,10 @@ import { updateSkillDto } from "../../dtos";
 export class UpdateSkillUC implements IUpdateSkillUC {
 	constructor(private _skillRepository: ISkillRepository) {}
 
-	async execute(data: updateSkillDto): Promise<void> {
+	async execute(dto: updateSkillDto): Promise<void> {
 		const updateData: Partial<Omit<updateSkillDto, "skillId">> = {};
-		if (data.name) updateData.name = data.name;
-		if (data.isVerified) updateData.isVerified = data.isVerified;
-		await this._skillRepository.update(data.skillId, updateData);
+		if (dto.name) updateData.name = dto.name;
+		if (dto.isVerified) updateData.isVerified = dto.isVerified;
+		await this._skillRepository.update(dto.skillId, updateData);
 	}
 }

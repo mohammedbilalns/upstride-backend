@@ -11,15 +11,15 @@ export class CreateExpertiseUC implements ICreateExpertiseUC {
 		private _skillRepository: ISkillRepository,
 	) {}
 
-	async execute(data: createExpertiseDto): Promise<void> {
+	async execute(dto: createExpertiseDto): Promise<void> {
 		const expertise = await this._expertiseRepository.create({
-			name: data.name,
-			description: data.description,
+			name: dto.name,
+			description: dto.description,
 			isVerified: true,
 		});
 
 		await Promise.all(
-			data.skills.map((skill) =>
+			dto.skills.map((skill) =>
 				this._skillRepository.create({
 					name: skill,
 					expertiseId: expertise.id,

@@ -1,3 +1,4 @@
+import { OTP_EXPIRY_TIME } from "../../../common/constants/otpConfig";
 import { ErrorMessage, HttpStatus, QueueEvents } from "../../../common/enums";
 import { MailType } from "../../../common/enums/mailTypes";
 import { IEventBus } from "../../../domain/events/IEventBus";
@@ -33,7 +34,7 @@ export class InitiatePasswordResetUC implements IInitiatePasswordResetUC {
 			otp,
 			email,
 			otpType.reset,
-			300,
+			OTP_EXPIRY_TIME,
 		);
 
 		// trigger password reset email event

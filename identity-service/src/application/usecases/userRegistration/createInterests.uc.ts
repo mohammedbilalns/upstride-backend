@@ -1,4 +1,8 @@
 import { CACHE_TTL } from "../../../common/constants/cacheOptions";
+import {
+	MAX_ALLOWED_EXPERTISES,
+	MAX_ALLOWED_TOPICS,
+} from "../../../common/constants/expertiseOptions";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import {
 	IExpertiseRepository,
@@ -30,7 +34,7 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		const newExpertisesMap: Map<string, string> = new Map();
 		newExpertises = [...new Set(newExpertises)];
 
-		if (newExpertises.length > 5) {
+		if (newExpertises.length > MAX_ALLOWED_EXPERTISES) {
 			throw new AppError(
 				ErrorMessage.TOO_MANY_NEW_EXPERTISES,
 				HttpStatus.BAD_REQUEST,
@@ -67,7 +71,7 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		newExpertisesMap: Map<string, string>,
 	) {
 		// Max allowed number of created topics
-		if (newTopics.length > 5) {
+		if (newTopics.length > MAX_ALLOWED_TOPICS) {
 			throw new AppError(
 				ErrorMessage.TOO_MANY_NEW_TOPICS,
 				HttpStatus.BAD_REQUEST,

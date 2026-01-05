@@ -8,10 +8,10 @@ import { AppError } from "../../errors/AppError";
 export class CreateSkillUC implements ICreateSkillUC {
 	constructor(private _skillRepository: ISkillRepository) {}
 
-	async execute(data: createSkillDto): Promise<void> {
+	async execute(dto: createSkillDto): Promise<void> {
 		const isExists = await this._skillRepository.exists(
-			data.name,
-			data.expertiseId,
+			dto.name,
+			dto.expertiseId,
 		);
 		if (isExists)
 			throw new AppError(
@@ -20,11 +20,11 @@ export class CreateSkillUC implements ICreateSkillUC {
 			);
 
 		const isAdmin = [UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(
-			data.userRole,
+			dto.userRole,
 		);
 		await this._skillRepository.create({
-			name: data.name,
-			expertiseId: data.expertiseId,
+			name: dto.name,
+			expertiseId: dto.expertiseId,
 			isVerified: isAdmin,
 		});
 	}

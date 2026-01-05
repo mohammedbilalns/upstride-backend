@@ -1,3 +1,5 @@
+import { RESEND_LIMIT } from "../../../common/constants/otpConfig";
+import { REGISTER_TOKEN_EXPIRY } from "../../../common/constants/tokenOptions";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import {
 	IUserRepository,
@@ -27,7 +29,7 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 				otpType.register,
 			)) ?? 0;
 
-		if (count > 3) {
+		if (count > RESEND_LIMIT) {
 			await this._verficationTokenRepository.deleteOtp(email, otpType.register);
 			throw new AppError(
 				ErrorMessage.TOO_MANY_OTP_ATTEMPTS,
@@ -67,7 +69,7 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 			token,
 			email,
 			"register",
-			15 * 60,
+			REGISTER_TOKEN_EXPIRY,
 		);
 
 		return token;

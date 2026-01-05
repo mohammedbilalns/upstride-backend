@@ -1,3 +1,4 @@
+import { MAX_OTP_ATTEMPTS } from "../../../common/constants/otpConfig";
 import { ErrorMessage, HttpStatus, QueueEvents } from "../../../common/enums";
 import { MailType } from "../../../common/enums/mailTypes";
 import { IEventBus } from "../../../domain/events/IEventBus";
@@ -37,7 +38,7 @@ export class ResendResetOtpUC implements IResendResetOtpUC {
 			)) ?? 0;
 
 		// Block further OTP requests if retry threshold is exceeded
-		if (count > 3) {
+		if (count > MAX_OTP_ATTEMPTS) {
 			await this._verficationTokenRepository.deleteOtp(email, otpType.reset);
 			throw new AppError(
 				ErrorMessage.TOO_MANY_OTP_ATTEMPTS,

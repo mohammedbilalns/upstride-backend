@@ -11,6 +11,7 @@ import { registerUserParam } from "../../dtos/registration.dto";
 import { AppError } from "../../errors/AppError";
 import { generateOtp } from "../../utils/generateOtp";
 import { OTP_SUBJECT, otpType } from "../../utils/mail.util";
+import { OTP_EXPIRY_TIME } from "../../../common/constants/otpConfig";
 
 /**
  * RegisterUser Use Case
@@ -52,7 +53,7 @@ export class RegisterUserUC implements IRegisterUserUC {
 			otp,
 			dto.email,
 			otpType.register,
-			300,
+			OTP_EXPIRY_TIME,
 		);
 		// send the OTP to the user
 		const message = {

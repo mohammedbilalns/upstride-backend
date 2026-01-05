@@ -1,3 +1,4 @@
+import { RESEND_LIMIT } from "../../../common/constants/otpConfig";
 import { ErrorMessage, HttpStatus, QueueEvents } from "../../../common/enums";
 import { MailType } from "../../../common/enums/mailTypes";
 import { IEventBus } from "../../../domain/events/IEventBus";
@@ -26,7 +27,7 @@ export class ResendRegisterOtpUC implements IResendRegisterOtpUC {
 				email,
 				otpType.register,
 			)) ?? 0;
-		if (count > 3) {
+		if (count > RESEND_LIMIT) {
 			await this._verficationTokenRepository.deleteOtp(email, otpType.register);
 			throw new AppError(
 				ErrorMessage.TOO_MANY_OTP_ATTEMPTS,

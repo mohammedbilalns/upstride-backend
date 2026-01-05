@@ -1,0 +1,1 @@
+export const MAX_REGISTRATION_COUNT = 3;

@@ -5,12 +5,12 @@ import { updateExpertiseDto } from "../../dtos";
 export class UpdateExpertiseUC implements IUpdateExpertiseUC {
 	constructor(private _expertiseRepository: IExpertiseRepository) {}
 
-	async execute(data: updateExpertiseDto): Promise<void> {
+	async execute(dto: updateExpertiseDto): Promise<void> {
 		const updateData: Partial<Omit<updateExpertiseDto, "expertiseId">> = {};
-		if (data.name) updateData.name = data.name;
-		if (data.description) updateData.description = data.description;
-		if (data.isVerified) updateData.isVerified = data.isVerified;
+		if (dto.name) updateData.name = dto.name;
+		if (dto.description) updateData.description = dto.description;
+		if (dto.isVerified) updateData.isVerified = dto.isVerified;
 
-		await this._expertiseRepository.update(data.expertiseId, updateData);
+		await this._expertiseRepository.update(dto.expertiseId, updateData);
 	}
 }

@@ -1,3 +1,4 @@
+import { MAX_REGISTRATION_COUNT } from "../../../common/constants/mentorRegistrationOptions";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import {
 	IMentorRepository,
@@ -20,7 +21,10 @@ export class RegisterAsMentorUC implements IRegisterAsMentorUC {
 		if (!user || !user.isVerified)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-		if (user.mentorRegistrationCount && user.mentorRegistrationCount >= 3)
+		if (
+			user.mentorRegistrationCount &&
+			user.mentorRegistrationCount >= MAX_REGISTRATION_COUNT
+		)
 			throw new AppError(
 				ErrorMessage.MENTOR_LIMIT_REACHED,
 				HttpStatus.BAD_REQUEST,

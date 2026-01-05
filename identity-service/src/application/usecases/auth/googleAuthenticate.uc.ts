@@ -1,4 +1,5 @@
 import { CACHE_TTL } from "../../../common/constants/cacheOptions";
+import { REGISTER_TOKEN_EXPIRY } from "../../../common/constants/tokenOptions";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { UserRole } from "../../../common/enums/userRoles";
 import {
@@ -51,7 +52,7 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 				token,
 				decodedToken.email,
 				"register",
-				15 * 60,
+				REGISTER_TOKEN_EXPIRY,
 			);
 			return { token, email: decodedToken.email };
 		} else if (!user.googleId) {
