@@ -16,35 +16,42 @@ export class MailService implements IMailService {
 	}
 
 	/**
-	 * Sends an email based on the provided DTO.
-	 * The DTO determines the email type and required data (OTP / username).
+	 * Builds the HTML content for an email based on the mail type.
+	 *
+	 * - Selects the appropriate email template using `mailType`
+	 * - Validates that all required data is present
 	 */
-	public async sendEmail(dto: SendMailDTO) {
-		let text: string;
-
-		// Select email template based on `mailType` and validate required data
+	private buildEmailContent(dto: SendMailDTO): string {
 		switch (dto.mailType) {
 			case MailType.REGISTER_OTP:
 				if (!dto.otp) throw new AppError(ErrorMessage.OTP_NOT_FOUND);
-				text = buildOtpEmailHtml(dto.otp, OtpType.register);
-				break;
+				return buildOtpEmailHtml(dto.otp, OtpType.register);
 
 			case MailType.PASSWORD_RESET_OTP:
 				if (!dto.otp) throw new AppError(ErrorMessage.OTP_NOT_FOUND);
-				text = buildOtpEmailHtml(dto.otp, OtpType.reset);
+				return buildOtpEmailHtml(dto.otp, OtpType.reset);
 				break;
 
 			case MailType.APPROVED_MENTOR:
 				if (!dto.userName) throw new AppError(ErrorMessage.USERNAME_NOT_FOUND);
-				text = buildMentorApprovalEmailHtml(dto.userName);
-				break;
+				return buildMentorApprovalEmailHtml(dto.userName);
 		}
+	}
+
+	/**
+	 * Sends an email using the configured mail transporter.
+	 *
+	 * - Delegates email content generation to `buildEmailContent`
+	 * - Sends the email via the configured Nodemailer transporter
+	 */
+	public async sendEmail(dto: SendMailDTO) {
+		const html = this.buildEmailContent(dto);
 
 		await this.transporter.sendMail({
 			from: "Upstride",
 			to: dto.to,
 			subject: dto.subject,
-			html: text,
+			html,
 		});
 	}
 }
