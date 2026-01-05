@@ -33,6 +33,8 @@ export class BookMarkController {
 	public deleteBookMark = asyncHandler(async (req, res) => {
 		const { userId, articleId } = req.params;
 		await this._bookMarkService.deleteBookMark(userId, articleId);
-		res.status(200).json({ message: ResponseMessage.BOOKMARK_DELETED });
+		res
+			.status(HttpStatus.OK)
+			.json({ message: ResponseMessage.BOOKMARK_DELETED });
 	});
 }
