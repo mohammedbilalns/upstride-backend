@@ -12,4 +12,9 @@ export interface IMessageRepository extends IBaseRepository<Message> {
 		chatId: string,
 		senderId: string,
 	): Promise<void>;
+	markAllMessagesAsRead(
+		chatId: string,
+		receiverId: string,
+		senderId: string,
+	): Promise<void>;
 }

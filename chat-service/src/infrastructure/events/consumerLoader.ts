@@ -1,9 +1,9 @@
 import logger from "../../common/utils/logger";
-import { composeMarkMessageReadConsumer } from "./compositions/markMessageRead.composition";
+import { composeMarkChatReadConsumer } from "./compositions/markChatRead.composition";
 import { composeSendMessageConsumer } from "./compositions/sendMessage.composition";
 
 export async function loadConsumers() {
 	await composeSendMessageConsumer();
-	await composeMarkMessageReadConsumer();
+	await composeMarkChatReadConsumer();
 	logger.info("Event consumers loaded");
 }

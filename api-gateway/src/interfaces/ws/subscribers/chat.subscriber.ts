@@ -3,10 +3,7 @@ import { SocketEvents } from "../../../common/enums/socketEvents";
 import type { IEventBus } from "../../../domain/events/eventBus.interface";
 import logger from "../../../utils/logger";
 import type { SocketPublisher } from "../socket.publisher";
-import {
-	messagePayloadSchema,
-	messageStatusPayloadSchema,
-} from "../validations/messagePayload.validation";
+import { messagePayloadSchema } from "../validations/messagePayload.validation";
 
 export async function registerChatSubscriber(
 	eventBus: IEventBus,
@@ -27,16 +24,14 @@ export async function registerChatSubscriber(
 		}
 	});
 
-	await eventBus.subscribe(QueueEvents.MARKED_MESSAGE_READ, async (payload) => {
+	await eventBus.subscribe(QueueEvents.MARKED_CHAT_READ, async (payload) => {
 		try {
-			const parsedPayload = messageStatusPayloadSchema.parse(payload);
-			socketPublisher.emitToUser(
-				parsedPayload.senderId,
-				SocketEvents.MARK_MESSAGE_READ,
-				{ recieverId: parsedPayload.recieverId },
-			);
+			const { senderId, recieverId } = payload as any; // or define schema
+			socketPublisher.emitToUser(senderId, SocketEvents.MARK_CHAT_READ, {
+				recieverId,
+			});
 		} catch (error) {
-			logger.error(`Error updating read status: ${error}`);
+			logger.error(`Error updating chat read status: ${error}`);
 		}
 	});
 }

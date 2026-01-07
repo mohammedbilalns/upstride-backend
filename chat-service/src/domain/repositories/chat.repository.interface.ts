@@ -8,4 +8,5 @@ export interface IChatRepository extends IBaseRepository<Chat> {
 		page: number,
 		limit: number,
 	): Promise<{ chats: Chat[]; total: number }>;
+	findByParticipants(userId1: string, userId2: string): Promise<Chat | null>;
 }

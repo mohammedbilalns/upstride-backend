@@ -33,6 +33,13 @@ export class ChatRepository
 		return chat ? this.mapToDomain(chat) : null;
 	}
 
+	async findByParticipants(
+		userId1: string,
+		userId2: string,
+	): Promise<Chat | null> {
+		return this.getChatByUserIds([userId1, userId2]);
+	}
+
 	async getUserChats(
 		userId: string,
 		page: number,

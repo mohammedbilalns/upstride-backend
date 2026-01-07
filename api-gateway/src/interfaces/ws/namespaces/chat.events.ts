@@ -30,15 +30,17 @@ export function registerChatEvents(socket: Socket, publisher: SocketPublisher) {
 		}
 	});
 
-	socket.on(SocketEvents.MARK_MESSAGE_READ, async (data) => {
+	socket.on(SocketEvents.MARK_CHAT_READ, async (data) => {
 		try {
-			const reciever = socket.data.user.id;
-			await publisher.publishToQueue(QueueEvents.MARK_MESSAGE_READ, {
-				...data,
-				reciever,
+			const userId = socket.data.user.id;
+			if (!data.senderId) return;
+
+			await publisher.publishToQueue(QueueEvents.MARK_CHAT_READ, {
+				userId,
+				senderId: data.senderId,
 			});
 		} catch (error) {
-			logger.error("Error marking message read", error);
+			logger.error("Error marking chat read", error);
 		}
 	});
 }

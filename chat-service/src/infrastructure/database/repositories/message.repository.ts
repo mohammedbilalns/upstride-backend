@@ -76,4 +76,23 @@ export class MessageRepository
 			)
 			.exec();
 	}
+
+	async markAllMessagesAsRead(
+		chatId: string,
+		_receiverId: string,
+		senderId: string,
+	): Promise<void> {
+		await this._model
+			.updateMany(
+				{
+					chatId,
+					senderId,
+					status: { $ne: "read" },
+				},
+				{
+					$set: { status: "read" },
+				},
+			)
+			.exec();
+	}
 }
