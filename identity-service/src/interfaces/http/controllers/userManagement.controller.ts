@@ -23,18 +23,18 @@ export class UserManagementController {
 		const { page, limit, query } = result;
 		const userRole = res.locals.user?.role;
 
-		const { users, total } = await this._fetchUsersUC.execute(
+		const { users, total } = await this._fetchUsersUC.execute({
 			userRole,
 			page,
 			limit,
 			query,
-		);
+		});
 		res.status(HttpStatus.OK).json({ data: users, total });
 	});
 
 	public blockUser = asyncHandler(async (req: Request, res: Response) => {
 		const userId = req.params.userId;
-		await this._blockUserUC.execute(userId);
+		await this._blockUserUC.execute({ userId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.USER_BLOCKED });
@@ -42,7 +42,7 @@ export class UserManagementController {
 
 	public unblockUser = asyncHandler(async (req: Request, res: Response) => {
 		const userId = req.params.userId;
-		await this._unblockUserUC.execute(userId);
+		await this._unblockUserUC.execute({ userId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.USER_UNBLOCKED });
@@ -50,7 +50,7 @@ export class UserManagementController {
 
 	public fetchByUserIds = asyncHandler(async (req: Request, res: Response) => {
 		const { ids } = fetchByUserIdsParamsSchema.parse(req.query);
-		const data = await this._fetchUsersByIdsUC.execute(ids);
+		const data = await this._fetchUsersByIdsUC.execute({ userIds: ids });
 		res.send(data);
 	});
 }

@@ -7,7 +7,7 @@ import {
 } from "../../../domain/repositories";
 import { ICryptoService } from "../../../domain/services";
 import { IRegisterUserUC } from "../../../domain/useCases/userRegistration/registerUser.uc.interface";
-import { registerUserParam } from "../../dtos/registration.dto";
+import { RegisterUserDto } from "../../dtos/registration.dto";
 import { AppError } from "../../errors/AppError";
 import { generateOtp } from "../../utils/generateOtp";
 import { OTP_SUBJECT, otpType } from "../../utils/mail.util";
@@ -26,7 +26,7 @@ export class RegisterUserUC implements IRegisterUserUC {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(dto: registerUserParam): Promise<void> {
+	async execute(dto: RegisterUserDto): Promise<void> {
 		// verify the user doesn't exist
 		const existingUser = await this._userRepository.findByEmail(dto.email);
 		if (existingUser?.isVerified)

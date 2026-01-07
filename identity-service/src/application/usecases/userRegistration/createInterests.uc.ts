@@ -13,11 +13,8 @@ import {
 import { ITokenService } from "../../../domain/services";
 import { ICacheService } from "../../../domain/services/cache.service.interface";
 import { ICreateInterestsUC } from "../../../domain/useCases/userRegistration/createInterests.uc.interface";
-import {
-	createInterestsParam,
-	LoginReturn,
-	NewTopic,
-} from "../../dtos/registration.dto";
+import { CreateInterestsDto, NewTopic } from "../../dtos/registration.dto";
+import { LoginReturn } from "../../dtos/auth.dto";
 import { AppError } from "../../errors/AppError";
 
 export class CreateInterestsUC implements ICreateInterestsUC {
@@ -101,7 +98,7 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		return newSkillIds.map((skillId) => skillId.id);
 	}
 
-	async execute(dto: createInterestsParam): Promise<LoginReturn> {
+	async execute(dto: CreateInterestsDto): Promise<LoginReturn> {
 		let newExpertisesMap: Map<string, string> = new Map();
 		let newTopicIds: string[] = [];
 

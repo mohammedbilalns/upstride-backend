@@ -4,7 +4,7 @@ import type { IChatRepository } from "../../domain/repositories/chat.repository.
 import type { IMessageRepository } from "../../domain/repositories/message.repository.interface";
 import type { IUserService } from "../../domain/services/user.service.interface";
 import type { IGetChatUC } from "../../domain/useCases/getChat.uc.interface";
-import type { getChatDto, getChatResult } from "../dtos/getChat.dto";
+import type { GetChatDto, GetChatResult } from "../dtos/getChat.dto";
 import { AppError } from "../errors/AppError";
 
 export class GetChatUC implements IGetChatUC {
@@ -14,7 +14,7 @@ export class GetChatUC implements IGetChatUC {
 		private _userService: IUserService,
 	) {}
 
-	async execute(dto: getChatDto): Promise<getChatResult> {
+	async execute(dto: GetChatDto): Promise<GetChatResult> {
 		const { userIds, currentUserId, page, limit } = dto;
 
 		// Get or create the chat

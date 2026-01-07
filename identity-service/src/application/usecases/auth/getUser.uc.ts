@@ -2,12 +2,14 @@ import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IUserRepository } from "../../../domain/repositories";
 import { IGetUserUC } from "../../../domain/useCases/auth/getUser.uc.interface";
 import { UserDTO } from "../../dtos";
+import { GetUserDto } from "../../dtos/auth.dto";
 import { AppError } from "../../errors/AppError";
 
 export class GetUserUC implements IGetUserUC {
 	constructor(private _userRepository: IUserRepository) {}
 
-	async execute(userId: string): Promise<UserDTO> {
+	async execute(dto: GetUserDto): Promise<UserDTO> {
+		const { userId } = dto;
 		const user = await this._userRepository.findById(userId);
 		if (!user)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);

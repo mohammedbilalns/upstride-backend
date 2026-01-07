@@ -1,5 +1,7 @@
+import { RefreshTokenDto } from "../../../application/dtos/auth.dto";
+
 export interface IRefreshTokenUC {
 	execute(
-		refreshToken: string,
+		dto: RefreshTokenDto,
 	): Promise<{ accessToken: string; refreshToken: string }>;
 }

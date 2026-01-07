@@ -1,13 +1,13 @@
 import type { Message } from "../../domain/entities/message.entity";
 
-export interface getChatDto {
+export interface GetChatDto {
 	userIds: string[];
 	currentUserId: string;
 	page: number;
 	limit: number;
 }
 
-export interface getChatResult {
+export interface GetChatResult {
 	chat: {
 		id: string;
 		participant: {

@@ -11,10 +11,10 @@ export class UnfollowMentorUC implements IUnfollowMentorUC {
 	) {}
 
 	async execute(userId: string, mentorId: string): Promise<void> {
-		const connectionId = await this._connectionValidationService.validate(
+		const connectionId = await this._connectionValidationService.validate({
 			userId,
 			mentorId,
-		);
+		});
 		if (connectionId === false)
 			throw new AppError(
 				ErrorMessage.FORBIDDEN_RESOURCE,

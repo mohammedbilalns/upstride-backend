@@ -1,5 +1,5 @@
-import { GoogleAuthResponse } from "../../../application/dtos";
+import { GoogleAuthResponse, GoogleAuthDto } from "../../../application/dtos";
 
 export interface IGoogleAuthenticateUC {
-	execute(token: string): Promise<GoogleAuthResponse>;
+	execute(dto: GoogleAuthDto): Promise<GoogleAuthResponse>;
 }

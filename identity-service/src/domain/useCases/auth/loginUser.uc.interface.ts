@@ -1,5 +1,5 @@
-import { LoginReturn } from "../../../application/dtos/registration.dto";
+import { LoginUserDto, LoginReturn } from "../../../application/dtos/auth.dto";
 
 export interface ILoginUserUC {
-	execute(email: string, password: string): Promise<LoginReturn>;
+	execute(dto: LoginUserDto): Promise<LoginReturn>;
 }

@@ -1,8 +1,8 @@
 import type {
-	getChatsDto,
-	getChatsResult,
+	GetChatsDto,
+	GetChatsResult,
 } from "../../application/dtos/getChats.dto";
 
 export interface IGetChatsUC {
-	execute(dto: getChatsDto): Promise<getChatsResult>;
+	execute(dto: GetChatsDto): Promise<GetChatsResult>;
 }

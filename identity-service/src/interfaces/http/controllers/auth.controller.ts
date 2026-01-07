@@ -79,8 +79,10 @@ export class AuthController {
 	public login = asyncHandler(async (req, res) => {
 		const { email, password } = loginSchema.parse(req.body);
 		const { user, accessToken, refreshToken } = await this._loginUserUC.execute(
-			email,
-			password,
+			{
+				email,
+				password,
+			},
 		);
 
 		this.setAuthCookies(res, accessToken, refreshToken);
@@ -93,7 +95,7 @@ export class AuthController {
 	/** Logout user & clear cookies */
 	public logout = asyncHandler(async (_req, res) => {
 		const userId = res.locals?.user?.id;
-		this._logoutUC.execute(userId);
+		this._logoutUC.execute({ userId });
 		this.clearAuthCookies(res);
 
 		res
@@ -112,9 +114,9 @@ export class AuthController {
 			});
 		}
 
-		const { accessToken, refreshToken } = await this._refreshTokenUC.execute(
-			refreshTokenFromCookie,
-		);
+		const { accessToken, refreshToken } = await this._refreshTokenUC.execute({
+			refreshToken: refreshTokenFromCookie,
+		});
 
 		this.setAuthCookies(res, accessToken, refreshToken);
 
@@ -127,7 +129,7 @@ export class AuthController {
 	/** Returns logged-in user's profile */
 	public me = asyncHandler(async (_req, res) => {
 		const userId = res.locals.user.id;
-		const user = await this._getUserUC.execute(userId);
+		const user = await this._getUserUC.execute({ userId });
 		res.status(HttpStatus.OK).json({ success: true, user });
 	});
 
@@ -139,7 +141,9 @@ export class AuthController {
 	public googleAuth = asyncHandler(async (req, res) => {
 		const { credential } = req.body;
 
-		const result = await this._googleAuthenticateUC.execute(credential);
+		const result = await this._googleAuthenticateUC.execute({
+			token: credential,
+		});
 
 		if ("token" in result) {
 			// New Google user → store registration token

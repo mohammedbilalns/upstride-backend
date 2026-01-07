@@ -8,7 +8,7 @@ import {
 import { ICryptoService, ITokenService } from "../../../domain/services";
 import { ICacheService } from "../../../domain/services/cache.service.interface";
 import { ILoginUserUC } from "../../../domain/useCases/auth/loginUser.uc.interface";
-import { LoginReturn } from "../../dtos/registration.dto";
+import { LoginReturn, LoginUserDto } from "../../dtos/auth.dto";
 import { AppError } from "../../errors/AppError";
 
 export class LoginUserUC implements ILoginUserUC {
@@ -24,7 +24,8 @@ export class LoginUserUC implements ILoginUserUC {
 	 * Validates user credentials and returns access/refresh tokens.
 	 * Also caches lightweight user data.
 	 */
-	async execute(email: string, password: string): Promise<LoginReturn> {
+	async execute(dto: LoginUserDto): Promise<LoginReturn> {
+		const { email, password } = dto;
 		// verify user identity
 		const user = await this._userRepository.findByEmail(email);
 

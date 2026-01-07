@@ -1,3 +1,5 @@
+import { LogoutDto } from "../../../application/dtos/auth.dto";
+
 export interface ILogoutUC {
-	execute(userId: string): Promise<void>;
+	execute(dto: LogoutDto): Promise<void>;
 }

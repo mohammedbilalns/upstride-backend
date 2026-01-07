@@ -11,10 +11,10 @@ export class FollowMentorUC implements IFollowMentorUC {
 	) {}
 
 	async execute(userId: string, mentorId: string): Promise<void> {
-		const isExists = await this._connectionValidationService.validate(
+		const isExists = await this._connectionValidationService.validate({
 			userId,
 			mentorId,
-		);
+		});
 		if (isExists)
 			throw new AppError(ErrorMessage.ALREADY_FOLLOWED, HttpStatus.BAD_REQUEST);
 

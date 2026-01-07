@@ -2,7 +2,7 @@ import { ErrorMessage } from "../../common/enums";
 import type { IChatRepository } from "../../domain/repositories";
 import type { IUserService } from "../../domain/services/user.service.interface";
 import type { IGetChatsUC } from "../../domain/useCases/getChats.uc.interface";
-import type { getChatsDto, getChatsResult } from "../dtos/getChats.dto";
+import type { GetChatsDto, GetChatsResult } from "../dtos/getChats.dto";
 import { AppError } from "../errors/AppError";
 
 export class GetChatsUC implements IGetChatsUC {
@@ -11,7 +11,7 @@ export class GetChatsUC implements IGetChatsUC {
 		private _userService: IUserService,
 	) {}
 
-	async execute(dto: getChatsDto): Promise<getChatsResult> {
+	async execute(dto: GetChatsDto): Promise<GetChatsResult> {
 		const { userId, page, limit } = dto;
 
 		// Fetch chats of the user

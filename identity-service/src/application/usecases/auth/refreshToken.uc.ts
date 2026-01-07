@@ -9,6 +9,7 @@ import { ITokenService } from "../../../domain/services";
 import { ICacheService } from "../../../domain/services/cache.service.interface";
 import { IRefreshTokenUC } from "../../../domain/useCases/auth/refreshToken.uc.interface";
 import { AppError } from "../../errors/AppError";
+import { RefreshTokenDto } from "../../dtos/auth.dto";
 
 export class RefreshTokenUC implements IRefreshTokenUC {
 	constructor(
@@ -27,8 +28,9 @@ export class RefreshTokenUC implements IRefreshTokenUC {
 	 *  4. Cache user info for
 	 */
 	async execute(
-		refreshToken: string,
+		dto: RefreshTokenDto,
 	): Promise<{ accessToken: string; refreshToken: string }> {
+		const { refreshToken } = dto;
 		// validate and decode refresh token
 		const decoded = this._tokenService.verifyRefreshToken(refreshToken);
 		const { id } = decoded;

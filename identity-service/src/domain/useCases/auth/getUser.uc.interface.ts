@@ -1,5 +1,6 @@
 import { UserDTO } from "../../../application/dtos";
+import { GetUserDto } from "../../../application/dtos/auth.dto";
 
 export interface IGetUserUC {
-	execute(userId: string): Promise<UserDTO>;
+	execute(dto: GetUserDto): Promise<UserDTO>;
 }

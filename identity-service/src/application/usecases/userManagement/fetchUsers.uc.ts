@@ -1,17 +1,15 @@
 import { UserRole } from "../../../common/enums/userRoles";
 import { IUserRepository } from "../../../domain/repositories";
 import { IFetchUsersUC } from "../../../domain/useCases/userManagement/fetchUsers.uc.interface";
-import { AdminUserDTO } from "../../dtos";
+import { AdminUserDTO, FetchUsersDto } from "../../dtos";
 
 export class FetchUsersUC implements IFetchUsersUC {
 	constructor(private _userRepository: IUserRepository) {}
 
 	async execute(
-		userRole: string,
-		page: number,
-		limit: number,
-		query?: string,
+		dto: FetchUsersDto,
 	): Promise<{ users: AdminUserDTO[]; total: number }> {
+		const { userRole, page, limit, query } = dto;
 		let allowedRoles: string[] = [];
 
 		if (userRole === UserRole.ADMIN) {

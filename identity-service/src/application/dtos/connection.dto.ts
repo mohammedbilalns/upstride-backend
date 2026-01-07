@@ -11,7 +11,7 @@ export interface Activity {
 	createdAt?: string;
 }
 
-export interface PopulatedUser {
+export interface ConnectionPopulatedUser {
 	_id: Types.ObjectId;
 	name: string;
 	profilePicture?: string;
@@ -19,7 +19,7 @@ export interface PopulatedUser {
 
 export interface PopulatedMentor {
 	_id: Types.ObjectId;
-	userId: PopulatedUser;
+	userId: ConnectionPopulatedUser;
 	bio: string;
 	currentRole: string;
 	organisation: string;
@@ -42,7 +42,7 @@ export interface PopulatedMentor {
 export interface PopulatedConnection {
 	_id: Types.ObjectId;
 	mentorId: PopulatedMentor;
-	followerId: PopulatedUser;
+	followerId: ConnectionPopulatedUser;
 	createdAt: string;
 	updatedAt: string;
 	__v: number;
@@ -79,3 +79,8 @@ export interface SuggestedMentorsResponseDto {
 }
 
 export type MutualConnectionsResponseDto = {};
+
+export type ValidateConnectionDto = {
+	userId: string;
+	mentorId: string;
+};

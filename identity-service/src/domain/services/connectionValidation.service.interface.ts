@@ -1,3 +1,5 @@
+import { ValidateConnectionDto } from "../../application/dtos/connection.dto";
+
 export interface IConnectionValidationService {
-	validate(userId: string, mentorId: string): Promise<false | string>;
+	validate(dto: ValidateConnectionDto): Promise<false | string>;
 }

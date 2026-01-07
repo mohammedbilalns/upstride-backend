@@ -1,3 +1,5 @@
+import { BlockUserDto } from "../../../application/dtos/user.dto";
+
 export interface IBlockUserUC {
-	execute(userId: string): Promise<void>;
+	execute(dto: BlockUserDto): Promise<void>;
 }

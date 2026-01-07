@@ -10,7 +10,7 @@ import {
 import { ITokenService } from "../../../domain/services";
 import { ICacheService } from "../../../domain/services/cache.service.interface";
 import { IGoogleAuthenticateUC } from "../../../domain/useCases/auth/googleAuthenticate.uc.interface";
-import { GoogleAuthResponse } from "../../dtos";
+import { GoogleAuthDto, GoogleAuthResponse } from "../../dtos";
 import { AppError } from "../../errors/AppError";
 import { generateSecureToken } from "../../utils/token.util";
 
@@ -30,7 +30,8 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 	 *  - Existing password-based user → attach Google login to their account
 	 *  - Existing Google user → log in and generate platform tokens
 	 */
-	async execute(token: string): Promise<GoogleAuthResponse> {
+	async execute(dto: GoogleAuthDto): Promise<GoogleAuthResponse> {
+		const { token } = dto;
 		// verify token and credentials
 		const decodedToken = this._tokenService.decodeGoogleToken(token);
 		if (!decodedToken)

@@ -1,5 +1,5 @@
-import { registerUserParam } from "../../../application/dtos/registration.dto";
+import { RegisterUserDto } from "../../../application/dtos/registration.dto";
 
 export interface IRegisterUserUC {
-	execute(dto: registerUserParam): Promise<void>;
+	execute(dto: RegisterUserDto): Promise<void>;
 }

@@ -4,49 +4,54 @@ layout {
       pane name="api gateway"{
         command "npm"
         args "run" "dev"
-        cwd "~/upstride-backend/api-gateway"
+        cwd "~/upstride/upstride-backend/api-gateway"
       }
       pane name="identity service"{
         command "npm"
         args "run" "dev"
-        cwd "~/upstride-backend/identity-service"
+        cwd "~/upstride/upstride-backend/identity-service"
       }
       pane name="mail service"{
         command "npm"
         args "run" "dev"
-        cwd "~/upstride-backend/mail-service"
+        cwd "~/upstride/upstride-backend/mail-service"
       }
       pane name="article service"{
-        cwd "~/upstride-backend/article-service"
+        cwd "~/upstride/upstride-backend/article-service"
         command "npm"
         args "run" "dev"
       }
       pane name="chat service"{
-        cwd "~/upstride-backend/chat-service"
+        cwd "~/upstride/upstride-backend/chat-service"
         command "npm"
         args "run" "dev"
       }
     }
     pane { 
       pane name="notification service"{
-        cwd "~/upstride-backend/notification-service"
+        cwd "~/upstride/upstride-backend/notification-service"
         command "npm"
         args "run" "dev"
       }
       pane name="sessions service" {
-        cwd "~/upstride-backend/sessions-service"
+        cwd "~/upstride/upstride-backend/sessions-service"
         command "npm"
         args "run" "dev"
       }
       pane name="media service" {
         command "npm"
         args "run" "dev"
-        cwd "~/upstride-backend/media-service"
+        cwd "~/upstride/upstride-backend/media-service"
+      }
+      pane name="payment service" {
+        command "npm"
+        args "run" "dev"
+        cwd "~/upstride/upstride-backend/payment-service"
       }
       pane name="frontend"{
         command "npm"
         args "run" "dev"
-        cwd "~/upstride-frontend"
+        cwd "~/upstride/upstride-frontend"
       }
     }
   }

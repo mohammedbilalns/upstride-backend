@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "bun dist/server.js",
-		"dev": "nodemon --watch src -e ts --exec 'bun src/server.ts'",
+		"dev": "nodemon --watch src -e ts --exec 'tsc && bun src/server.ts'",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts",
 		"test": "jest",

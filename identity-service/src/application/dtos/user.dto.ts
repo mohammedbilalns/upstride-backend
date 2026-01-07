@@ -19,3 +19,22 @@ export interface PopulatedUser
 	interestedExpertises: Array<{ _id: string; name: string }>;
 	interestedSkills: Array<{ _id: string; name: string }>;
 }
+
+export interface BlockUserDto {
+	userId: string;
+}
+
+export interface UnblockUserDto {
+	userId: string;
+}
+
+export interface FetchUsersDto {
+	userRole: string;
+	page: number;
+	limit: number;
+	query?: string;
+}
+
+export interface FetchUsersByIdsDto {
+	userIds: string[];
+}

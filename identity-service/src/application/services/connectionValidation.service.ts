@@ -4,6 +4,8 @@ import { IConnectionRepository } from "../../domain/repositories/connection.repo
 import { IConnectionValidationService } from "../../domain/services/connectionValidation.service.interface";
 import { AppError } from "../errors/AppError";
 
+import { ValidateConnectionDto } from "../../application/dtos/connection.dto";
+
 export class ConnectionValidationService
 	implements IConnectionValidationService
 {
@@ -13,10 +15,8 @@ export class ConnectionValidationService
 		private _connectionRepository: IConnectionRepository,
 	) {}
 
-	public async validate(
-		userId: string,
-		mentorId: string,
-	): Promise<false | string> {
+	public async validate(dto: ValidateConnectionDto): Promise<false | string> {
+		const { userId, mentorId } = dto;
 		const [user, mentor, connection] = await Promise.all([
 			this._userRepository.findById(userId),
 			this._mentorRepository.findById(mentorId),

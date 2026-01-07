@@ -1,15 +1,32 @@
-import type { UserDTO } from "./user.dto";
-export interface GoogleAuthRegisterResponse {
-	token: string;
-	email?: string;
-}
+import { UserDTO } from "./user.dto";
 
-export interface GoogleAuthLoginResponse {
-	user: UserDTO;
+export type LoginReturn = {
 	accessToken: string;
 	refreshToken: string;
-}
+	user: UserDTO;
+};
 
 export type GoogleAuthResponse =
-	| GoogleAuthRegisterResponse
-	| GoogleAuthLoginResponse;
+	| { token: string; email: string }
+	| { user: any; accessToken: string; refreshToken: string };
+
+export type LoginUserDto = {
+	email: string;
+	password: string;
+};
+
+export type GoogleAuthDto = {
+	token: string;
+};
+
+export type RefreshTokenDto = {
+	refreshToken: string;
+};
+
+export type LogoutDto = {
+	userId: string;
+};
+
+export type GetUserDto = {
+	userId: string;
+};
