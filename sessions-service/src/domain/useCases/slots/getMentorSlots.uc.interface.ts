@@ -1,8 +1,8 @@
 import {
-	getMentorSlotsDto,
-	getMentorSlotsResponse,
+	GetMentorSlotsDto,
+	GetMentorSlotsResponse,
 } from "../../../application/dtos/slot.dto";
 
 export interface IGetMentorSlotsUC {
-	execute(dto: getMentorSlotsDto): Promise<getMentorSlotsResponse>;
+	execute(dto: GetMentorSlotsDto): Promise<GetMentorSlotsResponse>;
 }

@@ -1,7 +1,7 @@
-export interface initiateSessionDto {
+export interface InitiateSessionDto {
 	sessionId: string;
 }
 
-export interface markSessionAsCompleteDto {
+export interface MarkSessionAsCompleteDto {
 	sessionId: string;
 }

@@ -2,6 +2,7 @@ import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
 import { IConnectionValidationService } from "../../../domain/services/connectionValidation.service.interface";
 import { IFollowMentorUC } from "../../../domain/useCases/connections/followMentor.uc.interface";
+import type { FollowMentorDto } from "../../dtos/connection.dto";
 import { AppError } from "../../errors/AppError";
 
 export class FollowMentorUC implements IFollowMentorUC {
@@ -10,7 +11,8 @@ export class FollowMentorUC implements IFollowMentorUC {
 		private _connectionValidationService: IConnectionValidationService,
 	) {}
 
-	async execute(userId: string, mentorId: string): Promise<void> {
+	async execute(dto: FollowMentorDto): Promise<void> {
+		const { userId, mentorId } = dto;
 		const isExists = await this._connectionValidationService.validate({
 			userId,
 			mentorId,

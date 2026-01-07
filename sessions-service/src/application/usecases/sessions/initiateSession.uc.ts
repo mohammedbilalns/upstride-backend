@@ -4,7 +4,7 @@ import { SlotStatus } from "../../../domain/entities/slot.entity";
 import { IEventBus } from "../../../domain/events/eventBus.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { IInitiateSessionUC } from "../../../domain/useCases/sessions/initiateSession.uc.interface";
-import { initiateSessionDto } from "../../dtos/session.dto";
+import { InitiateSessionDto } from "../../dtos/session.dto";
 import { AppError } from "../../errors/AppError";
 
 export class InitiateSessionUC implements IInitiateSessionUC {
@@ -13,7 +13,7 @@ export class InitiateSessionUC implements IInitiateSessionUC {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(dto: initiateSessionDto): Promise<void> {
+	async execute(dto: InitiateSessionDto): Promise<void> {
 		const session = await this._slotRepository.findById(dto.sessionId);
 		if (!session)
 			throw new AppError(

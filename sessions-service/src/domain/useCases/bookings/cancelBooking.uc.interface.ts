@@ -1,5 +1,5 @@
-import { cancelBookingDto } from "../../../application/dtos/booking.dto";
+import { CancelBookingDto } from "../../../application/dtos/booking.dto";
 
 export interface ICancelBookingUC {
-	execute(dto: cancelBookingDto): Promise<void>;
+	execute(dto: CancelBookingDto): Promise<void>;
 }

@@ -1,24 +1,24 @@
 import { Slot } from "../../domain/entities/slot.entity";
 
-export interface createCustomSlotDto {
+export interface CreateCustomSlotDto {
 	mentorId: string;
 	startAt: Date;
 	endAt: Date;
 	slotDuration: number;
 }
 
-export interface getMentorSlotsDto {
+export interface GetMentorSlotsDto {
 	mentorId: string;
 }
 
-export interface getMentorSlotsResponse {
+export interface GetMentorSlotsResponse {
 	slots: Slot[];
 }
 
-export interface cancelSlotDto {
+export interface CancelSlotDto {
 	mentorId: string;
 	slotId: string;
 }
-export interface getMentorRule {
+export interface GetMentorRule {
 	mentorId: string;
 }

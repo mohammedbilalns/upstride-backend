@@ -2,13 +2,13 @@ import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { CancelledBy, SlotStatus } from "../../../domain/entities/slot.entity";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { ICancleSlotUC } from "../../../domain/useCases/slots/cancelSlot.uc.interface";
-import { cancelSlotDto } from "../../dtos/slot.dto";
+import { CancelSlotDto } from "../../dtos/slot.dto";
 import { AppError } from "../../errors/AppError";
 
 export class CancelSlotUC implements ICancleSlotUC {
 	constructor(private _slotRepository: ISlotRepository) {}
 
-	async execute(dto: cancelSlotDto): Promise<void> {
+	async execute(dto: CancelSlotDto): Promise<void> {
 		const existingSlot = await this._slotRepository.findById(dto.slotId);
 		// check if the slot exists
 		if (!existingSlot)

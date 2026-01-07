@@ -1,13 +1,13 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { IDeleteRecurringRuleUC } from "../../../domain/useCases/recurringRule/deleteRecurringRule.uc.interface";
-import { deleteRecurringRuleDto } from "../../dtos/recurringRule.dto";
+import { DeleteRecurringRuleDto } from "../../dtos/recurringRule.dto";
 import { AppError } from "../../errors/AppError";
 
 export class DeleteRecurringRuleUC implements IDeleteRecurringRuleUC {
 	constructor(private _availabilityRepository: IAvailabilityRepository) {}
 
-	async execute(dto: deleteRecurringRuleDto): Promise<void> {
+	async execute(dto: DeleteRecurringRuleDto): Promise<void> {
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(dto.mentorId);
 

@@ -30,7 +30,7 @@ export class ConnectionController {
 		const { mentorId } = followMentorSchema.parse(req.body);
 		const userId = res.locals.user.id;
 
-		await this._followMentorUC.execute(userId, mentorId);
+		await this._followMentorUC.execute({ userId, mentorId });
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.FOLLOWED_MENTOR });
@@ -49,7 +49,7 @@ export class ConnectionController {
 	public fetchFollowers = asyncHandler(async (req, res) => {
 		const { page, limit } = paginationQuerySchema.parse(req.query);
 		const userId = res.locals.user.id;
-		const data = await this._fetchFollowersUC.execute(userId, page, limit);
+		const data = await this._fetchFollowersUC.execute({ userId, page, limit });
 		res.status(HttpStatus.OK).send(data);
 	});
 

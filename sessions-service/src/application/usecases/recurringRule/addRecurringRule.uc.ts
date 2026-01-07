@@ -1,6 +1,6 @@
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { IAddRecurringRuleUC } from "../../../domain/useCases/recurringRule/addRecurringRule.uc.interface";
-import { addRecurringRuleDto } from "../../dtos/recurringRule.dto";
+import { AddRecurringRuleDto } from "../../dtos/recurringRule.dto";
 import { v4 as uuid } from "uuid";
 import { AppError } from "../../errors/AppError";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
@@ -14,7 +14,7 @@ import { timeToMinutes } from "../../utils/dateUtils";
 export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 	constructor(private _availabilityRepository: IAvailabilityRepository) {}
 
-	async execute(dto: addRecurringRuleDto): Promise<void> {
+	async execute(dto: AddRecurringRuleDto): Promise<void> {
 		// fetch or create availability
 		const existingAvailabilityRule =
 			await this._availabilityRepository.fetchOrCreateByMentorId(dto.mentorId);

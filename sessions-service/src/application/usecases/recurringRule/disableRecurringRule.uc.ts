@@ -2,7 +2,7 @@ import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { IDisableRecurringRuleUC } from "../../../domain/useCases/recurringRule/disableRecurringRule.uc.interface";
-import { disableRecurringRuleDto } from "../../dtos/recurringRule.dto";
+import { DisableRecurringRuleDto } from "../../dtos/recurringRule.dto";
 import { AppError } from "../../errors/AppError";
 
 export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
@@ -11,7 +11,7 @@ export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
 		private _slotRepository: ISlotRepository,
 	) {}
 
-	async execute(dto: disableRecurringRuleDto): Promise<void> {
+	async execute(dto: DisableRecurringRuleDto): Promise<void> {
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(dto.mentorId);
 

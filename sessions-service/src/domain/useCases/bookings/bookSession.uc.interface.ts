@@ -1,5 +1,5 @@
-import { bookSessionDto } from "../../../application/dtos/booking.dto";
+import { BookSessionDto } from "../../../application/dtos/booking.dto";
 
 export interface IBookSessionUC {
-	execute(dto: bookSessionDto): Promise<void>;
+	execute(dto: BookSessionDto): Promise<void>;
 }

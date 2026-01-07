@@ -3,7 +3,7 @@ import { SlotStatus } from "../../../domain/entities/slot.entity";
 import { IBookingRepository } from "../../../domain/repositories/booking.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { IBookSessionUC } from "../../../domain/useCases/bookings/bookSession.uc.interface";
-import { bookSessionDto } from "../../dtos/booking.dto";
+import { BookSessionDto } from "../../dtos/booking.dto";
 import { AppError } from "../../errors/AppError";
 
 export class BookSessionUc implements IBookSessionUC {
@@ -12,7 +12,7 @@ export class BookSessionUc implements IBookSessionUC {
 		private _slotRepository: ISlotRepository,
 	) {}
 
-	async execute(dto: bookSessionDto): Promise<void> {
+	async execute(dto: BookSessionDto): Promise<void> {
 		const slot = await this._slotRepository.findById(dto.slotId);
 		if (!slot)
 			throw new AppError(ErrorMessage.SLOT_NOT_FOUND, HttpStatus.BAD_REQUEST);

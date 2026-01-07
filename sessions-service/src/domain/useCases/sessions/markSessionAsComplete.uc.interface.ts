@@ -1,5 +1,5 @@
-import { markSessionAsCompleteDto } from "../../../application/dtos/session.dto";
+import { MarkSessionAsCompleteDto } from "../../../application/dtos/session.dto";
 
 export interface IMarkSessionAsCompleteUC {
-	execute(dto: markSessionAsCompleteDto): Promise<void>;
+	execute(dto: MarkSessionAsCompleteDto): Promise<void>;
 }

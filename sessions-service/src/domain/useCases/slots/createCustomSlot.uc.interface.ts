@@ -1,5 +1,5 @@
-import { createCustomSlotDto } from "../../../application/dtos/slot.dto";
+import { CreateCustomSlotDto } from "../../../application/dtos/slot.dto";
 
 export interface ICreateCustomSlotUC {
-	execute(dto: createCustomSlotDto): Promise<void>;
+	execute(dto: CreateCustomSlotDto): Promise<void>;
 }

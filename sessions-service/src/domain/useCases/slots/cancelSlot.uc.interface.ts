@@ -1,5 +1,5 @@
-import { cancelSlotDto } from "../../../application/dtos/slot.dto";
+import { CancelSlotDto } from "../../../application/dtos/slot.dto";
 
 export interface ICancleSlotUC {
-	execute(dto: cancelSlotDto): Promise<void>;
+	execute(dto: CancelSlotDto): Promise<void>;
 }

@@ -4,7 +4,7 @@ import { SlotStatus } from "../../../domain/entities/slot.entity";
 import { IBookingRepository } from "../../../domain/repositories/booking.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { ICancelBookingUC } from "../../../domain/useCases/bookings/cancelBooking.uc.interface";
-import { cancelBookingDto } from "../../dtos/booking.dto";
+import { CancelBookingDto } from "../../dtos/booking.dto";
 import { AppError } from "../../errors/AppError";
 
 export class CancelBookingUC implements ICancelBookingUC {
@@ -13,7 +13,7 @@ export class CancelBookingUC implements ICancelBookingUC {
 		private _slotRepository: ISlotRepository,
 	) {}
 
-	async execute(dto: cancelBookingDto): Promise<void> {
+	async execute(dto: CancelBookingDto): Promise<void> {
 		const booking = await this._bookingRepository.findById(dto.bookingId);
 		if (!booking)
 			throw new AppError(

@@ -1,9 +1,9 @@
-export interface bookSessionDto {
+export interface BookSessionDto {
 	userId: string;
 	slotId: string;
 }
 
-export interface cancelBookingDto {
+export interface CancelBookingDto {
 	userId: string;
 	bookingId: string;
 }

@@ -1,3 +1,5 @@
+import type { FollowMentorDto } from "../../../application/dtos/connection.dto";
+
 export interface IFollowMentorUC {
-	execute(userId: string, mentorId: string): Promise<void>;
+	execute(dto: FollowMentorDto): Promise<void>;
 }

@@ -1,5 +1,5 @@
-import { addRecurringRuleDto } from "../../../application/dtos/recurringRule.dto";
+import { AddRecurringRuleDto } from "../../../application/dtos/recurringRule.dto";
 
 export interface IAddRecurringRuleUC {
-	execute(dto: addRecurringRuleDto): Promise<void>;
+	execute(dto: AddRecurringRuleDto): Promise<void>;
 }

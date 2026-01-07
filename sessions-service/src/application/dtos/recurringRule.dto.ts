@@ -7,34 +7,34 @@ type Rule = {
 	slotDuration: 60 | 90 | 120 | 180;
 };
 
-export interface createRecurringRuleDto {
+export interface CreateRecurringRuleDto {
 	mentorId: string;
 	rules: Array<Rule>;
 }
 
-export interface updateRecurringRuleDto {
+export interface UpdateRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
 	rule: Partial<Rule>;
 }
 
-export interface addRecurringRuleDto {
+export interface AddRecurringRuleDto {
 	mentorId: string;
 	rule: Rule;
 }
 
-export interface disableRecurringRuleDto {
+export interface DisableRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
 }
-export interface enableRecurringRuleDto {
-	mentorId: string;
-	ruleId: string;
-}
-
-export interface deleteRecurringRuleDto {
+export interface EnableRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
 }
 
-export type getMentorRuleResponse = Availability | null;
+export interface DeleteRecurringRuleDto {
+	mentorId: string;
+	ruleId: string;
+}
+
+export type GetMentorRuleResponse = Availability | null;

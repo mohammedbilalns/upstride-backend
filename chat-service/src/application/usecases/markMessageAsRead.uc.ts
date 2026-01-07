@@ -5,7 +5,8 @@ import type {
 	IChatRepository,
 	IMessageRepository,
 } from "../../domain/repositories";
-import type { IMarkMessageAsReadUC } from "../../domain/useCases/markMessageAsReac.uc.interface";
+import type { IMarkMessageAsReadUC } from "../../domain/useCases/markMessageAsRead.uc.interface";
+import type { MarkMessageAsReadDto } from "../dtos/markMessageAsRead.dto";
 import { AppError } from "../errors/AppError";
 
 export class MarkMessageAsReadUC implements IMarkMessageAsReadUC {
@@ -15,7 +16,8 @@ export class MarkMessageAsReadUC implements IMarkMessageAsReadUC {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(userId: string, messageId: string): Promise<void> {
+	async execute(dto: MarkMessageAsReadDto): Promise<void> {
+		const { userId, messageId } = dto;
 		const message = await this._messageRepository.findById(messageId);
 		if (!message)
 			throw new AppError(ErrorMessage.INVALID_INPUT, HttpStatus.BAD_REQUEST);

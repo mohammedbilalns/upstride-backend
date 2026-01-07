@@ -1,5 +1,5 @@
-import { updateRecurringRuleDto } from "../../../application/dtos/recurringRule.dto";
+import { UpdateRecurringRuleDto } from "../../../application/dtos/recurringRule.dto";
 
 export interface IUpdateRecurringRuleUC {
-	execute(dto: updateRecurringRuleDto): Promise<void>;
+	execute(dto: UpdateRecurringRuleDto): Promise<void>;
 }

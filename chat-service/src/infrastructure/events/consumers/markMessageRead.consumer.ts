@@ -15,10 +15,10 @@ export async function createMarkMessageReadConsumer(
 		async (payload) => {
 			try {
 				const markMessageData = markMessageDataSchema.parse(payload);
-				await markMessageReadUc.execute(
-					markMessageData.userId,
-					markMessageData.messageId,
-				);
+				await markMessageReadUc.execute({
+					userId: markMessageData.userId,
+					messageId: markMessageData.messageId,
+				});
 			} catch (err) {
 				logger.error(`Error marking message as read: ${err.message}`);
 				logger.error(`Error marking message as read: ${err.stack}`);

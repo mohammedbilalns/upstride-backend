@@ -84,3 +84,14 @@ export type ValidateConnectionDto = {
 	userId: string;
 	mentorId: string;
 };
+
+export interface FollowMentorDto {
+	userId: string;
+	mentorId: string;
+}
+
+export interface FetchFollowersDto {
+	userId: string;
+	page: number;
+	limit: number;
+}

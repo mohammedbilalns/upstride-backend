@@ -1,9 +1,8 @@
-import { ConnectionsResponseDto } from "../../../application/dtos/connection.dto";
+import type {
+	ConnectionsResponseDto,
+	FetchFollowersDto,
+} from "../../../application/dtos/connection.dto";
 
 export interface IFetchFollowersUC {
-	execute(
-		userId: string,
-		page: number,
-		limit: number,
-	): Promise<ConnectionsResponseDto>;
+	execute(dto: FetchFollowersDto): Promise<ConnectionsResponseDto>;
 }

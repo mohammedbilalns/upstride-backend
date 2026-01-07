@@ -1,5 +1,5 @@
-import { initiateSessionDto } from "../../../application/dtos/session.dto";
+import { InitiateSessionDto } from "../../../application/dtos/session.dto";
 
 export interface IInitiateSessionUC {
-	execute(dto: initiateSessionDto): Promise<void>;
+	execute(dto: InitiateSessionDto): Promise<void>;
 }
