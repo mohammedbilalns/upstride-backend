@@ -14,6 +14,10 @@ export function createNotificationRouter() {
 		"/:notificationId",
 		notificationController.markNotificationAsRead,
 	);
+	router.put(
+		"/chat/:chatId/read",
+		notificationController.markChatNotificationsAsRead,
+	);
 
 	return router;
 }

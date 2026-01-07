@@ -15,3 +15,7 @@ export const fetchNotificationsValidationSchema = z.object({
 export const markNotificationAsReadValidationSchema = z.object({
 	notificationId: z.string(),
 });
+
+export const markChatNotificationsAsReadValidationSchema = z.object({
+	chatId: z.string(),
+});
