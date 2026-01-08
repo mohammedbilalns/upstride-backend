@@ -49,7 +49,7 @@ export function rateLimiter(
 			console.error("Rate limiter error:", err);
 			return res
 				.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.json({ message: ErrorMessage.SERVER_ERROR });
+				.json({ message: ErrorMessage.INTERNAL_SERVER_ERROR });
 		}
 	};
 }

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@paypal/checkout-server-sdk':
+        specifier: ^1.0.3
+        version: 1.0.3
       amqplib:
         specifier: 0.10.8
         version: 0.10.8
@@ -17,6 +20,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -66,6 +72,9 @@ importers:
       '@types/node':
         specifier: ^25.0.3
         version: 25.0.3
+      '@types/paypal__checkout-server-sdk':
+        specifier: ^1.0.8
+        version: 1.0.8
       nodemon:
         specifier: ^3.1.11
         version: 3.1.11
@@ -151,6 +160,15 @@ packages:
   '@mongodb-js/saslprep@1.4.4':
     resolution: {integrity: sha512-p7X/ytJDIdwUfFL/CLOhKgdfJe1Fa8uw9seJYvdOmnP9JBWGWHW69HkOixXS6Wy9yvGf1MbhcS6lVmrhy4jm2g==}
 
+  '@paypal/checkout-server-sdk@1.0.3':
+    resolution: {integrity: sha512-UEdq8akEdMz0Vs4qoQFU2gMp8PpyE/HKyMwiZuK4vIWUKl8jfd1fWKjQN5cDFm9NkFUIp5U7h++rdMOVj9WMNA==}
+    engines: {node: '>=8'}
+    deprecated: 'Package no longer supported. The author suggests using the @paypal/paypal-server-sdk package instead: https://www.npmjs.com/package/@paypal/paypal-server-sdk. Contact Support at https://www.npmjs.com/support for more info.'
+
+  '@paypal/paypalhttp@1.0.1':
+    resolution: {integrity: sha512-DC7AHxTT7drF6dUi3YaFdPVuT15sIkpD5H2eHmdtFgxM4UanS1o1ZDfMhR9mpxd8o+X6pz2r+EZVRRq+n1cssQ==}
+    engines: {node: '>=4'}
+
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
@@ -200,6 +218,12 @@ packages:
 
   '@types/node@25.0.3':
     resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
+
+  '@types/paypal__checkout-server-sdk@1.0.8':
+    resolution: {integrity: sha512-PNmNBlcany7Dh42Qb5mkl+KqYfR39aVcalLm3FXHCozKtDyfLE1JAig7C2mANPdC3fmQhdvcs0n3ym6K10CLnw==}
+
+  '@types/paypal__paypalhttp@1.0.3':
+    resolution: {integrity: sha512-Zen2JyaCOPRkPFxXetopbYWsSpi3VlWWYBZKNEXruxp6vzh7f/an/IaeZ23tmd11rg56zYtmXS2e1PfllVRZtQ==}
 
   '@types/qs@6.14.0':
     resolution: {integrity: sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==}
@@ -357,6 +381,10 @@ packages:
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
+
+  dotenv@17.2.3:
+    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
+    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -961,6 +989,12 @@ snapshots:
     dependencies:
       sparse-bitfield: 3.0.3
 
+  '@paypal/checkout-server-sdk@1.0.3':
+    dependencies:
+      '@paypal/paypalhttp': 1.0.1
+
+  '@paypal/paypalhttp@1.0.1': {}
+
   '@pinojs/redact@0.4.0': {}
 
   '@tsconfig/node10@1.0.12': {}
@@ -1017,6 +1051,14 @@ snapshots:
   '@types/node@25.0.3':
     dependencies:
       undici-types: 7.16.0
+
+  '@types/paypal__checkout-server-sdk@1.0.8':
+    dependencies:
+      '@types/paypal__paypalhttp': 1.0.3
+
+  '@types/paypal__paypalhttp@1.0.3':
+    dependencies:
+      '@types/node': 25.0.3
 
   '@types/qs@6.14.0': {}
 
@@ -1162,6 +1204,8 @@ snapshots:
   depd@2.0.0: {}
 
   diff@4.0.2: {}
+
+  dotenv@17.2.3: {}
 
   dunder-proto@1.0.1:
     dependencies:

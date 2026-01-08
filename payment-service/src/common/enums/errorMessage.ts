@@ -1,17 +1,19 @@
-/**
- * Error messages.
- */
-export const ErrorMessage = {
-	TOO_MANY_REQUESTS: "Too many requests",
-	BLOCKED_FROM_PLATFORM: "You are blocked from platform",
-	TOKEN_NOT_FOUND: "Token not found",
-	TOKEN_EXPIRED: "Token expired",
-	INVALID_TOKEN: "Invalid token",
-	INTERNAL_SERVER_ERROR: "Internal server error",
-	VALIDATION_FAILED: "Validation failed",
-	FORBIDDEN_RESOURCE: "Forbidden resource",
-	// Auth & User Errors
-} as const;
+export enum ErrorMessage {
+	PAYMENT_NOT_FOUND = "Payment not found",
+	TRANSACTION_ID_REQUIRED = "Payment ID or Transaction ID required",
+	USER_ID_REQUIRED = "User ID required",
+	MENTOR_ID_REQUIRED = "Mentor ID required",
+	PAYPAL_CAPTURE_FAILED = "PayPal Capture Failed",
+	CHECK_REQUIRED_FIELDS = "Check required fields",
 
-export type ErrorMessageKey = keyof typeof ErrorMessage;
-export type ErrorMessageValue = (typeof ErrorMessage)[ErrorMessageKey];
+	// Auth & Middleware Errors
+	TOKEN_NOT_FOUND = "Token not found",
+	BLOCKED_FROM_PLATFORM = "User is blocked from the platform",
+	TOKEN_EXPIRED = "Token has expired",
+	INVALID_TOKEN = "Invalid token",
+	FORBIDDEN_RESOURCE = "Access to this resource is forbidden",
+	VALIDATION_FAILED = "Validation failed",
+	INTERNAL_SERVER_ERROR = "Internal server error",
+	TOO_MANY_REQUESTS = "Too many requests, please try again later",
+	SERVER_ERROR = "Server error",
+}

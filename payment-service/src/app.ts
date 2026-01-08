@@ -8,6 +8,7 @@ import { connectToDb, redisClient } from "./infrastructure/config";
 import env from "./infrastructure/config/env";
 import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
+import paymentRoutes from "./interfaces/http/routes/payment.routes";
 /**
  * Main application class for the Identity Service.
  * Sets up middlewares, routes, and starts the Express server.
@@ -50,18 +51,16 @@ class App {
 		this._app.use(requestLogger);
 	}
 
-	/**
+	/*
 	 * Registers all application routes.
-	 * - `/api/auth` → Authentication routes
-	 * - `/api/users` → User management routes
-	 * - `/api/expertise` → Expertise-related routes
-	 * - `/api/mentor` → Mentor-related routes
+	 * - `/api/payments` → Payment related routes
 	 * - Global error handler
 	 *
 	 * @private
 	 */
 
 	private _setupRoutes() {
+		this._app.use("/api/payments", paymentRoutes);
 		this._app.use(errorHandler);
 	}
 
@@ -76,7 +75,7 @@ class App {
 			connectRabbitMq();
 			connectToDb();
 			redisClient.ping;
-			logger.info(`Identity service started on port ${port}`);
+			logger.info(`Payment service started on port ${port}`);
 		});
 		return server;
 	}
