@@ -21,6 +21,7 @@ export interface FetchUserNotificationsDto {
 	userId: string;
 	page: number;
 	limit: number;
+	filter?: "all" | "unread";
 }
 
 export interface NotificationResponse {

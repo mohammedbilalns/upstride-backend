@@ -10,6 +10,7 @@ export const notificationValidationSchema = z.object({
 export const fetchNotificationsValidationSchema = z.object({
 	page: z.coerce.number().default(1),
 	limit: z.coerce.number().default(10),
+	filter: z.enum(["all", "unread"]).optional().default("all"),
 });
 
 export const markNotificationAsReadValidationSchema = z.object({

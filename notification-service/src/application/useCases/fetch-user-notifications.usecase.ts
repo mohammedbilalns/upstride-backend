@@ -14,6 +14,7 @@ export class FetchUserNotificationsUC implements IFetchUserNotificationsUC {
 				dto.userId,
 				Number(dto.page),
 				Number(dto.limit),
+				dto.filter,
 			);
 		return { notifications, total, unreadCount };
 	}

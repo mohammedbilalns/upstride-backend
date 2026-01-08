@@ -44,19 +44,21 @@ export class NotificationRepository implements INotificationRepository {
 		userId: string,
 		page: number,
 		limit: number,
+		filter: "all" | "unread" = "all",
 	): Promise<{
 		notifications: Notification[];
 		total: number;
 		unreadCount: number;
 	}> {
 		const skip = (page - 1) * limit;
+		const query: FilterQuery<INotification> = { userId };
+		if (filter === "unread") {
+			query.isRead = false;
+		}
+
 		const [notifications, total, unreadCount] = await Promise.all([
-			this._model
-				.find({ userId })
-				.skip(skip)
-				.limit(limit)
-				.sort({ createdAt: -1 }),
-			this._model.countDocuments({ userId }).lean(),
+			this._model.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
+			this._model.countDocuments(query).lean(),
 			this._model.countDocuments({ userId, isRead: false }).lean(),
 		]);
 		const mappedNotifications = notifications.map(this.mapToDomain);

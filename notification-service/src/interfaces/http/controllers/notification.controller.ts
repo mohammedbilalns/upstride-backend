@@ -31,9 +31,16 @@ export class NotificationController {
 
 	public fetchUserNotifications = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
-		const { page, limit } = fetchNotificationsValidationSchema.parse(req.query);
+		const { page, limit, filter } = fetchNotificationsValidationSchema.parse(
+			req.query,
+		);
 		const { notifications, total, unreadCount } =
-			await this._fetchUserNotificationsUC.execute({ userId, page, limit });
+			await this._fetchUserNotificationsUC.execute({
+				userId,
+				page,
+				limit,
+				filter,
+			});
 		return res
 			.status(HttpStatus.OK)
 			.send({ notifications, total, unreadCount });

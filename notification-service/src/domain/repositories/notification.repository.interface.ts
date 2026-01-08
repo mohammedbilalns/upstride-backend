@@ -7,6 +7,7 @@ export interface INotificationRepository {
 		userId: string,
 		page: number,
 		limit: number,
+		filter?: "all" | "unread",
 	): Promise<{
 		notifications: Notification[];
 		total: number;
