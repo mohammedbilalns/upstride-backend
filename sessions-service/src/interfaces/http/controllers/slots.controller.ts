@@ -139,7 +139,7 @@ export class SlotsController {
 		await this._deleteSlotUC.execute({ mentorId, slotId });
 		res
 			.status(HttpStatus.OK)
-			.json({ success: true, message: "Slot deleted successfully" });
+			.json({ success: true, message: ResponseMessage.SLOT_DELETED });
 	});
 
 	public getMentorRules = asyncHandler(async (_req, res) => {

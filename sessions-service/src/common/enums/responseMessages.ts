@@ -12,4 +12,8 @@ export enum ResponseMessage {
 	CANCELLED_BOOKING = "Booking cancelled successfully",
 	CANCEL_MENTOR_SLOTS = "Mentor slots cancelled successfully",
 	CANCELLED_SLOT = "Cancelled slots successfully",
+	SLOT_DELETED = "Slot deleted successfully",
+	RESCHEDULE_REQUESTED = "Reschedule requested",
+	RESCHEDULE_APPROVED = "Reschedule APPROVED",
+	RESCHEDULE_REJECTED = "Reschedule REJECTED",
 }

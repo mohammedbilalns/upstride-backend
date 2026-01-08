@@ -1,3 +1,3 @@
 export interface IConfirmSessionUC {
-	execute(transactionId: string): Promise<void>;
+	execute(bookingId: string, paymentId: string): Promise<void>;
 }

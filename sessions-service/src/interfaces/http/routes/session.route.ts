@@ -13,6 +13,11 @@ export function createSessionRoutes() {
 	router.post("/:bookingId/cancel", sessionsController.cancelBooking);
 	router.post("/:sessionId/start", sessionsController.initiateSession);
 	router.post("/:sessionId/complete", sessionsController.markSessionAsComplete);
+	router.post("/:bookingId/reschedule", sessionsController.requestReschedule);
+	router.post(
+		"/:bookingId/reschedule/handle",
+		sessionsController.handleReschedule,
+	);
 
 	return router;
 }

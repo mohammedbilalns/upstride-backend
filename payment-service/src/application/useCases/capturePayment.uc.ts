@@ -17,7 +17,6 @@ export class CapturePaymentUC implements ICapturePaymentUC {
 
 	async execute(data: VerifyPaymentDto) {
 		//  Find Payment
-		// Razorpay integration usually sends orderId as reference.
 		let payment = await this._paymentRepository.findByTransactionId(
 			data.orderId,
 		);
@@ -44,13 +43,15 @@ export class CapturePaymentUC implements ICapturePaymentUC {
 				"COMPLETED",
 			);
 
-			// Publish Payment Completed Event
-			await this._eventBus.publish(QueueEvents.PAYMENT_COMPLETED, {
-				orderId: payment.transactionId,
+			const eventPayload = {
+				orderId: payment.bookingId || payment.transactionId,
 				paymentId: payment.id,
 				userId: payment.userId,
 				mentorId: payment.mentorId,
-			});
+			};
+
+			// Publish Payment Completed Event
+			await this._eventBus.publish(QueueEvents.PAYMENT_COMPLETED, eventPayload);
 
 			return updated;
 		} else {

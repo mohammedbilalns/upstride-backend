@@ -5,6 +5,7 @@ import EventBus from "../eventBus";
 
 interface PaymentVerifiedPayload {
 	orderId: string;
+	paymentId: string;
 }
 
 export async function createPaymentVerifiedConsumer(
@@ -14,10 +15,7 @@ export async function createPaymentVerifiedConsumer(
 		QueueEvents.PAYMENT_COMPLETED,
 		async (payload) => {
 			try {
-				logger.info(
-					`Processing Payment Verified Event for order: ${payload.orderId}`,
-				);
-				await confirmSessionUC.execute(payload.orderId);
+				await confirmSessionUC.execute(payload.orderId, payload.paymentId);
 			} catch (err) {
 				logger.error(
 					`Error confirming session for payment ${payload.orderId}: ${err}`,

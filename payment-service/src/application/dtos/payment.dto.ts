@@ -1,6 +1,7 @@
 export interface CreatePaymentDto {
 	userId: string;
 	mentorId: string;
+	bookingId: string;
 	sessionId?: string;
 	amount: number;
 	currency?: string;

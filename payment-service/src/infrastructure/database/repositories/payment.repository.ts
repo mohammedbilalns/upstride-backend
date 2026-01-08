@@ -22,6 +22,7 @@ export class PaymentRepository
 			id: mapped.id,
 			userId: mapped.userId,
 			mentorId: mapped.mentorId,
+			bookingId: mapped.bookingId,
 			sessionId: mapped.sessionId,
 			amount: mapped.amount,
 			currency: mapped.currency,

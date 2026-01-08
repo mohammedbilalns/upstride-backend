@@ -27,3 +27,20 @@ export const markSessionAsCompleteParamsSchema = z.object({
 });
 
 export const markSessionAsCompletePayloadSchema = z.object({});
+
+export const requestRescheduleParamsSchema = z.object({
+	bookingId: z.string(),
+});
+
+export const requestReschedulePayloadSchema = z.object({
+	requestedSlotId: z.string().min(1, "Requested Slot ID is required"),
+	reason: z.string().optional(),
+});
+
+export const handleRescheduleParamsSchema = z.object({
+	bookingId: z.string(),
+});
+
+export const handleReschedulePayloadSchema = z.object({
+	action: z.enum(["APPROVED", "REJECTED"]),
+});

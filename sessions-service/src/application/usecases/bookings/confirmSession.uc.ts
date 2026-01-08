@@ -4,6 +4,8 @@ import { ISlotRepository } from "../../../domain/repositories/slot.repository.in
 import { BookingStatus } from "../../../domain/entities/booking.entity";
 import { SlotStatus } from "../../../domain/entities/slot.entity";
 import logger from "../../../common/utils/logger";
+import { AppError } from "../../errors/AppError";
+import { ErrorMessage, HttpStatus } from "../../../common/enums";
 
 export class ConfirmSessionUC implements IConfirmSessionUC {
 	constructor(
@@ -11,14 +13,12 @@ export class ConfirmSessionUC implements IConfirmSessionUC {
 		private _slotRepository: ISlotRepository,
 	) {}
 
-	async execute(transactionId: string): Promise<void> {
-		//  Find the booking by transactionId/paymentId
-		const booking =
-			await this._bookingRepository.findByPaymentId(transactionId);
+	async execute(bookingId: string, paymentId: string): Promise<void> {
+		//  Find the booking by bookingId
+		const booking = await this._bookingRepository.findById(bookingId);
 
 		if (!booking) {
-			logger.warn(`Booking not found for transactionId: ${transactionId}`);
-			return;
+			throw new AppError(ErrorMessage.BOOKING_NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 
 		if (booking.status === BookingStatus.CONFIRMED) {
@@ -26,9 +26,10 @@ export class ConfirmSessionUC implements IConfirmSessionUC {
 			return;
 		}
 
-		//  Update Booking Status
+		//  Update Booking Status and PaymentID
 		await this._bookingRepository.update(booking.id, {
 			status: BookingStatus.CONFIRMED,
+			paymentId: paymentId,
 		});
 
 		//  Update Slot Status
@@ -36,8 +37,8 @@ export class ConfirmSessionUC implements IConfirmSessionUC {
 			status: SlotStatus.FULL,
 		});
 
-		logger.info(`Session verified and confirmed: ${booking.id}`);
-
-		// TODO: Publish SESSION.BOOKED event here for Notification Service
+		logger.info(
+			`Session verified and confirmed: ${booking.id} with payment: ${paymentId}`,
+		);
 	}
 }

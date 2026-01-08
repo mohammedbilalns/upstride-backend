@@ -19,4 +19,7 @@ export enum ErrorMessage {
 	CONFLICTING_RULE = "There is already a rule overlapping with the given time",
 	RULE_NOT_FOUND = "Rule not found",
 	INVALID_INPUT_DATA = "Invalid input data",
+	FAILED_TO_FETCH_DATA = "Failed to fetch data",
+	MENTOR_PROFILE_NOT_FOUND = "Mentor profile not found",
+	MENTOR_ID_MISSING = "Mentor ID missing",
 }

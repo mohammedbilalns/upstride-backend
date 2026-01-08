@@ -12,6 +12,7 @@ import { ICapturePaymentUC } from "../../../domain/useCases/capturePayment.useca
 import { IGetUserPaymentsUC } from "../../../domain/useCases/getUserPayments.usecase.interface";
 import { IGetMentorPaymentsUC } from "../../../domain/useCases/getMentorPayments.usecase.interface";
 import { IHandleWebhookUC } from "../../../domain/useCases/handleWebhook.usecase.interface";
+import logger from "../../../common/utils/logger";
 
 export class PaymentController {
 	constructor(
@@ -48,7 +49,7 @@ export class PaymentController {
 			await this._handleWebhookUC.execute(event);
 			res.status(HttpStatus.OK).send();
 		} catch (error) {
-			console.error("Webhook processing error", error);
+			logger.error("Webhook processing error", error);
 			res.status(HttpStatus.OK).send();
 		}
 	});

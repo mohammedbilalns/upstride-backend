@@ -12,7 +12,7 @@ export class CreatePaymentUC implements ICreatePaymentUC {
 	async execute(data: CreatePaymentDto) {
 		const currency = data.currency || "INR";
 
-		//  Create Order in Payment Gateway (Razorpay)
+		//  Create Order in Payment Gateway
 		const order = await this._paymentGatewayService.createOrder(
 			data.amount,
 			currency,
@@ -21,11 +21,12 @@ export class CreatePaymentUC implements ICreatePaymentUC {
 		const paymentData = {
 			userId: data.userId,
 			mentorId: data.mentorId,
+			bookingId: data.bookingId,
 			sessionId: data.sessionId,
 			amount: data.amount,
 			currency: currency,
 			status: "PENDING" as const,
-			transactionId: order.id, // Razorpay Order ID
+			transactionId: order.id,
 			paymentMethod: "RAZORPAY" as const,
 			createdAt: new Date(),
 			updatedAt: new Date(),

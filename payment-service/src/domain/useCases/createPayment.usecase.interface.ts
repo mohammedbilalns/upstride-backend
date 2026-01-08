@@ -2,7 +2,7 @@ import { CreatePaymentDto } from "../../application/dtos/payment.dto";
 
 export interface ICreatePaymentUC {
 	execute(data: CreatePaymentDto): Promise<{
-		id: string; // Razorpay Order ID
+		id: string;
 		amount: number;
 		currency: string;
 		keyId: string;

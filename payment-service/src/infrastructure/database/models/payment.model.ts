@@ -7,6 +7,7 @@ const paymentSchema = new Schema(
 	{
 		userId: { type: String, required: true },
 		mentorId: { type: String, required: true },
+		bookingId: { type: String },
 		sessionId: { type: String },
 		amount: { type: Number, required: true },
 		currency: { type: String, required: true, default: "USD" },
