@@ -39,7 +39,15 @@ export class GetChatsUC implements IGetChatsUC {
 			const otherUserId = chat.userIds.find((id) => id !== userId);
 			return {
 				...chat,
-				participant: otherUserId ? (userMap.get(otherUserId) ?? null) : null,
+				participant: otherUserId
+					? userMap.get(otherUserId)
+						? {
+								...userMap.get(otherUserId)!,
+								isMentor: userMap.get(otherUserId)!.role === "mentor",
+								mentorId: userMap.get(otherUserId)!.mentorId,
+							}
+						: null
+					: null,
 				unreadCount: unread[userId] ?? 0,
 			};
 		});

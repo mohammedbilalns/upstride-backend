@@ -7,6 +7,15 @@ export interface GetChatsDto {
 }
 
 export interface GetChatsResult {
-	chats: (Omit<Chat, "unreadCount"> & { unreadCount: number })[];
+	chats: (Omit<Chat, "unreadCount"> & {
+		unreadCount: number;
+		participant: {
+			id: string;
+			name: string;
+			profilePicture?: string;
+			isMentor: boolean;
+			mentorId?: string;
+		} | null;
+	})[];
 	total: number;
 }

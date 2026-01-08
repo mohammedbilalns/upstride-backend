@@ -10,7 +10,10 @@ export const mapMongoDocument = <T extends Document>(
 ): DocumentToPlain<T> | null => {
 	if (!doc) return null;
 
-	const obj = doc.toObject();
+	const obj =
+		doc && typeof (doc as any).toObject === "function"
+			? (doc as any).toObject()
+			: doc;
 	const { _id, __v, ...rest } = obj;
 
 	return {

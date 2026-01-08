@@ -126,9 +126,33 @@ export class UserRepository
 		const objectIds = idsArray.map((id) => new Types.ObjectId(id));
 
 		const docs = await this._model
-			.find({ _id: { $in: objectIds } })
-			.select("_id name profilePicture");
+			.aggregate([
+				{ $match: { _id: { $in: objectIds } } },
+				{
+					$lookup: {
+						from: "mentors",
+						localField: "_id",
+						foreignField: "userId",
+						as: "mentorData",
+					},
+				},
+				{
+					$project: {
+						_id: 1,
+						name: 1,
+						profilePicture: 1,
+						role: 1,
+						mentorId: { $arrayElemAt: ["$mentorData._id", 0] },
+					},
+				},
+			])
+			.exec();
 
-		return docs ? docs.map(this.mapToDomain) : [];
+		return docs
+			? docs.map((doc: any) => ({
+					...this.mapToDomain(doc),
+					mentorId: doc.mentorId ? doc.mentorId.toString() : undefined,
+				}))
+			: [];
 	}
 }

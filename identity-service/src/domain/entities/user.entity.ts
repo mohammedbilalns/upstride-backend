@@ -17,4 +17,5 @@ export interface User {
 	interestedSkills: string[];
 	createdAt: Date;
 	updatedAt?: Date;
+	mentorId?: string;
 }

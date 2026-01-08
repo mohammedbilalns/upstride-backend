@@ -69,6 +69,7 @@ export class GetChatUC implements IGetChatUC {
 								id: sender.id,
 								name: sender.name,
 								profilePicture: sender.profilePicture,
+								isMentor: sender.role === "mentor",
 							}
 						: null,
 				};
@@ -82,6 +83,8 @@ export class GetChatUC implements IGetChatUC {
 					id: participant.id,
 					name: participant.name,
 					profilePicture: participant.profilePicture,
+					isMentor: participant.role === "mentor",
+					mentorId: participant.mentorId,
 				},
 			},
 			messages,

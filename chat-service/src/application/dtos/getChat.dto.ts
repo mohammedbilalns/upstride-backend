@@ -14,6 +14,8 @@ export interface GetChatResult {
 			id: string;
 			name: string;
 			profilePicture?: string;
+			isMentor: boolean;
+			mentorId?: string;
 		};
 	};
 	messages: Message[];
