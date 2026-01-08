@@ -10,6 +10,7 @@ export interface CreateCustomSlotDto {
 
 export interface GetMentorSlotsDto {
 	mentorId: string;
+	availableOnly?: boolean;
 }
 
 export interface GetMentorSlotsResponse {

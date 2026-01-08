@@ -6,9 +6,10 @@ export interface CreatePaymentDto {
 	currency?: string;
 }
 
-export interface CapturePaymentDto {
-	paymentId?: string;
-	transactionId?: string;
+export interface VerifyPaymentDto {
+	orderId: string;
+	paymentId: string;
+	signature: string;
 }
 
 export interface GetPaymentHistoryDto {

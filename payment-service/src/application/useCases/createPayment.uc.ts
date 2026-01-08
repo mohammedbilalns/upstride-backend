@@ -10,11 +10,13 @@ export class CreatePaymentUC implements ICreatePaymentUC {
 	) {}
 
 	async execute(data: CreatePaymentDto) {
-		const currency = data.currency || "USD";
+		const currency = data.currency || "INR";
 
-		//  Create Order in Payment Gateway
-		const { id: orderId, approvalLink } =
-			await this._paymentGatewayService.createOrder(data.amount, currency);
+		//  Create Order in Payment Gateway (Razorpay)
+		const order = await this._paymentGatewayService.createOrder(
+			data.amount,
+			currency,
+		);
 
 		const paymentData = {
 			userId: data.userId,
@@ -23,8 +25,8 @@ export class CreatePaymentUC implements ICreatePaymentUC {
 			amount: data.amount,
 			currency: currency,
 			status: "PENDING" as const,
-			transactionId: orderId,
-			paymentMethod: "PAYPAL" as const,
+			transactionId: order.id, // Razorpay Order ID
+			paymentMethod: "RAZORPAY" as const,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
@@ -32,9 +34,8 @@ export class CreatePaymentUC implements ICreatePaymentUC {
 		const payment = await this._paymentRepository.create(paymentData);
 
 		return {
-			approvalLink,
+			...order,
 			paymentId: payment.id,
-			transactionId: payment.transactionId,
 		};
 	}
 }

@@ -3,7 +3,7 @@ import { HttpStatus } from "../../../common/enums";
 import asyncHandler from "../utils/asyncHandler";
 import {
 	createPaymentSchema,
-	capturePaymentSchema,
+	verifyPaymentSchema,
 	getUserPaymentsSchema,
 	getMentorPaymentsSchema,
 } from "../validations/payment.validation";
@@ -30,11 +30,14 @@ export class PaymentController {
 	});
 
 	capturePayment = asyncHandler(async (req: Request, res: Response) => {
-		const { paymentId, transactionId } = capturePaymentSchema.parse(req.body);
+		const { orderId, paymentId, signature } = verifyPaymentSchema.parse(
+			req.body,
+		);
 
 		const result = await this._capturePaymentUC.execute({
+			orderId,
 			paymentId,
-			transactionId,
+			signature,
 		});
 		res.status(HttpStatus.OK).json(result);
 	});

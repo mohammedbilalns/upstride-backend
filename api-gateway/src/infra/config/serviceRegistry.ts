@@ -7,6 +7,7 @@ export enum ServiceName {
 	NOTIFICATION = "notification service",
 	SESSIONS = "sessions service",
 	CHAT = "chat service",
+	PAYMENT = "payment service",
 }
 
 export const SERVICE_URL: Record<ServiceName, string> = {
@@ -16,4 +17,5 @@ export const SERVICE_URL: Record<ServiceName, string> = {
 	[ServiceName.NOTIFICATION]: env.NOTIFICATION_SERVICE_URL,
 	[ServiceName.SESSIONS]: env.SESSIONS_SERVICE_URL,
 	[ServiceName.CHAT]: env.CHAT_SERVICE_URL,
+	[ServiceName.PAYMENT]: env.PAYMENT_SERVICE_URL,
 };

@@ -111,9 +111,15 @@ export class SlotsController {
 			.json({ success: true, message: ResponseMessage.DELETED_RECURRING_RULE });
 	});
 
-	public getMentorSlots = asyncHandler(async (_req, res) => {
-		const { mentorId } = res.locals.user;
-		const data = await this._getMentorSlotsUC.execute({ mentorId });
+	public getMentorSlots = asyncHandler(async (req, res) => {
+		const mentorId =
+			(req.query.mentorId as string) || res.locals.user?.mentorId;
+		const availableOnly = req.query.availableOnly === "true";
+
+		const data = await this._getMentorSlotsUC.execute({
+			mentorId,
+			availableOnly,
+		});
 
 		res.send(data);
 	});

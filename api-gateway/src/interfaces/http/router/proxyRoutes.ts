@@ -67,6 +67,10 @@ const sessionsProxy = createServiceProxy(
 	ServiceName.SESSIONS,
 	SERVICE_URL[ServiceName.SESSIONS],
 );
+const paymentProxy = createServiceProxy(
+	ServiceName.PAYMENT,
+	SERVICE_URL[ServiceName.PAYMENT],
+);
 
 router.use("/users", identityProxy);
 router.use("/expertise", identityProxy);
@@ -87,5 +91,6 @@ router.use("/chat", chatProxy);
 
 router.use("/sessions", sessionsProxy);
 router.use("/slots", sessionsProxy);
+router.use("/payments", paymentProxy);
 
 export default router;

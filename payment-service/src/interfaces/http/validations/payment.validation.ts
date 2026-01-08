@@ -8,15 +8,11 @@ export const createPaymentSchema = z.object({
 	currency: z.string().default("USD").optional(),
 });
 
-export const capturePaymentSchema = z
-	.object({
-		paymentId: z.string().min(1, "Payment ID is required").optional(),
-		transactionId: z.string().min(1, "Transaction ID is required").optional(),
-	})
-	.refine((data) => data.paymentId || data.transactionId, {
-		message: "Either Payment ID or Transaction ID is required",
-		path: ["paymentId"],
-	});
+export const verifyPaymentSchema = z.object({
+	orderId: z.string().min(1, "Order ID is required"),
+	paymentId: z.string().min(1, "Payment ID is required"),
+	signature: z.string().min(1, "Signature is required"),
+});
 
 export const getUserPaymentsSchema = z.object({
 	userId: z.string().min(1, "User ID is required"),

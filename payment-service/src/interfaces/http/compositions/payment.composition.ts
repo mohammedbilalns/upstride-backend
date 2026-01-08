@@ -4,7 +4,7 @@ import { GetUserPaymentsUC } from "../../../application/useCases/getUserPayments
 import { GetMentorPaymentsUC } from "../../../application/useCases/getMentorPayments.uc";
 import { HandleWebhookUC } from "../../../application/useCases/handleWebhook.uc";
 import { PaymentRepository } from "../../../infrastructure/database/repositories/payment.repository";
-import { PayPalService } from "../../../infrastructure/external/paypal.service";
+import { RazorpayService } from "../../../infrastructure/services/razorpay.service";
 import { PaymentController } from "../controllers/payment.controller";
 
 import eventBus from "../../../infrastructure/events/eventBus";
@@ -14,16 +14,19 @@ export function createPaymentController(): PaymentController {
 	// Dependencies
 	// ─────────────────────────────────────────────
 	const paymentRepository = new PaymentRepository();
-	const payPalService = new PayPalService();
+	const razorpayService = new RazorpayService();
 
 	// ─────────────────────────────────────────────
 	// Use Cases
 	// ─────────────────────────────────────────────
 	// Dependencies are now injected via interfaces
-	const createPaymentUC = new CreatePaymentUC(paymentRepository, payPalService);
+	const createPaymentUC = new CreatePaymentUC(
+		paymentRepository,
+		razorpayService,
+	);
 	const capturePaymentUC = new CapturePaymentUC(
 		paymentRepository,
-		payPalService,
+		razorpayService,
 		eventBus,
 	);
 	const getUserPaymentsUC = new GetUserPaymentsUC(paymentRepository);

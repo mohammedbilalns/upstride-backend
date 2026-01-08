@@ -7,7 +7,7 @@ export interface Payment {
 	currency: string;
 	status: "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED";
 	transactionId?: string;
-	paymentMethod: "PAYPAL";
+	paymentMethod: "RAZORPAY";
 	createdAt: Date;
 	updatedAt: Date;
 }

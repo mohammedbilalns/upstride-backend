@@ -12,9 +12,8 @@ const envSchema = z.object({
 	REDIS_URL: z.string(),
 	GATEWAY_URL: z.string(),
 	CLIENT_URL: z.string(),
-	PAYPAL_CLIENT_ID: z.string(),
-	PAYPAL_CLIENT_SECRET: z.string(),
-	PAYPAL_API_URL: z.string().default("https://api-m.sandbox.paypal.com"),
+	RAZORPAY_KEY_ID: z.string(),
+	RAZORPAY_KEY_SECRET: z.string(),
 });
 
 const env = envSchema.parse(process.env);

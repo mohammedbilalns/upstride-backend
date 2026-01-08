@@ -15,6 +15,7 @@ const envSchema = z.object({
 	RABBITMQ_URL: z.string(),
 	REDIS_URL: z.string(),
 	EXCHANGE_NAME: z.string(),
+	PAYMENT_SERVICE_URL: z.string().default("http://localhost:4006"),
 });
 
 const env = envSchema.parse(process.env);
