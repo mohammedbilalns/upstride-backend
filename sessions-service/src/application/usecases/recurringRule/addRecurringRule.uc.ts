@@ -11,8 +11,18 @@ import { timeToMinutes } from "../../utils/dateUtils";
  *
  * A recurring rule defines weekly availability (e.g., "Every Monday from 09:00 to 17:00").
  */
+import { IGenerateSlotsUC } from "../../../domain/useCases/slots/generateSlots.uc.interface";
+
+/**
+ * Use case: Add a recurring rule for a mentor.
+ *
+ * A recurring rule defines weekly availability (e.g., "Every Monday from 09:00 to 17:00").
+ */
 export class AddRecurringRuleUC implements IAddRecurringRuleUC {
-	constructor(private _availabilityRepository: IAvailabilityRepository) {}
+	constructor(
+		private _availabilityRepository: IAvailabilityRepository,
+		private _generateSlotsUC: IGenerateSlotsUC,
+	) {}
 
 	async execute(dto: AddRecurringRuleDto): Promise<void> {
 		// fetch or create availability
@@ -62,5 +72,8 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 		await this._availabilityRepository.update(existingAvailabilityRule.id, {
 			recurringRules: updatedRecurringRules,
 		});
+
+		// Trigger slot generation
+		await this._generateSlotsUC.execute(dto.mentorId);
 	}
 }

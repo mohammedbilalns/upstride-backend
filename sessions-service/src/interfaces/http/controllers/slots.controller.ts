@@ -18,6 +18,7 @@ import { ICreateCustomSlotUC } from "../../../domain/useCases/slots/createCustom
 import { IGetRulesUC } from "../../../domain/useCases/recurringRule/getRule.uc.interface";
 import { IDeleteRecurringRuleUC } from "../../../domain/useCases/recurringRule/deleteRecurringRule.uc.interface";
 import { IEnableRecurringRuleUC } from "../../../domain/useCases/recurringRule/enableRecurringRule.uc.interface";
+import { IDeleteSlotUC } from "../../../domain/useCases/slots/deleteSlot.uc.interface";
 
 export class SlotsController {
 	constructor(
@@ -29,6 +30,7 @@ export class SlotsController {
 		private _deleteRecurringRuleUC: IDeleteRecurringRuleUC,
 		private _getMentorSlotsUC: IGetMentorSlotsUC,
 		private _cancelSlotUC: ICancleSlotUC,
+		private _deleteSlotUC: IDeleteSlotUC,
 		private _getMentorRuleUC: IGetRulesUC,
 	) {}
 
@@ -47,12 +49,14 @@ export class SlotsController {
 	public updateRecurringRule = asyncHandler(async (req, res) => {
 		const { ruleId } = updateRecurringRuleParmsSchema.parse(req.params);
 		const { mentorId } = res.locals.user;
-		const payload = updateRecurringRulePayloadSchema.parse(req.body);
+		const { invalidateExisting, ...ruleData } =
+			updateRecurringRulePayloadSchema.parse(req.body);
 
 		await this._updateRecurringRuleUC.execute({
 			mentorId,
 			ruleId,
-			rule: payload,
+			rule: ruleData,
+			invalidateExisting,
 		});
 
 		res
@@ -94,8 +98,13 @@ export class SlotsController {
 	public deleteRecurringRule = asyncHandler(async (req, res) => {
 		const { mentorId } = res.locals.user;
 		const { ruleId } = deleteRecurringRuleParamsSchema.parse(req.params);
+		const deleteSlots = req.query.deleteSlots === "true";
 
-		await this._deleteRecurringRuleUC.execute({ mentorId, ruleId });
+		await this._deleteRecurringRuleUC.execute({
+			mentorId,
+			ruleId,
+			deleteSlots,
+		});
 
 		res
 			.status(HttpStatus.OK)
@@ -116,6 +125,15 @@ export class SlotsController {
 		res
 			.status(HttpStatus.OK)
 			.json({ success: true, message: ResponseMessage.CANCELLED_SLOT });
+	});
+
+	public deleteSlot = asyncHandler(async (req, res) => {
+		const { slotId } = cancelSlotParamsSchema.parse(req.params);
+		const { mentorId } = res.locals.user;
+		await this._deleteSlotUC.execute({ mentorId, slotId });
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: "Slot deleted successfully" });
 	});
 
 	public getMentorRules = asyncHandler(async (_req, res) => {

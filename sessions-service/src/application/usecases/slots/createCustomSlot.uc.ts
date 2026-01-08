@@ -3,8 +3,9 @@ import { ISlotRepository } from "../../../domain/repositories/slot.repository.in
 import { ICreateCustomSlotUC } from "../../../domain/useCases/slots/createCustomSlot.uc.interface";
 import { CreateCustomSlotDto } from "../../dtos/slot.dto";
 import { AppError } from "../../errors/AppError";
+import { SlotStatus } from "../../../domain/entities/slot.entity";
 
-export class CreateCustomSlot implements ICreateCustomSlotUC {
+export class CreateCustomSlotUC implements ICreateCustomSlotUC {
 	constructor(private _slotRepository: ISlotRepository) {}
 
 	async execute(dto: CreateCustomSlotDto): Promise<void> {
@@ -24,7 +25,9 @@ export class CreateCustomSlot implements ICreateCustomSlotUC {
 			mentorId: dto.mentorId,
 			startAt: dto.startAt,
 			endAt: dto.endAt,
+			price: dto.price,
+			generatedFrom: "custom",
+			status: SlotStatus.OPEN,
 		});
-		//TODO: what about the price in this case ?
 	}
 }

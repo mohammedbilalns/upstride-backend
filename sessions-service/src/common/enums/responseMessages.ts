@@ -1,4 +1,5 @@
 export enum ResponseMessage {
+	SUCCESS = "Success",
 	CUSTOM_AVAILABILITY_CREATED = "Custom availability created successfully",
 	RECURRING_RULE_CREATED = "Recurring rule created successfully",
 	DISBLED_RECURRING_RULE = "Recurring rule disabled successfully",

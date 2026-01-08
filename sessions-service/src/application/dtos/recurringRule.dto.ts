@@ -5,6 +5,7 @@ type Rule = {
 	startTime: string;
 	endTime: string;
 	slotDuration: 60 | 90 | 120 | 180;
+	price: number;
 };
 
 export interface CreateRecurringRuleDto {
@@ -16,6 +17,7 @@ export interface UpdateRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
 	rule: Partial<Rule>;
+	invalidateExisting?: boolean;
 }
 
 export interface AddRecurringRuleDto {
@@ -35,6 +37,7 @@ export interface EnableRecurringRuleDto {
 export interface DeleteRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
+	deleteSlots?: boolean;
 }
 
 export type GetMentorRuleResponse = Availability | null;

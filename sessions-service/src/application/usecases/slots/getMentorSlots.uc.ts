@@ -7,7 +7,7 @@ export class GetMentorSlotsUC implements IGetMentorSlotsUC {
 
 	// fetch for the mentor
 	async execute(dto: GetMentorSlotsDto): Promise<GetMentorSlotsResponse> {
-		const slots = await this._slotRepository.findUpcomingByMentor(dto.mentorId);
+		const slots = await this._slotRepository.find({ mentorId: dto.mentorId });
 		return { slots };
 	}
 }

@@ -23,4 +23,34 @@ export class BookingRepository
 			createdAt: mapped.createdAt,
 		};
 	}
+
+	public async findByPaymentId(paymentId: string): Promise<Booking | null> {
+		const doc = await this._model.findOne({ paymentId });
+		return doc ? this.mapToDomain(doc) : null;
+	}
+
+	public async findByUserId(userId: string): Promise<Booking[]> {
+		const docs = await this._model.find({ userId }).populate("slotId").exec();
+		return docs.map((doc) => this.mapToDomain(doc));
+	}
+
+	public async findUpcomingByUserId(userId: string): Promise<Booking[]> {
+		// Find bookings where associated slot start time is in the future
+
+		const docs = await this._model.aggregate([
+			{ $match: { userId: userId, status: "CONFIRMED" } },
+			{
+				$lookup: {
+					from: "slots",
+					localField: "slotId",
+					foreignField: "_id",
+					as: "slot",
+				},
+			},
+			{ $unwind: "$slot" },
+			{ $match: { "slot.startAt": { $gte: new Date() } } },
+		]);
+
+		return docs.map((doc) => this.mapToDomain(doc));
+	}
 }

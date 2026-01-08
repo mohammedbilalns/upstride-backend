@@ -13,4 +13,5 @@ export interface ISlotRepository extends IBaseRepository<Slot> {
 	toggleSlotStatusByRuleId(ruleId: string, isActive: boolean): Promise<void>;
 
 	findUpcomingByMentor(mentorId: string, now?: Date): Promise<Slot[]>;
+	deleteUnbookedFutureSlots(ruleId: string): Promise<void>;
 }

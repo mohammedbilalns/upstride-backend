@@ -6,4 +6,5 @@ export enum QueueEvents {
 	MARKED_MESSAGE_READ = "message.markedread",
 	MARK_CHAT_READ = "chat.markread",
 	MARKED_CHAT_READ = "chat.markedread",
+	LIVE_SESSION_MESSAGE = "live.message",
 }

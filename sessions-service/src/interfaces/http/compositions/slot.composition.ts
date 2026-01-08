@@ -5,7 +5,6 @@ import { EnableRecurringRuleUC } from "../../../application/usecases/recurringRu
 import { GetRuleUC } from "../../../application/usecases/recurringRule/getRule.uc";
 import { UpdateRecurringRuleUC } from "../../../application/usecases/recurringRule/updateRecurringRule.uc";
 import { CancelSlotUC } from "../../../application/usecases/slots/cancelSlot.uc";
-import { CreateCustomSlot } from "../../../application/usecases/slots/createCustomSlot.uc";
 import { GetMentorSlotsUC } from "../../../application/usecases/slots/getMentorSlots.uc";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
@@ -13,15 +12,26 @@ import { AvailabilityRepository } from "../../../infrastructure/database/reposit
 import { SlotRepository } from "../../../infrastructure/database/repositories/slot.repository";
 import { SlotsController } from "../controllers/slots.controller";
 
+import { GenerateSlotsUC } from "../../../application/usecases/slots/generateSlots.uc";
+import { DeleteSlotUC } from "../../../application/usecases/slots/deleteSlot.uc";
+import { CreateCustomSlotUC } from "../../../application/usecases/slots/createCustomSlot.uc";
+
 export function createSlotController() {
 	// repositiories
 	const slotRepository: ISlotRepository = new SlotRepository();
 	const availabilityRepository: IAvailabilityRepository =
 		new AvailabilityRepository();
 
+	const generateSlotsUC = new GenerateSlotsUC(
+		availabilityRepository,
+		slotRepository,
+	);
+
 	// usecases
 	const updateRecurringRuleUC = new UpdateRecurringRuleUC(
 		availabilityRepository,
+		generateSlotsUC,
+		slotRepository,
 	);
 	const disableRecurringRuleUC = new DisableRecurringRuleUC(
 		availabilityRepository,
@@ -34,13 +44,19 @@ export function createSlotController() {
 	);
 	const deleteRecurringRuleUC = new DeleteRecurringRuleUC(
 		availabilityRepository,
+		slotRepository,
 	);
-	const addRecurringRuleUC = new AddRecurringRuleUC(availabilityRepository);
-	const createCustomSlotUC = new CreateCustomSlot(slotRepository);
+	const addRecurringRuleUC = new AddRecurringRuleUC(
+		availabilityRepository,
+		generateSlotsUC,
+	);
+	const createCustomSlotUC = new CreateCustomSlotUC(slotRepository);
 	const cancelSlotUC = new CancelSlotUC(slotRepository);
 
 	const getMentorSlotsUC = new GetMentorSlotsUC(slotRepository);
 	const getMentorRulesUC = new GetRuleUC(availabilityRepository);
+
+	const deleteSlotUC = new DeleteSlotUC(slotRepository);
 
 	return new SlotsController(
 		createCustomSlotUC,
@@ -51,6 +67,7 @@ export function createSlotController() {
 		deleteRecurringRuleUC,
 		getMentorSlotsUC,
 		cancelSlotUC,
+		deleteSlotUC,
 		getMentorRulesUC,
 	);
 }

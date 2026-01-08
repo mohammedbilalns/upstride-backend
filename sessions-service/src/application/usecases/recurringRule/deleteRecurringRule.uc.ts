@@ -4,8 +4,13 @@ import { IDeleteRecurringRuleUC } from "../../../domain/useCases/recurringRule/d
 import { DeleteRecurringRuleDto } from "../../dtos/recurringRule.dto";
 import { AppError } from "../../errors/AppError";
 
+import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
+
 export class DeleteRecurringRuleUC implements IDeleteRecurringRuleUC {
-	constructor(private _availabilityRepository: IAvailabilityRepository) {}
+	constructor(
+		private _availabilityRepository: IAvailabilityRepository,
+		private _slotRepository: ISlotRepository,
+	) {}
 
 	async execute(dto: DeleteRecurringRuleDto): Promise<void> {
 		const existingAvailabilityRule =
@@ -15,6 +20,7 @@ export class DeleteRecurringRuleUC implements IDeleteRecurringRuleUC {
 			throw new AppError(ErrorMessage.RULE_NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 
+		// Update availability
 		const updatedRule = {
 			...existingAvailabilityRule,
 			recurringRules: existingAvailabilityRule.recurringRules.filter(
@@ -22,9 +28,14 @@ export class DeleteRecurringRuleUC implements IDeleteRecurringRuleUC {
 			),
 		};
 
-		this._availabilityRepository.update(
+		await this._availabilityRepository.update(
 			existingAvailabilityRule.id,
 			updatedRule,
 		);
+
+		// Delete slots if requested
+		if (dto.deleteSlots) {
+			await this._slotRepository.deleteUnbookedFutureSlots(dto.ruleId);
+		}
 	}
 }

@@ -5,6 +5,7 @@ export interface CreateCustomSlotDto {
 	startAt: Date;
 	endAt: Date;
 	slotDuration: number;
+	price: number;
 }
 
 export interface GetMentorSlotsDto {
@@ -21,4 +22,9 @@ export interface CancelSlotDto {
 }
 export interface GetMentorRule {
 	mentorId: string;
+}
+
+export interface DeleteSlotDto {
+	mentorId: string;
+	slotId: string;
 }

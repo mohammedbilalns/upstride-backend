@@ -59,7 +59,7 @@ export class SlotRepository
 		const docs = await this._model
 			.findOne({
 				mentorId,
-				$and: [{ startAt: { $lte: endAt } }, { endAt: { $gte: startAt } }],
+				$and: [{ startAt: { $lt: endAt } }, { endAt: { $gt: startAt } }],
 			})
 			.exec();
 
@@ -84,5 +84,13 @@ export class SlotRepository
 			{ $set: { isActive: isActive } },
 		);
 		console.log("toggled status ...");
+	}
+
+	public async deleteUnbookedFutureSlots(ruleId: string): Promise<void> {
+		await this._model.deleteMany({
+			ruleId: ruleId,
+			status: "OPEN",
+			startAt: { $gt: new Date() },
+		});
 	}
 }

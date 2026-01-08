@@ -1,4 +1,5 @@
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
+import { BookingStatus } from "../../../domain/entities/booking.entity";
 import { SlotStatus } from "../../../domain/entities/slot.entity";
 import { IBookingRepository } from "../../../domain/repositories/booking.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
@@ -12,10 +13,13 @@ export class BookSessionUc implements IBookSessionUC {
 		private _slotRepository: ISlotRepository,
 	) {}
 
-	async execute(dto: BookSessionDto): Promise<void> {
+	async execute(
+		dto: BookSessionDto,
+	): Promise<{ bookingId: string; paymentId: string }> {
 		const slot = await this._slotRepository.findById(dto.slotId);
 		if (!slot)
 			throw new AppError(ErrorMessage.SLOT_NOT_FOUND, HttpStatus.BAD_REQUEST);
+
 		if (slot.status !== SlotStatus.OPEN) {
 			throw new AppError(
 				ErrorMessage.SLOT_IS_ALREADY_TAKEN,
@@ -23,13 +27,23 @@ export class BookSessionUc implements IBookSessionUC {
 			);
 		}
 
-		await Promise.all([
-			this._slotRepository.update(dto.slotId, {
-				status: SlotStatus.FULL,
-				participantId: dto.userId,
-			}),
-			// TODO : payment verification and then save the doc
-			this._bookingRepository.create({}),
-		]);
+		//  Reserve Slot
+		await this._slotRepository.update(dto.slotId, {
+			status: SlotStatus.RESERVED,
+			participantId: dto.userId,
+		});
+
+		//  Create Pending Booking
+		const booking = await this._bookingRepository.create({
+			slotId: dto.slotId,
+			userId: dto.userId,
+			status: BookingStatus.PENDING,
+			paymentId: "PENDING",
+		});
+
+		return {
+			bookingId: booking.id,
+			paymentId: booking.id,
+		};
 	}
 }

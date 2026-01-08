@@ -7,6 +7,7 @@ export interface Availability {
 		startTime: number;
 		endTime: number;
 		slotDuration: 60 | 90 | 120 | 180;
+		price: number;
 		isActive?: boolean;
 	}[];
 	price: number;

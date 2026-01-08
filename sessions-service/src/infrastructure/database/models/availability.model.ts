@@ -17,6 +17,7 @@ export const availabilitySchema: Schema = new Schema(
 				endTime: { type: Number, min: 0, max: 1440 },
 				slotDuration: { type: Number, enum: [60, 90, 120, 180] },
 				isActive: { type: Boolean, default: true },
+				price: { type: Number },
 			},
 		],
 		price: { type: Number },

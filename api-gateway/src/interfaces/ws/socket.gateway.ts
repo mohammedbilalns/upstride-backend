@@ -7,11 +7,13 @@ import { socketAuthMiddleware } from "./middlewares/socket.middleware";
 import {
 	registerChatEvents,
 	//	registerNotificationEvents,
-	//	registerWebRTCEvents,
+	registerWebRTCEvents,
+	registerLiveMessageEvents,
 } from "./namespaces";
 import { SocketPublisher } from "./socket.publisher";
 import { registerNotificationSubscriber } from "./subscribers";
 import { registerChatSubscriber } from "./subscribers/chat.subscriber";
+import { registerSessionSubscriber } from "./subscribers/sessions.subscriber";
 
 /**
  * Initializes the Socket.IO server and binds all real-time event namespaces.
@@ -42,6 +44,7 @@ export function initSocket(server: HttpServer, eventBus: IEventBus) {
 	// Register event bus subscribers that need to trigger socket events
 	registerNotificationSubscriber(eventBus, socketPublisher);
 	registerChatSubscriber(eventBus, socketPublisher);
+	registerSessionSubscriber(eventBus, socketPublisher);
 
 	// Authenticate socket connections
 	io.use(socketAuthMiddleware);
@@ -61,7 +64,8 @@ export function initSocket(server: HttpServer, eventBus: IEventBus) {
 		 */
 		registerChatEvents(socket, socketPublisher);
 		//registerNotificationEvents(io, socket, socketPublisher);
-		//		registerWebRTCEvents(io, socket, socketPublisher);
+		registerWebRTCEvents(io, socket, socketPublisher);
+		registerLiveMessageEvents(socket, socketPublisher);
 
 		/**
 		 * When a user disconnects:

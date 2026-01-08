@@ -7,6 +7,8 @@ import { PaymentRepository } from "../../../infrastructure/database/repositories
 import { PayPalService } from "../../../infrastructure/external/paypal.service";
 import { PaymentController } from "../controllers/payment.controller";
 
+import eventBus from "../../../infrastructure/events/eventBus";
+
 export function createPaymentController(): PaymentController {
 	// ─────────────────────────────────────────────
 	// Dependencies
@@ -22,6 +24,7 @@ export function createPaymentController(): PaymentController {
 	const capturePaymentUC = new CapturePaymentUC(
 		paymentRepository,
 		payPalService,
+		eventBus,
 	);
 	const getUserPaymentsUC = new GetUserPaymentsUC(paymentRepository);
 	const getMentorPaymentsUC = new GetMentorPaymentsUC(paymentRepository);

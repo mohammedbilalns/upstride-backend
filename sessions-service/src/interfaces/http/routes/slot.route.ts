@@ -32,6 +32,7 @@ export function createSlotRoutes() {
 	);
 	router.get("/slots", slotsController.getMentorSlots);
 	router.post("/:slotId/cancel", slotsController.cancelSlot);
+	router.delete("/:slotId", slotsController.deleteSlot);
 
 	return router;
 }

@@ -2,6 +2,7 @@ import { BookSessionUc } from "../../../application/usecases/bookings/bookSessio
 import { CancelBookingUC } from "../../../application/usecases/bookings/cancelBooking.uc";
 import { InitiateSessionUC } from "../../../application/usecases/sessions/initiateSession.uc";
 import { MarkSessionAsCompleteUC } from "../../../application/usecases/sessions/markSessionAsComplete.uc";
+import { GetSessionsUC } from "../../../application/usecases/sessions/getSessions.uc";
 import { SessionController } from "../controllers/session.controller";
 import EventBus from "../../../infrastructure/events/eventBus";
 import { SlotRepository } from "../../../infrastructure/database/repositories/slot.repository";
@@ -14,17 +15,22 @@ export function createSessionController() {
 
 	// usecases
 	const initiateSessionUC = new InitiateSessionUC(slotRepository, EventBus);
-	const markSessionAsCompleteUC = new MarkSessionAsCompleteUC(slotRepository);
+	const markSessionAsCompleteUC = new MarkSessionAsCompleteUC(
+		slotRepository,
+		EventBus,
+	);
 	const bookSessionUC = new BookSessionUc(bookingRepository, slotRepository);
 	const cancelBookingUC = new CancelBookingUC(
 		bookingRepository,
 		slotRepository,
 	);
+	const getSessionsUC = new GetSessionsUC(bookingRepository);
 
 	return new SessionController(
 		initiateSessionUC,
 		markSessionAsCompleteUC,
 		bookSessionUC,
 		cancelBookingUC,
+		getSessionsUC,
 	);
 }

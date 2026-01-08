@@ -5,11 +5,14 @@ import { IPaymentGatewayService } from "../../domain/services/payment-gateway.se
 import { AppError } from "../../application/errors/AppError";
 import { HttpStatus } from "../../common/enums";
 import { ErrorMessage } from "../../common/enums/errorMessage";
+import { IEventBus } from "../../domain/events/IEventBus";
+import { QueueEvents } from "../../common/enums/queueEvents";
 
 export class CapturePaymentUC implements ICapturePaymentUC {
 	constructor(
 		private _paymentRepository: IPaymentRepository,
 		private _paymentGatewayService: IPaymentGatewayService,
+		private _eventBus: IEventBus,
 	) {}
 
 	async execute(data: CapturePaymentDto) {
@@ -44,6 +47,15 @@ export class CapturePaymentUC implements ICapturePaymentUC {
 				payment.id,
 				"COMPLETED",
 			);
+
+			// Publish Payment Completed Event
+			await this._eventBus.publish(QueueEvents.PAYMENT_COMPLETED, {
+				orderId: payment.transactionId, // Should match what Consumer expects
+				paymentId: payment.id,
+				userId: payment.userId,
+				mentorId: payment.mentorId,
+			});
+
 			return updated;
 		} else {
 			await this._paymentRepository.updateStatus(payment.id, "FAILED");

@@ -8,7 +8,7 @@ export function createSessionRoutes() {
 	router.use(authMiddleware());
 
 	// TODO: implment route to fetch upcoming past and all sessions
-	//router.get("/sessions", sessionsController.getSessions)
+	router.get("/", sessionsController.getSessions);
 	router.post("/:slotId/book", sessionsController.bookSession);
 	router.post("/:bookingId/cancel", sessionsController.cancelBooking);
 	router.post("/:sessionId/start", sessionsController.initiateSession);

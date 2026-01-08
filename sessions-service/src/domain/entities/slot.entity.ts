@@ -1,5 +1,6 @@
 export enum SlotStatus {
 	OPEN = "OPEN",
+	RESERVED = "RESERVED",
 	FULL = "FULL",
 	CANCELLED = "CANCELLED",
 	STARTED = "STARTED",
@@ -21,9 +22,9 @@ export interface Slot {
 	status: SlotStatus;
 	price: number;
 	participantId: string;
-	cancelledAt: Date;
-	cancelledBy: CancelledBy;
-	cancelReason: string;
+	cancelledAt?: Date;
+	cancelledBy?: CancelledBy;
+	cancelReason?: string;
 	isActive: boolean;
 	createdAt: Date;
 }

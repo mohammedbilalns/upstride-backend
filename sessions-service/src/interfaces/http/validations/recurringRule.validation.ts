@@ -10,6 +10,10 @@ const rule = z.object({
 		z.literal(120),
 		z.literal(180),
 	]),
+	price: z
+		.number()
+		.min(10, "Price must be at least 10")
+		.max(10000, "Price cannot exceed 10000"),
 });
 
 // create recurring rules
@@ -32,9 +36,12 @@ export const updateRecurringRuleParmsSchema = z.object({
 
 export const deleteRecurringRuleParamsSchema = z.object({
 	ruleId: z.string(),
+	deleteSlots: z.enum(["true", "false"]).optional(),
 });
 
-export const updateRecurringRulePayloadSchema = rule.partial();
+export const updateRecurringRulePayloadSchema = rule.partial().extend({
+	invalidateExisting: z.boolean().optional(),
+});
 
 // disable recurring rule
 export const toggleRecurringRuleParmsSchema = z.object({

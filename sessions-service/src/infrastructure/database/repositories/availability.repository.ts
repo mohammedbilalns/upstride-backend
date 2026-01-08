@@ -47,4 +47,14 @@ export class AvailabilityRepository
 		const docs = await this._model.find({ "recurringRules.isActive": true });
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
+
+	public async update(
+		id: string,
+		data: Partial<IAvailability>,
+	): Promise<Availability | null> {
+		const doc = await this._model
+			.findByIdAndUpdate(id, data, { new: true })
+			.exec();
+		return doc ? this.mapToDomain(doc) : null;
+	}
 }

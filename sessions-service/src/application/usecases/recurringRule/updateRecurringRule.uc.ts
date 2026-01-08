@@ -10,12 +10,25 @@ import { timeToMinutes } from "../../utils/dateUtils";
  *
  * A recurring rule defines weekly repeating availability (e.g., "Every Monday 09:00–17:00").
  */
+import { IGenerateSlotsUC } from "../../../domain/useCases/slots/generateSlots.uc.interface";
+import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
+
+/**
+ * Use case: Update an existing recurring availability rule.
+ *
+ * A recurring rule defines weekly repeating availability (e.g., "Every Monday 09:00–17:00").
+ */
 export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
-	constructor(private _availabilityRepository: IAvailabilityRepository) {}
+	constructor(
+		private _availabilityRepository: IAvailabilityRepository,
+		private _generateSlotsUC: IGenerateSlotsUC,
+		private _slotRepository: ISlotRepository,
+	) {}
 	async execute(dto: UpdateRecurringRuleDto): Promise<void> {
 		// lookup mentor availability
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(dto.mentorId);
+
 		if (!existingAvailabilityRule)
 			throw new AppError(
 				ErrorMessage.AVAILABILITY_NOT_FOUND,
@@ -42,6 +55,7 @@ export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
 				? timeToMinutes(dto.rule.endTime)
 				: ruleToUpdate.endTime,
 			slotDuration: dto.rule.slotDuration ?? ruleToUpdate.slotDuration,
+			price: dto.rule.price ?? ruleToUpdate.price,
 		};
 
 		// validate start time is before end time
@@ -52,7 +66,10 @@ export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
 			);
 		}
 
-		if (updatedRule.endTime - updatedRule.startTime !== dto.rule.slotDuration) {
+		if (
+			updatedRule.endTime - updatedRule.startTime !==
+			updatedRule.slotDuration
+		) {
 			throw new AppError(
 				ErrorMessage.INVALID_INPUT_DATA,
 				HttpStatus.BAD_REQUEST,
@@ -90,5 +107,13 @@ export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
 		await this._availabilityRepository.update(existingAvailabilityRule.id, {
 			recurringRules: updatedRecurringRules,
 		});
+
+		// Invalidate existing slots if requested
+		if (dto.invalidateExisting) {
+			await this._slotRepository.deleteUnbookedFutureSlots(dto.ruleId);
+		}
+
+		// Trigger slot generation
+		await this._generateSlotsUC.execute(dto.mentorId);
 	}
 }

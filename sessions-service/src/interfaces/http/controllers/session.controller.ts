@@ -11,23 +11,45 @@ import {
 	markSessionAsCompleteParamsSchema,
 } from "../validations/booking.validation";
 
+import { IGetSessionsUC } from "../../../domain/useCases/sessions/getSessions.uc.interface";
+
 export class SessionController {
 	constructor(
 		private _initiateSessionUC: IInitiateSessionUC,
 		private _markSessionAsCompleteUC: IMarkSessionAsCompleteUC,
 		private _bookSessionUC: IBookSessionUC,
 		private _cancelBookingUC: ICancelBookingUC,
+		private _getSessionsUC: IGetSessionsUC,
 	) {}
+
+	public getSessions = asyncHandler(async (req, res) => {
+		const userId = res.locals.user.id;
+		const type = req.query.type as string; // 'upcoming' | 'history'
+
+		let data;
+		if (type === "upcoming") {
+			data = await this._getSessionsUC.getUserUpcoming(userId);
+		} else {
+			data = await this._getSessionsUC.getUserHistory(userId);
+		}
+
+		res.status(HttpStatus.OK).json({
+			success: true,
+			message: ResponseMessage.SUCCESS,
+			data,
+		});
+	});
 
 	public bookSession = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { slotId } = bookSessionValidationParamsSchema.parse(req.params);
 
-		await this._bookSessionUC.execute({ userId, slotId });
-
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.SESSION_INITIATED });
+		const result = await this._bookSessionUC.execute({ userId, slotId });
+		res.status(HttpStatus.OK).json({
+			success: true,
+			message: ResponseMessage.SESSION_INITIATED,
+			data: result,
+		});
 	});
 
 	public cancelBooking = asyncHandler(async (req, res) => {
