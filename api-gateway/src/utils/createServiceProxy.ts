@@ -24,9 +24,12 @@ export function createServiceProxy(
 	return proxy(service_url, {
 		...proxyOptions,
 
-		// Add default Content-Type header for outgoing proxy requests
-		proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
-			proxyReqOpts.headers["Content-Type"] = "application/json";
+		// Preserve original Content-Type header if present, otherwise default to JSON
+		proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+			// Only set Content-Type if not already provided (e.g., multipart/form-data)
+			if (!srcReq.headers["content-type"]) {
+				proxyReqOpts.headers["Content-Type"] = "application/json";
+			}
 			return proxyReqOpts;
 		},
 

@@ -48,3 +48,38 @@ export interface SaveMediaDto {
 export interface getMediasDto {
 	publicIds: string[];
 }
+
+export interface UploadMediaResponse {
+	public_id: string;
+	secure_url: string;
+	original_filename: string;
+	resource_type: string;
+	bytes: number;
+	asset_folder?: string;
+}
+
+// Use case DTOs
+export interface UploadMediaDto {
+	file: Express.Multer.File;
+	resourceType: string;
+}
+
+export interface StreamMediaDto {
+	publicId: string;
+	mediaType: string;
+}
+
+export interface StreamMediaResult {
+	stream: import("stream").Readable;
+	contentType: string;
+}
+
+export interface DeleteMediaDto {
+	publicId: string;
+	resourceType: string;
+}
+
+export interface GetSignedViewUrlDto {
+	publicId: string;
+	mediaType: string;
+}

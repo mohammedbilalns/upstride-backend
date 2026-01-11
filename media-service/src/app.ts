@@ -17,9 +17,10 @@ class App {
 	}
 
 	private _setupMiddleware() {
-		this._app.use(express.json());
 		this._app.use(helmet());
 		this._app.use(cookieParser());
+		this._app.use(express.json());
+		this._app.use(express.urlencoded({ extended: true }));
 		this._app.use(requestLogger);
 	}
 

@@ -12,4 +12,5 @@ export enum ErrorMessage {
 	INVALID_TIMESTAMP = "Invalid timestamp",
 	MEDIA_NOT_FOUND = "Media not found",
 	FAILED_TO_FETCH_MEDIA = "Failed to fetch media",
+	FAILED_TO_UPLOAD_MEDIA = "Failed to upload media",
 }
