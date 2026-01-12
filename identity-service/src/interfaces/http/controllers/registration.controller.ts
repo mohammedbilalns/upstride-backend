@@ -15,6 +15,7 @@ import {
 } from "../validations/auth.validation";
 import { Response } from "express";
 import { addInterestsSchema } from "../validations/interests.validation";
+import { parseDuration } from "../../../common/utils/time";
 
 export class RegistrationController {
 	constructor(
@@ -33,23 +34,14 @@ export class RegistrationController {
 		const cookieName = type === "reset" ? "resettoken" : "registertoken";
 		res.cookie(cookieName, token, {
 			...COOKIE_OPTIONS,
-			maxAge: parseInt(env.RESET_TOKEN_EXPIRY),
+			maxAge: parseDuration(env.RESET_TOKEN_EXPIRY),
 		});
 	}
 
-	private setAuthCookies(
-		res: Response,
-		accessToken: string,
-		refreshToken: string,
-	) {
-		res.cookie("accesstoken", accessToken, {
-			...COOKIE_OPTIONS,
-			maxAge: parseInt(env.ACCESS_TOKEN_EXPIRY),
-		});
-
+	private setRefreshTokenCookie(res: Response, refreshToken: string) {
 		res.cookie("refreshtoken", refreshToken, {
 			...COOKIE_OPTIONS,
-			maxAge: parseInt(env.REFRESH_TOKEN_EXPIRY),
+			maxAge: parseDuration(env.REFRESH_TOKEN_EXPIRY),
 		});
 	}
 
@@ -110,10 +102,14 @@ export class RegistrationController {
 			});
 
 		this.clearTokenCookie(res, "register");
-		this.setAuthCookies(res, accessToken, refreshToken);
+		this.clearTokenCookie(res, "register");
+		this.setRefreshTokenCookie(res, refreshToken);
 
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.INTERESTS_ADDED, user });
+		res.status(HttpStatus.OK).json({
+			success: true,
+			message: ResponseMessage.INTERESTS_ADDED,
+			user,
+			accessToken,
+		});
 	});
 }

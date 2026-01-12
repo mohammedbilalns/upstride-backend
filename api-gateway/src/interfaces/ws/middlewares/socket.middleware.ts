@@ -24,11 +24,9 @@ export async function socketAuthMiddleware(
 	next: (err?: ExtendedError) => void,
 ): Promise<void> {
 	try {
-		const cookieHeader = socket.handshake.headers.cookie || "";
-		const token = cookieHeader
-			.split(";")
-			.find((c) => c.trim().startsWith("accesstoken="))
-			?.split("=")[1];
+		const token =
+			socket.handshake.auth?.token ||
+			socket.handshake.headers.authorization?.split(" ")[1];
 
 		if (!token) {
 			logger.warn(`[WS] Missing access token for socket ${socket.id}`);

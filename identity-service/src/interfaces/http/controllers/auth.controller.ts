@@ -8,6 +8,7 @@ import {
 
 import env from "../../../infrastructure/config/env";
 import asyncHandler from "../utils/asyncHandler";
+import { parseDuration } from "../../../common/utils/time";
 
 import { loginSchema } from "../validations/auth.validation";
 import {
@@ -35,20 +36,11 @@ export class AuthController {
 	// Cookie Helpers
 	// ─────────────────────────────────────────────────────────────
 
-	/** Sets access & refresh token cookies */
-	private setAuthCookies(
-		res: Response,
-		accessToken: string,
-		refreshToken: string,
-	) {
-		res.cookie("accesstoken", accessToken, {
-			...COOKIE_OPTIONS,
-			maxAge: parseInt(env.ACCESS_TOKEN_EXPIRY),
-		});
-
+	/** Sets refresh token cookie */
+	private setRefreshTokenCookie(res: Response, refreshToken: string) {
 		res.cookie("refreshtoken", refreshToken, {
 			...COOKIE_OPTIONS,
-			maxAge: parseInt(env.REFRESH_TOKEN_EXPIRY),
+			maxAge: parseDuration(env.REFRESH_TOKEN_EXPIRY),
 		});
 	}
 
@@ -61,13 +53,12 @@ export class AuthController {
 		const cookieName = type === "reset" ? "resettoken" : "registertoken";
 		res.cookie(cookieName, token, {
 			...COOKIE_OPTIONS,
-			maxAge: parseInt(env.RESET_TOKEN_EXPIRY),
+			maxAge: parseDuration(env.RESET_TOKEN_EXPIRY),
 		});
 	}
 
 	/** Clears authentication cookies */
 	private clearAuthCookies(res: Response) {
-		res.clearCookie("accesstoken");
 		res.clearCookie("refreshtoken");
 	}
 
@@ -85,11 +76,14 @@ export class AuthController {
 			},
 		);
 
-		this.setAuthCookies(res, accessToken, refreshToken);
+		this.setRefreshTokenCookie(res, refreshToken);
 
-		res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
+		res.status(HttpStatus.OK).json({
+			success: true,
+			message: ResponseMessage.LOGIN_SUCCESS,
+			user,
+			accessToken,
+		});
 	});
 
 	/** Logout user & clear cookies */
@@ -118,11 +112,12 @@ export class AuthController {
 			refreshToken: refreshTokenFromCookie,
 		});
 
-		this.setAuthCookies(res, accessToken, refreshToken);
+		this.setRefreshTokenCookie(res, refreshToken);
 
 		return res.status(HttpStatus.OK).json({
 			success: true,
 			message: ResponseMessage.REFRESH_TOKEN_SUCCESS,
+			accessToken,
 		});
 	});
 
@@ -159,10 +154,13 @@ export class AuthController {
 		// Existing user → login
 		const { user, accessToken, refreshToken } = result;
 
-		this.setAuthCookies(res, accessToken, refreshToken);
+		this.setRefreshTokenCookie(res, refreshToken);
 
-		return res
-			.status(HttpStatus.OK)
-			.json({ success: true, message: ResponseMessage.LOGIN_SUCCESS, user });
+		return res.status(HttpStatus.OK).json({
+			success: true,
+			message: ResponseMessage.LOGIN_SUCCESS,
+			user,
+			accessToken,
+		});
 	});
 }

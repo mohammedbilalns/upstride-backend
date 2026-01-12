@@ -15,7 +15,8 @@ import { RevokedUserRepository } from "../../../infrastructure/database/reposito
 export const createAuthMiddleware = (jwtSecret: string) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const token = req.cookies.accesstoken;
+			const token =
+				req.headers.authorization?.split(" ")[1] || req.cookies.accesstoken;
 			if (!token) {
 				return res.status(HttpStatus.UNAUTHORIZED).json({
 					success: false,
