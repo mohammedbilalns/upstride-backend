@@ -1,4 +1,4 @@
-import { NotificationPayloadTypes } from "../enums/notificationPayloadTypes";
+import { NotificationPayloadTypes } from "../enums/notification-payload-types";
 import type { NotificationTemplate } from "../types/notification-template.type";
 
 export const NOTIFICATION_TEMPLATES: Record<

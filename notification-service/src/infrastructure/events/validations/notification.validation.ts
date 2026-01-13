@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { NotificationPayloadTypes } from "../../../common/enums/notificationPayloadTypes";
+import { NotificationPayloadTypes } from "../../../common/enums/notification-payload-types";
 
 export const notificationValidationSchema = z.object({
 	userId: z.string(),

@@ -1,8 +1,8 @@
-import { CreatePaymentUC } from "../../../application/useCases/createPayment.uc";
-import { CapturePaymentUC } from "../../../application/useCases/capturePayment.uc";
-import { GetUserPaymentsUC } from "../../../application/useCases/getUserPayments.uc";
-import { GetMentorPaymentsUC } from "../../../application/useCases/getMentorPayments.uc";
-import { HandleWebhookUC } from "../../../application/useCases/handleWebhook.uc";
+import { CreatePaymentUC } from "../../../application/useCases/create-payment.uc";
+import { CapturePaymentUC } from "../../../application/useCases/capture-payment.uc";
+import { GetUserPaymentsUC } from "../../../application/useCases/get-user-payments.uc";
+import { GetMentorPaymentsUC } from "../../../application/useCases/get-mentor-payments.uc";
+import { HandleWebhookUC } from "../../../application/useCases/handle-webhook.uc";
 import { PaymentRepository } from "../../../infrastructure/database/repositories/payment.repository";
 import { RazorpayService } from "../../../infrastructure/services/razorpay.service";
 import { PaymentController } from "../controllers/payment.controller";

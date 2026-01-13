@@ -1,4 +1,4 @@
-import { MarkChatMessagesAsReadUC } from "../../../application/usecases/markChatMessagesAsRead.uc";
+import { MarkChatMessagesAsReadUC } from "../../../application/usecases/mark-chat-messages-as-read.uc";
 import { ChatRepository } from "../../database/repositories/chat.repository";
 import { MessageRepository } from "../../database/repositories/message.repository";
 import { createMarkChatReadConsumer } from "../consumers/markChatRead.consumer";

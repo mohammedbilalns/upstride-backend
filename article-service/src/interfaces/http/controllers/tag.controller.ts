@@ -1,6 +1,6 @@
 import { HttpStatus } from "../../../common/enums";
 import type { ITagService } from "../../../domain/services/tag.service.interface";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 
 export class TagController {
 	constructor(private _tagService: ITagService) {}

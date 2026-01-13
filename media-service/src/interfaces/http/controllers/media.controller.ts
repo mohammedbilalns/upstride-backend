@@ -1,12 +1,12 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
 import { ErrorMessage } from "../../../common/enums";
-import { AppError } from "../../../application/errors/AppError";
-import type { IUploadMediaUC } from "../../../domain/useCases/uploadMedia.uc.interface";
-import type { IStreamMediaUC } from "../../../domain/useCases/streamMedia.uc.interface";
-import type { IDeleteMediaUC } from "../../../domain/useCases/deleteMedia.uc.interface";
-import type { IGenerateSignatureUC } from "../../../domain/useCases/generateSignature.uc.interface";
-import type { IGetSignedViewUrlUC } from "../../../domain/useCases/getSignedViewUrl.uc.interface";
-import asyncHandler from "../utils/asyncHandler";
+import { AppError } from "../../../application/errors/app-error";
+import type { IUploadMediaUC } from "../../../domain/useCases/upload-media.uc.interface";
+import type { IStreamMediaUC } from "../../../domain/useCases/stream-media.uc.interface";
+import type { IDeleteMediaUC } from "../../../domain/useCases/delete-media.uc.interface";
+import type { IGenerateSignatureUC } from "../../../domain/useCases/generate-signature.uc.interface";
+import type { IGetSignedViewUrlUC } from "../../../domain/useCases/get-signed-view-url.uc.interface";
+import asyncHandler from "../utils/async-handler";
 import {
 	deleteMediaParamsSchema,
 	getSignedUrlBodySchema,

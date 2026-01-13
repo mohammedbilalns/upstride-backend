@@ -1,5 +1,5 @@
 import { ErrorMessage, HttpStatus } from "../../common/enums";
-import { QueueEvents } from "../../common/enums/queueEvents";
+import { QueueEvents } from "../../common/enums/queue-events";
 import type { Reaction } from "../../domain/entities/reaction.entity";
 import type { IEventBus } from "../../domain/events/eventBus.interface";
 import type {
@@ -13,7 +13,7 @@ import type {
 	ArticleComment,
 	ReactionDto,
 } from "../dtos/reaction.dto";
-import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/app-error";
 
 export class ReactionService implements IReactionService {
 	constructor(

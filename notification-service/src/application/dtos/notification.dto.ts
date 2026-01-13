@@ -1,4 +1,4 @@
-import type { NotificationPayloadTypes } from "../../common/enums/notificationPayloadTypes";
+import type { NotificationPayloadTypes } from "../../common/enums/notification-payload-types";
 import type { Notification } from "../../domain/entities/notification.entity";
 
 export interface SaveNotificationDto {

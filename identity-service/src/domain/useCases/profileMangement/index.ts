@@ -1,3 +1,3 @@
-export * from "./changePassword.uc.interface";
-export * from "./fetchProfile.uc.interface";
-export * from "./updateProfile.uc.interface";
+export * from "./change-password.uc.interface";
+export * from "./fetch-profile.uc.interface";
+export * from "./update-profile.uc.interface";

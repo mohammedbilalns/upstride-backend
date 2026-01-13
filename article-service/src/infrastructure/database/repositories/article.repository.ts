@@ -1,7 +1,7 @@
 import type { FilterQuery, PipelineStage } from "mongoose";
 import * as mongoose from "mongoose";
 import type { ArticleMetricsResponseDto } from "../../../application/dtos/article.dto";
-import { AppError } from "../../../application/errors/AppError";
+import { AppError } from "../../../application/errors/app-error";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import type { Article } from "../../../domain/entities/article.entity";
 import type { IArticleRepository } from "../../../domain/repositories/article.repository.interface";

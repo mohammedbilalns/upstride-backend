@@ -2,8 +2,8 @@ import cookieParser from "cookie-parser";
 import express, { type Application } from "express";
 import helmet from "helmet";
 import logger from "./common/utils/logger";
-import { connectToDb } from "./infrastructure/config/connectDb";
-import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { connectToDb } from "./infrastructure/config/connect-db";
+import { connectRabbitmq } from "./infrastructure/events/connect-rabbitmq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import { createSessionRoutes } from "./interfaces/http/routes/session.route";
 import { createSlotRoutes } from "./interfaces/http/routes/slot.route";
@@ -33,7 +33,7 @@ class App {
 	public listen(port: string) {
 		const server = this._app.listen(port, () => {
 			connectToDb();
-			connectRabbitMq();
+			connectRabbitmq();
 			initializeJobs();
 			logger.info(`Sesssions service is listening on port ${port}`);
 		});

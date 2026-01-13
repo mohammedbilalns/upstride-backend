@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { chatModel, type IChat } from "../models/chat.model";
 import { BaseRepository } from "./base.repository";
-import { AppError } from "../../../application/errors/AppError";
+import { AppError } from "../../../application/errors/app-error";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 
 export class ChatRepository

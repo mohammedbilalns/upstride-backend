@@ -1,10 +1,10 @@
-import { BookSessionUc } from "../../../application/usecases/bookings/bookSession.uc";
-import { CancelBookingUC } from "../../../application/usecases/bookings/cancelBooking.uc";
-import { InitiateSessionUC } from "../../../application/usecases/sessions/initiateSession.uc";
-import { MarkSessionAsCompleteUC } from "../../../application/usecases/sessions/markSessionAsComplete.uc";
-import { GetSessionsUC } from "../../../application/usecases/sessions/getSessions.uc";
-import { RequestRescheduleUC } from "../../../application/usecases/bookings/requestReschedule.uc";
-import { HandleRescheduleUC } from "../../../application/usecases/bookings/handleReschedule.uc";
+import { BookSessionUc } from "../../../application/usecases/bookings/book-session.uc";
+import { CancelBookingUC } from "../../../application/usecases/bookings/cancel-booking.uc";
+import { InitiateSessionUC } from "../../../application/usecases/sessions/initiate-session.uc";
+import { MarkSessionAsCompleteUC } from "../../../application/usecases/sessions/mark-session-as-complete.uc";
+import { GetSessionsUC } from "../../../application/usecases/sessions/get-sessions.uc";
+import { RequestRescheduleUC } from "../../../application/usecases/bookings/request-reschedule.uc";
+import { HandleRescheduleUC } from "../../../application/usecases/bookings/handle-reschedule.uc";
 import { SessionController } from "../controllers/session.controller";
 import EventBus from "../../../infrastructure/events/eventBus";
 import { SlotRepository } from "../../../infrastructure/database/repositories/slot.repository";

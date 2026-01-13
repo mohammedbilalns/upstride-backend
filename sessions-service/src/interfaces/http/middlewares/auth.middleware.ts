@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import logger from "../../../common/utils/logger";
-import { redisClient } from "../../../infrastructure/config/connectRedis";
+import { redisClient } from "../../../infrastructure/config/connect-redis";
 import env from "../../../infrastructure/config/env";
 
 export const createAuthMiddleware = (jwtSecret: string) => {

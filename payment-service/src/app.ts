@@ -6,7 +6,7 @@ import helmet from "helmet";
 import logger from "./common/utils/logger";
 import { connectToDb, redisClient } from "./infrastructure/config";
 import env from "./infrastructure/config/env";
-import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { connectRabbitmq } from "./infrastructure/events/connect-rabbitmq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import paymentRoutes from "./interfaces/http/routes/payment.routes";
 /**
@@ -72,7 +72,7 @@ class App {
 	 */
 	public listen(port: string) {
 		const server = this._app.listen(port, () => {
-			connectRabbitMq();
+			connectRabbitmq();
 			connectToDb();
 			redisClient.ping;
 			logger.info(`Payment service started on port ${port}`);

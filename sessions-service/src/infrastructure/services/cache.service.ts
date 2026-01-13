@@ -1,5 +1,5 @@
 import { ICacheService } from "../../domain/services/cache.service.interface";
-import { redisClient } from "../config/connectRedis";
+import { redisClient } from "../config/connect-redis";
 
 export class RedisCacheService implements ICacheService {
 	async get<T>(key: string): Promise<T | null> {

@@ -1,20 +1,20 @@
-import { AddRecurringRuleUC } from "../../../application/usecases/recurringRule/addRecurringRule.uc";
-import { DeleteRecurringRuleUC } from "../../../application/usecases/recurringRule/deleteRecurringRule.uc";
-import { DisableRecurringRuleUC } from "../../../application/usecases/recurringRule/disableRecurringRule.uc";
-import { EnableRecurringRuleUC } from "../../../application/usecases/recurringRule/enableRecurringRule.uc";
-import { GetRuleUC } from "../../../application/usecases/recurringRule/getRule.uc";
-import { UpdateRecurringRuleUC } from "../../../application/usecases/recurringRule/updateRecurringRule.uc";
-import { CancelSlotUC } from "../../../application/usecases/slots/cancelSlot.uc";
-import { GetMentorSlotsUC } from "../../../application/usecases/slots/getMentorSlots.uc";
+import { AddRecurringRuleUC } from "../../../application/usecases/recurringRule/add-recurring-rule.uc";
+import { DeleteRecurringRuleUC } from "../../../application/usecases/recurringRule/delete-recurring-rule.uc";
+import { DisableRecurringRuleUC } from "../../../application/usecases/recurringRule/disable-recurring-rule.uc";
+import { EnableRecurringRuleUC } from "../../../application/usecases/recurringRule/enable-recurring-rule.uc";
+import { GetRuleUC } from "../../../application/usecases/recurringRule/get-rule.uc";
+import { UpdateRecurringRuleUC } from "../../../application/usecases/recurringRule/update-recurring-rule.uc";
+import { CancelSlotUC } from "../../../application/usecases/slots/cancel-slot.uc";
+import { GetMentorSlotsUC } from "../../../application/usecases/slots/get-mentor-slots.uc";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 import { AvailabilityRepository } from "../../../infrastructure/database/repositories/availability.repository";
 import { SlotRepository } from "../../../infrastructure/database/repositories/slot.repository";
 import { SlotsController } from "../controllers/slots.controller";
 
-import { GenerateSlotsUC } from "../../../application/usecases/slots/generateSlots.uc";
-import { DeleteSlotUC } from "../../../application/usecases/slots/deleteSlot.uc";
-import { CreateCustomSlotUC } from "../../../application/usecases/slots/createCustomSlot.uc";
+import { GenerateSlotsUC } from "../../../application/usecases/slots/generate-slots.uc";
+import { DeleteSlotUC } from "../../../application/usecases/slots/delete-slot.uc";
+import { CreateCustomSlotUC } from "../../../application/usecases/slots/create-custom-slot.uc";
 
 export function createSlotController() {
 	// repositiories

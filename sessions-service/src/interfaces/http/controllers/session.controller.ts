@@ -3,13 +3,13 @@ import {
 	ResponseMessage,
 	ErrorMessage,
 } from "../../../common/enums";
-import { IBookSessionUC } from "../../../domain/useCases/bookings/bookSession.uc.interface";
-import { ICancelBookingUC } from "../../../domain/useCases/bookings/cancelBooking.uc.interface";
-import { IInitiateSessionUC } from "../../../domain/useCases/sessions/initiateSession.uc.interface";
-import { IMarkSessionAsCompleteUC } from "../../../domain/useCases/sessions/markSessionAsComplete.uc.interface";
-import { IRequestRescheduleUC } from "../../../domain/useCases/bookings/requestReschedule.usecase.interface";
-import { IHandleRescheduleUC } from "../../../domain/useCases/bookings/handleReschedule.usecase.interface";
-import asyncHandler from "../utils/asyncHandler";
+import { IBookSessionUC } from "../../../domain/useCases/bookings/book-session.uc.interface";
+import { ICancelBookingUC } from "../../../domain/useCases/bookings/cancel-booking.uc.interface";
+import { IInitiateSessionUC } from "../../../domain/useCases/sessions/initiate-session.uc.interface";
+import { IMarkSessionAsCompleteUC } from "../../../domain/useCases/sessions/mark-session-as-complete.uc.interface";
+import { IRequestRescheduleUC } from "../../../domain/useCases/bookings/request-reschedule.usecase.interface";
+import { IHandleRescheduleUC } from "../../../domain/useCases/bookings/handle-reschedule.usecase.interface";
+import asyncHandler from "../utils/async-handler";
 import {
 	bookSessionValidationParamsSchema,
 	cancelBookingValidationParamsSchema,
@@ -21,8 +21,8 @@ import {
 	handleReschedulePayloadSchema,
 } from "../validations/booking.validation";
 
-import { IGetSessionsUC } from "../../../domain/useCases/sessions/getSessions.uc.interface";
-import { AppError } from "../../../application/errors/AppError";
+import { IGetSessionsUC } from "../../../domain/useCases/sessions/get-sessions.uc.interface";
+import { AppError } from "../../../application/errors/app-error";
 
 export class SessionController {
 	constructor(

@@ -2,7 +2,7 @@ import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { INotificationRepository } from "../../domain/repositories/notification.repository.interface";
 import { IMarkNotificationAsReadUC } from "../../domain/useCases/mark-notification-as-read.usecase.interface";
 import { MarkNotificationAsReadDto } from "../dtos/notification.dto";
-import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/app-error";
 
 export class MarkNotificationAsReadUC implements IMarkNotificationAsReadUC {
 	constructor(private _notificationRepository: INotificationRepository) {}

@@ -1,4 +1,4 @@
-import { AppError } from "../../../application/errors/AppError";
+import { AppError } from "../../../application/errors/app-error";
 import { ErrorMessage } from "../../../common/enums";
 import type { Reaction } from "../../../domain/entities/reaction.entity";
 import type { IReactionRepository } from "../../../domain/repositories";

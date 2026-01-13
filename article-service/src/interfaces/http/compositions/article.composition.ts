@@ -1,9 +1,9 @@
 import { ArticleReadService } from "../../../application/services";
 import { ArticleCacheService } from "../../../application/services/article-cache.service";
 import { CacheService } from "../../../application/services/cache.service";
-import { CreateArticleUC } from "../../../application/useCases/article/write/createArticle.usecase";
-import { DeleteArticleUC } from "../../../application/useCases/article/write/deleteArticle.usecase";
-import { UpdateArticleUC } from "../../../application/useCases/article/write/updateArticle.usecase";
+import { CreateArticleUC } from "../../../application/useCases/article/write/create-article.usecase";
+import { DeleteArticleUC } from "../../../application/useCases/article/write/delete-article.usecase";
+import { UpdateArticleUC } from "../../../application/useCases/article/write/update-article.usecase";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
@@ -14,9 +14,9 @@ import type {
 import type { IArticleReadService } from "../../../domain/services";
 import { IArticleCacheService } from "../../../domain/services/article-cache.service.interface";
 import type { ICacheService } from "../../../domain/services/cache.service.interface";
-import { ICreateArticleUC } from "../../../domain/useCases/article/write/createArticle.usecase.interface";
-import { IDeleteArticleUC } from "../../../domain/useCases/article/write/deleteArticle.usecase.interface";
-import { IUpdateArticleUC } from "../../../domain/useCases/article/write/updateArticle.usecase.interface";
+import { ICreateArticleUC } from "../../../domain/useCases/article/write/create-article.usecase.interface";
+import { IDeleteArticleUC } from "../../../domain/useCases/article/write/delete-article.usecase.interface";
+import { IUpdateArticleUC } from "../../../domain/useCases/article/write/update-article.usecase.interface";
 import { redisClient } from "../../../infrastructure/config";
 import {
 	ArticleCommentRepository,

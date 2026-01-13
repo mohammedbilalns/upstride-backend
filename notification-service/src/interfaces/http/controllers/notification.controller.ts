@@ -3,7 +3,7 @@ import { IFetchUserNotificationsUC } from "../../../domain/useCases/fetch-user-n
 import { IMarkAllNotificationsAsReadUC } from "../../../domain/useCases/mark-all-notifications-as-read.usecase.interface";
 import { IMarkNotificationAsReadUC } from "../../../domain/useCases/mark-notification-as-read.usecase.interface";
 import { IMarkChatNotificationsAsReadUC } from "../../../domain/useCases/mark-chat-notifications-as-read.usecase.interface";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	fetchNotificationsValidationSchema,
 	markNotificationAsReadValidationSchema,

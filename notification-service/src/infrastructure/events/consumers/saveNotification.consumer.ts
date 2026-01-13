@@ -1,4 +1,4 @@
-import { QueueEvents } from "../../../common/enums/queueEvents";
+import { QueueEvents } from "../../../common/enums/queue-events";
 import { ISaveNotificationUC } from "../../../domain/useCases/save-notification.usecase.interface";
 import eventBus from "../eventBus";
 import {

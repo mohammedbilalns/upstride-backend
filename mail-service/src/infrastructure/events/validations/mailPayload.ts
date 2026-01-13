@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MailType } from "../../../common/enums/mailTypes";
+import { MailType } from "../../../common/enums/mail-types";
 
 export const mailPayloadSchema = z.object({
 	to: z.string(),

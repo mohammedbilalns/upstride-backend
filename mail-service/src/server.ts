@@ -1,14 +1,14 @@
 import logger from "./common/utils/logger";
 import {
-	connectRabbitMq,
-	disconnectRabbitMq,
-} from "./infrastructure/events/connectRabbitMq";
+	connectRabbitmq,
+	disconnectRabbitmq,
+} from "./infrastructure/events/connect-rabbitmq";
 
 let isShuttingDown = false;
 
 async function bootstrap() {
 	try {
-		await connectRabbitMq();
+		await connectRabbitmq();
 		logger.info("✅ Mail service connected to RabbitMQ and ready");
 	} catch (err) {
 		logger.error("❌ Failed to start mail service:", err);
@@ -31,7 +31,7 @@ async function shutdown(signal: string) {
 	}, 15000);
 
 	try {
-		await disconnectRabbitMq();
+		await disconnectRabbitmq();
 		logger.info("✅ Graceful shutdown complete.");
 
 		clearTimeout(forceExitTimeout);

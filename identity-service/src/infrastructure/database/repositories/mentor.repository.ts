@@ -1,6 +1,6 @@
 import { type FilterQuery, type PipelineStage, Types } from "mongoose";
 import type { findAllMentorsDto } from "../../../application/dtos";
-import { AppError } from "../../../application/errors/AppError";
+import { AppError } from "../../../application/errors/app-error";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import type { Mentor } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories";
@@ -10,7 +10,7 @@ import { isPopulatedDocument } from "../utils/common";
 import { ConnectionModel } from "../models/connection.model";
 import { type IMentor, mentorModel } from "../models/mentor.model";
 import { buildSuggestionPipeline } from "../utils/buildSuggestionPipeline";
-import { checkObjectId } from "../utils/checkObjectId";
+import { checkObjectId } from "../utils/check-object-id";
 
 export class MentorRepository
 	extends BaseRepository<Mentor, IMentor>

@@ -1,17 +1,17 @@
-import { CreateCommentUC } from "../../../application/useCases/comments/createComment.usecase";
-import { DeleteCommentUC } from "../../../application/useCases/comments/deleteComment.usecase";
-import { GetCommentsUC } from "../../../application/useCases/comments/getComments.usecase";
-import { UpdateCommentUC } from "../../../application/useCases/comments/updateComment.usecase";
+import { CreateCommentUC } from "../../../application/useCases/comments/create-comment.usecase";
+import { DeleteCommentUC } from "../../../application/useCases/comments/delete-comment.usecase";
+import { GetCommentsUC } from "../../../application/useCases/comments/get-comments.usecase";
+import { UpdateCommentUC } from "../../../application/useCases/comments/update-comment.usecase";
 import type { IEventBus } from "../../../domain/events/eventBus.interface";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
 	IReactionRepository,
 } from "../../../domain/repositories";
-import { ICreateCommentUc } from "../../../domain/useCases/comments/createComment.usecase.interface";
-import { IDeleteCommentUC } from "../../../domain/useCases/comments/deleteComment.usecase.interface";
-import { IGetCommentsUC } from "../../../domain/useCases/comments/getComments.usecase.interface";
-import { IUpdateCommentUC } from "../../../domain/useCases/comments/updateComment.usecase.interface";
+import { ICreateCommentUc } from "../../../domain/useCases/comments/create-comment.usecase.interface";
+import { IDeleteCommentUC } from "../../../domain/useCases/comments/delete-comment.usecase.interface";
+import { IGetCommentsUC } from "../../../domain/useCases/comments/get-comments.usecase.interface";
+import { IUpdateCommentUC } from "../../../domain/useCases/comments/update-comment.usecase.interface";
 import {
 	ArticleCommentRepository,
 	ArticleRepository,

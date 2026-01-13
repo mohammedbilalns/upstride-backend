@@ -1,4 +1,4 @@
-import { AppError } from "../../../application/errors/AppError";
+import { AppError } from "../../../application/errors/app-error";
 import { ErrorMessage } from "../../../common/enums";
 import type { Tag } from "../../../domain/entities/tag.entity";
 import type { ITagRepository } from "../../../domain/repositories/tag.repository.interface";

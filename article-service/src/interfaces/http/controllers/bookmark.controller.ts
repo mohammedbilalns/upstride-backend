@@ -1,6 +1,6 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
 import type { IBookMarkService } from "../../../domain/services/bookmark.service.interface";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	createBookMarkSchema,
 	fetchBookMarksParamsSchema,

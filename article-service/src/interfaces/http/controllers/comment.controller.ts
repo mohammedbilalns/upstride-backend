@@ -1,9 +1,9 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import { ICreateCommentUc } from "../../../domain/useCases/comments/createComment.usecase.interface";
-import { IDeleteCommentUC } from "../../../domain/useCases/comments/deleteComment.usecase.interface";
-import { IGetCommentsUC } from "../../../domain/useCases/comments/getComments.usecase.interface";
-import { IUpdateCommentUC } from "../../../domain/useCases/comments/updateComment.usecase.interface";
-import asyncHandler from "../utils/asyncHandler";
+import { ICreateCommentUc } from "../../../domain/useCases/comments/create-comment.usecase.interface";
+import { IDeleteCommentUC } from "../../../domain/useCases/comments/delete-comment.usecase.interface";
+import { IGetCommentsUC } from "../../../domain/useCases/comments/get-comments.usecase.interface";
+import { IUpdateCommentUC } from "../../../domain/useCases/comments/update-comment.usecase.interface";
+import asyncHandler from "../utils/async-handler";
 import {
 	articleCommentSchema,
 	articleCommentUpdateSchema,

@@ -1,6 +1,6 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
 import type { IReactionService } from "../../../domain/services";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	fetchReactionsParams,
 	reactionSchema,

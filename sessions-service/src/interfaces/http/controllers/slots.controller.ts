@@ -1,5 +1,5 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import { cancelSlotParamsSchema } from "../validations/cancelSlot.validation";
 import { createCustomAvailabilityPayloadSchema } from "../validations/createCustomAvailability.validation";
 import {
@@ -9,16 +9,16 @@ import {
 	deleteRecurringRuleParamsSchema,
 	toggleRecurringRuleParmsSchema,
 } from "../validations/recurringRule.validation";
-import { IUpdateRecurringRuleUC } from "../../../domain/useCases/recurringRule/updateRecurringRule.uc.interface";
-import { IAddRecurringRuleUC } from "../../../domain/useCases/recurringRule/addRecurringRule.uc.interface";
-import { IDisableRecurringRuleUC } from "../../../domain/useCases/recurringRule/disableRecurringRule.uc.interface";
-import { IGetMentorSlotsUC } from "../../../domain/useCases/slots/getMentorSlots.uc.interface";
-import { ICancleSlotUC } from "../../../domain/useCases/slots/cancelSlot.uc.interface";
-import { ICreateCustomSlotUC } from "../../../domain/useCases/slots/createCustomSlot.uc.interface";
-import { IGetRulesUC } from "../../../domain/useCases/recurringRule/getRule.uc.interface";
-import { IDeleteRecurringRuleUC } from "../../../domain/useCases/recurringRule/deleteRecurringRule.uc.interface";
-import { IEnableRecurringRuleUC } from "../../../domain/useCases/recurringRule/enableRecurringRule.uc.interface";
-import { IDeleteSlotUC } from "../../../domain/useCases/slots/deleteSlot.uc.interface";
+import { IUpdateRecurringRuleUC } from "../../../domain/useCases/recurringRule/update-recurring-rule.uc.interface";
+import { IAddRecurringRuleUC } from "../../../domain/useCases/recurringRule/add-recurring-rule.uc.interface";
+import { IDisableRecurringRuleUC } from "../../../domain/useCases/recurringRule/disable-recurring-rule.uc.interface";
+import { IGetMentorSlotsUC } from "../../../domain/useCases/slots/get-mentor-slots.uc.interface";
+import { ICancleSlotUC } from "../../../domain/useCases/slots/cancel-slot.uc.interface";
+import { ICreateCustomSlotUC } from "../../../domain/useCases/slots/create-custom-slot.uc.interface";
+import { IGetRulesUC } from "../../../domain/useCases/recurringRule/get-rule.uc.interface";
+import { IDeleteRecurringRuleUC } from "../../../domain/useCases/recurringRule/delete-recurring-rule.uc.interface";
+import { IEnableRecurringRuleUC } from "../../../domain/useCases/recurringRule/enable-recurring-rule.uc.interface";
+import { IDeleteSlotUC } from "../../../domain/useCases/slots/delete-slot.uc.interface";
 
 export class SlotsController {
 	constructor(

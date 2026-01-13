@@ -1,4 +1,4 @@
-import { QueueEvents } from "../../../common/enums/queueEvents";
+import { QueueEvents } from "../../../common/enums/queue-events";
 import logger from "../../../common/utils/logger";
 import type { IMailService } from "../../../domain/services/mail.service.interface";
 import eventBus from "../eventBus";

@@ -1,7 +1,7 @@
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import type { Socket } from "socket.io";
 import type { ExtendedError } from "socket.io/dist/namespace";
-import { redisClient } from "../../../infra/config/connectRedis";
+import { redisClient } from "../../../infra/config/connect-redis";
 import env from "../../../infra/config/env";
 import logger from "../../../utils/logger";
 

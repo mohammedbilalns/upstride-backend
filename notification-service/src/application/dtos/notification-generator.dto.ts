@@ -1,4 +1,4 @@
-import { NotificationPayloadTypes } from "../../common/enums/notificationPayloadTypes";
+import { NotificationPayloadTypes } from "../../common/enums/notification-payload-types";
 import { NotificationType } from "../../common/types/notification.type";
 
 export interface GenerateNotificationDto {

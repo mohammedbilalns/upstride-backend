@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
-import { redisClient } from "../../../infra/config/connectRedis";
+import { redisClient } from "../../../infra/config/connect-redis";
 import env from "../../../infra/config/env";
 import logger from "../../../utils/logger";
 

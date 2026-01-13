@@ -5,7 +5,7 @@ import { type IUser, userModel } from "../models/user.model";
 import { mapPopulatedSubToDomain } from "../utils/mapPopulatedSubToDomain";
 import { BaseRepository } from "./base.repository";
 import { Types } from "mongoose";
-import { checkObjectId } from "../utils/checkObjectId";
+import { checkObjectId } from "../utils/check-object-id";
 import { ErrorMessage } from "../../../common/enums";
 
 export class UserRepository

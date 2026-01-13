@@ -1,4 +1,4 @@
-import type { UserRole } from "../../common/enums/userRoles";
+import type { UserRole } from "../../common/enums/user-roles";
 
 export interface createExpertiseDto {
 	name: string;

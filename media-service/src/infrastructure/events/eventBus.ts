@@ -1,5 +1,5 @@
 import env from "../config/env";
-import { RabbitMQEventBus } from "./rabbitMq";
+import { RabbitMQEventBus } from "./rabbitmq";
 
 const eventBus = new RabbitMQEventBus();
 

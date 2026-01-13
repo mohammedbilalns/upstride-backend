@@ -12,8 +12,8 @@ import type {
 	FetchArticlesResponseDto,
 	FetchRandomArticlesByAuthorsDto,
 } from "../dtos/article.dto";
-import { AppError } from "../errors/AppError";
-import { ArticleCacheConstants } from "../utils/cacheUtils";
+import { AppError } from "../errors/app-error";
+import { ArticleCacheConstants } from "../utils/cache-utils";
 
 export class ArticleReadService implements IArticleReadService {
 	constructor(

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createAuthController } from "../compositions/auth.composition";
 import { authMiddleware } from "../middlewares";
-import { rateLimiter } from "../middlewares/rateLimiter.middleware";
+import { rateLimiter } from "../middlewares/rate-limiter.middleware";
 import { createRegistrationController } from "../compositions/registration.composition";
 import { createPasswordResetController } from "../compositions/passwordReset.composition";
 

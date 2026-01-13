@@ -3,8 +3,8 @@ import express, { type Application } from "express";
 import helmet from "helmet";
 import { initializeJobs } from "./application/jobs";
 import logger from "./common/utils/logger";
-import { connectToDb } from "./infrastructure/config/connectDb";
-import { connectRabbitMq } from "./infrastructure/events/connectRabbitmq";
+import { connectToDb } from "./infrastructure/config/connect-db";
+import { connectRabbitmq } from "./infrastructure/events/connect-rabbitmq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import { createNotificationRouter } from "./interfaces/http/routes/notification.routes";
 
@@ -30,7 +30,7 @@ class App {
 
 	public listen(port: string) {
 		const server = this._app.listen(port, () => {
-			connectRabbitMq();
+			connectRabbitmq();
 			connectToDb();
 			initializeJobs();
 			logger.info(`Notification service is listening on port ${port}`);

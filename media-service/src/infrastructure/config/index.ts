@@ -1,3 +1,3 @@
-export * from "./connectDb";
-export * from "./connectRedis";
+export * from "./connect-db";
+export * from "./connect-redis";
 export * from "./env";

@@ -7,7 +7,7 @@ import {
 } from "../../../common/enums";
 
 import env from "../../../infrastructure/config/env";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import { parseDuration } from "../../../common/utils/time";
 
 import { loginSchema } from "../validations/auth.validation";

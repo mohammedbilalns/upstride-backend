@@ -1,4 +1,4 @@
-import { ConnectionValidationService } from "../../../application/services/connectionValidation.service";
+import { ConnectionValidationService } from "../../../application/services/connection-validation.service";
 import {
 	FetchFollowersUC,
 	FetchFollowingUC,
@@ -13,7 +13,7 @@ import type {
 	IUserRepository,
 } from "../../../domain/repositories";
 import type { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
-import { IConnectionValidationService } from "../../../domain/services/connectionValidation.service.interface";
+import { IConnectionValidationService } from "../../../domain/services/connection-validation.service.interface";
 import {
 	MentorRepository,
 	UserRepository,

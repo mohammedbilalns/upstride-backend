@@ -1,2 +1,2 @@
-export * from "./errorMessages";
-export * from "./statusCodes";
+export * from "./error-messages";
+export * from "./status-codes";

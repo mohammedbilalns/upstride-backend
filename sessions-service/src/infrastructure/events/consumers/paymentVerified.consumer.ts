@@ -1,6 +1,6 @@
-import { QueueEvents } from "../../../common/enums/queueEvents";
+import { QueueEvents } from "../../../common/enums/queue-events";
 import logger from "../../../common/utils/logger";
-import { IConfirmSessionUC } from "../../../domain/useCases/bookings/confirmSession.uc.interface";
+import { IConfirmSessionUC } from "../../../domain/useCases/bookings/confirm-session.uc.interface";
 import EventBus from "../eventBus";
 
 interface PaymentVerifiedPayload {

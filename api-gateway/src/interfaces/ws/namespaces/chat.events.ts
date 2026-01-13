@@ -1,9 +1,9 @@
 import type { Socket } from "socket.io";
-import { QueueEvents } from "../../../common/enums/queueEvents";
-import { SocketEvents } from "../../../common/enums/socketEvents";
+import { QueueEvents } from "../../../common/enums/queue-events";
+import { SocketEvents } from "../../../common/enums/socket-events";
 import logger from "../../../utils/logger";
 import type { SocketPublisher } from "../socket.publisher";
-import { clientMessageSchema } from "../validations/messagePayload.validation";
+import { clientMessageSchema } from "../validations/message-payload.validation";
 
 export function registerChatEvents(socket: Socket, publisher: SocketPublisher) {
 	socket.on(SocketEvents.SEND_MESSAGE, async (data) => {

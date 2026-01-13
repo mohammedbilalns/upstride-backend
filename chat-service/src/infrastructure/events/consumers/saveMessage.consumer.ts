@@ -1,6 +1,6 @@
-import { QueueEvents } from "../../../common/enums/queueEvents";
+import { QueueEvents } from "../../../common/enums/queue-events";
 import logger from "../../../common/utils/logger";
-import type { ISendMessageUC } from "../../../domain/useCases/sendMessage.uc.interface";
+import type { ISendMessageUC } from "../../../domain/useCases/send-message.uc.interface";
 import EventBus from "../eventBus";
 import {
 	type MessagePayload,

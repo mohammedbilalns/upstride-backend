@@ -1,3 +1,3 @@
-export * from "./changePassword.uc";
-export * from "./fetchProfile.uc";
-export * from "./updateProfile.uc";
+export * from "./change-password.uc";
+export * from "./fetch-profile.uc";
+export * from "./update-profile.uc";

@@ -1,6 +1,6 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import { IFetchInterestsUC } from "../../../domain/useCases/userInterestManagement/fetchInterests.uc.interface";
-import asyncHandler from "../utils/asyncHandler";
+import { IFetchInterestsUC } from "../../../domain/useCases/userInterestManagement/fetch-interests.uc.interface";
+import asyncHandler from "../utils/async-handler";
 
 export class InterestsController {
 	constructor(private _fetchInterestsUC: IFetchInterestsUC) {}

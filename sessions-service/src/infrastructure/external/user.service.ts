@@ -1,4 +1,4 @@
-import { AppError } from "../../application/errors/AppError";
+import { AppError } from "../../application/errors/app-error";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 import { userData } from "../../common/types/user.types";
 import logger from "../../common/utils/logger";

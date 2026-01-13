@@ -1,6 +1,6 @@
 import { IArticleCacheService } from "../../domain/services/article-cache.service.interface";
 import { ICacheService } from "../../domain/services/cache.service.interface";
-import { ArticleCacheConstants } from "../utils/cacheUtils";
+import { ArticleCacheConstants } from "../utils/cache-utils";
 
 export class ArticleCacheService implements IArticleCacheService {
 	constructor(private _cacheService: ICacheService) {}

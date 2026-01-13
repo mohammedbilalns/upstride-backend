@@ -10,7 +10,7 @@ import {
 	IRejectMentorUC,
 	IUpdateMentorUC,
 } from "../../../domain/useCases/mentorManagement";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	approveMentorSchema,
 	fetchMentorParamsSchema,

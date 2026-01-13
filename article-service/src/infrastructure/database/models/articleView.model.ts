@@ -1,5 +1,5 @@
 import { type Document, model, Schema } from "mongoose";
-import type { ArticleView } from "../../../domain/entities/articleView.entity";
+import type { ArticleView } from "../../../domain/entities/article-view.entity";
 
 export interface IArticleView extends Document, Omit<ArticleView, "id"> {}
 

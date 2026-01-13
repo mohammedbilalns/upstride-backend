@@ -8,7 +8,7 @@ import {
 	IFollowMentorUC,
 	IUnfollowMentorUC,
 } from "../../../domain/useCases/connections";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	followMentorSchema,
 	unfollowMentorSchema,

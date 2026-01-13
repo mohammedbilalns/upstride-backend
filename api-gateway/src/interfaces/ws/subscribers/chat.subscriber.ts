@@ -1,9 +1,9 @@
-import { QueueEvents } from "../../../common/enums/queueEvents";
-import { SocketEvents } from "../../../common/enums/socketEvents";
+import { QueueEvents } from "../../../common/enums/queue-events";
+import { SocketEvents } from "../../../common/enums/socket-events";
 import type { IEventBus } from "../../../domain/events/eventBus.interface";
 import logger from "../../../utils/logger";
 import type { SocketPublisher } from "../socket.publisher";
-import { messagePayloadSchema } from "../validations/messagePayload.validation";
+import { messagePayloadSchema } from "../validations/message-payload.validation";
 
 export async function registerChatSubscriber(
 	eventBus: IEventBus,

@@ -1,13 +1,13 @@
 import type { Transporter } from "nodemailer";
 import type { IMailService } from "../../domain/services/mail.service.interface";
-import { createTransporter } from "../../infrastructure/config/nodeMailerConfig";
-import { MailType } from "../../common/enums/mailTypes";
-import { buildOtpEmailHtml } from "../utils/generateOTPMail";
-import { OtpType } from "../../common/enums/otpTypes";
-import { buildMentorApprovalEmailHtml } from "../utils/generateMentorOTPMail";
-import { SendMailDTO } from "../dtos/sendMail.dto";
-import { AppError } from "../errors/AppError";
-import { ErrorMessage } from "../../common/enums/errorMessages";
+import { createTransporter } from "../../infrastructure/config/node-mailer-config";
+import { MailType } from "../../common/enums/mail-types";
+import { buildOtpEmailHtml } from "../utils/generate-otp-mail";
+import { OtpType } from "../../common/enums/otp-types";
+import { buildMentorApprovalEmailHtml } from "../utils/generate-mentor-otp-mail";
+import { SendMailDTO } from "../dtos/send-mail.dto";
+import { AppError } from "../errors/app-error";
+import { ErrorMessage } from "../../common/enums/error-messages";
 
 export class MailService implements IMailService {
 	private transporter: Transporter;

@@ -7,7 +7,7 @@ import {
 	IVerifyOtpUC,
 } from "../../../domain/useCases/userRegistration";
 import env from "../../../infrastructure/config/env";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	registerSchema,
 	resendOtpSchema,

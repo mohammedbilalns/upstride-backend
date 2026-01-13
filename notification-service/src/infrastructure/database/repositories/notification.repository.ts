@@ -1,5 +1,5 @@
 import type { DeleteResult, FilterQuery } from "mongoose";
-import { AppError } from "../../../application/errors/AppError";
+import { AppError } from "../../../application/errors/app-error";
 import { ErrorMessage } from "../../../common/enums";
 import type { Notification } from "../../../domain/entities/notification.entity";
 import type { INotificationRepository } from "../../../domain/repositories/notification.repository.interface";

@@ -1,4 +1,4 @@
-import { IEventBus } from "../../../domain/events/IEventBus";
+import { IEventBus } from "../../../domain/events/event-bus.interface";
 import logger from "../../../common/utils/logger";
 
 interface SessionBookedPayload {

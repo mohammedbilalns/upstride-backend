@@ -4,7 +4,7 @@ import {
 	IFetchProfileUC,
 	IUpdateProfileUC,
 } from "../../../domain/useCases/profileMangement";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	changePasswordSchema,
 	fetchProfileSchema,

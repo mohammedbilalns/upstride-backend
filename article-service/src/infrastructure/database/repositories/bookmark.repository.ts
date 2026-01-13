@@ -1,4 +1,4 @@
-import { AppError } from "../../../application/errors/AppError";
+import { AppError } from "../../../application/errors/app-error";
 import { ErrorMessage } from "../../../common/enums";
 import type { BookMark } from "../../../domain/entities/bookmark.entity";
 import type { IBookMarkRepository } from "../../../domain/repositories/bookmark.repository.interface";

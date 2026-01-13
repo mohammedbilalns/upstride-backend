@@ -1,2 +1,2 @@
-export * from "./errorHandler.middleware";
-export * from "./requestLogger.middeware";
+export * from "./error-handler.middleware";
+export * from "./request-logger.middleware";

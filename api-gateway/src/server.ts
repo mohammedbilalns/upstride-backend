@@ -1,6 +1,6 @@
 import App from "./app";
 import env from "./infra/config/env";
-import EventBus from "./infra/events/eventBus";
+import EventBus from "./infra/events/event-bus";
 import { initSocket } from "./interfaces/ws/socket.gateway";
 import logger from "./utils/logger";
 

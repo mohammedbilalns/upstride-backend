@@ -5,7 +5,7 @@ import express, { type Application } from "express";
 import helmet from "helmet";
 import env from "./infra/config/env";
 import { errorHandler } from "./interfaces/http/middlewares";
-import proxyRoutes from "./interfaces/http/router/proxyRoutes";
+import proxyRoutes from "./interfaces/http/router/proxy-routes";
 import logger from "./utils/logger";
 
 /**

@@ -3,7 +3,7 @@ import { ErrorMessage, HttpStatus } from "../../common/enums";
 import type { ITokenService } from "../../domain/services";
 import env from "../../infrastructure/config/env";
 import type { UserDTO } from "../dtos";
-import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/app-error";
 
 export interface GoogleTokenPayload {
 	email: string;

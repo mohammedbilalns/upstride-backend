@@ -1,9 +1,9 @@
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
 import type { IArticleReadService } from "../../../domain/services";
-import { ICreateArticleUC } from "../../../domain/useCases/article/write/createArticle.usecase.interface";
-import { IDeleteArticleUC } from "../../../domain/useCases/article/write/deleteArticle.usecase.interface";
-import { IUpdateArticleUC } from "../../../domain/useCases/article/write/updateArticle.usecase.interface";
-import asyncHandler from "../utils/asyncHandler";
+import { ICreateArticleUC } from "../../../domain/useCases/article/write/create-article.usecase.interface";
+import { IDeleteArticleUC } from "../../../domain/useCases/article/write/delete-article.usecase.interface";
+import { IUpdateArticleUC } from "../../../domain/useCases/article/write/update-article.usecase.interface";
+import asyncHandler from "../utils/async-handler";
 import {
 	createArticleSchema,
 	deleteArticleParamsSchema,

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { HttpStatus, ResponseMessage } from "../../../common/enums";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import { paginationQuerySchema } from "../validations/pagination.validation";
 import { fetchByUserIdsParamsSchema } from "../validations/user.validations";
 import {

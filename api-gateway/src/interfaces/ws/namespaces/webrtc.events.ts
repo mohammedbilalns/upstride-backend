@@ -1,5 +1,5 @@
 import type { Server, Socket } from "socket.io";
-import { SocketEvents } from "../../../common/enums/socketEvents";
+import { SocketEvents } from "../../../common/enums/socket-events";
 import logger from "../../../utils/logger";
 import type { SocketPublisher } from "../socket.publisher";
 

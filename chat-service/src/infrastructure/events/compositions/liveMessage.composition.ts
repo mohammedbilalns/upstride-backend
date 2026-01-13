@@ -1,4 +1,4 @@
-import { QueueEvents } from "../../../common/enums/queueEvents";
+import { QueueEvents } from "../../../common/enums/queue-events";
 import EventBus from "../eventBus";
 import { liveMessageConsumer } from "../consumers/liveMessage.consumer";
 

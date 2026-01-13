@@ -5,7 +5,7 @@ import type { IConnectionRepository } from "../../../domain/repositories/connect
 import { mapMongoDocument } from "../mappers/mongoose.mapper";
 import { ConnectionModel, type IConnection } from "../models/connection.model";
 import { buildMutualMentorsPipeline } from "../utils/buildMutualMentorsPipeline";
-import { checkObjectId } from "../utils/checkObjectId";
+import { checkObjectId } from "../utils/check-object-id";
 import { BaseRepository } from "./base.repository";
 import { ErrorMessage } from "../../../common/enums";
 

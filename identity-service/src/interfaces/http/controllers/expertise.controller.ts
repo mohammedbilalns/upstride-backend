@@ -10,7 +10,7 @@ import type {
 	IUpdateSkillUC,
 	IVerifyExpertiseUC,
 } from "../../../domain/useCases/expertiseMangement";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	createExpertiseSchema,
 	createSkillParamsSchema,

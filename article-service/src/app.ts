@@ -3,9 +3,9 @@ import cors from "cors";
 import express, { type Application } from "express";
 import helmet from "helmet";
 import logger from "./common/utils/logger";
-import { connectToDb } from "./infrastructure/config/connectDb";
+import { connectToDb } from "./infrastructure/config/connect-db";
 import env from "./infrastructure/config/env";
-import { connectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { connectRabbitmq } from "./infrastructure/events/connect-rabbitmq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import {
 	createArticleRoutes,
@@ -47,7 +47,7 @@ class App {
 
 	public listen(port: string) {
 		const server = this._app.listen(port, () => {
-			connectRabbitMq();
+			connectRabbitmq();
 			connectToDb();
 			logger.info(`Article service is listening on port ${port}`);
 		});

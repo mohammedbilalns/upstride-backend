@@ -1,8 +1,8 @@
 import App from "./app";
 import logger from "./common/utils/logger";
-import { disconnectFromDb } from "./infrastructure/config/connectDb";
+import { disconnectFromDb } from "./infrastructure/config/connect-db";
 import env from "./infrastructure/config/env";
-import { disconnectRabbitMq } from "./infrastructure/events/connectRabbitMq";
+import { disconnectRabbitmq } from "./infrastructure/events/connect-rabbitmq";
 
 const PORT = env.PORT;
 const app = new App();
@@ -38,7 +38,7 @@ async function gracefulShutdown(signal: string) {
 		});
 
 		// disconnect from services
-		await Promise.all([disconnectFromDb(), disconnectRabbitMq()]);
+		await Promise.all([disconnectFromDb(), disconnectRabbitmq()]);
 
 		logger.info("All services disconnected");
 		logger.info("Graceful shutdown completed");

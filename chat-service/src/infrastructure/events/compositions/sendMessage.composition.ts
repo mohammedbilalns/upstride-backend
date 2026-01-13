@@ -1,5 +1,5 @@
 import { CacheService } from "../../../application/services/cache.service";
-import { SendMessageUC } from "../../../application/usecases/sendMessage.uc";
+import { SendMessageUC } from "../../../application/usecases/send-message.uc";
 import { redisClient } from "../../config";
 import { ChatRepository } from "../../database/repositories/chat.repository";
 import { MessageRepository } from "../../database/repositories/message.repository";

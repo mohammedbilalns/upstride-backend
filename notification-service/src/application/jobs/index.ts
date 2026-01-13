@@ -1,4 +1,4 @@
-import { scheduleCleanupNotificationsJob } from "./cleanupNotifications.job";
+import { scheduleCleanupNotificationsJob } from "./cleanup-notifications.job";
 
 export function initializeJobs() {
 	scheduleCleanupNotificationsJob();

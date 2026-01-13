@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../../common/enums";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	createPaymentSchema,
 	verifyPaymentSchema,
 	getUserPaymentsSchema,
 	getMentorPaymentsSchema,
 } from "../validations/payment.validation";
-import { ICreatePaymentUC } from "../../../domain/useCases/createPayment.usecase.interface";
-import { ICapturePaymentUC } from "../../../domain/useCases/capturePayment.usecase.interface";
-import { IGetUserPaymentsUC } from "../../../domain/useCases/getUserPayments.usecase.interface";
-import { IGetMentorPaymentsUC } from "../../../domain/useCases/getMentorPayments.usecase.interface";
-import { IHandleWebhookUC } from "../../../domain/useCases/handleWebhook.usecase.interface";
+import { ICreatePaymentUC } from "../../../domain/useCases/create-payment.usecase.interface";
+import { ICapturePaymentUC } from "../../../domain/useCases/capture-payment.usecase.interface";
+import { IGetUserPaymentsUC } from "../../../domain/useCases/get-user-payments.usecase.interface";
+import { IGetMentorPaymentsUC } from "../../../domain/useCases/get-mentor-payments.usecase.interface";
+import { IHandleWebhookUC } from "../../../domain/useCases/handle-webhook.usecase.interface";
 import logger from "../../../common/utils/logger";
 
 export class PaymentController {

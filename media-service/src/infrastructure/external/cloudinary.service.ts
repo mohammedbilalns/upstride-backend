@@ -4,12 +4,12 @@ import env from "../config/env";
 import type {
 	IMediaStorageService,
 	UploadOptions,
-} from "../../domain/services/mediaStorage.service.interface";
+} from "../../domain/services/media-storage.service.interface";
 import type {
 	UploadMediaResponse,
 	CreateSignatureResponse,
 } from "../../application/dtos/media.dto";
-import { AppError } from "../../application/errors/AppError";
+import { AppError } from "../../application/errors/app-error";
 import { ErrorMessage, HttpStatus } from "../../common/enums";
 
 export class CloudinaryService implements IMediaStorageService {

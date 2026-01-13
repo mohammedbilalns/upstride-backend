@@ -7,7 +7,7 @@ import {
 	IVerifyResetOtpUC,
 } from "../../../domain/useCases/resetUserPassword";
 import env from "../../../infrastructure/config/env";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/async-handler";
 import {
 	resendOtpSchema,
 	resetSchema,

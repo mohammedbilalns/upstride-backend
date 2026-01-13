@@ -1,5 +1,5 @@
-import type { MarkChatMessagesAsReadUC } from "../../../application/usecases/markChatMessagesAsRead.uc";
-import { QueueEvents } from "../../../common/enums/queueEvents";
+import type { MarkChatMessagesAsReadUC } from "../../../application/usecases/mark-chat-messages-as-read.uc";
+import { QueueEvents } from "../../../common/enums/queue-events";
 import logger from "../../../common/utils/logger";
 import EventBus from "../eventBus";
 import {

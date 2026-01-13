@@ -1,5 +1,5 @@
 import { type Document, model, Schema } from "mongoose";
-import type { ArticleComment } from "../../../domain/entities/articleComment.entity";
+import type { ArticleComment } from "../../../domain/entities/article-comment.entity";
 
 export interface IArticleComment extends Document, Omit<ArticleComment, "id"> {}
 

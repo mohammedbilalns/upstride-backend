@@ -1,4 +1,4 @@
-import { ExpertiseHelperService } from "../../../application/services/expertiseHelper.service";
+import { ExpertiseHelperService } from "../../../application/services/expertise-helper.service";
 import {
 	ApproveMentorUC,
 	FetchMentorByExpertiseUC,
@@ -17,7 +17,7 @@ import type {
 	IUserRepository,
 } from "../../../domain/repositories";
 import { IConnectionRepository } from "../../../domain/repositories/connection.repository.interface";
-import { IExpertiseHelperService } from "../../../domain/services/expertiseHelper.service.interface";
+import { IExpertiseHelperService } from "../../../domain/services/expertise-helper.service.interface";
 import {
 	IApproveMentorUC,
 	IFetchMentorByExpertiseUC,

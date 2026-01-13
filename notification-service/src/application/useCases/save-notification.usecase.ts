@@ -1,5 +1,5 @@
-import { QueueEvents } from "../../common/enums/queueEvents";
-import { IEventBus } from "../../domain/events/IEventBus";
+import { QueueEvents } from "../../common/enums/queue-events";
+import { IEventBus } from "../../domain/events/event-bus.interface";
 import { INotificationRepository } from "../../domain/repositories/notification.repository.interface";
 import { INotificationGenerator } from "../../domain/services/notification-generator.service.interface";
 import { ISaveNotificationUC } from "../../domain/useCases/save-notification.usecase.interface";
