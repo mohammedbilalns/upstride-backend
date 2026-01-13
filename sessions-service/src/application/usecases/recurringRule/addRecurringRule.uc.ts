@@ -24,14 +24,16 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 		private _generateSlotsUC: IGenerateSlotsUC,
 	) {}
 
-	async execute(dto: AddRecurringRuleDto): Promise<void> {
+	async execute(ruleDetails: AddRecurringRuleDto): Promise<void> {
 		// fetch or create availability
 		const existingAvailabilityRule =
-			await this._availabilityRepository.fetchOrCreateByMentorId(dto.mentorId);
+			await this._availabilityRepository.fetchOrCreateByMentorId(
+				ruleDetails.mentorId,
+			);
 		const newRule = {
-			...dto.rule,
-			startTime: timeToMinutes(dto.rule.startTime),
-			endTime: timeToMinutes(dto.rule.endTime),
+			...ruleDetails.rule,
+			startTime: timeToMinutes(ruleDetails.rule.startTime),
+			endTime: timeToMinutes(ruleDetails.rule.endTime),
 		};
 
 		// validate start time is before end time
@@ -42,7 +44,7 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 			);
 		}
 
-		if (newRule.endTime - newRule.startTime !== dto.rule.slotDuration) {
+		if (newRule.endTime - newRule.startTime !== ruleDetails.rule.slotDuration) {
 			throw new AppError(
 				ErrorMessage.INVALID_INPUT_DATA,
 				HttpStatus.BAD_REQUEST,
@@ -74,6 +76,6 @@ export class AddRecurringRuleUC implements IAddRecurringRuleUC {
 		});
 
 		// Trigger slot generation
-		await this._generateSlotsUC.execute(dto.mentorId);
+		await this._generateSlotsUC.execute(ruleDetails.mentorId);
 	}
 }

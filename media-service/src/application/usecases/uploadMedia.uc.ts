@@ -7,8 +7,8 @@ import logger from "../../common/utils/logger";
 export class UploadMediaUC implements IUploadMediaUC {
 	constructor(private _mediaStorageService: IMediaStorageService) {}
 
-	async execute(dto: UploadMediaDto): Promise<UploadMediaResponse> {
-		const { file, resourceType } = dto;
+	async execute(uploadDetails: UploadMediaDto): Promise<UploadMediaResponse> {
+		const { file, resourceType } = uploadDetails;
 		let fileBuffer = file.buffer;
 
 		// Optimize images using sharp

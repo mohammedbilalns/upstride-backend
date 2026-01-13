@@ -98,25 +98,33 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		return newSkillIds.map((skillId) => skillId.id);
 	}
 
-	async execute(dto: CreateInterestsDto): Promise<LoginReturn> {
+	async execute(interestDetails: CreateInterestsDto): Promise<LoginReturn> {
 		let newExpertisesMap: Map<string, string> = new Map();
 		let newTopicIds: string[] = [];
 
-		if (dto.newExpertises && dto.newExpertises?.length > 0) {
-			newExpertisesMap = await this._createNewExpertises(dto.newExpertises);
+		if (
+			interestDetails.newExpertises &&
+			interestDetails.newExpertises?.length > 0
+		) {
+			newExpertisesMap = await this._createNewExpertises(
+				interestDetails.newExpertises,
+			);
 		}
 
-		if (dto.newTopics && dto.newTopics.length > 0) {
+		if (interestDetails.newTopics && interestDetails.newTopics.length > 0) {
 			newTopicIds = await this._createNewTopics(
-				dto.newTopics,
+				interestDetails.newTopics,
 				newExpertisesMap,
 			);
 		}
 
 		// verify token and fetch user info
 		const [validToken, user] = await Promise.all([
-			this._verficationTokenRepository.getToken(dto.token, "register"),
-			this._userRepository.findByEmail(dto.email),
+			this._verficationTokenRepository.getToken(
+				interestDetails.token,
+				"register",
+			),
+			this._userRepository.findByEmail(interestDetails.email),
 		]);
 
 		if (!validToken) {
@@ -132,9 +140,9 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		// combine the new expertises and skills with the existing ones
 		const combinedExpertises =
 			newExpertisesMap.size > 0
-				? [...dto.expertises, ...newExpertisesMap.values()]
-				: dto.expertises;
-		const combinedTopics = [...newTopicIds, ...dto.skills];
+				? [...interestDetails.expertises, ...newExpertisesMap.values()]
+				: interestDetails.expertises;
+		const combinedTopics = [...newTopicIds, ...interestDetails.skills];
 		// updaet the user repo
 		await this._userRepository.update(user.id, {
 			interestedExpertises: combinedExpertises,

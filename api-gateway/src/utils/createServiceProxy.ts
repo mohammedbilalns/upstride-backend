@@ -15,13 +15,13 @@ import logger from "./logger";
  */
 
 export function createServiceProxy(
-	target_service: string,
-	service_url: string,
+	targetService: string,
+	serviceUrl: string,
 	isAuth?: boolean,
 ) {
 	const domainRegex = /;\s*Domain=[^;]*/i;
 
-	return proxy(service_url, {
+	return proxy(serviceUrl, {
 		...proxyOptions,
 
 		// Preserve original Content-Type header if present, otherwise default to JSON
@@ -50,7 +50,7 @@ export function createServiceProxy(
 				}
 			}
 			logger.info(
-				`Response received from ${target_service}: ${proxyRes.statusCode}`,
+				`Response received from ${targetService}: ${proxyRes.statusCode}`,
 			);
 			return proxyResData;
 		},

@@ -1,7 +1,7 @@
 export enum ResponseMessage {
-	MEDIA_UPLOADED_SUCCESSFULLY = "Media uploaded successfully",
-	MEDIA_NOT_FOUND = "Media not found",
-	MEDIA_DELETED_SUCCESSFULLY = "Media deleted successfully",
-	MEDIA_UPDATED_SUCCESSFULLY = "Media updated successfully",
-	USER_NOT_FOUND = "User not found",
+	MEDIA_UPLOADED_SUCCESSFULLY = "The media has been uploaded successfully.",
+	MEDIA_NOT_FOUND = "We could not find the specified media.",
+	MEDIA_DELETED_SUCCESSFULLY = "The media has been deleted successfully.",
+	MEDIA_UPDATED_SUCCESSFULLY = "The media has been updated successfully.",
+	USER_NOT_FOUND = "We could not find the user details.",
 }

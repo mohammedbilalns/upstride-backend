@@ -21,20 +21,21 @@ export class MailService implements IMailService {
 	 * - Selects the appropriate email template using `mailType`
 	 * - Validates that all required data is present
 	 */
-	private buildEmailContent(dto: SendMailDTO): string {
-		switch (dto.mailType) {
+	private buildEmailContent(mailDetails: SendMailDTO): string {
+		switch (mailDetails.mailType) {
 			case MailType.REGISTER_OTP:
-				if (!dto.otp) throw new AppError(ErrorMessage.OTP_NOT_FOUND);
-				return buildOtpEmailHtml(dto.otp, OtpType.register);
+				if (!mailDetails.otp) throw new AppError(ErrorMessage.OTP_NOT_FOUND);
+				return buildOtpEmailHtml(mailDetails.otp, OtpType.register);
 
 			case MailType.PASSWORD_RESET_OTP:
-				if (!dto.otp) throw new AppError(ErrorMessage.OTP_NOT_FOUND);
-				return buildOtpEmailHtml(dto.otp, OtpType.reset);
+				if (!mailDetails.otp) throw new AppError(ErrorMessage.OTP_NOT_FOUND);
+				return buildOtpEmailHtml(mailDetails.otp, OtpType.reset);
 				break;
 
 			case MailType.APPROVED_MENTOR:
-				if (!dto.userName) throw new AppError(ErrorMessage.USERNAME_NOT_FOUND);
-				return buildMentorApprovalEmailHtml(dto.userName);
+				if (!mailDetails.userName)
+					throw new AppError(ErrorMessage.USERNAME_NOT_FOUND);
+				return buildMentorApprovalEmailHtml(mailDetails.userName);
 		}
 	}
 
@@ -44,13 +45,13 @@ export class MailService implements IMailService {
 	 * - Delegates email content generation to `buildEmailContent`
 	 * - Sends the email via the configured Nodemailer transporter
 	 */
-	public async sendEmail(dto: SendMailDTO) {
-		const html = this.buildEmailContent(dto);
+	public async sendEmail(mailDetails: SendMailDTO) {
+		const html = this.buildEmailContent(mailDetails);
 
 		await this.transporter.sendMail({
 			from: "Upstride",
-			to: dto.to,
-			subject: dto.subject,
+			to: mailDetails.to,
+			subject: mailDetails.subject,
 			html,
 		});
 	}

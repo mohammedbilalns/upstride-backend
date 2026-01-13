@@ -16,36 +16,44 @@ export class CreateCommentUC implements ICreateCommentUc {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(dto: CreateCommentDto): Promise<void> {
-		const article = await this._articleRepository.findById(dto.articleId);
+	async execute(commentDetails: CreateCommentDto): Promise<void> {
+		const article = await this._articleRepository.findById(
+			commentDetails.articleId,
+		);
 		if (!article)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 
 		await Promise.all([
 			this._commentRepository.create({
-				articleId: dto.articleId,
-				userId: dto.userId,
-				userName: dto.userName,
-				userImage: dto.userImage,
-				content: dto.content,
-				parentId: dto.parentCommentId,
+				articleId: commentDetails.articleId,
+				userId: commentDetails.userId,
+				userName: commentDetails.userName,
+				userImage: commentDetails.userImage,
+				content: commentDetails.content,
+				parentId: commentDetails.parentCommentId,
 			}),
 			this._articleRepository.update(article.id, {
 				comments: article.comments + 1,
 			}),
 		]);
-		if (dto.parentCommentId) {
+		if (commentDetails.parentCommentId) {
 			await Promise.all([
-				this._commentRepository.incrementReplies(dto.parentCommentId),
-				this._commentRepository.incrementRepliesWithParent(dto.parentCommentId),
+				this._commentRepository.incrementReplies(
+					commentDetails.parentCommentId,
+				),
+				this._commentRepository.incrementRepliesWithParent(
+					commentDetails.parentCommentId,
+				),
 			]);
 		}
-		if (article.author !== dto.userId) {
+		if (article.author !== commentDetails.userId) {
 			this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
 				userId: article.author,
-				type: dto.parentCommentId ? "REPLY_COMMENT" : "COMMENT_ARTICLE",
-				triggeredBy: dto.userName,
-				targetResource: dto.articleId,
+				type: commentDetails.parentCommentId
+					? "REPLY_COMMENT"
+					: "COMMENT_ARTICLE",
+				triggeredBy: commentDetails.userName,
+				targetResource: commentDetails.articleId,
 			});
 		}
 	}

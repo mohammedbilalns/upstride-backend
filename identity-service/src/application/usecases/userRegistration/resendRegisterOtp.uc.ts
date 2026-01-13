@@ -22,12 +22,12 @@ export class ResendRegisterOtpUC implements IResendRegisterOtpUC {
 		const user = await this._userRepository.findByEmailAndRole(email, "user");
 		if (!user)
 			throw new AppError(ErrorMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
-		const count =
+		const resendAttempts =
 			(await this._verficationTokenRepository.getResendCount(
 				email,
 				otpType.register,
 			)) ?? 0;
-		if (count > RESEND_LIMIT) {
+		if (resendAttempts > RESEND_LIMIT) {
 			await this._verficationTokenRepository.deleteOtp(email, otpType.register);
 			throw new AppError(
 				ErrorMessage.TOO_MANY_OTP_ATTEMPTS,
@@ -41,12 +41,12 @@ export class ResendRegisterOtpUC implements IResendRegisterOtpUC {
 			email,
 			otpType.register,
 		);
-		const message = {
+		const emailMessage = {
 			to: email,
 			subject: OTP_SUBJECT,
 			mailType: MailType.REGISTER_OTP,
 			otp,
 		};
-		await this._eventBus.publish(QueueEvents.SEND_MAIL, message);
+		await this._eventBus.publish(QueueEvents.SEND_MAIL, emailMessage);
 	}
 }

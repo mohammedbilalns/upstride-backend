@@ -1,4 +1,4 @@
 export enum ResponseMessage {
-	NOTIFICAION_READ = "Notification marked as read successfully",
-	NOTIFICATION_CREATED = "Notification created successfully",
+	NOTIFICAION_READ = "The notification has been marked as read.",
+	NOTIFICATION_CREATED = "The notification has been created successfully.",
 }

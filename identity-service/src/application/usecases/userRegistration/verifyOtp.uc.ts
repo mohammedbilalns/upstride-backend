@@ -23,13 +23,13 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 
 	async execute(email: string, otp: string): Promise<string> {
 		// verify resend count doesn't exceed the limit
-		const count =
+		const resendAttempts =
 			(await this._verficationTokenRepository.getResendCount(
 				email,
 				otpType.register,
 			)) ?? 0;
 
-		if (count > RESEND_LIMIT) {
+		if (resendAttempts > RESEND_LIMIT) {
 			await this._verficationTokenRepository.deleteOtp(email, otpType.register);
 			throw new AppError(
 				ErrorMessage.TOO_MANY_OTP_ATTEMPTS,
@@ -38,14 +38,14 @@ export class VerifyOtpUC implements IVerifyOtpUC {
 		}
 
 		// save otp and update count
-		const savedOtp = await this._verficationTokenRepository.getOtp(
+		const storedOtp = await this._verficationTokenRepository.getOtp(
 			email,
 			otpType.register,
 		);
-		if (!savedOtp)
+		if (!storedOtp)
 			throw new AppError(ErrorMessage.OTP_NOT_FOUND, HttpStatus.NOT_FOUND);
 
-		if (savedOtp !== otp) {
+		if (storedOtp !== otp) {
 			await this._verficationTokenRepository.incrementCount(
 				email,
 				otpType.register,

@@ -9,8 +9,8 @@ import logger from "../../common/utils/logger";
 export class StreamMediaUC implements IStreamMediaUC {
 	constructor(private _mediaStorageService: IMediaStorageService) {}
 
-	async execute(dto: StreamMediaDto): Promise<StreamMediaResult> {
-		const { publicId, mediaType } = dto;
+	async execute(streamDetails: StreamMediaDto): Promise<StreamMediaResult> {
+		const { publicId, mediaType } = streamDetails;
 		const expiresAt = Math.floor(Date.now() / 1000) + 60;
 
 		let signedUrl = this._mediaStorageService.generateSignedUrl(

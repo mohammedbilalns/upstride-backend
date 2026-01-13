@@ -12,18 +12,18 @@ export class SaveNotificationUC implements ISaveNotificationUC {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(dto: SaveNotificationDto): Promise<void> {
+	async execute(notificationData: SaveNotificationDto): Promise<void> {
 		const triggerInfo = {
-			type: dto.type,
-			triggeredBy: dto.triggeredBy,
-			targetResource: dto.targetResource,
-			time: dto.time,
+			type: notificationData.type,
+			triggeredBy: notificationData.triggeredBy,
+			targetResource: notificationData.targetResource,
+			time: notificationData.time,
 		};
 		const { title, content, link, type } =
 			this._notificationGeneratorService.generate(triggerInfo);
 
 		const newNotification = await this._notificationRepository.create({
-			userId: dto.userId,
+			userId: notificationData.userId,
 			title,
 			content,
 			link,
@@ -34,7 +34,7 @@ export class SaveNotificationUC implements ISaveNotificationUC {
 
 		this._eventBus.publish(QueueEvents.NOTIFICATION_CREATED, {
 			id: newNotification.id,
-			userId: dto.userId,
+			userId: notificationData.userId,
 			title,
 			content,
 			link,

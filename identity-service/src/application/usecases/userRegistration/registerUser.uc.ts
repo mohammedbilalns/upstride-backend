@@ -26,9 +26,11 @@ export class RegisterUserUC implements IRegisterUserUC {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(dto: RegisterUserDto): Promise<void> {
+	async execute(registrationData: RegisterUserDto): Promise<void> {
 		// verify the user doesn't exist
-		const existingUser = await this._userRepository.findByEmail(dto.email);
+		const existingUser = await this._userRepository.findByEmail(
+			registrationData.email,
+		);
 		if (existingUser?.isVerified)
 			throw new AppError(
 				ErrorMessage.EMAIL_ALREADY_EXISTS,
@@ -39,29 +41,31 @@ export class RegisterUserUC implements IRegisterUserUC {
 			await this._userRepository.delete(existingUser.id);
 
 		// hash the password
-		const hashedPassword = await this._cryptoService.hash(dto.password);
+		const hashedPassword = await this._cryptoService.hash(
+			registrationData.password,
+		);
 		// create the user
 		await this._userRepository.create({
-			email: dto.email,
-			phone: dto.phone,
-			name: dto.name,
+			email: registrationData.email,
+			phone: registrationData.phone,
+			name: registrationData.name,
 			passwordHash: hashedPassword,
 		});
 		// generate and save the OTP
 		const otp = generateOtp();
 		await this._verficationTokenRepository.saveOtp(
 			otp,
-			dto.email,
+			registrationData.email,
 			otpType.register,
 			OTP_EXPIRY_TIME,
 		);
 		// send the OTP to the user
-		const message = {
-			to: dto.email,
+		const emailMessage = {
+			to: registrationData.email,
 			subject: OTP_SUBJECT,
 			mailType: MailType.REGISTER_OTP,
 			otp: otp,
 		};
-		await this._eventBus.publish(QueueEvents.SEND_MAIL, message);
+		await this._eventBus.publish(QueueEvents.SEND_MAIL, emailMessage);
 	}
 }

@@ -24,8 +24,8 @@ export class LoginUserUC implements ILoginUserUC {
 	 * Validates user credentials and returns access/refresh tokens.
 	 * Also caches lightweight user data.
 	 */
-	async execute(dto: LoginUserDto): Promise<LoginReturn> {
-		const { email, password } = dto;
+	async execute(loginDetails: LoginUserDto): Promise<LoginReturn> {
+		const { email, password } = loginDetails;
 		// verify user identity
 		const user = await this._userRepository.findByEmail(email);
 

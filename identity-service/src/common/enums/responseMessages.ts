@@ -3,43 +3,43 @@
  */
 export const ResponseMessage = {
 	// Authentication
-	USER_REGISTERED: "Registered successfully",
-	USER_ALREADY_EXISTS: "User with this email already exists",
-	LOGIN_SUCCESS: "Login successful",
-	LOGOUT_SUCCESS: "Logged out successfully",
-	REFRESH_TOKEN_SUCCESS: "Refresh token refreshed successfully",
+	USER_REGISTERED: "Your registration has been completed successfully.",
+	USER_ALREADY_EXISTS: "A user with this email already exists.",
+	LOGIN_SUCCESS: "You have successfully logged in.",
+	LOGOUT_SUCCESS: "You have been logged out successfully.",
+	REFRESH_TOKEN_SUCCESS: "Your session token has been refreshed successfully.",
 
 	// OTP
-	OTP_SENT: "OTP sent to your email, please check your inbox",
-	OTP_RESENT: "OTP resent to your email, please check your inbox",
-	OTP_VERIFIED: "OTP verified successfully",
-	PASSWORD_UPDATED: "Password updated successfully",
+	OTP_SENT: "An OTP has been sent to your email. Please check your inbox.",
+	OTP_RESENT: "A new OTP has been sent to your email. Please check your inbox.",
+	OTP_VERIFIED: "The OTP has been verified successfully.",
+	PASSWORD_UPDATED: "Your password has been updated successfully.",
 
 	// User Management
-	USER_BLOCKED: "User blocked successfully",
-	USER_UNBLOCKED: "User unblocked successfully",
+	USER_BLOCKED: "The user has been blocked successfully.",
+	USER_UNBLOCKED: "The user has been unblocked successfully.",
 
 	// Mentors
-	UPDATED_MENTOR: "Mentor updated successfully",
-	MENTOR_REJECTED: "Mentor rejected successfully",
-	REQUEST_FOR_MENTORING: "Request for mentoring sent successfully",
-	MENTOR_REQUEST_SENT: "Mentor request sent successfully",
-	MENTOR_APPROVED: "Mentor approved successfully",
-	FOLLOWED_MENTOR: "Followed mentor successfully",
-	UNFOLLOWED_MENTOR: "Unfollowed mentor successfully",
+	UPDATED_MENTOR: "The mentor's profile has been updated successfully.",
+	MENTOR_REJECTED: "The mentor application has been rejected.",
+	REQUEST_FOR_MENTORING: "Your mentorship request has been sent successfully.",
+	MENTOR_REQUEST_SENT: "Your mentor request has been sent successfully.",
+	MENTOR_APPROVED: "The mentor has been approved successfully.",
+	FOLLOWED_MENTOR: "You are now following this mentor.",
+	UNFOLLOWED_MENTOR: "You have successfully unfollowed this mentor.",
 
 	// Expertise & Skills
-	EXPERTISE_CREATED: "Expertise created successfully",
-	EXPERTISE_UPDATED: "Expertise updated successfully",
-	EXPERTISE_VERIFIED: "Expertise verified successfully",
-	SKILL_CREATED: "Skill created successfully",
-	SKILL_UPDATED: "Skill updated successfully",
-	SKILL_VERIFIED: "Skill verified successfully",
+	EXPERTISE_CREATED: "The expertise has been created successfully.",
+	EXPERTISE_UPDATED: "The expertise has been updated successfully.",
+	EXPERTISE_VERIFIED: "The expertise has been verified successfully.",
+	SKILL_CREATED: "The skill has been created successfully.",
+	SKILL_UPDATED: "The skill has been updated successfully.",
+	SKILL_VERIFIED: "The skill has been verified successfully.",
 
 	// Interests & Profile
-	INTERESTS_FETCHED: "Interests fetched successfully",
-	INTERESTS_ADDED: "Interests added successfully",
-	PROFILE_UPDATED: "Updated profile successfully",
+	INTERESTS_FETCHED: "Interests have been fetched successfully.",
+	INTERESTS_ADDED: "Your interests have been added successfully.",
+	PROFILE_UPDATED: "Your profile has been updated successfully.",
 } as const;
 
 export type ResponseMessageKey = keyof typeof ResponseMessage;

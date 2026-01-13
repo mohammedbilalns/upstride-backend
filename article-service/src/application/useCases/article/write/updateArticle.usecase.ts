@@ -18,30 +18,32 @@ export class UpdateArticleUC implements IUpdateArticleUC {
 		private _articleCacheService: IArticleCacheService,
 	) {}
 
-	async execute(dto: UpdateArticleDto): Promise<void> {
-		const article = await this._articleRepository.findByArticleId(dto.id);
-		if (article?.author !== dto.userId) {
+	async execute(articleUpdateData: UpdateArticleDto): Promise<void> {
+		const article = await this._articleRepository.findByArticleId(
+			articleUpdateData.id,
+		);
+		if (article?.author !== articleUpdateData.userId) {
 			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
 		}
 
-		const updateData: Partial<Article> = { title: dto.title };
+		const updateData: Partial<Article> = { title: articleUpdateData.title };
 
-		if (dto.content) {
-			updateData.content = dto.content;
-			updateData.description = generateDescription(dto.content);
+		if (articleUpdateData.content) {
+			updateData.content = articleUpdateData.content;
+			updateData.description = generateDescription(articleUpdateData.content);
 		}
 
-		if (dto.featuredImage) {
-			updateData.featuredImageId = dto.featuredImage.public_id;
-			updateData.featuredImage = dto.featuredImage.secure_url;
-		} else if (dto.featuredImage === null) {
+		if (articleUpdateData.featuredImage) {
+			updateData.featuredImageId = articleUpdateData.featuredImage.public_id;
+			updateData.featuredImage = articleUpdateData.featuredImage.secure_url;
+		} else if (articleUpdateData.featuredImage === null) {
 			updateData.featuredImageId = null;
 			updateData.featuredImage = null;
 		}
 
 		// NOTE: updated logic to handle type errors
-		if (dto.tags !== undefined) {
-			const nextTagNames = dto.tags; // string[]
+		if (articleUpdateData.tags !== undefined) {
+			const nextTagNames = articleUpdateData.tags; // string[]
 
 			const prevTagNames = article.tags
 				.filter((tag): tag is Tag | PopulatedTag => typeof tag !== "string")
@@ -76,8 +78,8 @@ export class UpdateArticleUC implements IUpdateArticleUC {
 			updateData.tags = [...remainingTagIds, ...newTagIds];
 		}
 
-		await this._articleRepository.update(dto.id, updateData);
+		await this._articleRepository.update(articleUpdateData.id, updateData);
 
-		await this._articleCacheService.clearArticleCache(dto.id);
+		await this._articleCacheService.clearArticleCache(articleUpdateData.id);
 	}
 }

@@ -14,8 +14,8 @@ export class GetChatUC implements IGetChatUC {
 		private _userService: IUserService,
 	) {}
 
-	async execute(dto: GetChatDto): Promise<GetChatResult> {
-		const { userIds, currentUserId, page, limit } = dto;
+	async execute(chatRequestDetails: GetChatDto): Promise<GetChatResult> {
+		const { userIds, currentUserId, page, limit } = chatRequestDetails;
 
 		// Get or create the chat
 		let chat = await this._chatRepository.getChatByUserIds(userIds);

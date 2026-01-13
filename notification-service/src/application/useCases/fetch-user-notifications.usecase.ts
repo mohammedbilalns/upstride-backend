@@ -8,13 +8,15 @@ import {
 export class FetchUserNotificationsUC implements IFetchUserNotificationsUC {
 	constructor(private _notificationRepository: INotificationRepository) {}
 
-	async execute(dto: FetchUserNotificationsDto): Promise<NotificationResponse> {
+	async execute(
+		fetchCriteria: FetchUserNotificationsDto,
+	): Promise<NotificationResponse> {
 		const { notifications, total, unreadCount } =
 			await this._notificationRepository.findAll(
-				dto.userId,
-				Number(dto.page),
-				Number(dto.limit),
-				dto.filter,
+				fetchCriteria.userId,
+				Number(fetchCriteria.page),
+				Number(fetchCriteria.limit),
+				fetchCriteria.filter,
 			);
 		return { notifications, total, unreadCount };
 	}

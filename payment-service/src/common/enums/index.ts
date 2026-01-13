@@ -1,4 +1,4 @@
-export * from "./errorMessage";
-export * from "./responseMessage";
+export * from "./errorMessages";
+export * from "./responseMessages";
 export * from "./statusCodes";
 export * from "./userRoles";

@@ -1,3 +1,3 @@
 export enum ResponseMessage {
-	CHAT_CREATED = "chat created successfully",
+	CHAT_CREATED = "The chat has been created successfully.",
 }

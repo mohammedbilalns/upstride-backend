@@ -30,8 +30,8 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 	 *  - Existing password-based user → attach Google login to their account
 	 *  - Existing Google user → log in and generate platform tokens
 	 */
-	async execute(dto: GoogleAuthDto): Promise<GoogleAuthResponse> {
-		const { token } = dto;
+	async execute(googleAuthData: GoogleAuthDto): Promise<GoogleAuthResponse> {
+		const { token } = googleAuthData;
 		// verify token and credentials
 		const decodedToken = this._tokenService.decodeGoogleToken(token);
 		if (!decodedToken)

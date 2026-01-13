@@ -8,12 +8,12 @@ import { SlotStatus } from "../../../domain/entities/slot.entity";
 export class CreateCustomSlotUC implements ICreateCustomSlotUC {
 	constructor(private _slotRepository: ISlotRepository) {}
 
-	async execute(dto: CreateCustomSlotDto): Promise<void> {
+	async execute(slotDetails: CreateCustomSlotDto): Promise<void> {
 		// check if there is already a slot overlapping the duration
 		const overlappingSlot = await this._slotRepository.findOverlappingSlots(
-			dto.mentorId,
-			dto.startAt,
-			dto.endAt,
+			slotDetails.mentorId,
+			slotDetails.startAt,
+			slotDetails.endAt,
 		);
 		if (overlappingSlot)
 			throw new AppError(
@@ -22,10 +22,10 @@ export class CreateCustomSlotUC implements ICreateCustomSlotUC {
 			);
 
 		await this._slotRepository.create({
-			mentorId: dto.mentorId,
-			startAt: dto.startAt,
-			endAt: dto.endAt,
-			price: dto.price,
+			mentorId: slotDetails.mentorId,
+			startAt: slotDetails.startAt,
+			endAt: slotDetails.endAt,
+			price: slotDetails.price,
 			generatedFrom: "custom",
 			status: SlotStatus.OPEN,
 		});

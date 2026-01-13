@@ -4,7 +4,7 @@ import { IPaymentRepository } from "../../domain/repositories/payment.repository
 import { IPaymentGatewayService } from "../../domain/services/payment-gateway.service.interface";
 import { AppError } from "../../application/errors/AppError";
 import { HttpStatus } from "../../common/enums";
-import { ErrorMessage } from "../../common/enums/errorMessage";
+import { ErrorMessage } from "../../common/enums/errorMessages";
 import { IEventBus } from "../../domain/events/IEventBus";
 import { QueueEvents } from "../../common/enums/queueEvents";
 
@@ -15,10 +15,10 @@ export class CapturePaymentUC implements ICapturePaymentUC {
 		private _eventBus: IEventBus,
 	) {}
 
-	async execute(data: VerifyPaymentDto) {
+	async execute(verificationDetails: VerifyPaymentDto) {
 		//  Find Payment
 		let payment = await this._paymentRepository.findByTransactionId(
-			data.orderId,
+			verificationDetails.orderId,
 		);
 
 		if (!payment) {
@@ -31,9 +31,9 @@ export class CapturePaymentUC implements ICapturePaymentUC {
 
 		// Verify Signature
 		const isValid = this._paymentGatewayService.verifyPayment(
-			data.orderId,
-			data.paymentId,
-			data.signature,
+			verificationDetails.orderId,
+			verificationDetails.paymentId,
+			verificationDetails.signature,
 		);
 
 		if (isValid) {

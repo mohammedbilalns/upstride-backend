@@ -18,28 +18,30 @@ export class CreateArticleUC implements ICreateArticleUC {
 		private _articleCacheService: IArticleCacheService,
 	) {}
 
-	async execute(dto: CreateArticleDto): Promise<void> {
+	async execute(articleData: CreateArticleDto): Promise<void> {
 		const cachedAuthor: { profilePicture: string } | null =
-			await this._cacheService.get(`user:${dto.author}`);
+			await this._cacheService.get(`user:${articleData.author}`);
 		const authorImage = cachedAuthor?.profilePicture;
 
 		// check if authorRole is mentor
-		if (dto.authorRole !== "mentor")
+		if (articleData.authorRole !== "mentor")
 			throw new AppError(ErrorMessage.FORBIDDEN_RESOURCE, HttpStatus.FORBIDDEN);
 		// create tags
-		const tagIds = await this._tagRepository.createOrIncrement(dto.tags);
+		const tagIds = await this._tagRepository.createOrIncrement(
+			articleData.tags,
+		);
 		// generate description
-		const description = generateDescription(dto.content);
+		const description = generateDescription(articleData.content);
 
 		await this._articleRepository.create({
-			content: dto.content,
+			content: articleData.content,
 			description,
-			author: dto.author,
+			author: articleData.author,
 			authorImage,
-			featuredImage: dto.featuredImage?.secure_url,
-			featuredImageId: dto.featuredImage?.public_id,
-			authorName: dto.authorName,
-			title: dto.title,
+			featuredImage: articleData.featuredImage?.secure_url,
+			featuredImageId: articleData.featuredImage?.public_id,
+			authorName: articleData.authorName,
+			title: articleData.title,
 			tags: tagIds,
 		});
 

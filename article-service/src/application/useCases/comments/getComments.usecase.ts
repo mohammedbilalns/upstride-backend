@@ -18,16 +18,20 @@ export class GetCommentsUC implements IGetCommentsUC {
 		private _reactionRepository: IReactionRepository,
 	) {}
 
-	async execute(dto: FetchCommentsDto): Promise<fetchCommentsResponseDto> {
-		const article = await this._articleRepository.findById(dto.articleId);
+	async execute(
+		fetchCriteria: FetchCommentsDto,
+	): Promise<fetchCommentsResponseDto> {
+		const article = await this._articleRepository.findById(
+			fetchCriteria.articleId,
+		);
 		if (!article)
 			throw new AppError(ErrorMessage.ARTICLE_NOT_FOUND, HttpStatus.NOT_FOUND);
 
 		const { comments, total } = await this._commentRepository.findByArticle(
-			dto.articleId,
-			dto.page,
-			dto.limit,
-			dto.parentCommentId,
+			fetchCriteria.articleId,
+			fetchCriteria.page,
+			fetchCriteria.limit,
+			fetchCriteria.parentCommentId,
 		);
 
 		const commentsWithIsLiked = await Promise.all(
@@ -35,7 +39,7 @@ export class GetCommentsUC implements IGetCommentsUC {
 				const userReaction =
 					await this._reactionRepository.findByResourceAndUser(
 						comment.id,
-						dto.userId,
+						fetchCriteria.userId,
 					);
 				const isLiked = userReaction?.reaction === "like";
 
