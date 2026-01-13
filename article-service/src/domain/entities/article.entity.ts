@@ -3,8 +3,8 @@ export interface Article {
 	id: string;
 	authorName: string;
 	authorImage?: string;
-	featuredImage?: string;
-	featuredImageId?: string;
+	featuredImage?: string | null;
+	featuredImageId?: string | null;
 	title: string;
 	author: string;
 	tags: string[] | Tag[];

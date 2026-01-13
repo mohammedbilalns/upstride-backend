@@ -13,7 +13,7 @@ export interface CreateArticleDto {
 	author: string;
 	authorName: string;
 	authorRole: string;
-	featuredImage?: FeaturedImage;
+	featuredImage?: FeaturedImage | null;
 	title: string;
 	tags: string[];
 	content: string;
@@ -23,7 +23,7 @@ export interface UpdateArticleDto {
 	id: string;
 	title?: string;
 	userId: string;
-	featuredImage?: FeaturedImage;
+	featuredImage?: FeaturedImage | null;
 	tags?: string[];
 	content?: string;
 }

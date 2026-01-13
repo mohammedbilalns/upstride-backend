@@ -40,8 +40,8 @@ export class ArticleController {
 		const userId = res.locals.user.id;
 		await this._updateArticleUseCase.execute({ userId, ...articleData });
 		res
-			.status(HttpStatus.CREATED)
-			.send({ success: true, message: ResponseMessage.ARTICLE_CREATED });
+			.status(HttpStatus.OK)
+			.send({ success: true, message: ResponseMessage.ARTICLE_UPDATED });
 	});
 
 	public delete = asyncHandler(async (req, res) => {

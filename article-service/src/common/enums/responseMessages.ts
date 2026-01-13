@@ -1,5 +1,6 @@
 export enum ResponseMessage {
 	ARTICLE_CREATED = "Article created successfully",
+	ARTICLE_UPDATED = "Article updated successfully",
 	ARTICLE_DELETED = "Article deleted successfully",
 	REACTED_ARTICLE = "Reacted to article successfully",
 	COMMENT_CREATED = "Comment created successfully",

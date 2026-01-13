@@ -9,7 +9,8 @@ const featuredImageSchema = z
 		bytes: z.number(),
 		asset_folder: z.string(),
 	})
-	.optional();
+	.optional()
+	.nullable();
 
 export const createArticleSchema = z.object({
 	featuredImage: featuredImageSchema,

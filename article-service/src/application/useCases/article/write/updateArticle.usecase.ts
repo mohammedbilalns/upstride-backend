@@ -29,8 +29,14 @@ export class UpdateArticleUC implements IUpdateArticleUC {
 		if (dto.content) {
 			updateData.content = dto.content;
 			updateData.description = generateDescription(dto.content);
-			updateData.featuredImageId = dto.featuredImage?.public_id;
-			updateData.featuredImage = dto.featuredImage?.secure_url;
+		}
+
+		if (dto.featuredImage) {
+			updateData.featuredImageId = dto.featuredImage.public_id;
+			updateData.featuredImage = dto.featuredImage.secure_url;
+		} else if (dto.featuredImage === null) {
+			updateData.featuredImageId = null;
+			updateData.featuredImage = null;
 		}
 
 		// NOTE: updated logic to handle type errors
