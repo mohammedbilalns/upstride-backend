@@ -11,7 +11,9 @@ export class UnblockUserUC implements IUnblockUserUC {
 
 	async execute(dto: UnblockUserDto): Promise<void> {
 		const { userId } = dto;
-		this._userRepository.update(userId, { isBlocked: false });
+
+  
+		 await this._userRepository.update(userId, { isBlocked: false });
 		const isRevoked = await this._revokedUserRepository.isRevoked(userId);
 		if (isRevoked) {
 			this._revokedUserRepository.remove(userId);

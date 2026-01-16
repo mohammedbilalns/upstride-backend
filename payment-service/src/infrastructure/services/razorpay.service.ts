@@ -35,10 +35,15 @@ export class RazorpayService implements IPaymentGatewayService {
 		paymentId: string,
 		signature: string,
 	): boolean {
+		console.log("Verifying Payment - Inputs:", { orderId, paymentId, signature });
+		console.log("Key Secret Length:", env.RAZORPAY_KEY_SECRET?.length);
+
 		const generatedSignature = crypto
 			.createHmac("sha256", env.RAZORPAY_KEY_SECRET)
 			.update(orderId + "|" + paymentId)
 			.digest("hex");
+
+		console.log("Signatures:", { generated: generatedSignature, received: signature });
 
 		return generatedSignature === signature;
 	}

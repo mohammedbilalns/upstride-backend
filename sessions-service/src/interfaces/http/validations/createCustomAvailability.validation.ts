@@ -5,12 +5,10 @@ export const createCustomAvailabilityPayloadSchema = z
 		startAt: z.coerce.date(),
 		endAt: z.coerce.date(),
 		slotDuration: z.union([
+			z.literal(30),
 			z.literal(60),
 			z.literal(90),
-			z.literal(120),
-			z.literal(180),
 		]),
-		price: z.number().min(10).max(10000),
 	})
 	.refine((data) => data.startAt > new Date(), {
 		message: "Start time must be in the future",

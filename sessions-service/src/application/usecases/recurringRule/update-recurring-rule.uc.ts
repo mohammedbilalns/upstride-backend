@@ -4,18 +4,11 @@ import { IUpdateRecurringRuleUC } from "../../../domain/useCases/recurringRule/u
 import { UpdateRecurringRuleDto } from "../../dtos/recurring-rule.dto";
 import { AppError } from "../../errors/app-error";
 import { timeToMinutes } from "../../utils/date-utils";
-
-/**
- * Use case: Update an existing recurring availability rule.
- *
- * A recurring rule defines weekly repeating availability (e.g., "Every Monday 09:00–17:00").
- */
 import { IGenerateSlotsUC } from "../../../domain/useCases/slots/generate-slots.uc.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
 
 /**
- * Use case: Update an existing recurring availability rule.
- *
+ * Update an existing recurring availability rule.
  * A recurring rule defines weekly repeating availability (e.g., "Every Monday 09:00–17:00").
  */
 export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
@@ -23,7 +16,9 @@ export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
 		private _availabilityRepository: IAvailabilityRepository,
 		private _generateSlotsUC: IGenerateSlotsUC,
 		private _slotRepository: ISlotRepository,
-	) {}
+	) { }
+
+
 	async execute(dto: UpdateRecurringRuleDto): Promise<void> {
 		// lookup mentor availability
 		const existingAvailabilityRule =
@@ -47,15 +42,14 @@ export class UpdateRecurringRuleUC implements IUpdateRecurringRuleUC {
 		// construct updated rule
 		const updatedRule = {
 			...ruleToUpdate,
-			weekDay: dto.rule.weekDay ?? ruleToUpdate.weekDay,
-			startTime: dto.rule.startTime
-				? timeToMinutes(dto.rule.startTime)
+			weekDay: dto.weekDay ?? ruleToUpdate.weekDay,
+			startTime: dto.startTime
+				? timeToMinutes(dto.startTime)
 				: ruleToUpdate.startTime,
-			endTime: dto.rule.endTime
-				? timeToMinutes(dto.rule.endTime)
+			endTime: dto.endTime
+				? timeToMinutes(dto.endTime)
 				: ruleToUpdate.endTime,
-			slotDuration: dto.rule.slotDuration ?? ruleToUpdate.slotDuration,
-			price: dto.rule.price ?? ruleToUpdate.price,
+			slotDuration: dto.slotDuration ?? ruleToUpdate.slotDuration,
 		};
 
 		// validate start time is before end time

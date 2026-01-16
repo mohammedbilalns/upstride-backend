@@ -9,6 +9,7 @@ import { IInitiateSessionUC } from "../../../domain/useCases/sessions/initiate-s
 import { IMarkSessionAsCompleteUC } from "../../../domain/useCases/sessions/mark-session-as-complete.uc.interface";
 import { IRequestRescheduleUC } from "../../../domain/useCases/bookings/request-reschedule.usecase.interface";
 import { IHandleRescheduleUC } from "../../../domain/useCases/bookings/handle-reschedule.usecase.interface";
+import { CancelReservationUc } from "../../../application/usecases/bookings/cancel-reservation.uc";
 import asyncHandler from "../utils/async-handler";
 import {
 	bookSessionValidationParamsSchema,
@@ -22,6 +23,8 @@ import {
 } from "../validations/booking.validation";
 
 import { IGetSessionsUC } from "../../../domain/useCases/sessions/get-sessions.uc.interface";
+import { IGetSessionsListUC } from "../../../domain/useCases/sessions/get-sessions-list.uc.interface";
+import { IJoinSessionUC } from "../../../domain/useCases/sessions/join-session.uc.interface";
 import { AppError } from "../../../application/errors/app-error";
 
 export class SessionController {
@@ -33,12 +36,59 @@ export class SessionController {
 		private _getSessionsUC: IGetSessionsUC,
 		private _requestRescheduleUC: IRequestRescheduleUC,
 		private _handleRescheduleUC: IHandleRescheduleUC,
-	) {}
+		private _cancelReservationUC: CancelReservationUc,
+		private _getSessionsListUC: IGetSessionsListUC,
+		private _joinSessionUC: IJoinSessionUC,
+	) { }
 
+	/**
+	 * Retrieves sessions list with pagination .
+	 */
+	public getSessionsList = asyncHandler(async (req, res) => {
+		const userId = res.locals.user.id;
+		const mentorId = res.locals.user.mentorId;
+
+		const page = parseInt(req.query.page as string) || 1;
+		const limit = parseInt(req.query.limit as string) || 15;
+		const type = (req.query.type as "upcoming" | "history") || "upcoming";
+
+		const result = await this._getSessionsListUC.execute(
+			userId,
+			type,
+			page,
+			limit,
+			mentorId
+		);
+
+		res.status(HttpStatus.OK).json({
+			success: true,
+			message: ResponseMessage.SUCCESS,
+			data: result,
+		});
+	});
+
+	/**
+	 * Joins a session .
+	 */
+	public joinSession = asyncHandler(async (req, res) => {
+		const userId = res.locals.user.id;
+		const { sessionId } = req.params;
+
+		await this._joinSessionUC.execute(userId, sessionId);
+
+		res.status(HttpStatus.OK).json({
+			success: true,
+			message: "Session is ready to join",
+		});
+	});
+
+	/**
+	 * Retrieves sessions for a user or mentor (Legacy? Keep for now).
+	 */
 	public getSessions = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const role = res.locals.user.role;
-		const type = req.query.type as string; // 'upcoming' | 'history'
+		const type = req.query.type as string;
 
 		let data;
 		if (role === "mentor") {
@@ -68,6 +118,9 @@ export class SessionController {
 		});
 	});
 
+	/**
+	 * Books a session for a specific slot.
+	 */
 	public bookSession = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { slotId } = bookSessionValidationParamsSchema.parse(req.params);
@@ -80,6 +133,9 @@ export class SessionController {
 		});
 	});
 
+	/**
+	 * Cancels a booking.
+	 */
 	public cancelBooking = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { bookingId } = cancelBookingValidationParamsSchema.parse(req.params);
@@ -90,6 +146,9 @@ export class SessionController {
 			.json({ success: true, message: ResponseMessage.CANCELLED_BOOKING });
 	});
 
+	/**
+	 * Initiates a session.
+	 */
 	public initiateSession = asyncHandler(async (req, res) => {
 		const { sessionId } = initiateSessionParamsSchema.parse(req.params);
 
@@ -99,6 +158,9 @@ export class SessionController {
 			.json({ success: true, message: ResponseMessage.SESSION_INITIATED });
 	});
 
+	/**
+	 * Marks a session as complete.
+	 */
 	public markSessionAsComplete = asyncHandler(async (req, res) => {
 		const { sessionId } = markSessionAsCompleteParamsSchema.parse(req.params);
 
@@ -110,6 +172,9 @@ export class SessionController {
 		});
 	});
 
+	/**
+	 * Requests a reschedule for a booking.
+	 */
 	public requestReschedule = asyncHandler(async (req, res) => {
 		const userId = res.locals.user.id;
 		const { bookingId } = requestRescheduleParamsSchema.parse(req.params);
@@ -129,6 +194,9 @@ export class SessionController {
 		});
 	});
 
+	/**
+	 * Handles a reschedule request (approves or rejects).
+	 */
 	public handleReschedule = asyncHandler(async (req, res) => {
 		const mentorId = res.locals.user.mentorId;
 		if (!mentorId)
@@ -154,5 +222,17 @@ export class SessionController {
 					: ResponseMessage.RESCHEDULE_REJECTED,
 			data: result,
 		});
+	});
+	/**
+	 * Cancels a reservation for a slot.
+	 */
+	public cancelReservation = asyncHandler(async (req, res) => {
+		const userId = res.locals.user.id;
+		const { slotId } = bookSessionValidationParamsSchema.parse(req.params);
+
+		await this._cancelReservationUC.execute({ userId, slotId });
+		res
+			.status(HttpStatus.OK)
+			.json({ success: true, message: ResponseMessage.CANCELLED_BOOKING });
 	});
 }

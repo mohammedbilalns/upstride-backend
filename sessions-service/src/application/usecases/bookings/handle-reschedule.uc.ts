@@ -11,8 +11,15 @@ export class HandleRescheduleUC implements IHandleRescheduleUC {
 	constructor(
 		private _bookingRepository: IBookingRepository,
 		private _slotRepository: ISlotRepository,
-	) {}
+	) { }
 
+	/**
+	 * Handles a reschedule request (Approve/Reject).
+	 * If Approved:
+	 *  - Frees old slot.
+	 *  - Books new slot.
+	 *  - Updates booking with new slotId.
+	 */
 	async execute(dto: HandleRescheduleDto): Promise<Booking> {
 		const booking = await this._bookingRepository.findById(dto.bookingId);
 		if (!booking) throw new AppError("Booking not found", HttpStatus.NOT_FOUND);

@@ -4,10 +4,15 @@ import { IDeleteSlotUC } from "../../../domain/useCases/slots/delete-slot.uc.int
 import { DeleteSlotDto } from "../../dtos/slot.dto";
 
 import { AppError } from "../../errors/app-error";
+import { SlotStatus } from "../../../domain/entities/slot.entity";
 
 export class DeleteSlotUC implements IDeleteSlotUC {
-	constructor(private _slotRepository: ISlotRepository) {}
+	constructor(private _slotRepository: ISlotRepository) { }
 
+	/**
+	 * Deletes a slot.
+	 * Verifies that the slot is not already booked before deleting.
+	 */
 	async execute(dto: DeleteSlotDto): Promise<void> {
 		const existingSlot = await this._slotRepository.findById(dto.slotId);
 		// check if the slot exists
@@ -18,15 +23,12 @@ export class DeleteSlotUC implements IDeleteSlotUC {
 		if (existingSlot.mentorId !== dto.mentorId)
 			throw new AppError(ErrorMessage.SLOT_NOT_FOUND, HttpStatus.BAD_REQUEST);
 
-		// Check if slot is booked (status not OPEN and not CANCELLED usually implies booked, or check participantId)
-		// If status is FULL, STARTED, COMPLETED, it is booked.
-		if (
-			existingSlot.status === "FULL" ||
-			existingSlot.status === "STARTED" ||
-			existingSlot.status === "COMPLETED" ||
-			existingSlot.participantId
-		) {
-			throw new AppError("Cannot delete a booked slot", HttpStatus.BAD_REQUEST);
+
+		if (existingSlot.status !== SlotStatus.OPEN || existingSlot.participantId) {
+			throw new AppError(
+				"Cannot delete a slot that is booked or reserved",
+				HttpStatus.BAD_REQUEST,
+			);
 		}
 
 		await this._slotRepository.delete(existingSlot.id);

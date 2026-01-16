@@ -10,6 +10,8 @@ import {
 	IRejectMentorUC,
 	IUpdateMentorUC,
 } from "../../../domain/useCases/mentorManagement";
+
+import { IFetchPublicMentorProfileUC } from "../../../application/usecases/mentorManagement/fetch-public-mentor-profile.uc";
 import asyncHandler from "../utils/async-handler";
 import {
 	approveMentorSchema,
@@ -32,7 +34,8 @@ export class MentorController {
 		private _fetchMentorByExpertiseUC: IFetchMentorByExpertiseUC,
 		private _fetchMentorDetailsUC: IFetchMentorDetailsUC,
 		private _fetchSelfUC: IFetchSelfUC,
-	) {}
+		private _fetchPublicMentorProfileUC: IFetchPublicMentorProfileUC,
+	) { }
 
 	public createMentor = asyncHandler(async (req, res) => {
 		const data = mentorRegistrationSchema.parse(req.body);
@@ -104,6 +107,14 @@ export class MentorController {
 		const { expertiseId } = req.params;
 		const mentors = await this._fetchMentorByExpertiseUC.execute(expertiseId);
 		res.status(HttpStatus.OK).json(mentors);
+	});
+
+
+
+	public getBasicProfile = asyncHandler(async (req, res) => {
+		const { mentorId } = req.params;
+		const mentor = await this._fetchPublicMentorProfileUC.execute(mentorId);
+		res.status(HttpStatus.OK).json(mentor);
 	});
 
 	public fetchMentorDetails = asyncHandler(async (req, res) => {

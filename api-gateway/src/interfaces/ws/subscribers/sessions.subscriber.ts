@@ -34,7 +34,18 @@ export function registerSessionSubscriber(
 		logger.info(
 			`[WS] Received payment completed event: ${JSON.stringify(data)}`,
 		);
-		// Optionally notify user of payment success via socket if strictly needed,
-		// but SESSION_BOOKED (confirmed) is usually sufficient.
+	});
+
+	eventBus.subscribe(QueueEvents.STARTED_SESSION, async (data: any) => {
+		logger.info(`[WS] Received session started event: ${JSON.stringify(data)}`);
+		// Notify Mentor and User to join the session
+		const payload = {
+			sessionId: data.sessionId,
+			mentorId: data.mentorId,
+			userId: data.userId,
+		};
+		// Custom event 'session_started' to trigger navigation or modal
+		publisher.emitToUser(data.mentorId, "session_started", payload);
+		publisher.emitToUser(data.userId, "session_started", payload);
 	});
 }

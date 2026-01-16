@@ -43,4 +43,4 @@ export const handleRescheduleParamsSchema = z.object({
 
 export const handleReschedulePayloadSchema = z.object({
 	action: z.enum(["APPROVED", "REJECTED"]),
-});
+})

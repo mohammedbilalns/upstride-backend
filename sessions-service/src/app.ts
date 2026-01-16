@@ -7,6 +7,7 @@ import { connectRabbitmq } from "./infrastructure/events/connect-rabbitmq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
 import { createSessionRoutes } from "./interfaces/http/routes/session.route";
 import { createSlotRoutes } from "./interfaces/http/routes/slot.route";
+import { createPricingRoutes } from "./interfaces/http/routes/pricing.route";
 import { initializeJobs } from "./application/jobs";
 
 class App {
@@ -27,6 +28,7 @@ class App {
 	private _setupRoutes() {
 		this._app.use("/api/sessions", createSessionRoutes());
 		this._app.use("/api/slots", createSlotRoutes());
+		this._app.use("/api/pricing", createPricingRoutes());
 		this._app.use(errorHandler);
 	}
 

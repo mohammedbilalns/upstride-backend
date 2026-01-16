@@ -8,8 +8,10 @@ import { CancelSlotUC } from "../../../application/usecases/slots/cancel-slot.uc
 import { GetMentorSlotsUC } from "../../../application/usecases/slots/get-mentor-slots.uc";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
+import { IPricingConfigRepository } from "../../../domain/repositories/pricing-config.repository.interface";
 import { AvailabilityRepository } from "../../../infrastructure/database/repositories/availability.repository";
 import { SlotRepository } from "../../../infrastructure/database/repositories/slot.repository";
+import { PricingConfigRepository } from "../../../infrastructure/database/repositories/pricing-config.repository";
 import { SlotsController } from "../controllers/slots.controller";
 
 import { GenerateSlotsUC } from "../../../application/usecases/slots/generate-slots.uc";
@@ -21,10 +23,13 @@ export function createSlotController() {
 	const slotRepository: ISlotRepository = new SlotRepository();
 	const availabilityRepository: IAvailabilityRepository =
 		new AvailabilityRepository();
+	const pricingConfigRepository: IPricingConfigRepository =
+		new PricingConfigRepository();
 
 	const generateSlotsUC = new GenerateSlotsUC(
 		availabilityRepository,
 		slotRepository,
+		pricingConfigRepository,
 	);
 
 	// usecases
@@ -50,7 +55,10 @@ export function createSlotController() {
 		availabilityRepository,
 		generateSlotsUC,
 	);
-	const createCustomSlotUC = new CreateCustomSlotUC(slotRepository);
+	const createCustomSlotUC = new CreateCustomSlotUC(
+		slotRepository,
+		pricingConfigRepository,
+	);
 	const cancelSlotUC = new CancelSlotUC(slotRepository);
 
 	const getMentorSlotsUC = new GetMentorSlotsUC(slotRepository);

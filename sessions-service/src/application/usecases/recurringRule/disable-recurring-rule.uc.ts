@@ -9,8 +9,12 @@ export class DisableRecurringRuleUC implements IDisableRecurringRuleUC {
 	constructor(
 		private _availabilityRepository: IAvailabilityRepository,
 		private _slotRepository: ISlotRepository,
-	) {}
+	) { }
 
+	/**
+	 * Disables a recurring availability rule.
+	 * Also toggles associated slots to inactive.
+	 */
 	async execute(dto: DisableRecurringRuleDto): Promise<void> {
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(dto.mentorId);

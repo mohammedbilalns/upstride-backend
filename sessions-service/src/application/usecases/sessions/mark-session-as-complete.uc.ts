@@ -11,8 +11,14 @@ export class MarkSessionAsCompleteUC implements IMarkSessionAsCompleteUC {
 	constructor(
 		private _slotRepository: ISlotRepository,
 		private _eventBus: IEventBus,
-	) {}
+	) { }
 
+	/**
+	 * Marks a session as complete.
+	 * 1. Updates slot status to COMPLETED.
+	 * 2. Emits COMPLETED_SESSION event.
+	 * 3. Sends notification.
+	 */
 	async execute(dto: MarkSessionAsCompleteDto): Promise<void> {
 		const session = await this._slotRepository.findById(dto.sessionId);
 		if (!session) {

@@ -9,6 +9,7 @@ import {
 	RegisterAsMentorUC,
 	RejectMentorUC,
 	UpdateMentorUC,
+	FetchPublicMentorProfileUC
 } from "../../../application/usecases/mentorManagement";
 import type { IEventBus } from "../../../domain/events/IEventBus";
 import type {
@@ -92,6 +93,12 @@ export function createMentorController(): MentorController {
 	);
 
 	// ─────────────────────────────────────────────
+	// UseCases (New)
+	// ─────────────────────────────────────────────
+
+	const fetchPublicMentorProfileUC = new FetchPublicMentorProfileUC(mentorRepository);
+
+	// ─────────────────────────────────────────────
 	// Controller
 	// ─────────────────────────────────────────────
 	return new MentorController(
@@ -104,5 +111,6 @@ export function createMentorController(): MentorController {
 		fetchMentorByExpertiseUC,
 		fetchMentorDetailsUC,
 		fetchSelfUC,
+		fetchPublicMentorProfileUC
 	);
 }

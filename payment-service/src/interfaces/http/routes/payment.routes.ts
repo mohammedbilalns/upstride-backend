@@ -1,13 +1,22 @@
 import { Router } from "express";
 import { createPaymentController } from "../compositions/payment.composition";
+import { authMiddleware, authorizeRoles } from "../middlewares";
 
-const router = Router();
-const controller = createPaymentController();
+export function createPaymentRoutes(): Router {
+    const router = Router();
+    const paymentController = createPaymentController();
 
-router.post("/", controller.createPayment);
-router.post("/capture", controller.capturePayment);
-router.post("/webhook", controller.handleWebhook);
-router.get("/user", controller.getUserPayments);
-router.get("/mentor", controller.getMentorPayments);
+    router.get("/", paymentController.getPaymentsByIds);
 
-export default router;
+    router.use(authMiddleware(), authorizeRoles("mentor", "user"))
+    router.post("/", paymentController.createPayment);
+    router.post("/capture", paymentController.capturePayment);
+    router.post("/wallet", paymentController.payWithWallet);
+    router.post("/webhook", paymentController.handleWebhook);
+    router.get("/user", paymentController.getUserPayments);
+    router.get("/user", paymentController.getUserPayments);
+    router.get("/mentor", paymentController.getMentorPayments);
+    router.get("/:paymentId/receipt", paymentController.getPaymentReceipt);
+
+    return router;
+}

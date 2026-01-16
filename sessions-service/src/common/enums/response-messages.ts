@@ -16,4 +16,6 @@ export enum ResponseMessage {
 	RESCHEDULE_REQUESTED = "Your reschedule request has been submitted.",
 	RESCHEDULE_APPROVED = "Your reschedule request has been approved.",
 	RESCHEDULE_REJECTED = "Your reschedule request has been rejected.",
+	PRICING_CONFIG_SAVED = "Pricing configuration saved successfully",
+	PRICING_CONFIG_NOT_FOUND = "Pricing configuration not found",
 }

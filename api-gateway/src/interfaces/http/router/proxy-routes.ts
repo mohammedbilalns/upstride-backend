@@ -91,6 +91,9 @@ router.use("/chat", chatProxy);
 
 router.use("/sessions", sessionsProxy);
 router.use("/slots", sessionsProxy);
+router.use("/pricing", sessionsProxy);
 router.use("/payments", paymentProxy);
+router.use("/finance", paymentProxy);
+router.use("/wallets", paymentProxy);
 
 export default router;

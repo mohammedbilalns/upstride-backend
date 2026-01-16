@@ -9,4 +9,5 @@ export enum QueueEvents {
 	SESSION_BOOKED = "session.booked",
 	PAYMENT_COMPLETED = "payment.completed",
 	LIVE_SESSION_MESSAGE = "live.message",
+	STARTED_SESSION = "session.started",
 }

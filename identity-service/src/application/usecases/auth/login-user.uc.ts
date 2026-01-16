@@ -76,6 +76,7 @@ export class LoginUserUC implements ILoginUserUC {
 		if (user.role === UserRole.MENTOR) {
 			const mentor = await this._mentorRepository.findByUserId(user.id);
 			mentorId = mentor?.id;
+      publicUser.mentorId = mentorId;
 		}
 
 		// generate tokens

@@ -1,10 +1,11 @@
 export interface CreatePaymentDto {
 	userId: string;
-	mentorId: string;
-	bookingId: string;
+	mentorId?: string;
+	bookingId?: string;
 	sessionId?: string;
 	amount: number;
 	currency?: string;
+	paymentType?: 'BOOKING' | 'WALLET_LOAD';
 }
 
 export interface VerifyPaymentDto {
@@ -21,4 +22,13 @@ export interface GetPaymentHistoryDto {
 export interface WebhookEventDto {
 	event_type: string;
 	resource: any;
+}
+
+export interface PayWithWalletDto {
+	userId: string;
+	mentorId: string;
+	slotId: string;
+	bookingId: string;
+	amount: number;
+	currency?: string;
 }

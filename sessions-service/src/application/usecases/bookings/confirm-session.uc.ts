@@ -11,8 +11,13 @@ export class ConfirmSessionUC implements IConfirmSessionUC {
 	constructor(
 		private _bookingRepository: IBookingRepository,
 		private _slotRepository: ISlotRepository,
-	) {}
+	) { }
 
+	/**
+	 * Confirms a session after successful payment.
+	 * 1. Updates booking status to CONFIRMED.
+	 * 2. Updates slot status to FULL.
+	 */
 	async execute(bookingId: string, paymentId: string): Promise<void> {
 		//  Find the booking by bookingId
 		const booking = await this._bookingRepository.findById(bookingId);
@@ -31,6 +36,13 @@ export class ConfirmSessionUC implements IConfirmSessionUC {
 			status: BookingStatus.CONFIRMED,
 			paymentId: paymentId,
 		});
+
+		logger.info(`Booking retrieved for confirmation: ${JSON.stringify(booking)}`);
+		logger.info(`Slot ID type: ${typeof booking.slotId}, value: ${booking.slotId}`);
+
+		if (typeof booking.slotId !== 'string') {
+			logger.warn(`WARNING: booking.slotId is NOT a string! It is: ${typeof booking.slotId}`);
+		}
 
 		//  Update Slot Status
 		await this._slotRepository.update(booking.slotId, {

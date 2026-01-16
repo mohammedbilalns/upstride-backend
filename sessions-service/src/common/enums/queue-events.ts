@@ -4,4 +4,6 @@ export enum QueueEvents {
 	SEND_NOTIFICATION = "send.notification",
 	PAYMENT_COMPLETED = "payment.completed",
 	SESSION_BOOKED = "session.booked",
+	BOOKING_CANCELLED = "booking.cancelled",
+	REFUND_PROCESSED = "refund.processed",
 }

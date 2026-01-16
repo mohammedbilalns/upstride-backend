@@ -11,8 +11,12 @@ export class RequestRescheduleUC implements IRequestRescheduleUC {
 	constructor(
 		private _bookingRepository: IBookingRepository,
 		private _slotRepository: ISlotRepository,
-	) {}
+	) { }
 
+	/**
+	 * Requests a reschedule for a booking.
+	 * Validates the requested slot and updates the booking with a pending reschedule request.
+	 */
 	async execute(dto: RequestRescheduleDto): Promise<Booking> {
 		const booking = await this._bookingRepository.findById(dto.bookingId);
 		if (!booking) throw new AppError("Booking not found", HttpStatus.NOT_FOUND);

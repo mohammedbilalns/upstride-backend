@@ -6,17 +6,27 @@ import { BaseRepository } from "./base.repository";
 
 export class BookingRepository
 	extends BaseRepository<Booking, IBooking>
-	implements IBookingRepository
-{
+	implements IBookingRepository {
 	constructor() {
 		super(bookingModel);
+	}
+
+	private stringifyId(id: any): string {
+		if (!id) return id;
+		if (typeof id === 'string') return id;
+		if (id.id) return id.id;
+		if (id._id) return id._id.toString();
+		if (typeof id.toHexString === 'function') return id.toHexString();
+		if (Buffer.isBuffer(id)) return id.toString('hex');
+		if (id._bsontype === 'Binary' && id.buffer) return id.buffer.toString('hex');
+		return String(id);
 	}
 
 	protected mapToDomain(doc: IBooking): Booking {
 		const mapped = mapMongoDocument(doc)!;
 		const booking: Booking = {
 			id: mapped.id,
-			slotId: mapped.slotId, // This might be an object if populated
+			slotId: this.stringifyId(mapped.slotId),
 			userId: mapped.userId,
 			status: mapped.status,
 			paymentId: mapped.paymentId,
@@ -25,37 +35,22 @@ export class BookingRepository
 		};
 
 		// Handle slot population
-		// 1. Aggregation case: 'slot' field added via $lookup
 		if ("slot" in doc) {
-			booking.slot = (doc as any).slot;
+			const slotRaw = (doc as any).slot;
+			if (slotRaw && typeof slotRaw === 'object' && '__v' in slotRaw) {
+				delete slotRaw.__v;
+			}
+			booking.slot = slotRaw;
 		}
-		// 2. Mongoose populate case: slotId field replaced by object
 		else if (
 			doc.slotId &&
 			typeof doc.slotId === "object" &&
 			"mentorId" in doc.slotId
 		) {
 			booking.slot = doc.slotId as any;
-			// Reset slotId to string ID just in case domain expects string ID
-			// But domain interface says `slotId: string`, so we should probably keep it as string ID
-			// However `mapped.slotId` likely handles it if `mapMongoDocument` does `obj._id.toString()`.
-			// If `slotId` was populated, `doc.toObject()` might have legacy behavior.
-			// Let's rely on standard mapping but add `slot`.
 		}
 
-		// If slotId is an object (populated or Buffer/ObjectId), ensure it's a string
-		if (booking.slotId && typeof booking.slotId === "object") {
-			const slotObj = booking.slotId as any;
-			// Handle populated object with id/_id
-			if (slotObj.id || slotObj._id) {
-				booking.slotId = slotObj.id || slotObj._id.toString();
-			}
-			// Handle Buffer/ObjectId directly
-			else if (slotObj.toString) {
-				// specific check for Buffer if needed, usually toString() works for ObjectId
-				booking.slotId = slotObj.toString();
-			}
-		}
+		booking.slotId = this.stringifyId(booking.slotId);
 
 		return booking;
 	}
@@ -103,8 +98,14 @@ export class BookingRepository
 		return doc ? this.mapToDomain(doc) : null;
 	}
 
+	public async findBySlotId(slotId: string): Promise<Booking | null> {
+		const doc = await this._model.findOne({ slotId }).sort({ createdAt: -1 });
+		return doc ? this.mapToDomain(doc) : null;
+	}
+
+
+
 	public async findByUserId(userId: string): Promise<Booking[]> {
-		// Populate slotId to get slot details for regular find
 		const docs = await this._model.find({ userId }).populate("slotId").exec();
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
@@ -113,7 +114,6 @@ export class BookingRepository
 		id: string,
 		role: "user" | "mentor",
 	): Promise<Booking[]> {
-		// Optimized pipeline
 		const pipeline: any[] = [
 			{
 				$lookup: {
@@ -124,7 +124,7 @@ export class BookingRepository
 				},
 			},
 			{ $unwind: "$slot" },
-			{ $match: { "slot.startAt": { $gte: new Date() } } }, // Future dates
+			{ $match: { "slot.startAt": { $gte: new Date() } } },
 		];
 
 		// Add role-based specific match
@@ -167,9 +167,89 @@ export class BookingRepository
 		}
 
 		pipeline.push({ $match: roleMatch });
-		pipeline.push({ $sort: { "slot.startAt": -1 } }); // Newest history first
+		pipeline.push({ $sort: { "slot.startAt": -1 } });
 
 		const docs = await this._model.aggregate(pipeline);
 		return docs.map((doc) => this.mapToDomain(doc));
+	}
+
+	public async findUserSessions(
+		userId: string,
+		type: "upcoming" | "history",
+		page: number,
+		limit: number,
+		mentorId?: string
+	): Promise<{ sessions: Booking[]; total: number }> {
+		const skip = (page - 1) * limit;
+		const now = new Date();
+
+		const matchStage: any = {};
+
+		if (type === "upcoming") {
+			matchStage["slot.startAt"] = { $gte: now };
+			matchStage["status"] = { $in: ["CONFIRMED", "PENDING", "RESERVED"] };
+		} else {
+			matchStage["$or"] = [
+				//  Completed sessions
+				{ "status": "COMPLETED" },
+
+				//  Confirmed sessions in the past
+				{
+					"status": "CONFIRMED",
+					"slot.endAt": { $lt: now }
+				},
+
+				//  Cancelled sessions that have a valid payment (excluding 'PENDING' or missing)
+				{
+					"status": "CANCELLED",
+					"paymentId": { $exists: true, $nin: ["PENDING", null, ""] }
+				}
+			];
+		}
+
+		// If user is a mentor  check if they are either the participant OR the mentor
+		const orConditions: any[] = [{ userId: userId }];
+		if (mentorId) {
+			orConditions.push({ "slot.mentorId": mentorId });
+		}
+
+
+		// Combine match criteria
+		const pipeline: any[] = [
+			{
+				$lookup: {
+					from: "slots",
+					localField: "slotId",
+					foreignField: "_id",
+					as: "slot",
+				},
+			},
+			{ $unwind: "$slot" },
+			{
+				$match: {
+					...matchStage,
+					$or: orConditions
+				}
+			},
+			{
+				$sort: { "slot.startAt": type === 'upcoming' ? 1 : -1 }
+			},
+			{
+				$facet: {
+					metadata: [{ $count: "total" }],
+					data: [{ $skip: skip }, { $limit: limit }]
+				}
+			}
+		];
+
+		const result = await this._model.aggregate(pipeline);
+
+		const total = result[0].metadata[0]?.total || 0;
+		const docs = result[0].data || [];
+
+		return {
+			sessions: docs.map((doc: any) => this.mapToDomain(doc)),
+			total
+		};
 	}
 }

@@ -7,8 +7,12 @@ import { AppError } from "../../errors/app-error";
 
 // Reusing CancelSlotDto since it just needs mentorId and slotId
 export class EnableSlotUC implements ICancleSlotUC {
-	constructor(private _slotRepository: ISlotRepository) {}
+	constructor(private _slotRepository: ISlotRepository) { }
 
+	/**
+	 * Enables a previously cancelled slot.
+	 * Updates status to OPEN and clears cancellation details.
+	 */
 	async execute(dto: CancelSlotDto): Promise<void> {
 		const existingSlot = await this._slotRepository.findById(dto.slotId);
 		// check if the slot exists

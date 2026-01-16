@@ -2,6 +2,7 @@ import cron from "node-cron";
 import logger from "../../common/utils/logger";
 import { AvailabilityRepository } from "../../infrastructure/database/repositories/availability.repository";
 import { SlotRepository } from "../../infrastructure/database/repositories/slot.repository";
+import { PricingConfigRepository } from "../../infrastructure/database/repositories/pricing-config.repository";
 import { SlotStatus } from "../../domain/entities/slot.entity";
 
 export function scheduleGenerateSlotsJob() {
@@ -20,14 +21,39 @@ export function scheduleGenerateSlotsJob() {
 export async function generateSlots() {
 	const availabilityRepo = new AvailabilityRepository();
 	const slotRepo = new SlotRepository();
+	const pricingRepo = new PricingConfigRepository();
 
 	const activeAvailabilities = await availabilityRepo.findAllActive();
 	const today = new Date();
 	const bufferDays = 7; // Generate slots for the next 7 days
 
 	for (const availability of activeAvailabilities) {
+		// Fetch pricing config for this mentor
+		const pricingConfig = await pricingRepo.findByMentor(
+			availability.mentorId,
+		);
+
+		if (!pricingConfig || !pricingConfig.isActive) {
+			logger.warn(
+				`No active pricing config for mentor ${availability.mentorId}, skipping slot generation`,
+			);
+			continue;
+		}
+
 		for (const rule of availability.recurringRules) {
 			if (!rule.isActive) continue;
+
+			// Find price tier for this duration
+			const priceTier = pricingConfig.pricingTiers.find(
+				(tier) => tier.duration === rule.slotDuration,
+			);
+
+			if (!priceTier) {
+				logger.warn(
+					`No pricing tier for duration ${rule.slotDuration} for mentor ${availability.mentorId}`,
+				);
+				continue;
+			}
 
 			// Check next 7 days
 			for (let i = 0; i < bufferDays; i++) {
@@ -67,7 +93,7 @@ export async function generateSlots() {
 								startAt: slotStart,
 								endAt: slotEnd,
 								status: SlotStatus.OPEN,
-								price: availability.price,
+								price: priceTier.price,
 								generatedFrom: availability.id as any, // Cast to any or ObjectId if needed
 							});
 						}

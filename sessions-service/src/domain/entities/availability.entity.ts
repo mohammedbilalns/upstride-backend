@@ -1,15 +1,15 @@
+import type { AllowedDuration } from "../../application/dtos/pricing-config.dto";
+
 export interface Availability {
 	id: string;
-	mentorId: string;
 	recurringRules: {
 		ruleId: string;
 		weekDay: number;
 		startTime: number;
 		endTime: number;
-		slotDuration: 60 | 90 | 120 | 180;
-		price: number;
+		slotDuration: AllowedDuration; // Only 30, 60, or 90 minutes
 		isActive?: boolean;
 	}[];
-	price: number;
+	mentorId: string;
 	createdAt: Date;
 }

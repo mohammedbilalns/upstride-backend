@@ -6,8 +6,12 @@ import { CancelSlotDto } from "../../dtos/slot.dto";
 import { AppError } from "../../errors/app-error";
 
 export class CancelSlotUC implements ICancleSlotUC {
-	constructor(private _slotRepository: ISlotRepository) {}
+	constructor(private _slotRepository: ISlotRepository) { }
 
+	/**
+	 * Cancels a slot.
+	 * Updates the slot status to CANCELLED and marks it as cancelled by mentor.
+	 */
 	async execute(dto: CancelSlotDto): Promise<void> {
 		const existingSlot = await this._slotRepository.findById(dto.slotId);
 		// check if the slot exists

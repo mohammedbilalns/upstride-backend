@@ -4,14 +4,16 @@ import { IBlockUserUC } from "../../../domain/useCases/userManagement/block-user
 import { BlockUserDto } from "../../dtos/user.dto";
 
 export class BlockUserUC implements IBlockUserUC {
-	constructor(
-		private _userRepository: IUserRepository,
-		private _revokedUserRepository: IRevokedUserRepository,
-	) {}
+  constructor(
+    private _userRepository: IUserRepository,
+    private _revokedUserRepository: IRevokedUserRepository,
+  ) {}
 
-	async execute(dto: BlockUserDto): Promise<void> {
-		const { userId } = dto;
-		this._userRepository.update(userId, { isBlocked: true });
-		this._revokedUserRepository.add(userId);
-	}
+  async execute(dto: BlockUserDto): Promise<void> {
+    const { userId } = dto;
+    Promise.all([
+      this._userRepository.update(userId, { isBlocked: true })
+      ,this._revokedUserRepository.add(userId)
+    ])
+  }
 }

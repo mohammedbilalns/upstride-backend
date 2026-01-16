@@ -10,10 +10,9 @@ const envSchema = z.object({
 	ACCESS_TOKEN_EXPIRY: z.string().default("15m"),
 	REFRESH_TOKEN_EXPIRY: z.string().default("7d"),
 	REDIS_URL: z.string(),
-	USERS_ENDPOINT: z.string().default("http://localhost:3000/api/v1/users"),
-	PAYMENT_SERVICE_URL: z
-		.string()
-		.default("http://localhost:3002/api/v1/payments"),
+	USERS_ENDPOINT: z.string(),
+	PAYMENT_SERVICE_URL: z.string(),
+	MENTOR_SERVICE_URL: z.string(),
 });
 
 const env = envSchema.parse(process.env);

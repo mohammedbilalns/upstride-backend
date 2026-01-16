@@ -6,6 +6,19 @@ export enum ErrorMessage {
 	PAYPAL_CAPTURE_FAILED = "We encountered an issue capturing the PayPal payment. Please try again.",
 	CHECK_REQUIRED_FIELDS = "Please check that all required fields are provided.",
 
+	// Wallet & Transaction Errors
+	WALLET_NOT_FOUND = "Wallet not found.",
+	INVALID_TRANSACTION_AMOUNT = "Transaction amount must be greater than zero.",
+	INSUFFICIENT_BALANCE = "Insufficient wallet balance.",
+	WALLET_CREATION_FAILED = "Failed to create wallet.",
+	TRANSACTION_FAILED = "Failed to record transaction.",
+
+	// Refund Errors
+	USER_WALLET_NOT_FOUND = "User wallet not found.",
+	MENTOR_WALLET_NOT_FOUND = "Mentor wallet not found.",
+	PLATFORM_WALLET_NOT_FOUND = "Platform wallet not found.",
+	REFUND_PROCESSING_FAILED = "Failed to process refund.",
+
 	// Auth & Middleware Errors
 	TOKEN_NOT_FOUND = "We could not find the required token.",
 	BLOCKED_FROM_PLATFORM = "Your account has been blocked. Please contact support for assistance.",

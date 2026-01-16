@@ -6,8 +6,7 @@ import { BaseRepository } from "./base.repository";
 
 export class PaymentRepository
 	extends BaseRepository<Payment, IPaymentDocument>
-	implements IPaymentRepository
-{
+	implements IPaymentRepository {
 	constructor() {
 		super(PaymentModel);
 	}
@@ -28,7 +27,9 @@ export class PaymentRepository
 			currency: mapped.currency,
 			status: mapped.status,
 			transactionId: mapped.transactionId,
+			orderId: mapped.orderId,
 			paymentMethod: mapped.paymentMethod,
+			purpose: mapped.purpose,
 			createdAt: mapped.createdAt,
 			updatedAt: mapped.updatedAt,
 		};
@@ -53,6 +54,11 @@ export class PaymentRepository
 
 	async findByMentorId(mentorId: string): Promise<Payment[]> {
 		const docs = await this._model.find({ mentorId }).exec();
+		return docs.map((doc) => this.mapToDomain(doc));
+	}
+
+	async findByIds(ids: string[]): Promise<Payment[]> {
+		const docs = await this._model.find({ _id: { $in: ids } }).exec();
 		return docs.map((doc) => this.mapToDomain(doc));
 	}
 }

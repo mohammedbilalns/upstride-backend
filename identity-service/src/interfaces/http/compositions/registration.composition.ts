@@ -7,11 +7,13 @@ import {
 } from "../../../domain/useCases/userRegistration";
 import {
 	ExpertiseRepository,
+	MentorRepository,
 	SkillRepository,
 	UserRepository,
 } from "../../../infrastructure/database/repositories";
 import {
 	IExpertiseRepository,
+	IMentorRepository,
 	ISkillRepository,
 	IUserRepository,
 	IVerificationTokenRepository,
@@ -42,6 +44,7 @@ export function createRegistrationController(): RegistrationController {
 	const cacheService: ICacheService = new CacheService(redisClient);
 	const tokenService: ITokenService = new TokenService(env.JWT_SECRET);
 	const cryptoService: ICryptoService = new CryptoService();
+  const mentorRepository: IMentorRepository = new MentorRepository();
 
 	// usecases
 	const createInterestsUC: ICreateInterestsUC = new CreateInterestsUC(
@@ -49,6 +52,7 @@ export function createRegistrationController(): RegistrationController {
 		verificationTokenRepository,
 		expertiseRepository,
 		skillRepostiory,
+    mentorRepository,
 		cacheService,
 		tokenService,
 	);

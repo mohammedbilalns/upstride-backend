@@ -9,8 +9,7 @@ import { BaseRepository } from "./base.repository";
 
 export class AvailabilityRepository
 	extends BaseRepository<Availability, IAvailability>
-	implements IAvailabilityRepository
-{
+	implements IAvailabilityRepository {
 	constructor() {
 		super(availabilityModel);
 	}
@@ -21,7 +20,6 @@ export class AvailabilityRepository
 			id: mapped.id,
 			mentorId: mapped.mentorId,
 			recurringRules: mapped.recurringRules,
-			price: mapped.price,
 			createdAt: mapped.createdAt,
 		};
 	}

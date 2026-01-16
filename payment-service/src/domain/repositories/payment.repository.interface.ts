@@ -7,4 +7,5 @@ export interface IPaymentRepository {
 	findByTransactionId(transactionId: string): Promise<Payment | null>;
 	findByUserId(userId: string): Promise<Payment[]>;
 	findByMentorId(mentorId: string): Promise<Payment[]>;
+	findByIds(ids: string[]): Promise<Payment[]>;
 }

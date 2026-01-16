@@ -1,16 +1,20 @@
 import { Slot } from "../../domain/entities/slot.entity";
 
+import type { AllowedDuration } from "./pricing-config.dto";
+
 export interface CreateCustomSlotDto {
 	mentorId: string;
 	startAt: Date;
 	endAt: Date;
-	slotDuration: number;
-	price: number;
+	slotDuration: AllowedDuration;
 }
 
 export interface GetMentorSlotsDto {
 	mentorId: string;
 	availableOnly?: boolean;
+	month?: number;
+	year?: number;
+	userId?: string;
 }
 
 export interface GetMentorSlotsResponse {

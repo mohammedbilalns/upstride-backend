@@ -7,3 +7,4 @@ export * from "./find-mentor-by-expertise-and-skill.uc";
 export * from "./register-as-mentor.uc";
 export * from "./reject-mentor.uc";
 export * from "./update-mentor.uc";
+export * from "./fetch-public-mentor-profile.uc";

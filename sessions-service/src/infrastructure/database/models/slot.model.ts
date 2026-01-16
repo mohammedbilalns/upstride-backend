@@ -1,7 +1,7 @@
 import { type Document, model, Schema } from "mongoose";
 import type { Slot } from "../../../domain/entities/slot.entity";
 
-export interface ISlot extends Document, Omit<Slot, "id"> {}
+export interface ISlot extends Document, Omit<Slot, "id"> { }
 
 export const slotSchema: Schema = new Schema(
 	{
@@ -13,7 +13,7 @@ export const slotSchema: Schema = new Schema(
 		ruleId: { type: String, default: null },
 		status: {
 			type: String,
-			enum: ["OPEN", "FULL", "CANCELLED", "STARTED", "COMPLETED"],
+			enum: ["OPEN", "FULL", "CANCELLED", "STARTED", "COMPLETED", "RESERVED"],
 			default: "OPEN",
 		},
 		price: { type: Number },

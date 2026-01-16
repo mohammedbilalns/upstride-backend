@@ -5,15 +5,15 @@ const rule = z.object({
 	startTime: z.string().regex(/^\d{2}:\d{2}$/),
 	endTime: z.string().regex(/^\d{2}:\d{2}$/),
 	slotDuration: z.union([
+		z.literal(30),
 		z.literal(60),
 		z.literal(90),
-		z.literal(120),
-		z.literal(180),
 	]),
 	price: z
 		.number()
 		.min(10, "Price must be at least 10")
-		.max(10000, "Price cannot exceed 10000"),
+		.max(10000, "Price cannot exceed 10000")
+		.optional(),
 });
 
 // create recurring rules
@@ -25,9 +25,8 @@ export const createRecurringRulePayloadSchema = z.object({
 	rules: z.array(rule),
 });
 
-export const addRecurringRulePayloadSchema = z.object({
-	rule,
-});
+export const addRecurringRulePayloadSchema = rule;
+
 
 //  update recurring rule
 export const updateRecurringRuleParmsSchema = z.object({

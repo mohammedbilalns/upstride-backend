@@ -12,6 +12,19 @@ export interface ISlotRepository extends IBaseRepository<Slot> {
 
 	toggleSlotStatusByRuleId(ruleId: string, isActive: boolean): Promise<void>;
 
-	findUpcomingByMentor(mentorId: string, now?: Date): Promise<Slot[]>;
+	findUpcomingByMentor(
+		mentorId: string,
+		now?: Date,
+		startDate?: Date,
+		endDate?: Date,
+		userId?: string,
+	): Promise<Slot[]>;
 	deleteUnbookedFutureSlots(ruleId: string): Promise<void>;
+	updatePriceForFutureSlots(
+		mentorId: string,
+		durationInMinutes: number,
+		newPrice: number,
+	): Promise<void>;
+	findInTimeRange(start: Date, end: Date, status?: string): Promise<Slot[]>;
+	countFutureSlotsByMentor(mentorId: string): Promise<number>;
 }

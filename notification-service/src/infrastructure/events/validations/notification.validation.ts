@@ -7,6 +7,7 @@ export const notificationValidationSchema = z.object({
 	triggeredBy: z.string().optional(),
 	targetResource: z.string(),
 	time: z.string().optional(),
+	payload: z.any().optional(),
 });
 
 export type NotificationPayload = z.infer<typeof notificationValidationSchema>;

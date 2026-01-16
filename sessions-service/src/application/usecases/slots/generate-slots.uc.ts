@@ -1,6 +1,7 @@
 import { IGenerateSlotsUC } from "../../../domain/useCases/slots/generate-slots.uc.interface";
 import { IAvailabilityRepository } from "../../../domain/repositories/availability.repository.interface";
 import { ISlotRepository } from "../../../domain/repositories/slot.repository.interface";
+import { IPricingConfigRepository } from "../../../domain/repositories/pricing-config.repository.interface";
 import { SlotStatus } from "../../../domain/entities/slot.entity";
 import logger from "../../../common/utils/logger";
 
@@ -8,8 +9,14 @@ export class GenerateSlotsUC implements IGenerateSlotsUC {
 	constructor(
 		private _availabilityRepository: IAvailabilityRepository,
 		private _slotRepository: ISlotRepository,
-	) {}
+		private _pricingConfigRepository: IPricingConfigRepository,
+	) { }
 
+	/**
+	 * Generates slots for a mentor based on their recurring availability.
+	 * Generates slots for the next 7 days.
+	 * Handles pricing configuration and overlap checks.
+	 */
 	async execute(mentorId?: string): Promise<void> {
 		const availabilities = mentorId
 			? [await this._availabilityRepository.findByMentorId(mentorId)]
@@ -21,11 +28,44 @@ export class GenerateSlotsUC implements IGenerateSlotsUC {
 		for (const availability of availabilities) {
 			if (!availability) continue;
 
+			// Fetch pricing configuration for this mentor
+			let pricingConfig = await this._pricingConfigRepository.findByMentor(
+				availability.mentorId,
+			);
+
+			if (!pricingConfig || !pricingConfig.isActive) {
+				logger.info(
+					`No active pricing configuration for mentor ${availability.mentorId}, creating default configuration`,
+				);
+
+				pricingConfig = await this._pricingConfigRepository.create({
+					mentorId: availability.mentorId,
+					pricingTiers: [
+						{ duration: 30, price: 500 },
+						{ duration: 60, price: 1000 },
+						{ duration: 90, price: 1500 },
+					],
+					isActive: true,
+				});
+			}
+
 			for (const rule of availability.recurringRules) {
 				console.log(
 					`Processing rule: ${rule.ruleId}, WeekDay: ${rule.weekDay}, Active: ${rule.isActive}`,
 				);
 				if (!rule.isActive) continue;
+
+				// Find price for this slot duration from pricing config
+				const priceTier = pricingConfig.pricingTiers.find(
+					(tier) => tier.duration === rule.slotDuration,
+				);
+
+				if (!priceTier) {
+					logger.warn(
+						`No pricing tier found for duration ${rule.slotDuration} minutes for mentor ${availability.mentorId}`,
+					);
+					continue;
+				}
 
 				for (let i = 0; i < bufferDays; i++) {
 					const targetDate = new Date(today);
@@ -54,7 +94,7 @@ export class GenerateSlotsUC implements IGenerateSlotsUC {
 								continue;
 							}
 
-							// Idempotency: Check overlap
+							//  Check overlap
 							const existingSlot =
 								await this._slotRepository.findOverlappingSlots(
 									availability.mentorId,
@@ -68,7 +108,7 @@ export class GenerateSlotsUC implements IGenerateSlotsUC {
 									startAt: slotStart,
 									endAt: slotEnd,
 									status: SlotStatus.OPEN,
-									price: rule.price,
+									price: priceTier.price,
 									generatedFrom: availability.id as any,
 									ruleId: rule.ruleId,
 								});

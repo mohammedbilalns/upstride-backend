@@ -6,8 +6,7 @@ import { BaseRepository } from "./base.repository";
 
 export class SlotRepository
 	extends BaseRepository<Slot, ISlot>
-	implements ISlotRepository
-{
+	implements ISlotRepository {
 	constructor() {
 		super(slotModel);
 	}
@@ -40,13 +39,30 @@ export class SlotRepository
 	public async findUpcomingByMentor(
 		mentorId: string,
 		now: Date = new Date(),
+		startDate?: Date,
+		endDate?: Date,
+		userId?: string,
 	): Promise<Slot[]> {
-		const docs = await this._model.find({
+		const query: any = {
 			mentorId,
 			isActive: true,
-			status: "OPEN",
 			startAt: { $gt: now },
-		});
+			$or: [
+				{ status: "OPEN" },
+				...(userId ? [{ status: "RESERVED", participantId: userId }] : []),
+				...(userId ? [{ status: "FULL", participantId: userId }] : []),
+			],
+		};
+
+		if (startDate) {
+			query.startAt.$gte = startDate;
+		}
+
+		if (endDate) {
+			query.startAt.$lte = endDate;
+		}
+
+		const docs = await this._model.find(query);
 
 		return docs.map(this.mapToDomain);
 	}
@@ -78,17 +94,60 @@ export class SlotRepository
 		ruleId: string,
 		isActive: boolean,
 	): Promise<void> {
-		console.log("toggling status ...");
 		await this._model.updateMany(
 			{ ruleId: ruleId },
 			{ $set: { isActive: isActive } },
 		);
-		console.log("toggled status ...");
 	}
 
 	public async deleteUnbookedFutureSlots(ruleId: string): Promise<void> {
 		await this._model.deleteMany({
 			ruleId: ruleId,
+			status: "OPEN",
+			startAt: { $gt: new Date() },
+		});
+	}
+
+	public async updatePriceForFutureSlots(
+		mentorId: string,
+		durationInMinutes: number,
+		newPrice: number,
+	): Promise<void> {
+		const durationMs = durationInMinutes * 60 * 1000;
+
+		await this._model.updateMany(
+			{
+				mentorId,
+				status: "OPEN",
+				startAt: { $gt: new Date() },
+				$expr: {
+					$eq: [{ $subtract: ["$endAt", "$startAt"] }, durationMs],
+				},
+			},
+			{
+				$set: { price: newPrice },
+			},
+		);
+	}
+
+	public async findInTimeRange(
+		start: Date,
+		end: Date,
+		status?: string,
+	): Promise<Slot[]> {
+		const query: any = {
+			startAt: { $gte: start, $lt: end },
+		};
+		if (status) {
+			query.status = status;
+		}
+		const docs = await this._model.find(query);
+		return docs.map(this.mapToDomain);
+	}
+
+	public async countFutureSlotsByMentor(mentorId: string): Promise<number> {
+		return this._model.countDocuments({
+			mentorId,
 			status: "OPEN",
 			startAt: { $gt: new Date() },
 		});

@@ -11,6 +11,10 @@ export function createMentorRouter() {
 		"/expertise/:expertiseId",
 		mentorController.fetchMentorsByExpertiseId,
 	);
+	router.get(
+		"/basic/:mentorId",
+		mentorController.getBasicProfile
+	);
 	router.use(authMiddleware());
 	router.post(
 		"/",

@@ -25,7 +25,6 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 
 	/**
 	 * Handles Google OAuth login / registration flow.
-	 * outcomes:
 	 *  - New Google user → create user and issue email verification token
 	 *  - Existing password-based user → attach Google login to their account
 	 *  - Existing Google user → log in and generate platform tokens
@@ -76,6 +75,7 @@ export class GoogleAuthenticateUC implements IGoogleAuthenticateUC {
 		if (user.role === UserRole.MENTOR) {
 			const mentor = await this._mentorRepository.findByUserId(user.id);
 			mentorId = mentor?.id;
+      publicUser.mentorId = mentorId;
 		}
 
 		// generate tokens

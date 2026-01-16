@@ -1,12 +1,12 @@
 import { Schema, model, Document } from "mongoose";
 import { Payment } from "../../../domain/entities/payment.entity";
 
-export interface IPaymentDocument extends Document, Omit<Payment, "id"> {}
+export interface IPaymentDocument extends Document, Omit<Payment, "id"> { }
 
 const paymentSchema = new Schema(
 	{
 		userId: { type: String, required: true },
-		mentorId: { type: String, required: true },
+		mentorId: { type: String, required: false },
 		bookingId: { type: String },
 		sessionId: { type: String },
 		amount: { type: Number, required: true },
@@ -17,7 +17,13 @@ const paymentSchema = new Schema(
 			default: "PENDING",
 		},
 		transactionId: { type: String },
+		orderId: { type: String, required: true },
 		paymentMethod: { type: String, default: "PAYPAL" },
+		purpose: {
+			type: String,
+			enum: ["BOOKING", "WALLET_LOAD"],
+			default: "BOOKING",
+		},
 	},
 	{ timestamps: true },
 );

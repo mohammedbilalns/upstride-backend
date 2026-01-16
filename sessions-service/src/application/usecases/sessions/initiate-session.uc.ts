@@ -11,8 +11,14 @@ export class InitiateSessionUC implements IInitiateSessionUC {
 	constructor(
 		private _slotRepository: ISlotRepository,
 		private _eventBus: IEventBus,
-	) {}
+	) { }
 
+	/**
+	 * Initiates a session.
+	 * 1. Updates slot status to STARTED.
+	 * 2. Emits STARTED_SESSION event.
+	 * 3. Sends notification to participant.
+	 */
 	async execute(dto: InitiateSessionDto): Promise<void> {
 		const session = await this._slotRepository.findById(dto.sessionId);
 		if (!session)
@@ -26,8 +32,12 @@ export class InitiateSessionUC implements IInitiateSessionUC {
 			this._slotRepository.update(dto.sessionId, {
 				status: SlotStatus.STARTED,
 			}),
-			//TODO: update the queue payload
-			this._eventBus.publish(QueueEvents.STARTED_SESSION, {}),
+			// Emitting STARTED_SESSION with details for Gateway to create room/signal users
+			this._eventBus.publish(QueueEvents.STARTED_SESSION, {
+				sessionId: session.id,
+				mentorId: session.mentorId,
+				userId: session.participantId,
+			}),
 			// send notification to the user
 			this._eventBus.publish(QueueEvents.SEND_NOTIFICATION, {
 				userId: session.participantId,

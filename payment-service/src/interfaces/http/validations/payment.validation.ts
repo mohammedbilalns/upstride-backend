@@ -2,11 +2,12 @@ import { z } from "zod";
 
 export const createPaymentSchema = z.object({
 	userId: z.string().min(1, "User ID is required"),
-	mentorId: z.string().min(1, "Mentor ID is required"),
-	bookingId: z.string().min(1, "Booking ID is required"),
+	mentorId: z.string().optional(),
+	bookingId: z.string().optional(),
+	paymentType: z.enum(["BOOKING", "WALLET_LOAD"]).optional().default("BOOKING"),
 	sessionId: z.string().optional(),
 	amount: z.number().min(0.01, "Amount must be greater than 0"),
-	currency: z.string().default("USD").optional(),
+	currency: z.string().default("INR").optional(),
 });
 
 export const verifyPaymentSchema = z.object({
@@ -21,4 +22,11 @@ export const getUserPaymentsSchema = z.object({
 
 export const getMentorPaymentsSchema = z.object({
 	mentorId: z.string().min(1, "Mentor ID is required"),
+});
+
+export const payWithWalletSchema = z.object({
+	slotId: z.string().min(1, "Slot ID is required"),
+	mentorId: z.string().min(1, "Mentor ID is required"),
+	bookingId: z.string().min(1, "Booking ID is required"),
+	amount: z.number().min(0.01, "Amount must be greater than 0"),
 });

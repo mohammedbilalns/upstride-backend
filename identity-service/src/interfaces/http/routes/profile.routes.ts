@@ -9,7 +9,7 @@ export function createProfileRouter() {
 	router.use(authMiddleware());
 	router.use(authorizeRoles("user", "mentor"));
 	router.get("/:profileId", profileController.fetchProfileById);
-	router.post("/", profileController.updateProfile);
+	router.put("/", profileController.updateProfile);
 	router.put("/change-password", profileController.changePassword);
 
 	return router;

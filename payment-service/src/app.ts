@@ -8,9 +8,13 @@ import { connectToDb, redisClient } from "./infrastructure/config";
 import env from "./infrastructure/config/env";
 import { connectRabbitmq } from "./infrastructure/events/connect-rabbitmq";
 import { errorHandler, requestLogger } from "./interfaces/http/middlewares";
-import paymentRoutes from "./interfaces/http/routes/payment.routes";
+import { createPaymentRoutes } from "./interfaces/http/routes/payment.routes";
+import { createWalletRoutes } from "./interfaces/http/routes/wallet.route";
+import { createAnalyticsRoutes } from "./interfaces/http/routes/analytics.routes";
+import { WalletRepository } from "./infrastructure/database/repositories/wallet.repository";
+import { InitializePlatformWalletUC } from "./application/useCases/wallets/initialize-platform-wallet.uc";
 /**
- * Main application class for the Identity Service.
+ * Main application class for the Payment Service.
  * Sets up middlewares, routes, and starts the Express server.
  */
 
@@ -54,13 +58,16 @@ class App {
 	/*
 	 * Registers all application routes.
 	 * - `/api/payments` → Payment related routes
+	 * - `/api/wallets` → Wallet related routes
 	 * - Global error handler
 	 *
 	 * @private
 	 */
 
 	private _setupRoutes() {
-		this._app.use("/api/payments", paymentRoutes);
+		this._app.use("/api/payments", createPaymentRoutes());
+		this._app.use("/api/wallets", createWalletRoutes());
+		this._app.use("/api/finance", createAnalyticsRoutes());
 		this._app.use(errorHandler);
 	}
 
@@ -71,10 +78,20 @@ class App {
 	 * @public
 	 */
 	public listen(port: string) {
-		const server = this._app.listen(port, () => {
+		const server = this._app.listen(port, async () => {
 			connectRabbitmq();
-			connectToDb();
+			await connectToDb(); // Ensure DB is connected
 			redisClient.ping;
+
+			// Initialize Platform Wallet
+			try {
+				const walletRepository = new WalletRepository();
+				const initPlatformWallet = new InitializePlatformWalletUC(walletRepository);
+				await initPlatformWallet.execute();
+			} catch (error) {
+				logger.error("Failed to run platform wallet initialization:", error);
+			}
+
 			logger.info(`Payment service started on port ${port}`);
 		});
 		return server;

@@ -6,6 +6,7 @@ import {
 import { ErrorMessage, HttpStatus } from "../../../common/enums";
 import {
 	IExpertiseRepository,
+	IMentorRepository,
 	ISkillRepository,
 	IUserRepository,
 	IVerificationTokenRepository,
@@ -23,6 +24,7 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 		private _verficationTokenRepository: IVerificationTokenRepository,
 		private _expertiseRepository: IExpertiseRepository,
 		private _skillRepository: ISkillRepository,
+    private _mentorRepository: IMentorRepository,
 		private _cacheService: ICacheService,
 		private _tokenService: ITokenService,
 	) {}
@@ -144,11 +146,15 @@ export class CreateInterestsUC implements ICreateInterestsUC {
 				: interestDetails.expertises;
 		const combinedTopics = [...newTopicIds, ...interestDetails.skills];
 		// updaet the user repo
-		await this._userRepository.update(user.id, {
+		const [_, mentorDetails] = await Promise.all( [this._userRepository.update(user.id, {
 			interestedExpertises: combinedExpertises,
 			interestedSkills: combinedTopics,
 			isVerified: true,
-		});
+		}),
+      this._mentorRepository.findByUserId(user.id)
+    ]
+    )
+    user.mentorId = mentorDetails?.id;
 
 		const { passwordHash, isBlocked, isVerified, googleId, ...publicUser } =
 			user;

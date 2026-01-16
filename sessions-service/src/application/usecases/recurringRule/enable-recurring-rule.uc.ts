@@ -9,8 +9,12 @@ export class EnableRecurringRuleUC implements IEnableRecurringRuleUC {
 	constructor(
 		private _availabilityRepository: IAvailabilityRepository,
 		private _slotRepository: ISlotRepository,
-	) {}
+	) { }
 
+	/**
+	 * Enables a recurring availability rule.
+	 * Also toggles associated slots to active.
+	 */
 	async execute(dto: EnableRecurringRuleDto): Promise<void> {
 		const existingAvailabilityRule =
 			await this._availabilityRepository.findByMentorId(dto.mentorId);

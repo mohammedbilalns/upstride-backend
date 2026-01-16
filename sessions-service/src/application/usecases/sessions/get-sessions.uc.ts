@@ -9,8 +9,12 @@ export class GetSessionsUC implements IGetSessionsUC {
 		private _bookingRepository: IBookingRepository,
 		private _userService: IUserService,
 		private _paymentService: IPaymentService,
-	) {}
+	) { }
 
+	/**
+	 * Retrieves session history for a user.
+	 * Populates mentor and payment details.
+	 */
 	async getUserHistory(userId: string): Promise<Booking[]> {
 		const sessions = await this._bookingRepository.findHistory(userId, "user");
 		const withMentor = await this.populateMentorDetails(sessions);

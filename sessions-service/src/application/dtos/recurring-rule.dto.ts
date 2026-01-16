@@ -1,11 +1,11 @@
 import { Availability } from "../../domain/entities/availability.entity";
+import type { AllowedDuration } from "./pricing-config.dto";
 
 type Rule = {
 	weekDay: number;
 	startTime: string;
 	endTime: string;
-	slotDuration: 60 | 90 | 120 | 180;
-	price: number;
+	slotDuration: AllowedDuration;
 };
 
 export interface CreateRecurringRuleDto {
@@ -16,22 +16,34 @@ export interface CreateRecurringRuleDto {
 export interface UpdateRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
-	rule: Partial<Rule>;
+	startTime?: string;
+	endTime?: string;
+	slotDuration?: AllowedDuration;
+	weekDay?: number;
 	invalidateExisting?: boolean;
 }
 
 export interface AddRecurringRuleDto {
 	mentorId: string;
-	rule: Rule;
+	weekDay: number;
+	startTime: string;
+	endTime: string;
+	slotDuration: AllowedDuration;
 }
 
 export interface DisableRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
 }
+
 export interface EnableRecurringRuleDto {
 	mentorId: string;
 	ruleId: string;
+}
+
+export interface ToggleRecurringRuleDto {
+	ruleId: string;
+	isActive: boolean;
 }
 
 export interface DeleteRecurringRuleDto {

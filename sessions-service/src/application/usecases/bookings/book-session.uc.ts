@@ -11,8 +11,11 @@ export class BookSessionUc implements IBookSessionUC {
 	constructor(
 		private _bookingRepository: IBookingRepository,
 		private _slotRepository: ISlotRepository,
-	) {}
+	) { }
 
+	/**
+	 * Executes the booking session logic.
+	 */
 	async execute(
 		dto: BookSessionDto,
 	): Promise<{ bookingId: string; paymentId: string }> {
@@ -20,7 +23,23 @@ export class BookSessionUc implements IBookSessionUC {
 		if (!slot)
 			throw new AppError(ErrorMessage.SLOT_NOT_FOUND, HttpStatus.BAD_REQUEST);
 
-		if (slot.status !== SlotStatus.OPEN) {
+
+		if (slot.status === SlotStatus.RESERVED) {
+			if (slot.participantId !== dto.userId) {
+				throw new AppError(
+					ErrorMessage.SLOT_IS_ALREADY_TAKEN,
+					HttpStatus.BAD_REQUEST,
+				);
+			}
+
+			const existingBooking = await this._bookingRepository.findBySlotId(dto.slotId);
+			if (existingBooking && existingBooking.status === BookingStatus.PENDING) {
+				return {
+					bookingId: existingBooking.id,
+					paymentId: existingBooking.paymentId,
+				};
+			}
+		} else if (slot.status !== SlotStatus.OPEN) {
 			throw new AppError(
 				ErrorMessage.SLOT_IS_ALREADY_TAKEN,
 				HttpStatus.BAD_REQUEST,
