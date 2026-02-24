@@ -1,12 +1,16 @@
-import env from "@/infrastructure/config/env.js";
 import App from "./app.js";
-
+import env from "@infrastructure/config/env.js";
+import logger from "@infrastructure/logging/logger.js";import { disconnectFromRedis, redisClient } from "@/infrastructure/database/redis.connection.js";
+import { connectToMongo, disconnectFromMongo } from "@/infrastructure/database/mongodb.connection.js";
+''
 
 let isShuttingDown = false
 let appInstance: App
 
 async function bootStrap(){
+  logger.info("Starting...")
 
+  await Promise.all([connectToMongo() , redisClient.ping()])
   appInstance = new App()
   appInstance.listen(env.PORT)
 }
@@ -14,22 +18,20 @@ async function shutdown(signal: string){
   if(isShuttingDown) return
 
   isShuttingDown = true
-  console.log(`Received ${signal}, shutting down...`)
+  logger.info(`Received ${signal}, shutting down...`)
 
   const forceExitTimeout = setTimeout(() => {
-    console.log(`Force exiting...`)
+    logger.error(`Force exiting...`)
     process.exit(1)
   }, 10000) 
 
   try {
     if(appInstance) await appInstance.close()
-
-    //TODO: add all clean up tasks
-    await Promise.all([])
+    await Promise.all([ disconnectFromMongo(),disconnectFromRedis() ])
     clearTimeout(forceExitTimeout)
   } catch (error) {
     clearTimeout(forceExitTimeout)
-    console.error(`Error shutting down: ${error}`)
+    logger.error(`Error shutting down: ${error}`)
     process.exit(1)
   }
 }
@@ -40,12 +42,12 @@ async function shutdown(signal: string){
 })
 
 process.on("uncaughtException", (error: Error) => {
-  console.log(`Uncaught Exception: ${error}`)
+  logger.error(`Caught exception: ${error}`)
   shutdown("uncaughtException")
 })
 
 process.on("unhandledRejection", (reason: unknown, promise: Promise<unknown>) => {
-  console.error(`Unhandled Rejection at: ${promise} reason: ${reason}`)
+  logger.error(`Caught unhandled rejection at: ${promise}, with reason: ${reason}`)
   shutdown("unhandledRejection")
 })
 
