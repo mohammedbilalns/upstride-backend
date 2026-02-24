@@ -1,0 +1,36 @@
+import type { Response } from "express";
+import { HttpStatus } from "@/shared/constants/http-status-codes.js";
+
+interface SuccessResponse<T> {
+	success: true;
+	message?: string;
+	data?: T;
+}
+
+//TODO: Handle pagination here ??
+/**
+ * Sends a standardized JSON success response.
+ * handles 204 No Content by omitting the body.
+ */
+export const sendSuccess = <T>(
+	res: Response,
+	statusCode: HttpStatus,
+	options: { message?: string; data?: T } = {},
+): Response => {
+	const { message, data } = options;
+
+	// Handle 204 No Content
+	if (statusCode === 204) {
+		return res.status(statusCode).send();
+	}
+
+	// Construct the response body
+	const responseBody: SuccessResponse<T> = {
+		success: true,
+		...(message && { message }),
+		...(data !== undefined && { data }),
+	};
+
+	//Send response
+	return res.status(statusCode).json(responseBody);
+};

@@ -2,7 +2,7 @@ import App from "./app.js";
 import env from "@infrastructure/config/env.js";
 import logger from "@infrastructure/logging/logger.js";
 import {
-	disconnectFromRedis,
+	disconnectRedis,
 	redisClient,
 } from "@/infrastructure/database/redis.connection.js";
 import {
@@ -33,7 +33,7 @@ async function shutdown(signal: string) {
 
 	try {
 		if (appInstance) await appInstance.close();
-		await Promise.all([disconnectFromMongo(), disconnectFromRedis()]);
+		await Promise.all([disconnectFromMongo(), disconnectRedis()]);
 		clearTimeout(forceExitTimeout);
 	} catch (error) {
 		clearTimeout(forceExitTimeout);
