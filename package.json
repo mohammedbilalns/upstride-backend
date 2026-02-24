@@ -1,0 +1,35 @@
+{
+  "name": "upstride-backend",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/main/index.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "nodemon --watch src -e ts --exec 'tsc && node --env-file=.env  dist/server.js'",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.2",
+  "dependencies": {
+    "express": "^5.2.1",
+    "inversify": "^7.11.0",
+    "ioredis": "^5.9.3",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.0",
+    "pino": "^10.3.1",
+    "pino-pretty": "^13.1.3",
+    "pino-roll": "^4.0.0",
+    "reflect-metadata": "^0.2.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.3.0",
+    "typescript": "^5.9.3"
+  }
+}
