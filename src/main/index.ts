@@ -1,15 +1,14 @@
-import App from "./app.js";
 import env from "@infrastructure/config/env.js";
 import logger from "@infrastructure/logging/logger.js";
-import {
-	disconnectRedis,
-	redisClient,
-} from "@/infrastructure/database/redis.connection.js";
 import {
 	connectToMongo,
 	disconnectFromMongo,
 } from "@/infrastructure/database/mongodb.connection.js";
-("");
+import {
+	disconnectRedis,
+	redisClient,
+} from "@/infrastructure/database/redis.connection.js";
+import App from "./app.js";
 
 let isShuttingDown = false;
 let appInstance: App;

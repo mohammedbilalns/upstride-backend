@@ -1,11 +1,11 @@
-import logger from "@/infrastructure/logging/logger.js";
-import express, { Application } from "express";
 import { createServer } from "node:http";
-import helmet from "helmet";
-import cors from "cors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import express, { Application } from "express";
+import helmet from "helmet";
 import { corsOptions } from "@/infrastructure/http/config/cors.config.js";
 import { requestLogger } from "@/infrastructure/http/middlewares/request-logger.middleware.js";
+import logger from "@/infrastructure/logging/logger.js";
 
 /**
  * Core application bootstrapper.
