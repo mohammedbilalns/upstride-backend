@@ -10,6 +10,7 @@
 		"build": "tsc",
 		"prepare": "husky",
 		"format": "biome format --write",
+		"type-check": "tsc --noEmit",
 		"lint-format": "biome check --write"
 	},
 	"keywords": [],
