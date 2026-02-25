@@ -12,31 +12,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout Code
+      # checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      #  Install pnpm 
+        # install pnpm 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 10.28.2
 
-      # Setup Node.js 
+          # setup node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '25' 
-          cache: 'pnpm'      
+          cache: 'pnpm' 
 
-      # Install Dependencies
+          # install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Run Biome
+
+        # Run Biome
       - name: Run Biome (Lint & Format Check)
         run: pnpm biome check . --diagnostic-level=error
 
-      # Run TypeScript Type Check
+        # Run TypeScript Type Check
       - name: TypeScript Type Check
         run: pnpm type-check
