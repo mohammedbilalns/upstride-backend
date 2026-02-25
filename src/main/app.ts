@@ -2,6 +2,10 @@ import logger from "@/infrastructure/logging/logger.js";
 import express, { Application } from "express";
 import { createServer } from "node:http";
 import helmet from "helmet";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { corsOptions } from "@/infrastructure/http/config/cors.config.js";
+import { requestLogger } from "@/infrastructure/http/middlewares/request-logger.middleware.js";
 
 /**
  * Core application bootstrapper.
@@ -27,12 +31,17 @@ class App {
 	 *
 	 * - JSON parsing
 	 * - CORS
-	 * - Security (helmet)
+	 * - Security
 	 * - Logging
 	 * - Rate limiting
 	 */
 	private _setupMiddlewares() {
-		this._app.use(helmet());
+		this._app
+			.use(helmet())
+			.use(requestLogger)
+			.use(cors(corsOptions))
+			.use(express.json())
+			.use(cookieParser());
 	}
 	private _setupRoutes() {
 		this._app.use("/api/test", async (_req, res) => {
