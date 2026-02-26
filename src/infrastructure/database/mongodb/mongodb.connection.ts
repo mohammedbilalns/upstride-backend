@@ -1,4 +1,4 @@
-import { MongoClient, Db } from "mongodb";
+import { type Db, MongoClient } from "mongodb";
 import env from "../../../shared/config/env.js";
 import logger from "../../../shared/logging/logger.js";
 
