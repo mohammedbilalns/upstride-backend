@@ -1,6 +1,6 @@
-import env from "@infrastructure/config/env.js";
-import logger from "@infrastructure/logging/logger.js";
 import { Redis } from "ioredis";
+import env from "../../../shared/config/env";
+import logger from "../../../shared/logging/logger";
 /**
  * Redis client instance.
  */

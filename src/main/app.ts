@@ -1,11 +1,11 @@
-import { createServer } from "node:http";
+import * as nodeHttp from "node:http";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { Application } from "express";
+import express, { type Application } from "express";
 import helmet from "helmet";
-import { corsOptions } from "@/infrastructure/http/config/cors.config.js";
-import { requestLogger } from "@/infrastructure/http/middlewares/request-logger.middleware.js";
-import logger from "@/infrastructure/logging/logger.js";
+import { corsOptions } from "../interfaces/http/config/cors.config";
+import { requestLogger } from "../interfaces/http/middlewares/request-logger.middleware";
+import logger from "../shared/logging/logger";
 
 /**
  * Core application bootstrapper.
@@ -17,11 +17,11 @@ import logger from "@/infrastructure/logging/logger.js";
  */
 class App {
 	private _app: Application;
-	private _server: ReturnType<typeof createServer>;
+	private _server: ReturnType<typeof nodeHttp.createServer>;
 
 	constructor() {
 		this._app = express();
-		this._server = createServer(this._app);
+		this._server = nodeHttp.createServer(this._app);
 		this._setupMiddlewares();
 		this._setupRoutes();
 	}

@@ -2,11 +2,11 @@
 	"name": "upstride-backend",
 	"version": "1.0.0",
 	"description": "",
-	"type": "module",
+	"type": "commonjs",
 	"main": "src/main/index.js",
 	"scripts": {
 		"start": "node dist/main/index.js",
-		"dev": "nodemon --watch src -e ts --exec 'tsc && tsc-alias && node --env-file=.env  dist/main/index.js'",
+		"dev": "nodemon --watch src -e ts --exec 'tsc  && node --env-file=.env  dist/main/index.js'",
 		"build": "tsc",
 		"prepare": "husky",
 		"format": "biome format --write",
@@ -18,7 +18,6 @@
 	"license": "ISC",
 	"packageManager": "pnpm@10.28.2",
 	"dependencies": {
-		"@types/cors": "^2.8.19",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.6",
 		"express": "^5.2.1",

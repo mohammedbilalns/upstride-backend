@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import { HttpStatus } from "@/shared/constants/http-status-codes.js";
+import type { HttpStatus } from "../../../shared/constants/http-status-codes";
 
 interface SuccessResponse<T> {
 	success: true;

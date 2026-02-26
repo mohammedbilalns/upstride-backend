@@ -1,11 +1,11 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"module": "nodenext",
+		"module": "commonjs",
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"outDir": "./dist",
-		"moduleResolution": "nodenext",
+		"moduleResolution": "node",
 		"removeComments": true,
 		"noImplicitAny": true,
 		"strict": true,
@@ -23,12 +23,6 @@
 		"emitDecoratorMetadata": true,
 		"resolveJsonModule": true,
 		"incremental": true,
-		"paths": {
-			"@/*": ["./src/*"],
-			"@modules/*": ["./src/modules/*"],
-			"@shared/*": ["./src/shared/*"],
-			"@infrastructure/*": ["./src/infrastructure/*"]
-		},
 		"tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
 		"types": ["node"],
 		"typeRoots": ["./node_modules/@types", "src/types"]

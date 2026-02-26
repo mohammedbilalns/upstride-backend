@@ -1,13 +1,13 @@
-import env from "@infrastructure/config/env.js";
-import logger from "@infrastructure/logging/logger.js";
 import {
 	connectToMongo,
 	disconnectFromMongo,
-} from "@/infrastructure/database/mongodb.connection.js";
+} from "../infrastructure/database/mongodb/mongodb.connection";
 import {
 	disconnectRedis,
 	redisClient,
-} from "@/infrastructure/database/redis.connection.js";
+} from "../infrastructure/database/redis/redis.connection";
+import env from "../shared/config/env.js";
+import logger from "../shared/logging/logger.js";
 import App from "./app.js";
 
 let isShuttingDown = false;

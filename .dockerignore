@@ -1,0 +1,8 @@
+node_modules
+dist 
+.gitignore
+npm-debug.log
+Dockerfile
+.dockerignore
+pnpm-lock.yaml
+
