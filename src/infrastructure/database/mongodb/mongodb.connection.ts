@@ -1,6 +1,6 @@
-import { MongoClient, type Db } from "mongodb";
-import logger from "../../../shared/logging/logger.js";
+import { MongoClient, Db } from "mongodb";
 import env from "../../../shared/config/env.js";
+import logger from "../../../shared/logging/logger.js";
 
 let client: MongoClient | null = null;
 let db: Db | null = null;
