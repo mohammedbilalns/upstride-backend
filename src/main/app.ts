@@ -1,14 +1,14 @@
-import * as nodeHttp from "node:http";
+import { createServer } from "node:http";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
 import helmet from "helmet";
 import { corsOptions } from "../interfaces/http/config/cors.config";
-import { requestLogger } from "../interfaces/http/middlewares/request-logger.middleware";
+import { errorHandler, requestLogger } from "../interfaces/http/middlewares";
 import { router as v1Router } from "../interfaces/http/routes/v1.route";
-import logger from "../shared/logging/logger";
 import { HttpStatus } from "../shared/constants/http-status-codes";
+import logger from "../shared/logging/logger";
 
 /**
  * Core application bootstrapper.
@@ -20,13 +20,14 @@ import { HttpStatus } from "../shared/constants/http-status-codes";
  */
 class App {
 	private _app: Application;
-	private _server: ReturnType<typeof nodeHttp.createServer>;
+	private _server: ReturnType<typeof createServer>;
 
 	constructor() {
 		this._app = express();
-		this._server = nodeHttp.createServer(this._app);
+		this._server = createServer(this._app);
 		this._setupMiddlewares();
 		this._setupRoutes();
+		this._setupErrorHandlers();
 	}
 
 	/**
@@ -56,6 +57,10 @@ class App {
 				message: `Route ${req.method} ${req.originalUrl} not found`,
 			});
 		});
+	}
+
+	private _setupErrorHandlers() {
+		this._app.use(errorHandler);
 	}
 
 	public get server() {

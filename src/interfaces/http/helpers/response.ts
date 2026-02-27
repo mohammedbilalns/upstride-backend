@@ -1,25 +1,31 @@
 import type { Response } from "express";
 import type { HttpStatus } from "../../../shared/constants/http-status-codes";
 
+interface PaginationData {
+	page: number;
+	limit: number;
+	totalPages: number;
+	totalCount: number;
+}
+
 interface SuccessResponse<T> {
 	success: true;
 	message?: string;
 	data?: T;
+	pagination?: PaginationData;
 }
 
-//TODO: Handle pagination here ??
 /**
  * Sends a standardized JSON success response.
  * handles 204 No Content by omitting the body.
  */
 
-//TODO: Convert this to class ??
 export const sendSuccess = <T>(
 	res: Response,
 	statusCode: HttpStatus,
-	options: { message?: string; data?: T } = {},
+	options: { message?: string; data?: T; pagination?: PaginationData } = {},
 ): Response => {
-	const { message, data } = options;
+	const { message, data, pagination } = options;
 
 	// Handle 204 No Content
 	if (statusCode === 204) {
@@ -31,6 +37,7 @@ export const sendSuccess = <T>(
 		success: true,
 		...(message && { message }),
 		...(data !== undefined && { data }),
+		...(pagination && { pagination }),
 	};
 
 	//Send response

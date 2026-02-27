@@ -35,13 +35,15 @@ RUN addgroup -S app && adduser -S app -G app
 # Copy dependency manifests
 COPY --chown=app:app package.json pnpm-lock.yaml ./
 
-# Install ONLY production dependencies
-# --ignore-scripts: Skips git hooks/husky setup
-# --prod: Excludes devDependencies (TypeScript, ESLint, etc.)
+# Install  production dependencies
+
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 # ensure the user owns the dist files
 COPY --chown=app:app --from=builder /app/dist ./dist
+
+# Create logs directory and assign ownership
+RUN mkdir -p /app/logs && chown -R app:app /app/logs
 
 # Switch to the non-root user
 USER app
