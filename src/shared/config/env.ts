@@ -7,6 +7,7 @@ const envSchema = z.object({
 	APP_URL: z.string().min(1),
 	CLIENT_URL: z.string().min(1),
 	NODE_ENV: z.enum(["development", "production", "test"]),
+	LOKI_HOST: z.string().min(1),
 });
 
 const env = envSchema.parse(process.env);

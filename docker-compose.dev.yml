@@ -21,6 +21,7 @@ services:
       - .env
     environment:
       - NODE_ENV=development
+      - LOKI_HOST=http://loki:3100
     volumes:
       - ./src:/app/src
       - ./package.json:/app/package.json
@@ -29,6 +30,32 @@ services:
     command: pnpm run dev
     depends_on:
       - redis
+      - loki
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: upstride-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: upstride-grafana
+    ports:
+      - "3002:3000" 
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - loki
     restart: unless-stopped
 
 volumes:

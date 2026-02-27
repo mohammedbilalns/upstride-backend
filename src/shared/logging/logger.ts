@@ -1,11 +1,18 @@
-import path from "node:path";
 import pino from "pino";
+import env from "../config/env";
 
 const isProd = process.env.NODE_ENV === "production";
 
+/**
+ * Pino transport pipeline.
+ *
+ * two targets:
+ *  - console output
+ *  - Loki transport
+ */
 const transport = pino.transport({
 	targets: [
-		//  Console output
+		//  Console output using pino pretty
 		{
 			target: "pino-pretty",
 			level: isProd ? "info" : "debug",
@@ -16,29 +23,16 @@ const transport = pino.transport({
 			},
 		},
 
-		// combined log file
+		// Loki transport for centralized logging
 		{
-			target: "pino-roll",
-			level: "info",
+			target: "pino-loki",
+			level: isProd ? "info" : "debug",
 			options: {
-				file: path.join("logs", "combined.log"),
-				frequency: "daily",
-				size: "20m", // max-size
-				limit: { count: 14 }, // max-file count
-				mkdir: true, // Auto-create dir
-			},
-		},
-
-		// error log file
-		{
-			target: "pino-roll",
-			level: "error",
-			options: {
-				file: path.join("logs", "error.log"),
-				frequency: "daily",
-				size: "20m",
-				limit: { count: 14 },
-				mkdir: true,
+				batching: true,
+				interval: 5,
+				host: env.LOKI_HOST,
+				labels: { app: "upstride-backend", env: env.NODE_ENV },
+				format: true,
 			},
 		},
 	],
@@ -47,7 +41,7 @@ const transport = pino.transport({
 const logger = pino(
 	{
 		level: isProd ? "info" : "debug",
-		timestamp: pino.stdTimeFunctions.isoTime,
+		timestamp: pino.stdTimeFunctions.unixTime,
 		errorKey: "stack",
 	},
 	transport,
