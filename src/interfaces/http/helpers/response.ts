@@ -12,6 +12,8 @@ interface SuccessResponse<T> {
  * Sends a standardized JSON success response.
  * handles 204 No Content by omitting the body.
  */
+
+//TODO: Convert this to class ??
 export const sendSuccess = <T>(
 	res: Response,
 	statusCode: HttpStatus,

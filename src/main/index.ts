@@ -19,6 +19,7 @@ async function bootStrap() {
 	appInstance = new App();
 	appInstance.listen(env.PORT);
 }
+
 async function shutdown(signal: string) {
 	if (isShuttingDown) return;
 

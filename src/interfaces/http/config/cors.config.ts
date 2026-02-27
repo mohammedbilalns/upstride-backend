@@ -3,5 +3,6 @@ import env from "../../../shared/config/env";
 
 export const corsOptions: CorsOptions = {
 	origin: env.CLIENT_URL,
+	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 	credentials: true,
 };

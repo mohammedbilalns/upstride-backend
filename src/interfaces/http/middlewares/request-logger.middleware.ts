@@ -13,12 +13,15 @@ export const requestLogger = (
 		const { method, url } = req;
 		const { statusCode } = res;
 
-		const statusLevel =
-			statusCode >= 500 ? "ERROR" : statusCode >= 400 ? "WARN" : "SUCCESS";
+		const message = `${method} ${url} ${statusCode} - ${duration}ms`;
 
-		logger.info(
-			`[${statusLevel}] ${method} ${url} ${statusCode} - ${duration}ms`,
-		);
+		if (statusCode >= 500) {
+			logger.error(`[ERROR] ${message}`);
+		} else if (statusCode >= 400) {
+			logger.warn(`[WARN] ${message}`);
+		} else {
+			logger.info(`[SUCCESS] ${message}`);
+		}
 	});
 
 	next();

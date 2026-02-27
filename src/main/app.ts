@@ -1,11 +1,14 @@
 import * as nodeHttp from "node:http";
+import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
 import helmet from "helmet";
 import { corsOptions } from "../interfaces/http/config/cors.config";
 import { requestLogger } from "../interfaces/http/middlewares/request-logger.middleware";
+import { router as v1Router } from "../interfaces/http/routes/v1.route";
 import logger from "../shared/logging/logger";
+import { HttpStatus } from "../shared/constants/http-status-codes";
 
 /**
  * Core application bootstrapper.
@@ -38,14 +41,20 @@ class App {
 	private _setupMiddlewares() {
 		this._app
 			.use(helmet())
+			.use(compression())
 			.use(requestLogger)
 			.use(cors(corsOptions))
 			.use(express.json())
 			.use(cookieParser());
 	}
 	private _setupRoutes() {
-		this._app.use("/api/test", async (_req, res) => {
-			res.send("Hello World");
+		this._app.use("/api/v1", v1Router);
+
+		this._app.use((req, res) => {
+			res.status(HttpStatus.NOT_FOUND).json({
+				success: false,
+				message: `Route ${req.method} ${req.originalUrl} not found`,
+			});
 		});
 	}
 
