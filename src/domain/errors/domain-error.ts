@@ -1,11 +1,7 @@
-export abstract class DomainError extends Error {
-	public readonly statusCode: number;
+import { BaseError } from "../../shared/errors/base.error";
 
-	constructor(message: string, statusCode: number = 500) {
-		super(message);
-		this.name = this.constructor.name;
-		this.statusCode = statusCode;
-
-		Error.captureStackTrace(this, this.constructor);
+export abstract class DomainError extends BaseError {
+	constructor(message: string, statusCode = 400) {
+		super(message, statusCode);
 	}
 }

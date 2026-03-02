@@ -33,7 +33,11 @@ async function shutdown(signal: string) {
 
 	try {
 		if (appInstance) await appInstance.close();
-		await Promise.all([disconnectFromMongo(), disconnectRedis()]);
+		await Promise.all([
+			disconnectFromMongo(),
+			disconnectRedis(),
+			appInstance.close(),
+		]);
 		clearTimeout(forceExitTimeout);
 	} catch (error) {
 		clearTimeout(forceExitTimeout);
