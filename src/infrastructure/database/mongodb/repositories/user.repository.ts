@@ -2,8 +2,8 @@ import type { QueryFilter } from "mongoose";
 import type { User } from "../../../../domain/entities/user.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type {
+	IUserRepository,
 	UserQuery,
-	UserRepository,
 } from "../../../../domain/repositories/user.repository.interface";
 import { UserMapper } from "../mappers/user.mapper";
 import type { UserDocument } from "../models/user.model";
@@ -11,7 +11,7 @@ import { AbstractMongoRepository } from "./abstract.repository";
 
 export class MongoUserRepository
 	extends AbstractMongoRepository<User, UserDocument>
-	implements UserRepository
+	implements IUserRepository
 {
 	protected toDomain(doc: UserDocument): User {
 		return UserMapper.toDomain(doc);

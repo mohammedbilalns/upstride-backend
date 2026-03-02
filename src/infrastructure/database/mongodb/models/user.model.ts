@@ -11,7 +11,7 @@ export interface UserDocument {
 	name: string;
 	email: string;
 	phone: string;
-	password: string;
+	passwordHash: string;
 	authType: AuthType;
 	profilePictureId: string | null;
 	role: UserRole;
@@ -26,7 +26,7 @@ export const userSchema = new Schema<UserDocument>(
 		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
 		phone: { type: String, required: true },
-		password: { type: String, required: true },
+		passwordHash: { type: String, required: true },
 		authType: { type: String, enum: AuthTypeValues, required: true },
 		profilePictureId: { type: String },
 		role: { type: String, enum: UserRoleValues, required: true },

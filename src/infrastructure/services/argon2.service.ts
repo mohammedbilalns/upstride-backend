@@ -1,9 +1,9 @@
 import argon2 from "argon2";
 import { injectable } from "inversify";
-import type { ICryptoService } from "../../domain/service/crypto.service";
+import type { IPasswordHasherService } from "../../application/services";
 
 @injectable()
-export class Argon2Service implements ICryptoService {
+export class Argon2Service implements IPasswordHasherService {
 	async hash(password: string): Promise<string> {
 		return argon2.hash(password);
 	}

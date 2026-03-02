@@ -7,6 +7,7 @@ export const UserRoleValues = [
 	"ADMIN",
 	"SUPER_ADMIN",
 ] as const;
+
 export type UserRole = (typeof UserRoleValues)[number];
 
 export class User {
@@ -15,7 +16,7 @@ export class User {
 		public readonly name: string,
 		public readonly email: string,
 		public readonly phone: string,
-		public readonly password: string,
+		public readonly passwordHash: string,
 		public readonly authType: AuthType,
 		public readonly profilePictureId: string | null,
 		public readonly role: UserRole,

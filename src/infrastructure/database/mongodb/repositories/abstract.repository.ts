@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import type { Model } from "mongoose";
 
 export abstract class AbstractMongoRepository<TDomain, TDocument> {
 	constructor(protected readonly model: Model<TDocument>) {}
