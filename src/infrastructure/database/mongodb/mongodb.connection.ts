@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-
-import logger from "../../../shared/logging/logger";
 import env from "../../../shared/config/env";
+import logger from "../../../shared/logging/logger";
 
 let isConnected = false;
 

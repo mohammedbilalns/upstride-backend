@@ -1,8 +1,8 @@
-import { Types, Schema, model } from "mongoose";
+import { model, Schema, type Types } from "mongoose";
 import {
-	AuthType,
+	type AuthType,
 	AuthTypeValues,
-	UserRole,
+	type UserRole,
 	UserRoleValues,
 } from "../../../../domain/entities/user.entity";
 

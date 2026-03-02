@@ -1,6 +1,6 @@
 import type express from "express";
 import { MongooseError } from "mongoose";
-import { HttpStatus, ErrorMessage } from "../../../shared/constants";
+import { ErrorMessage, HttpStatus } from "../../../shared/constants";
 import { BaseError } from "../../../shared/errors/base.error";
 import logger from "../../../shared/logging/logger";
 

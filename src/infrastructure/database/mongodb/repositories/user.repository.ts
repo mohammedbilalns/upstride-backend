@@ -1,13 +1,13 @@
-import { AbstractMongoRepository } from "./abstract.repository";
-import { User } from "../../../../domain/entities/user.entity";
-import { UserDocument } from "../models/user.model";
-import {
+import type { QueryFilter } from "mongoose";
+import type { User } from "../../../../domain/entities/user.entity";
+import type { PaginateParams } from "../../../../domain/repositories";
+import type {
 	UserQuery,
 	UserRepository,
 } from "../../../../domain/repositories/user.repository.interface";
-import { PaginateParams } from "../../../../domain/repositories";
-import { QueryFilter } from "mongoose";
 import { UserMapper } from "../mappers/user.mapper";
+import type { UserDocument } from "../models/user.model";
+import { AbstractMongoRepository } from "./abstract.repository";
 
 export class MongoUserRepository
 	extends AbstractMongoRepository<User, UserDocument>
