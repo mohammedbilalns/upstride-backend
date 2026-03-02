@@ -10,10 +10,10 @@ export const requestLogger = (
 
 	res.on("finish", () => {
 		const duration = Date.now() - start;
-		const { method, url } = req;
+		const { method, originalUrl } = req;
 		const { statusCode } = res;
 
-		const message = `${method} ${url} ${statusCode} - ${duration}ms`;
+		const message = `${method} ${originalUrl} ${statusCode} - ${duration}ms`;
 
 		if (statusCode >= 500) {
 			logger.error(`[ERROR] ${message}`);

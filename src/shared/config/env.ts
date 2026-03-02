@@ -8,6 +8,8 @@ const envSchema = z.object({
 	CLIENT_URL: z.string().min(1),
 	NODE_ENV: z.enum(["development", "production", "test"]),
 	LOKI_HOST: z.string().min(1),
+	JWT_ACCESS_SECRET: z.string().min(1).default("secret"),
+	JWT_REFRESH_SECRET: z.string().min(1).default("secret2"),
 });
 
 const env = envSchema.parse(process.env);

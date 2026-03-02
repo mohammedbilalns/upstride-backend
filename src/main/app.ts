@@ -46,6 +46,7 @@ class App {
 			.use(requestLogger)
 			.use(cors(corsOptions))
 			.use(express.json())
+			.use(express.urlencoded({ extended: true }))
 			.use(cookieParser());
 	}
 	private _setupRoutes() {
