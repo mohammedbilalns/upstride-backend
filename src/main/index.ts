@@ -1,3 +1,4 @@
+import type { Worker } from "bullmq";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -6,16 +7,22 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
+import { createMailWorker } from "../infrastructure/queue/workers/mail.worker.js";
 import env from "../shared/config/env.js";
 import logger from "../shared/logging/logger.js";
 import App from "./app.js";
+import { mailQueue } from "./container.js";
 
 let isShuttingDown = false;
 let appInstance: App;
+let mailWorker: Worker;
 
 async function bootStrap() {
 	logger.info("Starting...");
 	await Promise.all([connectToMongo(), redisClient.ping()]);
+
+	mailWorker = createMailWorker(redisClient);
+
 	appInstance = new App();
 	appInstance.listen(env.PORT);
 }
@@ -35,6 +42,8 @@ async function shutdown(signal: string) {
 		if (appInstance) await appInstance.close();
 		await Promise.all([
 			disconnectFromMongo(),
+			mailWorker?.close(),
+			mailQueue.close(),
 			disconnectRedis(),
 			appInstance.close(),
 		]);

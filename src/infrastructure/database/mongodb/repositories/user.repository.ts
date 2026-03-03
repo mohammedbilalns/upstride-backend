@@ -77,4 +77,8 @@ export class MongoUserRepository
 
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
+
+	async deleteById(id: string): Promise<void> {
+		this.model.deleteOne({ _id: id });
+	}
 }

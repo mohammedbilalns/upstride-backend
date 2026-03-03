@@ -7,5 +7,6 @@ export const ROUTES = {
 		RESEND_REGISTER_OTP: "/resend-registration-otp",
 		GOOGLE: "/google",
 		LINKEDIN: "/linkedin",
+		REQUEST_PASSWORD_RESET: "/reset-password",
 	},
 };

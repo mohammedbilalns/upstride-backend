@@ -16,4 +16,5 @@ export interface IUserRepository
 		UpdatableByIdRepository<User>,
 		PaginatableRepository<User, UserQuery> {
 	findByEmail(email: string): Promise<User | null>;
+	deleteById(id: string): Promise<void>;
 }
