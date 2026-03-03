@@ -15,10 +15,13 @@ export class MailService implements IMailService {
 		template: IMailTemplate,
 		data: unknown,
 	): Promise<void> {
+		const { html, text } = template.render(data);
+
 		await this.mailQueue.add("send_mail", {
 			to,
 			subject: template.subject,
-			body: template.render(data),
+			html,
+			text,
 		});
 	}
 }

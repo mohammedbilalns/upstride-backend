@@ -1,3 +1,4 @@
+import { MailRenderer } from "../../infrastructure/mail/mail-renderer";
 import type { IMailTemplate } from "./mail.template";
 
 export class RegisterOtpMailTemplate implements IMailTemplate {
@@ -6,11 +7,8 @@ export class RegisterOtpMailTemplate implements IMailTemplate {
 
 	render(data: { name: string; otp: string }) {
 		return {
-			html: `
-        <h1>Hello ${data.name}</h1>
-        <p>Your OTP is <strong>${data.otp}</strong></p>
-      `,
-			text: `Hello ${data.name}, Your OTP is ${data.otp}`,
+			html: MailRenderer.render("register-otp", data),
+			text: `Hello ${data.name}, Your OTP for UpStride is ${data.otp}`,
 		};
 	}
 }

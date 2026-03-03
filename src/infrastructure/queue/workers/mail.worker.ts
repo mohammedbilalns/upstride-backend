@@ -15,14 +15,15 @@ export const createMailWorker = (connection: Redis): Worker => {
 		"mailQueue",
 		async (job) => {
 			logger.info(`Processing mail job ${job.id} `);
-			const { to, subject, body } = job.data;
+			const { to, subject, html, text } = job.data;
 
 			try {
 				await mailTransporter.sendMail({
 					from: env.SMTP_USER,
 					to,
 					subject,
-					html: body,
+					html,
+					text,
 				});
 				logger.info(`Mail sent successfully to ${to} `);
 			} catch (error) {

@@ -8,6 +8,7 @@ import type { IRegisterWithEmailUseCase } from "../../../application/authenticat
 import type { IResendOtpUseCase } from "../../../application/authentication/use-cases/resend-otp.usecase.interface";
 import type { IVerifyOtpUseCase } from "../../../application/authentication/use-cases/verify-otp.usecase.interface";
 import { OtpPurpose } from "../../../domain/policies/otp-purposes";
+import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages } from "../constants/response-messages";
@@ -62,8 +63,16 @@ export class AuthController {
 	});
 
 	login = asyncHandler(async (req, res) => {
-		const data = await this._loginWithEmailUseCase.execute(req.body);
+		const { refreshToken, ...data } = await this._loginWithEmailUseCase.execute(
+			req.body,
+		);
 
+		res.cookie("refreshToken", refreshToken, {
+			httpOnly: true,
+			secure: env.NODE_ENV === "production",
+			sameSite: "strict",
+			maxAge: 7 * 24 * 60 * 60 * 1000,
+		});
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
 			data,

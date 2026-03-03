@@ -1,3 +1,4 @@
+import { MailRenderer } from "../../infrastructure/mail/mail-renderer";
 import type { IMailTemplate } from "./mail.template";
 
 export class ResetPasswordMailTemplate implements IMailTemplate {
@@ -6,11 +7,8 @@ export class ResetPasswordMailTemplate implements IMailTemplate {
 
 	render(data: { code: string }) {
 		return {
-			html: `
-        <h1>Password Reset</h1>
-        <p>Your OTP for password reset is: <strong>${data.code}</strong></p>
-      `,
-			text: `Your OTP for password reset is: ${data.code}`,
+			html: MailRenderer.render("reset-password-otp", data),
+			text: `Your OTP for UpStride password reset is: ${data.code}`,
 		};
 	}
 }

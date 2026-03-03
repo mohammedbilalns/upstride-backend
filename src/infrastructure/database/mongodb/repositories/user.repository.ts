@@ -79,6 +79,6 @@ export class MongoUserRepository
 	}
 
 	async deleteById(id: string): Promise<void> {
-		this.model.deleteOne({ _id: id });
+		await this.model.deleteOne({ _id: id });
 	}
 }

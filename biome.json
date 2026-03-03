@@ -8,6 +8,11 @@
 	"files": {
 		"includes": ["**", "!!**/dist"]
 	},
+	"html": {
+		"parser": {
+			"interpolation": true
+		}
+	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
