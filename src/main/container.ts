@@ -3,6 +3,8 @@ import { Container } from "inversify";
 import { LoginWithEmailUseCase } from "../application/authentication/use-cases/login/login-with-email.use-case";
 import { RequestPasswordResetUseCase } from "../application/authentication/use-cases/password-reset";
 import { RegisterWithEmailUseCase } from "../application/authentication/use-cases/registration/register-with-email.usecase";
+import { ResendOtpUseCase } from "../application/authentication/use-cases/resend-otp.usecase";
+import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
 import type { IPasswordHasherService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
 import { MongoUserRepository } from "../infrastructure/database/mongodb/repositories";
@@ -53,6 +55,8 @@ container.bind(TYPES.UseCases.RegisterWithEmail).to(RegisterWithEmailUseCase);
 container
 	.bind(TYPES.UseCases.RequestPasswordReset)
 	.to(RequestPasswordResetUseCase);
+container.bind(TYPES.UseCases.VerifyOtp).to(VerifyOtpUseCase);
+container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
 
 //-------------------------
 // Controllers

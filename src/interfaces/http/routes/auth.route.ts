@@ -7,6 +7,8 @@ import {
 	loginBodySchema,
 	passwordResetBodySchema,
 	registerBodySchema,
+	resendOtpBodySchema,
+	verifyOtpBodySchema,
 } from "../validators";
 
 const router = Router();
@@ -25,9 +27,33 @@ router.post(
 );
 
 router.post(
+	ROUTES.AUTH.VERIFY_REGISTER_OTP,
+	validate({ body: verifyOtpBodySchema }),
+	authController.verifyRegisterOtp,
+);
+
+router.post(
+	ROUTES.AUTH.RESEND_REGISTER_OTP,
+	validate({ body: resendOtpBodySchema }),
+	authController.resendRegisterOtp,
+);
+
+router.post(
 	ROUTES.AUTH.REQUEST_PASSWORD_RESET,
 	validate({ body: passwordResetBodySchema }),
 	authController.requestPasswordReset,
+);
+
+router.post(
+	ROUTES.AUTH.VERIFY_RESET_PASSWORD_OTP,
+	validate({ body: verifyOtpBodySchema }),
+	authController.verifyResetPasswordOtp,
+);
+
+router.post(
+	ROUTES.AUTH.RESEND_RESET_PASSWORD_OTP,
+	validate({ body: resendOtpBodySchema }),
+	authController.resendResetPasswordOtp,
 );
 
 export { router as authRouter };

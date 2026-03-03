@@ -8,5 +8,7 @@ export const ROUTES = {
 		GOOGLE: "/google",
 		LINKEDIN: "/linkedin",
 		REQUEST_PASSWORD_RESET: "/reset-password",
+		VERIFY_RESET_PASSWORD_OTP: "/verify-reset-password-otp",
+		RESEND_RESET_PASSWORD_OTP: "/resend-reset-password-otp",
 	},
 };
