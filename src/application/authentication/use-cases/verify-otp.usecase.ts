@@ -6,7 +6,7 @@ import type { IUserRepository } from "../../../domain/repositories";
 import type { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import type { ITokenService } from "../../services";
-import type { VerifyOtpInput } from "../dtos/verify-otp.dto";
+import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos/verify-otp.dto";
 import { InvalidOtpError } from "../errors/invalid-otp.error";
 import { UserNotFoundError } from "../errors/user-not-found.error";
 import { LoginResponseMapper } from "../mappers/login-response.mapper";
@@ -16,14 +16,14 @@ import type { IVerifyOtpUseCase } from "./verify-otp.usecase.interface";
 export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
-		private _userRepository: IUserRepository,
+		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.OtpRepository)
-		private _otpRepository: IOtpRepository,
+		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.TokenService)
-		private _tokenService: ITokenService,
+		private readonly _tokenService: ITokenService,
 	) {}
 
-	async execute(input: VerifyOtpInput): Promise<any> {
+	async execute(input: VerifyOtpInput): Promise<VerifyOtpResponse> {
 		const user = await this._userRepository.findByEmail(input.email);
 		if (!user) throw new UserNotFoundError();
 
@@ -77,13 +77,14 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 				tempProfilePictureUrl,
 			);
 		} else if (input.type === "RESET_PASSWORD") {
-			const resetToken = this._tokenService.generateAccessToken({
+			const resetToken = this._tokenService.generateResetToken({
 				sub: user.id,
-				role: user.role,
 			});
 			return {
 				resetToken,
 			};
 		}
+
+		throw new InvalidOtpError();
 	}
 }

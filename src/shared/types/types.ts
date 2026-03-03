@@ -21,5 +21,6 @@ export const TYPES = {
 		RegisterWithEmail: Symbol.for("RegisterWithEmailUseCase"),
 		VerifyOtp: Symbol.for("VerifyOtpUseCase"),
 		ResendOtp: Symbol.for("ResendOtpUseCase"),
+		ChangePassword: Symbol.for("ChangePasswordUseCase"),
 	},
 };

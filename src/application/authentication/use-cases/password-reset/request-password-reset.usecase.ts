@@ -15,13 +15,13 @@ export class RequestPasswordResetUseCase
 {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
-		private _userRepository: IUserRepository,
+		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.OtpRepository)
-		private _otpRepository: IOtpRepository,
+		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.OtpGenerator)
-		private _otpGeneratorService: IOtpGenerator,
+		private readonly _otpGeneratorService: IOtpGenerator,
 		@inject(TYPES.Services.MailService)
-		private _mailService: IMailService,
+		private readonly _mailService: IMailService,
 	) {}
 
 	async execute(input: RequestPasswordResetInput): Promise<void> {

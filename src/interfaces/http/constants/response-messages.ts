@@ -6,4 +6,5 @@ export const AuthResponseMessages = {
 		"If an account with this email address exists, you will receive an OTP to reset your password.",
 	OTP_VERIFIED: "OTP verified successfully",
 	OTP_RESENT: "A new OTP has been sent to your email",
+	PASSWORD_CHANGED: "Password changed successfully",
 };

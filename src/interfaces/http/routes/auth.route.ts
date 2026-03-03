@@ -10,6 +10,7 @@ import {
 	resendOtpBodySchema,
 	verifyOtpBodySchema,
 } from "../validators";
+import { changePasswordBodySchema } from "../validators/change-password.schema";
 
 const router = Router();
 const authController = container.get(AuthController);
@@ -54,6 +55,12 @@ router.post(
 	ROUTES.AUTH.RESEND_RESET_PASSWORD_OTP,
 	validate({ body: resendOtpBodySchema }),
 	authController.resendResetPasswordOtp,
+);
+
+router.post(
+	ROUTES.AUTH.CHANGE_PASSWORD,
+	validate({ body: changePasswordBodySchema }),
+	authController.changePassword,
 );
 
 export { router as authRouter };

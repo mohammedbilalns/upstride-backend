@@ -1,5 +1,5 @@
-import type { VerifyOtpInput } from "../dtos/verify-otp.dto";
+import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos/verify-otp.dto";
 
 export interface IVerifyOtpUseCase {
-	execute(input: VerifyOtpInput): Promise<void>;
+	execute(input: VerifyOtpInput): Promise<VerifyOtpResponse>;
 }

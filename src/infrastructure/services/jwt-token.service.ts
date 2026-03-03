@@ -5,7 +5,9 @@ import {
 	type AccessTokenPayload,
 	type ITokenService,
 	REFRESH_TOKEN_EXPIRES_IN,
+	RESET_TOKEN_EXPIRES_IN,
 	type RefreshTokenPayload,
+	type ResetTokenPayload,
 } from "../../application/services/token.service.interace";
 import env from "../../shared/config/env";
 
@@ -23,11 +25,21 @@ export class JwtTokenService implements ITokenService {
 		});
 	}
 
+	generateResetToken(payload: ResetTokenPayload): string {
+		return jwt.sign(payload, env.JWT_RESET_SECRET, {
+			expiresIn: RESET_TOKEN_EXPIRES_IN,
+		});
+	}
+
 	verifyAccessToken(token: string): AccessTokenPayload {
 		return jwt.verify(token, env.JWT_ACCESS_SECRET) as AccessTokenPayload;
 	}
 
 	verifyRefreshToken(token: string): RefreshTokenPayload {
 		return jwt.verify(token, env.JWT_REFRESH_SECRET) as RefreshTokenPayload;
+	}
+
+	verifyResetToken(token: string): ResetTokenPayload {
+		return jwt.verify(token, env.JWT_RESET_SECRET) as ResetTokenPayload;
 	}
 }
