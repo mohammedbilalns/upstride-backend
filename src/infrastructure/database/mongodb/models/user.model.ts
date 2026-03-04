@@ -12,7 +12,7 @@ export interface UserDocument {
 	_id: Types.ObjectId;
 	name: string;
 	email: string;
-	phone: string;
+	phone?: string;
 	passwordHash: string;
 	authType: AuthType;
 	profilePictureId: string | null;
@@ -34,7 +34,7 @@ export const userSchema = new Schema<UserDocument>(
 	{
 		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
-		phone: { type: String, required: true },
+		phone: { type: String },
 		passwordHash: { type: String, required: true },
 		authType: { type: String, enum: AuthTypeValues, required: true },
 		profilePictureId: { type: String },

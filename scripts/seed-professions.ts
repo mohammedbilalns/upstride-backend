@@ -7,6 +7,7 @@ import {
 	disconnectFromMongo,
 } from "../src/infrastructure/database/mongodb/mongodb.connection";
 import logger from "../src/shared/logging/logger";
+import { createSlug } from "../src/shared/utiliites/slug.util";
 
 const seedProfessions = async () => {
 	try {
@@ -24,10 +25,7 @@ const seedProfessions = async () => {
 		let existed = 0;
 
 		for (const name of professions) {
-			const slug = name
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, "-")
-				.replace(/(^-|-$)/g, "");
+			const slug = createSlug(name);
 
 			const result = await ProfessionModel.updateOne(
 				{ name },

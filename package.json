@@ -16,6 +16,7 @@
 		"seed:interests": "npx tsx --env-file=.env scripts/seed-interests.ts",
 		"seed:professions": "npx tsx --env-file=.env scripts/seed-professions.ts",
 		"seed:skills": "npx tsx --env-file=.env scripts/seed-skills.ts",
+		"seed:superadmin": "npx tsx --env-file=.env scripts/seed-superadmin.ts",
 		"seed": "npm run seed:interests && npm run seed:professions && npm run seed:skills"
 	},
 	"keywords": [],

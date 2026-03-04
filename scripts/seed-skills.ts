@@ -8,6 +8,7 @@ import {
 	disconnectFromMongo,
 } from "../src/infrastructure/database/mongodb/mongodb.connection";
 import logger from "../src/shared/logging/logger";
+import { createSlug } from "../src/shared/utiliites/slug.util";
 
 const seedSkills = async () => {
 	try {
@@ -56,10 +57,7 @@ const seedSkills = async () => {
 				}
 
 				const skillName = line.slice(2).trim();
-				const slug = skillName
-					.toLowerCase()
-					.replace(/[^a-z0-9]+/g, "-")
-					.replace(/(^-|-$)/g, "");
+				const slug = createSlug(skillName);
 
 				// Upsert based on skill name
 				const result = await SkillModel.updateOne(

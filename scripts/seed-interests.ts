@@ -7,6 +7,7 @@ import {
 	disconnectFromMongo,
 } from "../src/infrastructure/database/mongodb/mongodb.connection";
 import logger from "../src/shared/logging/logger";
+import { createSlug } from "../src/shared/utiliites/slug.util";
 
 const seedInterests = async () => {
 	try {
@@ -24,10 +25,7 @@ const seedInterests = async () => {
 		let existed = 0;
 
 		for (const name of interests) {
-			const slug = name
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, "-")
-				.replace(/(^-|-$)/g, "");
+			const slug = createSlug(name);
 
 			// Upsert based on name
 			const result = await InterestModel.updateOne(

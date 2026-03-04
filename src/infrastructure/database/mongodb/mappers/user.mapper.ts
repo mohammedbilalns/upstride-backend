@@ -7,7 +7,7 @@ export class UserMapper {
 			id: doc._id.toString(),
 			name: doc.name,
 			email: doc.email,
-			phone: doc.phone,
+			phone: doc.phone || "",
 			passwordHash: doc.passwordHash,
 			authType: doc.authType,
 			profilePictureId: doc.profilePictureId,
