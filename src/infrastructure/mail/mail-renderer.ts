@@ -34,7 +34,7 @@ export class MailRenderer {
 		layout = layout.replace(
 			"{{subject}}",
 			templateName.replace(/-/g, " ").toUpperCase(),
-		); // Fallback or pass subject
+		);
 		layout = layout.replace("{{content}}", content);
 
 		return layout;
