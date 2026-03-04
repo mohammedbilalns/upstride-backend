@@ -8,12 +8,15 @@ import {
 import { RegisterWithEmailUseCase } from "../application/authentication/use-cases/registration/register-with-email.usecase";
 import { ResendOtpUseCase } from "../application/authentication/use-cases/resend-otp.usecase";
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
-import type { IPasswordHasherService } from "../application/services";
+import type { IHasherService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
-import { MongoUserRepository } from "../infrastructure/database/mongodb/repositories";
+import {
+	MongoSessionRepository,
+	MongoUserRepository,
+} from "../infrastructure/database/mongodb/repositories";
 import { redisClient } from "../infrastructure/database/redis/redis.connection";
 import { RedisOtpRepository } from "../infrastructure/database/redis/repositories/otp.repository";
-import { Argon2PasswordHasherService } from "../infrastructure/services/argon2.service";
+import { Argon2HasherService } from "../infrastructure/services/argon2.service";
 import { JwtTokenService } from "../infrastructure/services/jwt-token.service";
 import { MailService } from "../infrastructure/services/mail.service";
 import { CryptoOtpGenerator } from "../infrastructure/services/otp-generator.service";
@@ -31,9 +34,7 @@ container.bind<Queue>(TYPES.Queues.MailQueue).toConstantValue(mailQueue);
 //-------------------------
 // Services
 //-------------------------
-container
-	.bind<IPasswordHasherService>(TYPES.Services.PasswordHasher)
-	.to(Argon2PasswordHasherService);
+container.bind<IHasherService>(TYPES.Services.Hasher).to(Argon2HasherService);
 container.bind(TYPES.Services.TokenService).to(JwtTokenService);
 container.bind<IMailService>(TYPES.Services.MailService).to(MailService);
 container.bind(TYPES.Services.OtpGenerator).to(CryptoOtpGenerator);
@@ -43,6 +44,7 @@ container.bind(TYPES.Services.OtpGenerator).to(CryptoOtpGenerator);
 //-------------------------
 container.bind(TYPES.Repositories.UserRepository).to(MongoUserRepository);
 container.bind(TYPES.Repositories.OtpRepository).to(RedisOtpRepository);
+container.bind(TYPES.Repositories.SessionRepository).to(MongoSessionRepository);
 
 //-------------------------
 // Databases

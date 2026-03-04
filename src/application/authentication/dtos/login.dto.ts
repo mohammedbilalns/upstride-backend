@@ -3,6 +3,12 @@ import type { UserRole } from "../../../domain/entities/user.entity";
 export interface LoginWithEmailInput {
 	email: string;
 	password: string;
+	deviceType?: string;
+	deviceVendor?: string;
+	deviceModel?: string;
+	deviceOs?: string;
+	ipAddress?: string;
+	userAgent?: string;
 }
 
 export interface AuthenticatedUserDTO {

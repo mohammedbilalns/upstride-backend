@@ -29,4 +29,6 @@ export const SessionSchema = new Schema<SessionDocument>(
 	{ timestamps: true },
 );
 
+SessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 export const SessionModel = model<SessionDocument>("Session", SessionSchema);

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { IPasswordHasherService, ITokenService } from "../../../services";
+import type { IHasherService, ITokenService } from "../../../services";
 import type { ChangePasswordInput } from "../../dtos/reset-password.dto";
 import { AuthenticationError, UserNotFoundError } from "../../errors";
 import type { IChangePasswordUseCase } from "./change-password.usecase.interface";
@@ -11,8 +11,8 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
-		@inject(TYPES.Services.PasswordHasher)
-		private readonly _passwordHasherService: IPasswordHasherService,
+		@inject(TYPES.Services.Hasher)
+		private readonly _passwordHasherService: IHasherService,
 		@inject(TYPES.Services.TokenService)
 		private readonly _tokenService: ITokenService,
 	) {}

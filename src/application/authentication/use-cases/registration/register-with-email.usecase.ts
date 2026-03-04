@@ -9,7 +9,7 @@ import { RegisterOtpPolicy } from "../../../../domain/policies/register-otp.poli
 import type { IUserRepository } from "../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import type { IOtpGenerator, IPasswordHasherService } from "../../../services";
+import type { IHasherService, IOtpGenerator } from "../../../services";
 import type { IMailService } from "../../../services/mail.service.interface";
 import type { RegisterWithEmailInput } from "../../dtos/registration.dto";
 import { UserAlreadyExistsError } from "../../errors/user-already-exists.error";
@@ -22,8 +22,8 @@ export class RegisterWithEmailUseCase implements IRegisterWithEmailUseCase {
 		private _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.OtpRepository)
 		private _otpRepository: IOtpRepository,
-		@inject(TYPES.Services.PasswordHasher)
-		private _passwordHasherService: IPasswordHasherService,
+		@inject(TYPES.Services.Hasher)
+		private _passwordHasherService: IHasherService,
 		@inject(TYPES.Services.OtpGenerator)
 		private _otpGeneratorService: IOtpGenerator,
 		@inject(TYPES.Services.MailService)

@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { UAParser } from "ua-parser-js";
 import type { ILoginWithEmailUseCase } from "../../../application/authentication/use-cases/login/login-with-email.usecase.interface";
 import type {
 	IChangePasswordUseCase,
@@ -63,8 +64,23 @@ export class AuthController {
 	});
 
 	login = asyncHandler(async (req, res) => {
+		const userAgent = req.headers["user-agent"] || ("unknown" as string);
+		const ua = new UAParser(userAgent);
+		const deviceType = ua.getDevice().type;
+		const vendorName = ua.getDevice().vendor;
+		const model = ua.getDevice().model;
+		const osName = ua.getOS().name;
+
 		const { refreshToken, ...data } = await this._loginWithEmailUseCase.execute(
-			req.body,
+			{
+				...req.body,
+				deviceType: deviceType || "unknown",
+				deviceVendor: vendorName || "unknown",
+				deviceModel: model || "unknown",
+				deviceOs: osName || "unknown",
+				ipAddress: req.ip || req.socket?.remoteAddress || "unknown",
+				userAgent: userAgent,
+			},
 		);
 
 		res.cookie("refreshToken", refreshToken, {

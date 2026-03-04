@@ -9,7 +9,7 @@ export class Session {
 		public readonly deviceName: string,
 		public readonly deviceType: string,
 		public readonly revoked: boolean,
-		public readonly createdAt: Date,
 		public readonly lastUsedAt: Date,
+		public readonly createdAt?: Date,
 	) {}
 }

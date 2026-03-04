@@ -1,6 +1,6 @@
 export const TYPES = {
 	Services: {
-		PasswordHasher: Symbol.for("PasswordHasher"),
+		Hasher: Symbol.for("Hasher"),
 		TokenService: Symbol.for("TokenService"),
 		MailService: Symbol.for("MailService"),
 		OtpGenerator: Symbol.for("OtpGenerator"),
@@ -11,6 +11,7 @@ export const TYPES = {
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),
 		OtpRepository: Symbol.for("OtpRepository"),
+		SessionRepository: Symbol.for("SessionRepository"),
 	},
 	Databases: {
 		Redis: Symbol.for("Redis"),
