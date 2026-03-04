@@ -12,6 +12,7 @@ export const TYPES = {
 		UserRepository: Symbol.for("UserRepository"),
 		OtpRepository: Symbol.for("OtpRepository"),
 		SessionRepository: Symbol.for("SessionRepository"),
+		TokenRevocationRepository: Symbol.for("TokenRevocationRepository"),
 	},
 	Databases: {
 		Redis: Symbol.for("Redis"),

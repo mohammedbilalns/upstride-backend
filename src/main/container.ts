@@ -15,6 +15,7 @@ import {
 	MongoSessionRepository,
 	MongoUserRepository,
 } from "../infrastructure/database/mongodb/repositories";
+import { RedisTokenRevocationRepository } from "../infrastructure/database/mongodb/repositories/token-revokation.repository";
 import { redisClient } from "../infrastructure/database/redis/redis.connection";
 import { RedisOtpRepository } from "../infrastructure/database/redis/repositories/otp.repository";
 import { Argon2HasherService } from "../infrastructure/services/argon2.service";
@@ -49,6 +50,9 @@ container.bind(TYPES.Services.OtpGenerator).to(CryptoOtpGenerator);
 container.bind(TYPES.Repositories.UserRepository).to(MongoUserRepository);
 container.bind(TYPES.Repositories.OtpRepository).to(RedisOtpRepository);
 container.bind(TYPES.Repositories.SessionRepository).to(MongoSessionRepository);
+container
+	.bind(TYPES.Repositories.TokenRevocationRepository)
+	.to(RedisTokenRevocationRepository);
 
 //-------------------------
 // Databases
