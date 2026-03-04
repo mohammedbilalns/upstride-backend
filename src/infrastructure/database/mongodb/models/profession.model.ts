@@ -16,4 +16,7 @@ export const professionSchema = new Schema<ProfessionDocument>(
 	{ timestamps: true },
 );
 
-export const ProfessionModel = model<ProfessionDocument>("Profession");
+export const ProfessionModel = model<ProfessionDocument>(
+	"Profession",
+	professionSchema,
+);

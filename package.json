@@ -12,7 +12,10 @@
 		"format": "biome format --write",
 		"type-check": "tsc --noEmit",
 		"lint-format": "biome check --write",
-		"test": "vitest"
+		"test": "vitest",
+		"seed:interests": "npx tsx --env-file=.env scripts/seed-interests.ts",
+		"seed:professions": "npx tsx --env-file=.env scripts/seed-professions.ts",
+		"seed": "npm run seed:interests && npm run seed:professions"
 	},
 	"keywords": [],
 	"author": "",

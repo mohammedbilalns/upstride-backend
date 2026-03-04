@@ -18,4 +18,7 @@ export const interestsSchema = new Schema<InterestDocument>(
 	{ timestamps: true },
 );
 
-export const InterestModel = model<InterestDocument>("Interest");
+export const InterestModel = model<InterestDocument>(
+	"Interest",
+	interestsSchema,
+);
