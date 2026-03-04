@@ -12,7 +12,7 @@ export interface SkillDocument {
 
 export const skillSchema = new Schema<SkillDocument>(
 	{
-		name: { type: String, required: true },
+		name: { type: String, required: true, unique: true },
 		slug: { type: String, required: true, unique: true },
 		interestId: {
 			type: Schema.Types.ObjectId,

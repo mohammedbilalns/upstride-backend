@@ -18,9 +18,9 @@ import {
 	MongoSessionRepository,
 	MongoUserRepository,
 } from "../infrastructure/database/mongodb/repositories";
-import { RedisTokenRevocationRepository } from "../infrastructure/database/mongodb/repositories/token-revokation.repository";
 import { redisClient } from "../infrastructure/database/redis/redis.connection";
 import { RedisOtpRepository } from "../infrastructure/database/redis/repositories/otp.repository";
+import { RedisTokenRevocationRepository } from "../infrastructure/database/redis/repositories/token-revokation.repository";
 import { Argon2HasherService } from "../infrastructure/services/argon2.service";
 import { JwtTokenService } from "../infrastructure/services/jwt-token.service";
 import { MailService } from "../infrastructure/services/mail.service";

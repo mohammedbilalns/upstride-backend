@@ -11,7 +11,7 @@ export interface InterestDocument {
 
 export const interestsSchema = new Schema<InterestDocument>(
 	{
-		name: { type: String, required: true },
+		name: { type: String, required: true, unique: true },
 		slug: { type: String, required: true, unique: true },
 		isActive: { type: Boolean, required: true, default: false },
 	},
