@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { UAParser } from "ua-parser-js";
+import { UnauthorizedError } from "../../../application/authentication/errors";
 import type { ILoginWithEmailUseCase } from "../../../application/authentication/use-cases/login/login-with-email.usecase.interface";
 import type { IRefreshSessionUseCase } from "../../../application/authentication/use-cases/refresh-session/refresh-session.usecase.interface";
 import type { IRegisterWithEmailUseCase } from "../../../application/authentication/use-cases/registration/register-with-email.usecase.interface";
@@ -91,7 +92,12 @@ export class AuthController {
 	});
 
 	refreshSession = asyncHandler(async (req, res) => {
-		const data = await this._refreshSessionUseCase.execute(req.body);
+		const refreshToken = req.cookies.refreshToken;
+
+		if (!refreshToken) {
+			throw new UnauthorizedError();
+		}
+		const data = await this._refreshSessionUseCase.execute({ refreshToken });
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.REFRESH_SESSION_SUCCESS,
