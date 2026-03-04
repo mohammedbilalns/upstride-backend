@@ -24,4 +24,4 @@ export const skillSchema = new Schema<SkillDocument>(
 	{ timestamps: true },
 );
 
-export const SkillModel = model<SkillDocument>("Skill");
+export const SkillModel = model<SkillDocument>("Skill", skillSchema);

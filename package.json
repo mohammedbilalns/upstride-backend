@@ -15,7 +15,8 @@
 		"test": "vitest",
 		"seed:interests": "npx tsx --env-file=.env scripts/seed-interests.ts",
 		"seed:professions": "npx tsx --env-file=.env scripts/seed-professions.ts",
-		"seed": "npm run seed:interests && npm run seed:professions"
+		"seed:skills": "npx tsx --env-file=.env scripts/seed-skills.ts",
+		"seed": "npm run seed:interests && npm run seed:professions && npm run seed:skills"
 	},
 	"keywords": [],
 	"author": "",
