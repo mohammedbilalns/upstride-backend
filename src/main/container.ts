@@ -20,7 +20,10 @@ import { Argon2HasherService } from "../infrastructure/services/argon2.service";
 import { JwtTokenService } from "../infrastructure/services/jwt-token.service";
 import { MailService } from "../infrastructure/services/mail.service";
 import { CryptoOtpGenerator } from "../infrastructure/services/otp-generator.service";
-import { AuthController } from "../interfaces/http/controllers";
+import {
+	AuthController,
+	PasswordResetController,
+} from "../interfaces/http/controllers";
 import { TYPES } from "../shared/types/types";
 
 const container = new Container();
@@ -68,5 +71,6 @@ container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
 // Controllers
 //-------------------------
 container.bind(AuthController).to(AuthController);
+container.bind(PasswordResetController).to(PasswordResetController);
 
 export { container };

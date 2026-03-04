@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { container } from "../../../main/container";
 import { ROUTES } from "../constants/route-paths";
-import { AuthController } from "../controllers";
+import { AuthController, PasswordResetController } from "../controllers";
 import { validate } from "../middlewares/validator.middleware";
 import {
 	loginBodySchema,
@@ -14,6 +14,7 @@ import { changePasswordBodySchema } from "../validators/change-password.schema";
 
 const router = Router();
 const authController = container.get(AuthController);
+const passwordResetController = container.get(PasswordResetController);
 
 router.post(
 	ROUTES.AUTH.LOGIN,
@@ -42,25 +43,25 @@ router.post(
 router.post(
 	ROUTES.AUTH.REQUEST_PASSWORD_RESET,
 	validate({ body: passwordResetBodySchema }),
-	authController.requestPasswordReset,
+	passwordResetController.requestPasswordReset,
 );
 
 router.post(
 	ROUTES.AUTH.VERIFY_RESET_PASSWORD_OTP,
 	validate({ body: verifyOtpBodySchema }),
-	authController.verifyResetPasswordOtp,
+	passwordResetController.verifyResetPasswordOtp,
 );
 
 router.post(
 	ROUTES.AUTH.RESEND_RESET_PASSWORD_OTP,
 	validate({ body: resendOtpBodySchema }),
-	authController.resendResetPasswordOtp,
+	passwordResetController.resendResetPasswordOtp,
 );
 
 router.post(
 	ROUTES.AUTH.CHANGE_PASSWORD,
 	validate({ body: changePasswordBodySchema }),
-	authController.changePassword,
+	passwordResetController.changePassword,
 );
 
 export { router as authRouter };
