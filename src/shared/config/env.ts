@@ -15,6 +15,10 @@ const envSchema = z.object({
 	SMTP_PORT: z.coerce.number().min(1).default(25),
 	SMTP_USER: z.string().min(1),
 	SMTP_PASS: z.string().min(1),
+	AWS_BUCKET_NAME: z.string().min(1),
+	AWS_ACCESS_KEY_ID: z.string().min(1),
+	AWS_SECRET_ACCESS_KEY: z.string().min(1),
+	AWS_REGION: z.string().min(1),
 });
 
 const env = envSchema.parse(process.env);
