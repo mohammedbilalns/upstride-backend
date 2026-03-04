@@ -57,12 +57,15 @@ export class MongoSessionRepository
 		await this.model.updateOne({ sid }, { $set: { revoked: true } });
 	}
 
-	async revokeAllOtherSessions(
-		userId: string,
-		currentSid: string,
-	): Promise<void> {
+	async findAllByUserId(userId: string): Promise<Session[]> {
+		const docs = await this.model.find({ userId }).lean();
+		return docs.map((doc) => this.toDomain(doc as SessionDocument));
+	}
+
+	async revokeMultiple(sids: string[]): Promise<void> {
+		if (sids.length === 0) return;
 		await this.model.updateMany(
-			{ userId, sid: { $ne: currentSid } },
+			{ sid: { $in: sids } },
 			{ $set: { revoked: true } },
 		);
 	}

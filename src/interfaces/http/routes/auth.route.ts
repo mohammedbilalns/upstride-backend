@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { container } from "../../../main/container";
 import { ROUTES } from "../constants/route-paths";
-import { AuthController, PasswordResetController } from "../controllers";
+import {
+	AuthController,
+	LogoutController,
+	PasswordResetController,
+} from "../controllers";
 import { verifySession } from "../middlewares";
 import { validate } from "../middlewares/validator.middleware";
 import {
@@ -12,10 +16,12 @@ import {
 	verifyOtpBodySchema,
 } from "../validators";
 import { changePasswordBodySchema } from "../validators/change-password.schema";
+import { revokeSessionBodySchema } from "../validators/revokation.schema";
 
 const router = Router();
 const authController = container.get(AuthController);
 const passwordResetController = container.get(PasswordResetController);
+const logoutController = container.get(LogoutController);
 
 router.post(
 	ROUTES.AUTH.LOGIN,
@@ -67,5 +73,18 @@ router.post(
 	passwordResetController.changePassword,
 );
 
-router.post(ROUTES.AUTH.LOGOUT, verifySession, authController.logout);
+router.post(ROUTES.AUTH.LOGOUT, verifySession, logoutController.logout);
+
+router.post(
+	ROUTES.AUTH.REVOKE_SESSION,
+	verifySession,
+	validate({ body: revokeSessionBodySchema }),
+	logoutController.revokeSession,
+);
+
+router.post(
+	ROUTES.AUTH.REVOKE_ALL_OTHER_SESSIONS,
+	verifySession,
+	logoutController.revokeAllOtherSessions,
+);
 export { router as authRouter };

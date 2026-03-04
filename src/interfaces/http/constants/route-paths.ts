@@ -13,5 +13,7 @@ export const ROUTES = {
 		CHANGE_PASSWORD: "/change-password",
 		REFRESH: "/refresh",
 		LOGOUT: "/logout",
+		REVOKE_SESSION: "/revoke-session",
+		REVOKE_ALL_OTHER_SESSIONS: "/revoke-all-other-sessions",
 	},
 };

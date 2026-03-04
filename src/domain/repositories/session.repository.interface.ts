@@ -9,7 +9,8 @@ export interface ISessionRepository
 		UpdatableByOwnerRepository<Session> {
 	findByTokenHash(tokenHash: string): Promise<Session | null>;
 	revoke(sid: string): Promise<void>;
-	revokeAllOtherSessions(userId: string, currentSid: string): Promise<void>;
+	revokeMultiple(sids: string[]): Promise<void>;
 	updateBySid(sid: string, data: Partial<Session>): Promise<void>;
 	findBySid(sid: string): Promise<Session | null>;
+	findAllByUserId(userId: string): Promise<Session[]>;
 }

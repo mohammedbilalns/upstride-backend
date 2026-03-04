@@ -2,6 +2,8 @@ import { Queue } from "bullmq";
 import { Container } from "inversify";
 import { LoginWithEmailUseCase } from "../application/authentication/use-cases/login/login-with-email.use-case";
 import { LogoutUseCase } from "../application/authentication/use-cases/logout/logout.usecase";
+import { RevokeAllOtherSessionsUseCase } from "../application/authentication/use-cases/logout/revoke-all-other-sessions.usecase";
+import { RevokeSessionUseCase } from "../application/authentication/use-cases/logout/revoke-session.usecase";
 import {
 	ChangePasswordUseCase,
 	RequestPasswordResetUseCase,
@@ -25,6 +27,7 @@ import { MailService } from "../infrastructure/services/mail.service";
 import { CryptoOtpGenerator } from "../infrastructure/services/otp-generator.service";
 import {
 	AuthController,
+	LogoutController,
 	PasswordResetController,
 } from "../interfaces/http/controllers";
 import { TYPES } from "../shared/types/types";
@@ -74,11 +77,16 @@ container.bind(TYPES.UseCases.VerifyOtp).to(VerifyOtpUseCase);
 container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
 container.bind(TYPES.UseCases.RefreshSession).to(RefreshSessionUseCase);
 container.bind(TYPES.UseCases.Logout).to(LogoutUseCase);
+container.bind(TYPES.UseCases.RevokeSession).to(RevokeSessionUseCase);
+container
+	.bind(TYPES.UseCases.RevokeAllOtherSessions)
+	.to(RevokeAllOtherSessionsUseCase);
 
 //-------------------------
 // Controllers
 //-------------------------
 container.bind(AuthController).to(AuthController);
 container.bind(PasswordResetController).to(PasswordResetController);
+container.bind(LogoutController).to(LogoutController);
 
 export { container };

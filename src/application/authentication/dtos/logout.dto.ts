@@ -3,9 +3,11 @@ export interface LogoutInput {
 }
 
 export interface RevokeSessionInput {
-	sessionid: string;
+	requesterUserId: string;
+	targetSessionId: string;
 }
 
-export interface RevokeAllSessionsInput {
-	sessionId: string;
+export interface RevokeAllOtherSessionsInput {
+	requesterUserId: string;
+	requesterSessionId: string;
 }

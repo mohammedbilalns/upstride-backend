@@ -26,5 +26,7 @@ export const TYPES = {
 		ChangePassword: Symbol.for("ChangePasswordUseCase"),
 		RefreshSession: Symbol.for("RefreshSessionUseCase"),
 		Logout: Symbol.for("LogoutUseCase"),
+		RevokeSession: Symbol.for("RevokeSessionUseCase"),
+		RevokeAllOtherSessions: Symbol.for("RevokeAllOtherSessionsUseCase"),
 	},
 };

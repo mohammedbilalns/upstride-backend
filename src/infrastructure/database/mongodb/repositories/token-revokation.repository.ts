@@ -13,6 +13,20 @@ export class RedisTokenRevocationRepository
 		await this.redis.set(`revoked_session:${sessionId}`, "1", "EX", ttl);
 	}
 
+	async revokeMultiple(sessions: { sessionId: string; ttl: number }[]) {
+		if (sessions.length === 0) return;
+		const pipeline = this.redis.pipeline();
+		for (const session of sessions) {
+			pipeline.set(
+				`revoked_session:${session.sessionId}`,
+				"1",
+				"EX",
+				session.ttl,
+			);
+		}
+		await pipeline.exec();
+	}
+
 	async isSessionRevoked(sessionId: string) {
 		return Boolean(await this.redis.exists(`revoked_session:${sessionId}`));
 	}

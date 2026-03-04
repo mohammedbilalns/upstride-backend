@@ -3,7 +3,6 @@ import { inject, injectable } from "inversify";
 import { UAParser } from "ua-parser-js";
 import { UnauthorizedError } from "../../../application/authentication/errors";
 import type { ILoginWithEmailUseCase } from "../../../application/authentication/use-cases/login/login-with-email.usecase.interface";
-import type { ILogoutUseCase } from "../../../application/authentication/use-cases/logout/logout.usecase.interface";
 import type { IRefreshSessionUseCase } from "../../../application/authentication/use-cases/refresh-session/refresh-session.usecase.interface";
 import type { IRegisterWithEmailUseCase } from "../../../application/authentication/use-cases/registration/register-with-email.usecase.interface";
 import type { IResendOtpUseCase } from "../../../application/authentication/use-cases/resend-otp.usecase.interface";
@@ -11,7 +10,6 @@ import type { IVerifyOtpUseCase } from "../../../application/authentication/use-
 import { OtpPurpose } from "../../../domain/policies/otp-purposes";
 import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
-import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages } from "../constants/response-messages";
 import { asyncHandler, sendSuccess } from "../helpers";
@@ -29,8 +27,6 @@ export class AuthController {
 		private _resendOtpUseCase: IResendOtpUseCase,
 		@inject(TYPES.UseCases.RefreshSession)
 		private _refreshSessionUseCase: IRefreshSessionUseCase,
-		@inject(TYPES.UseCases.Logout)
-		private _logoutUseCase: ILogoutUseCase,
 	) {}
 
 	register = asyncHandler(async (req, res) => {
@@ -105,22 +101,6 @@ export class AuthController {
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.REFRESH_SESSION_SUCCESS,
 			data,
-		});
-	});
-
-	logout = asyncHandler(async (req: AuthenticatedRequest, res) => {
-		const sessionId = req.user.sid;
-
-		await this._logoutUseCase.execute({ sessionId });
-
-		res.clearCookie("refreshToken", {
-			httpOnly: true,
-			secure: env.NODE_ENV === "production",
-			sameSite: "strict",
-		});
-
-		sendSuccess(res, HttpStatus.OK, {
-			message: AuthResponseMessages.LOGOUT_SUCCESS,
 		});
 	});
 

@@ -9,4 +9,6 @@ export const AuthResponseMessages = {
 	PASSWORD_CHANGED: "Password changed successfully",
 	REFRESH_SESSION_SUCCESS: "Refresh session successful",
 	LOGOUT_SUCCESS: "Logout successful",
+	SESSION_REVOKED: "Session revoked successfully",
+	ALL_OTHER_SESSIONS_REVOKED: "All other sessions revoked successfully",
 };
