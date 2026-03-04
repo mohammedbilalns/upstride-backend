@@ -1,3 +1,4 @@
+import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import { UAParser } from "ua-parser-js";
 import { UnauthorizedError } from "../../../application/authentication/errors";
@@ -79,12 +80,7 @@ export class AuthController {
 			},
 		);
 
-		res.cookie("refreshToken", refreshToken, {
-			httpOnly: true,
-			secure: env.NODE_ENV === "production",
-			sameSite: "strict",
-			maxAge: 7 * 24 * 60 * 60 * 1000,
-		});
+		this._setRefreshTokenCookie(res, refreshToken);
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
 			data,
@@ -97,11 +93,23 @@ export class AuthController {
 		if (!refreshToken) {
 			throw new UnauthorizedError();
 		}
-		const data = await this._refreshSessionUseCase.execute({ refreshToken });
+		const { refreshToken: newRefreshToken, ...data } =
+			await this._refreshSessionUseCase.execute({ refreshToken });
+
+		this._setRefreshTokenCookie(res, newRefreshToken);
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.REFRESH_SESSION_SUCCESS,
 			data,
 		});
 	});
+
+	private _setRefreshTokenCookie(res: Response, token: string) {
+		res.cookie("refreshToken", token, {
+			httpOnly: true,
+			secure: env.NODE_ENV === "production",
+			sameSite: "strict",
+			maxAge: 7 * 24 * 60 * 60 * 1000,
+		});
+	}
 }

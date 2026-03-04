@@ -5,6 +5,12 @@ export interface VerifyOtpInput {
 	email: string;
 	otp: string;
 	type: OtpPurpose;
+	deviceType?: string;
+	deviceVendor?: string;
+	deviceModel?: string;
+	deviceOs?: string;
+	ipAddress?: string;
+	userAgent?: string;
 }
 
 interface VerifyResetOtpResponse {

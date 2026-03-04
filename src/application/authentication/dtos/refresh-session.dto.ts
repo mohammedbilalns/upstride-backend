@@ -4,4 +4,5 @@ export interface RefreshSessionInput {
 
 export interface RefreshSessionOutput {
 	accessToken: string;
+	refreshToken: string;
 }

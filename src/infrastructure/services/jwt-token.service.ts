@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { injectable } from "inversify";
 import jwt from "jsonwebtoken";
 import {
@@ -41,5 +42,11 @@ export class JwtTokenService implements ITokenService {
 
 	verifyResetToken(token: string): ResetTokenPayload {
 		return jwt.verify(token, env.JWT_RESET_SECRET) as ResetTokenPayload;
+	}
+
+	hashToken(token: string): string {
+		return createHmac("sha256", env.JWT_REFRESH_SECRET)
+			.update(token)
+			.digest("hex");
 	}
 }

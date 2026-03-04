@@ -10,4 +10,6 @@ export interface ISessionRepository
 	findByTokenHash(tokenHash: string): Promise<Session | null>;
 	revoke(sessionId: string): Promise<void>;
 	revokeAllByUserId(userId: string): Promise<void>;
+	updateById(sessionId: string, data: Partial<Session>): Promise<void>;
+	findById(sessionId: string): Promise<Session | null>;
 }

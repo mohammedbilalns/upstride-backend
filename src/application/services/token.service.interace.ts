@@ -2,11 +2,14 @@ import type { UserRole } from "../../domain/entities/user.entity";
 
 export interface AccessTokenPayload {
 	sub: string;
+	sid: string;
 	role: UserRole;
+	jti: string;
 }
 
 export interface RefreshTokenPayload {
 	sub: string;
+	sid: string;
 	jti: string;
 }
 
@@ -25,4 +28,5 @@ export interface ITokenService {
 	verifyRefreshToken(token: string): RefreshTokenPayload;
 	generateResetToken(payload: ResetTokenPayload): string;
 	verifyResetToken(token: string): ResetTokenPayload;
+	hashToken(token: string): string;
 }

@@ -12,6 +12,7 @@ export interface SessionDocument {
 	lastUsedAt: Date;
 	expiresAt: Date;
 	createdAt: Date;
+	jti?: string;
 }
 
 export const SessionSchema = new Schema<SessionDocument>(
@@ -25,6 +26,7 @@ export const SessionSchema = new Schema<SessionDocument>(
 		revoked: { type: Boolean, required: true, default: false },
 		lastUsedAt: { type: Date, required: true, default: Date.now },
 		expiresAt: { type: Date, required: true },
+		jti: { type: String, required: false },
 	},
 	{ timestamps: true },
 );

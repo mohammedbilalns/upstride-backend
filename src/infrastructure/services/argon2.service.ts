@@ -11,4 +11,9 @@ export class Argon2HasherService implements IHasherService {
 	async compare(password: string, hash: string): Promise<boolean> {
 		return argon2.verify(password, hash);
 	}
+
+	async fakeCompare(): Promise<boolean> {
+		await argon2.hash("fake_password");
+		return false;
+	}
 }

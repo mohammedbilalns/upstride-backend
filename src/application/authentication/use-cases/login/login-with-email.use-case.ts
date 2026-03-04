@@ -5,9 +5,13 @@ import type {
 	ISessionRepository,
 	IUserRepository,
 } from "../../../../domain/repositories";
-import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
-import type { IHasherService, ITokenService } from "../../../services";
+import { formatDeviceString } from "../../../../shared/utiliites/device.util";
+import {
+	type IHasherService,
+	type ITokenService,
+	REFRESH_TOKEN_EXPIRES_IN,
+} from "../../../services";
 import type { LoginResponse, LoginWithEmailInput } from "../../dtos/login.dto";
 import { AuthenticationError } from "../../errors/authentication.error";
 import { LoginResponseMapper } from "../../mappers/login-response.mapper";
@@ -21,53 +25,58 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 		@inject(TYPES.Repositories.SessionRepository)
 		private _sessionRepository: ISessionRepository,
 		@inject(TYPES.Services.Hasher)
-		private _passwordHasherService: IHasherService,
+		private _hasherService: IHasherService,
 		@inject(TYPES.Services.TokenService) private _tokenService: ITokenService,
 	) {}
 
-	//TODO : add measures to handle timing attacks
 	async execute(input: LoginWithEmailInput): Promise<LoginResponse> {
-		logger.debug({ input }, "LoginWithEmailUseCase.execute");
 		const existingUser = await this._userRepository.findByEmail(input.email);
 
-		if (!existingUser) throw new AuthenticationError();
-
-		if (existingUser.isBlocked || !existingUser.isVerified) {
+		if (!existingUser) {
+			await this._hasherService.fakeCompare();
 			throw new AuthenticationError();
 		}
 
-		const isPasswordCorrect = await this._passwordHasherService.compare(
+		if (existingUser.isBlocked || !existingUser.isVerified) {
+			await this._hasherService.fakeCompare();
+			throw new AuthenticationError();
+		}
+
+		const isPasswordCorrect = await this._hasherService.compare(
 			input.password,
 			existingUser.passwordHash,
 		);
 
 		if (!isPasswordCorrect) throw new AuthenticationError();
 
+		const sessionId = randomUUID();
+		const refreshTokenId = randomUUID();
+		const accessTokenId = randomUUID();
+
 		const accessToken = this._tokenService.generateAccessToken({
 			sub: existingUser.id,
 			role: existingUser.role,
+			jti: accessTokenId,
+			sid: sessionId,
 		});
-
-		const refreshTokenId = randomUUID();
 
 		const refreshToken = this._tokenService.generateRefreshToken({
 			sub: existingUser.id,
 			jti: refreshTokenId,
+			sid: sessionId,
 		});
 
-		const refreshTokenHash =
-			await this._passwordHasherService.hash(refreshToken);
-		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+		const refreshTokenHash = this._tokenService.hashToken(refreshToken);
+		const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN);
 
 		const session = new Session(
-			refreshTokenId,
+			sessionId,
 			existingUser.id,
 			refreshTokenHash,
 			expiresAt,
 			input.ipAddress || "unknown",
 			input.userAgent || "unknown",
-			`${input.deviceVendor || ""} ${input.deviceModel || ""} ${input.deviceOs || ""}`.trim() ||
-				"unknown",
+			formatDeviceString(input.deviceVendor, input.deviceModel, input.deviceOs),
 			input.deviceType || "unknown",
 			false,
 			new Date(),

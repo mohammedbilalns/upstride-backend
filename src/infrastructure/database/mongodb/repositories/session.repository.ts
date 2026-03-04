@@ -31,6 +31,10 @@ export class MongoSessionRepository
 		return doc ? this.toDomain(doc as SessionDocument) : null;
 	}
 
+	async findById(sessionId: string): Promise<Session | null> {
+		return this.findByIdDocument(sessionId);
+	}
+
 	async updateByOwnerId(
 		ownerId: string,
 		update: Partial<Session>,
@@ -54,5 +58,9 @@ export class MongoSessionRepository
 
 	async revokeAllByUserId(userId: string): Promise<void> {
 		await this.model.updateMany({ userId }, { $set: { revoked: true } });
+	}
+
+	async updateById(sessionId: string, data: Partial<Session>): Promise<void> {
+		await this.model.findByIdAndUpdate(sessionId, data);
 	}
 }
