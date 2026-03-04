@@ -5,6 +5,7 @@ import {
 	ChangePasswordUseCase,
 	RequestPasswordResetUseCase,
 } from "../application/authentication/use-cases/password-reset";
+import { RefreshSessionUseCase } from "../application/authentication/use-cases/refresh-session/refresh-session.usecase";
 import { RegisterWithEmailUseCase } from "../application/authentication/use-cases/registration/register-with-email.usecase";
 import { ResendOtpUseCase } from "../application/authentication/use-cases/resend-otp.usecase";
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
@@ -66,6 +67,7 @@ container
 container.bind(TYPES.UseCases.ChangePassword).to(ChangePasswordUseCase);
 container.bind(TYPES.UseCases.VerifyOtp).to(VerifyOtpUseCase);
 container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
+container.bind(TYPES.UseCases.RefreshSession).to(RefreshSessionUseCase);
 
 //-------------------------
 // Controllers

@@ -11,5 +11,6 @@ export const ROUTES = {
 		VERIFY_RESET_PASSWORD_OTP: "/verify-reset-password-otp",
 		RESEND_RESET_PASSWORD_OTP: "/resend-reset-password-otp",
 		CHANGE_PASSWORD: "/change-password",
+		REFRESH: "/refresh",
 	},
 };

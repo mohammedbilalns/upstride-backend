@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import { UAParser } from "ua-parser-js";
 import type { ILoginWithEmailUseCase } from "../../../application/authentication/use-cases/login/login-with-email.usecase.interface";
+import type { IRefreshSessionUseCase } from "../../../application/authentication/use-cases/refresh-session/refresh-session.usecase.interface";
 import type { IRegisterWithEmailUseCase } from "../../../application/authentication/use-cases/registration/register-with-email.usecase.interface";
 import type { IResendOtpUseCase } from "../../../application/authentication/use-cases/resend-otp.usecase.interface";
 import type { IVerifyOtpUseCase } from "../../../application/authentication/use-cases/verify-otp.usecase.interface";
@@ -22,6 +23,8 @@ export class AuthController {
 		private _verifyOtpUseCase: IVerifyOtpUseCase,
 		@inject(TYPES.UseCases.ResendOtp)
 		private _resendOtpUseCase: IResendOtpUseCase,
+		@inject(TYPES.UseCases.RefreshSession)
+		private _refreshSessionUseCase: IRefreshSessionUseCase,
 	) {}
 
 	register = asyncHandler(async (req, res) => {
@@ -83,6 +86,15 @@ export class AuthController {
 		});
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
+			data,
+		});
+	});
+
+	refreshSession = asyncHandler(async (req, res) => {
+		const data = await this._refreshSessionUseCase.execute(req.body);
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: AuthResponseMessages.REFRESH_SESSION_SUCCESS,
 			data,
 		});
 	});

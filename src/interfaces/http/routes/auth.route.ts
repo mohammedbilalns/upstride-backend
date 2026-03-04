@@ -11,6 +11,7 @@ import {
 	verifyOtpBodySchema,
 } from "../validators";
 import { changePasswordBodySchema } from "../validators/change-password.schema";
+import { refreshSessionBodySchema } from "../validators/refresh-session.schema";
 
 const router = Router();
 const authController = container.get(AuthController);
@@ -38,6 +39,12 @@ router.post(
 	ROUTES.AUTH.RESEND_REGISTER_OTP,
 	validate({ body: resendOtpBodySchema }),
 	authController.resendRegisterOtp,
+);
+
+router.post(
+	ROUTES.AUTH.REFRESH,
+	validate({ body: refreshSessionBodySchema }),
+	authController.refreshSession,
 );
 
 router.post(
