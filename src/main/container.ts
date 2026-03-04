@@ -13,10 +13,13 @@ import { RegisterWithEmailUseCase } from "../application/authentication/use-case
 import { ResendOtpUseCase } from "../application/authentication/use-cases/resend-otp.usecase";
 import { SaveUserInterestsUseCase } from "../application/authentication/use-cases/save-user-interests/save-user-interests.usecase";
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
+import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
 import type { IHasherService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
 import {
+	MongoInterestRepository,
 	MongoSessionRepository,
+	MongoSkillRepository,
 	MongoUserRepository,
 } from "../infrastructure/database/mongodb/repositories";
 import { redisClient } from "../infrastructure/database/redis/redis.connection";
@@ -28,6 +31,7 @@ import { MailService } from "../infrastructure/services/mail.service";
 import { CryptoOtpGenerator } from "../infrastructure/services/otp-generator.service";
 import {
 	AuthController,
+	CatalogController,
 	LogoutController,
 	PasswordResetController,
 } from "../interfaces/http/controllers";
@@ -58,6 +62,10 @@ container.bind(TYPES.Repositories.SessionRepository).to(MongoSessionRepository);
 container
 	.bind(TYPES.Repositories.TokenRevocationRepository)
 	.to(RedisTokenRevocationRepository);
+container
+	.bind(TYPES.Repositories.InterestRepository)
+	.to(MongoInterestRepository);
+container.bind(TYPES.Repositories.SkillRepository).to(MongoSkillRepository);
 
 //-------------------------
 // Databases
@@ -83,6 +91,9 @@ container
 	.bind(TYPES.UseCases.RevokeAllOtherSessions)
 	.to(RevokeAllOtherSessionsUseCase);
 container.bind(TYPES.UseCases.SaveUserInterests).to(SaveUserInterestsUseCase);
+container
+	.bind(TYPES.UseCases.GetOnboardingCatalog)
+	.to(GetOnboardingCatalogUseCase);
 
 //-------------------------
 // Controllers
@@ -90,5 +101,6 @@ container.bind(TYPES.UseCases.SaveUserInterests).to(SaveUserInterestsUseCase);
 container.bind(AuthController).to(AuthController);
 container.bind(PasswordResetController).to(PasswordResetController);
 container.bind(LogoutController).to(LogoutController);
+container.bind(CatalogController).to(CatalogController);
 
 export { container };

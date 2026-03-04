@@ -17,4 +17,8 @@ export const ROUTES = {
 		REVOKE_SESSION: "/revoke-session",
 		REVOKE_ALL_OTHER_SESSIONS: "/revoke-all-other-sessions",
 	},
+	CATALOG: {
+		BASE: "/catalog",
+		ONBOARDING: "/onboarding",
+	},
 };

@@ -13,6 +13,8 @@ export const TYPES = {
 		OtpRepository: Symbol.for("OtpRepository"),
 		SessionRepository: Symbol.for("SessionRepository"),
 		TokenRevocationRepository: Symbol.for("TokenRevocationRepository"),
+		InterestRepository: Symbol.for("InterestRepository"),
+		SkillRepository: Symbol.for("SkillRepository"),
 	},
 	Databases: {
 		Redis: Symbol.for("Redis"),
@@ -29,5 +31,6 @@ export const TYPES = {
 		RevokeSession: Symbol.for("RevokeSessionUseCase"),
 		RevokeAllOtherSessions: Symbol.for("RevokeAllOtherSessionsUseCase"),
 		SaveUserInterests: Symbol.for("SaveUserInterestsUseCase"),
+		GetOnboardingCatalog: Symbol.for("GetOnboardingCatalogUseCase"),
 	},
 };

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ROUTES } from "../constants/route-paths";
 import { authRouter } from "./auth.route";
+import { catalogRouter } from "./catalog.route";
 
 export const router = Router();
 
@@ -9,3 +10,4 @@ router.use("/test", async (_req, res) => {
 });
 
 router.use(ROUTES.AUTH.BASE, authRouter);
+router.use(ROUTES.CATALOG.BASE, catalogRouter);

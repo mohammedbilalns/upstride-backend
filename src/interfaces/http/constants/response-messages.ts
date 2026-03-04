@@ -12,3 +12,7 @@ export const AuthResponseMessages = {
 	SESSION_REVOKED: "Session revoked successfully",
 	ALL_OTHER_SESSIONS_REVOKED: "All other sessions revoked successfully",
 };
+
+export const CatalogResponseMessages = {
+	CATALOG_FETCHED_SUCCESS: "Onboarding catalog fetched successfully",
+};
