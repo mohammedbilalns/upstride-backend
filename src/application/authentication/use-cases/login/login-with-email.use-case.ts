@@ -70,6 +70,7 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 		const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN);
 
 		const session = new Session(
+			"",
 			sessionId,
 			existingUser.id,
 			refreshTokenHash,

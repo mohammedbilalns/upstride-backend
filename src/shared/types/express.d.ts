@@ -1,5 +1,5 @@
 import "express";
-import { UserRole } from "../../domain/entities/user.entity";
+import type { UserRole } from "../../domain/entities/user.entity";
 
 declare global {
 	namespace Express {
@@ -12,6 +12,7 @@ declare global {
 			user?: {
 				id: string;
 				role: UserRole;
+				sid: string;
 			};
 		}
 	}

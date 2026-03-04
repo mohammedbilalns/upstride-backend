@@ -8,4 +8,5 @@ export const AuthResponseMessages = {
 	OTP_RESENT: "A new OTP has been sent to your email",
 	PASSWORD_CHANGED: "Password changed successfully",
 	REFRESH_SESSION_SUCCESS: "Refresh session successful",
+	LOGOUT_SUCCESS: "Logout successful",
 };

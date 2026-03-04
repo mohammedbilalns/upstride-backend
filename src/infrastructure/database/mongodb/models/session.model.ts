@@ -3,6 +3,7 @@ import { model, Schema, type Types } from "mongoose";
 export interface SessionDocument {
 	_id: Types.ObjectId;
 	userId: Types.ObjectId;
+	sid: string;
 	refreshTokenHash: string;
 	ipAddress: string;
 	userAgent: string;
@@ -18,6 +19,7 @@ export interface SessionDocument {
 export const SessionSchema = new Schema<SessionDocument>(
 	{
 		userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+		sid: { type: String, required: true, unique: true },
 		refreshTokenHash: { type: String, required: true },
 		ipAddress: { type: String, required: true },
 		userAgent: { type: String, required: true },

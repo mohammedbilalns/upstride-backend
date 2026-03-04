@@ -1,6 +1,7 @@
 import { Queue } from "bullmq";
 import { Container } from "inversify";
 import { LoginWithEmailUseCase } from "../application/authentication/use-cases/login/login-with-email.use-case";
+import { LogoutUseCase } from "../application/authentication/use-cases/logout/logout.usecase";
 import {
 	ChangePasswordUseCase,
 	RequestPasswordResetUseCase,
@@ -72,6 +73,7 @@ container.bind(TYPES.UseCases.ChangePassword).to(ChangePasswordUseCase);
 container.bind(TYPES.UseCases.VerifyOtp).to(VerifyOtpUseCase);
 container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
 container.bind(TYPES.UseCases.RefreshSession).to(RefreshSessionUseCase);
+container.bind(TYPES.UseCases.Logout).to(LogoutUseCase);
 
 //-------------------------
 // Controllers

@@ -8,8 +8,8 @@ export interface ISessionRepository
 		CreatableRepository<Session>,
 		UpdatableByOwnerRepository<Session> {
 	findByTokenHash(tokenHash: string): Promise<Session | null>;
-	revoke(sessionId: string): Promise<void>;
-	revokeAllByUserId(userId: string): Promise<void>;
-	updateById(sessionId: string, data: Partial<Session>): Promise<void>;
-	findById(sessionId: string): Promise<Session | null>;
+	revoke(sid: string): Promise<void>;
+	revokeAllOtherSessions(userId: string, currentSid: string): Promise<void>;
+	updateBySid(sid: string, data: Partial<Session>): Promise<void>;
+	findBySid(sid: string): Promise<Session | null>;
 }

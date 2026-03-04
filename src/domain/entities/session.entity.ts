@@ -1,6 +1,7 @@
 export class Session {
 	constructor(
 		public readonly id: string,
+		public readonly sid: string,
 		public readonly userId: string,
 		public readonly refreshTokenHash: string,
 		public readonly expiresAt: Date,

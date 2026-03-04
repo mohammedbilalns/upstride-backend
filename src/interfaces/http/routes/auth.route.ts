@@ -2,6 +2,7 @@ import { Router } from "express";
 import { container } from "../../../main/container";
 import { ROUTES } from "../constants/route-paths";
 import { AuthController, PasswordResetController } from "../controllers";
+import { verifySession } from "../middlewares";
 import { validate } from "../middlewares/validator.middleware";
 import {
 	loginBodySchema,
@@ -66,4 +67,5 @@ router.post(
 	passwordResetController.changePassword,
 );
 
+router.post(ROUTES.AUTH.LOGOUT, verifySession, authController.logout);
 export { router as authRouter };

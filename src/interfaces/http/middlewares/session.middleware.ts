@@ -39,6 +39,7 @@ export const verifySession = async (
 		req.user = {
 			id: payload.sub,
 			role: payload.role,
+			sid: payload.sid,
 		};
 		next();
 	} catch (error) {

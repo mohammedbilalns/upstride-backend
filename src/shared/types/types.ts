@@ -25,5 +25,6 @@ export const TYPES = {
 		ResendOtp: Symbol.for("ResendOtpUseCase"),
 		ChangePassword: Symbol.for("ChangePasswordUseCase"),
 		RefreshSession: Symbol.for("RefreshSessionUseCase"),
+		Logout: Symbol.for("LogoutUseCase"),
 	},
 };

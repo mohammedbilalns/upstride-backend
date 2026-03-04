@@ -6,6 +6,7 @@ export class SessionMapper {
 	static toDomain(doc: SessionDocument): Session {
 		return {
 			id: doc._id.toString(),
+			sid: doc.sid,
 			userId: doc.userId.toString(),
 			refreshTokenHash: doc.refreshTokenHash,
 			expiresAt: doc.expiresAt,
@@ -22,6 +23,7 @@ export class SessionMapper {
 	static toDocument(entity: Session): Partial<SessionDocument> {
 		return {
 			userId: new Types.ObjectId(entity.userId),
+			sid: entity.sid,
 			refreshTokenHash: entity.refreshTokenHash,
 			ipAddress: entity.ipAddress,
 			userAgent: entity.userAgent,

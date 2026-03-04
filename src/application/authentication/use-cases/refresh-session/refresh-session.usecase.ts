@@ -28,7 +28,7 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 		const payload = this._tokenService.verifyRefreshToken(input.refreshToken);
 		const { sid } = payload;
 
-		const session = await this._sessionRepository.findById(sid);
+		const session = await this._sessionRepository.findBySid(sid);
 
 		if (!session) throw new UnauthorizedError();
 
@@ -39,7 +39,7 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 		const currentTokenHash = this._tokenService.hashToken(input.refreshToken);
 
 		if (session.refreshTokenHash !== currentTokenHash) {
-			await this._sessionRepository.updateById(sid, { revoked: true });
+			await this._sessionRepository.updateBySid(sid, { revoked: true });
 			throw new UnauthorizedError();
 		}
 
@@ -59,12 +59,12 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 		const newRefreshToken = this._tokenService.generateRefreshToken({
 			sub: user.id,
 			jti: refreshTokenId,
-			sid: session.id,
+			sid: session.sid,
 		});
 
 		const newRefreshTokenHash = this._tokenService.hashToken(newRefreshToken);
 
-		await this._sessionRepository.updateById(session.id, {
+		await this._sessionRepository.updateBySid(session.sid, {
 			lastUsedAt: new Date(),
 			refreshTokenHash: newRefreshTokenHash,
 		});

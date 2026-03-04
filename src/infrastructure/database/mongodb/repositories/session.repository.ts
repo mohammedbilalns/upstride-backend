@@ -31,8 +31,9 @@ export class MongoSessionRepository
 		return doc ? this.toDomain(doc as SessionDocument) : null;
 	}
 
-	async findById(sessionId: string): Promise<Session | null> {
-		return this.findByIdDocument(sessionId);
+	async findBySid(sid: string): Promise<Session | null> {
+		const doc = await this.model.findOne({ sid }).lean();
+		return doc ? this.toDomain(doc as SessionDocument) : null;
 	}
 
 	async updateByOwnerId(
@@ -52,15 +53,21 @@ export class MongoSessionRepository
 		return doc ? this.toDomain(doc as SessionDocument) : null;
 	}
 
-	async revoke(sessionId: string): Promise<void> {
-		await this.model.updateOne({ _id: sessionId }, { $set: { revoked: true } });
+	async revoke(sid: string): Promise<void> {
+		await this.model.updateOne({ sid }, { $set: { revoked: true } });
 	}
 
-	async revokeAllByUserId(userId: string): Promise<void> {
-		await this.model.updateMany({ userId }, { $set: { revoked: true } });
+	async revokeAllOtherSessions(
+		userId: string,
+		currentSid: string,
+	): Promise<void> {
+		await this.model.updateMany(
+			{ userId, sid: { $ne: currentSid } },
+			{ $set: { revoked: true } },
+		);
 	}
 
-	async updateById(sessionId: string, data: Partial<Session>): Promise<void> {
-		await this.model.findByIdAndUpdate(sessionId, data);
+	async updateBySid(sid: string, data: Partial<Session>): Promise<void> {
+		await this.model.findOneAndUpdate({ sid }, data);
 	}
 }
