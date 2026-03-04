@@ -1,4 +1,4 @@
-import type { Response } from "express";
+import type { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { UAParser } from "ua-parser-js";
 import { UnauthorizedError } from "../../../application/authentication/errors";
@@ -6,6 +6,7 @@ import type { ILoginWithEmailUseCase } from "../../../application/authentication
 import type { IRefreshSessionUseCase } from "../../../application/authentication/use-cases/refresh-session/refresh-session.usecase.interface";
 import type { IRegisterWithEmailUseCase } from "../../../application/authentication/use-cases/registration/register-with-email.usecase.interface";
 import type { IResendOtpUseCase } from "../../../application/authentication/use-cases/resend-otp.usecase.interface";
+import type { ISaveUserInterestsUseCase } from "../../../application/authentication/use-cases/save-user-interests/save-user-interests.usecase.interface";
 import type { IVerifyOtpUseCase } from "../../../application/authentication/use-cases/verify-otp.usecase.interface";
 import { OtpPurpose } from "../../../domain/policies/otp-purposes";
 import env from "../../../shared/config/env";
@@ -27,6 +28,8 @@ export class AuthController {
 		private _resendOtpUseCase: IResendOtpUseCase,
 		@inject(TYPES.UseCases.RefreshSession)
 		private _refreshSessionUseCase: IRefreshSessionUseCase,
+		@inject(TYPES.UseCases.SaveUserInterests)
+		private _saveUserInterestsUseCase: ISaveUserInterestsUseCase,
 	) {}
 
 	register = asyncHandler(async (req, res) => {
@@ -61,24 +64,30 @@ export class AuthController {
 	});
 
 	login = asyncHandler(async (req, res) => {
-		const userAgent = req.headers["user-agent"] || ("unknown" as string);
-		const ua = new UAParser(userAgent);
-		const deviceType = ua.getDevice().type;
-		const vendorName = ua.getDevice().vendor;
-		const model = ua.getDevice().model;
-		const osName = ua.getOS().name;
+		const deviceInfo = this._extractDeviceInfo(req);
 
 		const { refreshToken, ...data } = await this._loginWithEmailUseCase.execute(
 			{
 				...req.body,
-				deviceType: deviceType || "unknown",
-				deviceVendor: vendorName || "unknown",
-				deviceModel: model || "unknown",
-				deviceOs: osName || "unknown",
-				ipAddress: req.ip || req.socket?.remoteAddress || "unknown",
-				userAgent: userAgent,
+				...deviceInfo,
 			},
 		);
+
+		this._setRefreshTokenCookie(res, refreshToken);
+		sendSuccess(res, HttpStatus.OK, {
+			message: AuthResponseMessages.LOGIN_SUCCESS,
+			data,
+		});
+	});
+
+	saveInterests = asyncHandler(async (req, res) => {
+		const deviceInfo = this._extractDeviceInfo(req);
+
+		const { refreshToken, ...data } =
+			await this._saveUserInterestsUseCase.execute({
+				...req.body,
+				...deviceInfo,
+			});
 
 		this._setRefreshTokenCookie(res, refreshToken);
 		sendSuccess(res, HttpStatus.OK, {
@@ -111,5 +120,24 @@ export class AuthController {
 			sameSite: "strict",
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		});
+	}
+
+	private _extractDeviceInfo(req: Request) {
+		const userAgent = req.headers["user-agent"] || ("unknown" as string);
+		const ua = new UAParser(userAgent);
+		const deviceType = ua.getDevice().type || "unknown";
+		const deviceVendor = ua.getDevice().vendor || "unknown";
+		const deviceModel = ua.getDevice().model || "unknown";
+		const deviceOs = ua.getOS().name || "unknown";
+		const ipAddress = req.ip || req.socket?.remoteAddress || "unknown";
+
+		return {
+			deviceType,
+			deviceVendor,
+			deviceModel,
+			deviceOs,
+			ipAddress,
+			userAgent,
+		};
 	}
 }

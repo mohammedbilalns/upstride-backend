@@ -17,4 +17,11 @@ interface VerifyResetOtpResponse {
 	resetToken: string | null;
 }
 
-export type VerifyOtpResponse = VerifyResetOtpResponse | LoginResponse;
+interface VerifyRegisterOtpResponse {
+	setupToken: string;
+}
+
+export type VerifyOtpResponse =
+	| VerifyResetOtpResponse
+	| VerifyRegisterOtpResponse
+	| LoginResponse;

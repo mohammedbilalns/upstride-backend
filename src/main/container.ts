@@ -11,6 +11,7 @@ import {
 import { RefreshSessionUseCase } from "../application/authentication/use-cases/refresh-session/refresh-session.usecase";
 import { RegisterWithEmailUseCase } from "../application/authentication/use-cases/registration/register-with-email.usecase";
 import { ResendOtpUseCase } from "../application/authentication/use-cases/resend-otp.usecase";
+import { SaveUserInterestsUseCase } from "../application/authentication/use-cases/save-user-interests/save-user-interests.usecase";
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
 import type { IHasherService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
@@ -81,6 +82,7 @@ container.bind(TYPES.UseCases.RevokeSession).to(RevokeSessionUseCase);
 container
 	.bind(TYPES.UseCases.RevokeAllOtherSessions)
 	.to(RevokeAllOtherSessionsUseCase);
+container.bind(TYPES.UseCases.SaveUserInterests).to(SaveUserInterestsUseCase);
 
 //-------------------------
 // Controllers

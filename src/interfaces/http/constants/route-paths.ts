@@ -7,6 +7,7 @@ export const ROUTES = {
 		RESEND_REGISTER_OTP: "/resend-registration-otp",
 		GOOGLE: "/google",
 		LINKEDIN: "/linkedin",
+		SAVE_INTERESTS: "/save-interests",
 		REQUEST_PASSWORD_RESET: "/reset-password",
 		VERIFY_RESET_PASSWORD_OTP: "/verify-reset-password-otp",
 		RESEND_RESET_PASSWORD_OTP: "/resend-reset-password-otp",

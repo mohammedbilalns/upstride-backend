@@ -13,6 +13,7 @@ import {
 	passwordResetBodySchema,
 	registerBodySchema,
 	resendOtpBodySchema,
+	saveInterestsBodySchema,
 	verifyOtpBodySchema,
 } from "../validators";
 import { changePasswordBodySchema } from "../validators/change-password.schema";
@@ -48,6 +49,12 @@ router.post(
 );
 
 router.post(ROUTES.AUTH.REFRESH, authController.refreshSession);
+
+router.post(
+	ROUTES.AUTH.SAVE_INTERESTS,
+	validate({ body: saveInterestsBodySchema }),
+	authController.saveInterests,
+);
 
 router.post(
 	ROUTES.AUTH.REQUEST_PASSWORD_RESET,

@@ -28,5 +28,6 @@ export const TYPES = {
 		Logout: Symbol.for("LogoutUseCase"),
 		RevokeSession: Symbol.for("RevokeSessionUseCase"),
 		RevokeAllOtherSessions: Symbol.for("RevokeAllOtherSessionsUseCase"),
+		SaveUserInterests: Symbol.for("SaveUserInterestsUseCase"),
 	},
 };
