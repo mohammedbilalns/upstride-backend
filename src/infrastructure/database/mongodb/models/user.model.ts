@@ -2,6 +2,8 @@ import { model, Schema, type Types } from "mongoose";
 import {
 	type AuthType,
 	AuthTypeValues,
+	type SkillLevel,
+	SkillLevelValues,
 	type UserRole,
 	UserRoleValues,
 } from "../../../../domain/entities/user.entity";
@@ -17,6 +19,13 @@ export interface UserDocument {
 	role: UserRole;
 	isBlocked: boolean;
 	isVerified: boolean;
+	preferences?: {
+		interests: Types.ObjectId[];
+		skills: {
+			skillId: Types.ObjectId;
+			levl: SkillLevel;
+		}[];
+	};
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -32,6 +41,18 @@ export const userSchema = new Schema<UserDocument>(
 		role: { type: String, enum: UserRoleValues, required: true },
 		isBlocked: { type: Boolean, required: true, default: false },
 		isVerified: { type: Boolean, required: true, default: false },
+		preferences: {
+			interests: [{ type: Schema.Types.ObjectId, ref: "Interest" }],
+			skills: [
+				{
+					skillId: { type: Schema.Types.ObjectId, ref: "Skill" },
+					level: {
+						type: String,
+						enum: SkillLevelValues,
+					},
+				},
+			],
+		},
 	},
 	{ timestamps: true },
 );

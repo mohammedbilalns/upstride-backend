@@ -10,6 +10,13 @@ export const UserRoleValues = [
 
 export type UserRole = (typeof UserRoleValues)[number];
 
+export const SkillLevelValues = [
+	"BEGINNER",
+	"INTERMEDIATE",
+	"ADVANCED",
+] as const;
+export type SkillLevel = (typeof SkillLevelValues)[number];
+
 export class User {
 	constructor(
 		public readonly id: string,
@@ -24,5 +31,12 @@ export class User {
 		public readonly isVerified: boolean,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
+		public readonly preferences?: {
+			interests: string[];
+			skills: {
+				skillId: string;
+				level: SkillLevel;
+			}[];
+		},
 	) {}
 }
