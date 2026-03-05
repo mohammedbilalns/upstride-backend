@@ -4,6 +4,7 @@ export const TYPES = {
 		TokenService: Symbol.for("TokenService"),
 		MailService: Symbol.for("MailService"),
 		OtpGenerator: Symbol.for("OtpGenerator"),
+		Storage: Symbol.for("Storage"),
 	},
 	Queues: {
 		MailQueue: Symbol.for("MailQueue"),
@@ -15,6 +16,7 @@ export const TYPES = {
 		TokenRevocationRepository: Symbol.for("TokenRevocationRepository"),
 		InterestRepository: Symbol.for("InterestRepository"),
 		SkillRepository: Symbol.for("SkillRepository"),
+		MentorRepository: Symbol.for("MentorRepository"),
 	},
 	Databases: {
 		Redis: Symbol.for("Redis"),
@@ -37,8 +39,10 @@ export const TYPES = {
 		GetUsers: Symbol.for("GetUsersUseCase"),
 		BlockUser: Symbol.for("BlockUserUseCase"),
 		UnblockUser: Symbol.for("UnblockUserUseCase"),
+		GetPreSignedUploadUrl: Symbol.for("GetPreSignedUploadUrlUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
+		File: Symbol.for("FileController"),
 	},
 };

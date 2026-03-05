@@ -29,4 +29,8 @@ export const ROUTES = {
 		BLOCK: (id: string) => `/${id}/block`,
 		UNBLOCK: (id: string) => `/${id}/unblock`,
 	},
+	STORAGE: {
+		BASE: "/storage",
+		GET_PRESIGNED_URL: "/presigned-upload-url",
+	},
 };

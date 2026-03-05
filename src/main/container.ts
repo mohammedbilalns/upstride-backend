@@ -16,13 +16,15 @@ import { ResendOtpUseCase } from "../application/authentication/use-cases/resend
 import { SaveUserInterestsUseCase } from "../application/authentication/use-cases/save-user-interests/save-user-interests.usecase";
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
 import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
-import type { IHasherService } from "../application/services";
+import type { IHasherService, IStorageService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
+import { GetPreSignedUploadUrlUseCase } from "../application/storage-management/use-cases/get-presigned-upload-url.usecase";
 import { BlockUserUseCase } from "../application/user-management/use-cases/block-user.usecase";
 import { GetUsersUseCase } from "../application/user-management/use-cases/get-users.usecase";
 import { UnblockUserUseCase } from "../application/user-management/use-cases/unblock-user.usecase";
 import {
 	MongoInterestRepository,
+	MongoMentorRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
 	MongoUserRepository,
@@ -34,9 +36,11 @@ import { Argon2HasherService } from "../infrastructure/services/argon2.service";
 import { JwtTokenService } from "../infrastructure/services/jwt-token.service";
 import { MailService } from "../infrastructure/services/mail.service";
 import { CryptoOtpGenerator } from "../infrastructure/services/otp-generator.service";
+import { S3StorageService } from "../infrastructure/services/s3-storage.service";
 import {
 	AuthController,
 	CatalogController,
+	FileController,
 	LogoutController,
 	PasswordResetController,
 	UserManagementController,
@@ -58,6 +62,7 @@ container.bind<IHasherService>(TYPES.Services.Hasher).to(Argon2HasherService);
 container.bind(TYPES.Services.TokenService).to(JwtTokenService);
 container.bind<IMailService>(TYPES.Services.MailService).to(MailService);
 container.bind(TYPES.Services.OtpGenerator).to(CryptoOtpGenerator);
+container.bind<IStorageService>(TYPES.Services.Storage).to(S3StorageService);
 
 //-------------------------
 // Repositories
@@ -72,6 +77,7 @@ container
 	.bind(TYPES.Repositories.InterestRepository)
 	.to(MongoInterestRepository);
 container.bind(TYPES.Repositories.SkillRepository).to(MongoSkillRepository);
+container.bind(TYPES.Repositories.MentorRepository).to(MongoMentorRepository);
 
 //-------------------------
 // Databases
@@ -105,6 +111,9 @@ container
 container.bind(TYPES.UseCases.GetUsers).to(GetUsersUseCase);
 container.bind(TYPES.UseCases.BlockUser).to(BlockUserUseCase);
 container.bind(TYPES.UseCases.UnblockUser).to(UnblockUserUseCase);
+container
+	.bind(TYPES.UseCases.GetPreSignedUploadUrl)
+	.to(GetPreSignedUploadUrlUseCase);
 
 //-------------------------
 // Controllers
@@ -115,5 +124,7 @@ container.bind(LogoutController).to(LogoutController);
 container.bind(CatalogController).to(CatalogController);
 container.bind(UserManagementController).to(UserManagementController);
 container.bind(TYPES.Controllers.UserManagement).to(UserManagementController);
+container.bind(FileController).to(FileController);
+container.bind(TYPES.Controllers.File).to(FileController);
 
 export { container };
