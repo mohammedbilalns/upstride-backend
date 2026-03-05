@@ -73,7 +73,7 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 			sub: user.id,
 			role: user.role,
 			jti: accessTokenId,
-			sid: session.id,
+			sid: session.sid,
 		});
 
 		return {

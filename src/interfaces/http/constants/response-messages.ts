@@ -12,6 +12,7 @@ export const AuthResponseMessages = {
 	SESSION_REVOKED: "Session revoked successfully",
 	ALL_OTHER_SESSIONS_REVOKED: "All other sessions revoked successfully",
 	FETCH_USER_SUCCESS: "User fetched successfully",
+	FETCH_SESSIONS_SUCCESS: "Active sessions fetched successfully",
 };
 
 export const CatalogResponseMessages = {

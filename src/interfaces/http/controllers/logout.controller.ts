@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import type { IGetActiveSessionsUseCase } from "../../../application/authentication/use-cases/logout/get-active-sessions.usecase.interface";
 import type { ILogoutUseCase } from "../../../application/authentication/use-cases/logout/logout.usecase.interface";
 import type { IRevokeAllOtherSessionsUseCase } from "../../../application/authentication/use-cases/logout/revoke-all-other-sessions.usecase.interface";
 import type { IRevokeSessionUseCase } from "../../../application/authentication/use-cases/logout/revoke-session.usecase.interface";
@@ -18,6 +19,8 @@ export class LogoutController {
 		private _revokeSessionUseCase: IRevokeSessionUseCase,
 		@inject(TYPES.UseCases.RevokeAllOtherSessions)
 		private _revokeAllOtherSessionsUseCase: IRevokeAllOtherSessionsUseCase,
+		@inject(TYPES.UseCases.GetActiveSessions)
+		private _getActiveSessionsUseCase: IGetActiveSessionsUseCase,
 	) {}
 
 	logout = asyncHandler(async (req: AuthenticatedRequest, res) => {
@@ -65,4 +68,19 @@ export class LogoutController {
 			});
 		},
 	);
+
+	getActiveSessions = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const userId = req.user.id;
+		const currentSessionId = req.user.sid;
+
+		const data = await this._getActiveSessionsUseCase.execute(
+			{ userId },
+			currentSessionId,
+		);
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: AuthResponseMessages.FETCH_SESSIONS_SUCCESS,
+			data,
+		});
+	});
 }
