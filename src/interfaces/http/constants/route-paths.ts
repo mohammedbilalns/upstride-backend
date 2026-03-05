@@ -1,0 +1,26 @@
+export const ROUTES = {
+	AUTH: {
+		BASE: "/auth",
+		LOGIN: "/login",
+		REGISTER: "/register",
+		VERIFY_REGISTER_OTP: "/verify-registration-otp",
+		RESEND_REGISTER_OTP: "/resend-registration-otp",
+		GOOGLE: "/google",
+		LINKEDIN: "/linkedin",
+		SAVE_INTERESTS: "/save-interests",
+		REQUEST_PASSWORD_RESET: "/reset-password",
+		VERIFY_RESET_PASSWORD_OTP: "/verify-reset-password-otp",
+		RESEND_RESET_PASSWORD_OTP: "/resend-reset-password-otp",
+		CHANGE_PASSWORD: "/change-password",
+		REFRESH: "/refresh",
+		LOGOUT: "/logout",
+		REVOKE_SESSION: "/revoke-session",
+		REVOKE_ALL_OTHER_SESSIONS: "/revoke-all-other-sessions",
+		ACTIVE_SESSIONS: "/active-sessions",
+		ME: "/me",
+	},
+	CATALOG: {
+		BASE: "/catalog",
+		ONBOARDING: "/onboarding",
+	},
+};

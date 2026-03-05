@@ -1,57 +1,34 @@
-import { type Db, MongoClient } from "mongodb";
-import env from "../../../shared/config/env.js";
-import logger from "../../../shared/logging/logger.js";
+import mongoose from "mongoose";
+import env from "../../../shared/config/env";
+import logger from "../../../shared/logging/logger";
 
-let client: MongoClient | null = null;
-let db: Db | null = null;
+let isConnected = false;
 
-/**
- * Establishes a MongoDB connection.
- *
- * - Reuses existing connection if already established.
- */
-export const connectToMongo = async (): Promise<Db> => {
-	if (db) return db;
-
+export const connectToMongo = async () => {
+	if (isConnected) return;
 	try {
-		client = new MongoClient(env.MONGODB_URI);
-		await client.connect();
-
-		db = client.db();
-		logger.info(`Connected to MongoDB`);
-
-		return db;
-	} catch (e) {
-		logger.error(`Error connecting to database: ${e}`);
+		await mongoose.connect(env.MONGODB_URI);
+		isConnected = true;
+		logger.info(`Connected to database`);
+	} catch (err) {
+		logger.error(`Error connecting to database, ${err}`);
 		process.exit(1);
 	}
 };
 
-/**
- * Returns the active database instance.
- *
- * Throws if accessed before initialization.
- */
-export const getDb = (): Db => {
-	if (!db) throw new Error("Database not connected");
-	return db;
-};
-
-/**
- * Gracefully closes the MongoDB connection.
- *
- * triggers a disconnection if already connected.
- */
-export const disconnectFromMongo = async (): Promise<void> => {
-	if (!client) return;
+export const disconnectFromMongo = async () => {
+	if (!isConnected) return;
 
 	try {
-		await client.close();
-		client = null;
-		db = null;
-
-		logger.info(`Disconnected from database`);
+		await mongoose.connection.close();
+		isConnected = false;
+		logger.info("Disconnected from the database");
 	} catch (error) {
-		logger.error(`Error disconnecting from database: ${error}`);
+		logger.error(
+			`Error disconnecting from the database: ${(error as Error).message} `,
+		);
+		throw new Error(
+			`Error disconnecting from the database: ${(error as Error).message} `,
+		);
 	}
 };

@@ -4,7 +4,9 @@ import logger from "../../../shared/logging/logger";
 /**
  * Redis client instance.
  */
-export const redisClient = new Redis(env.REDIS_URI);
+export const redisClient = new Redis(env.REDIS_URI, {
+	maxRetriesPerRequest: null,
+});
 
 redisClient.on("connect", () => logger.info("Redis connected"));
 redisClient.on("error", (err) =>
@@ -15,7 +17,7 @@ redisClient.on("error", (err) =>
  * Gracefully terminates the Redis connection.
  *
  * - quit() allows Redis to finish pending commands.
- * - Falls back to forceful `disconnect()` if graceful shutdown fails.
+ * - Falls back to forceful disconnect() if graceful shutdown fails.
  */
 export const disconnectRedis = async () => {
 	if (!redisClient) return;
