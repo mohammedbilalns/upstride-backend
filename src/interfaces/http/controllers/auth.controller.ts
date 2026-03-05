@@ -145,7 +145,11 @@ export class AuthController {
 		const deviceType = ua.getDevice().type || "unknown";
 		const deviceVendor = ua.getDevice().vendor || "unknown";
 		const deviceModel = ua.getDevice().model || "unknown";
-		const deviceOs = ua.getOS().name || "unknown";
+		const deviceOsName = ua.getOS().name || "unknown";
+		const deviceOsVersion = ua.getOS().version;
+		const deviceOs = deviceOsVersion
+			? `${deviceOsName} ${deviceOsVersion}`
+			: deviceOsName;
 		const browser = ua.getBrowser().name || "unknown";
 		const ipAddress = req.ip || req.socket?.remoteAddress || "unknown";
 
