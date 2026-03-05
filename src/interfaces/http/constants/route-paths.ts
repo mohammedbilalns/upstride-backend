@@ -23,4 +23,8 @@ export const ROUTES = {
 		BASE: "/catalog",
 		ONBOARDING: "/onboarding",
 	},
+	USER_MANAGEMENT: {
+		BASE: "/user-management",
+		FETCH_USERS: "/fetch-users",
+	},
 };

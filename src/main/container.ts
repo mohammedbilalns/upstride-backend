@@ -18,6 +18,7 @@ import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify
 import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
 import type { IHasherService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
+import { GetUsersUseCase } from "../application/user-management/use-cases/get-users.usecase";
 import {
 	MongoInterestRepository,
 	MongoSessionRepository,
@@ -36,6 +37,7 @@ import {
 	CatalogController,
 	LogoutController,
 	PasswordResetController,
+	UserManagementController,
 } from "../interfaces/http/controllers";
 import { TYPES } from "../shared/types/types";
 
@@ -98,6 +100,7 @@ container.bind(TYPES.UseCases.GetActiveSessions).to(GetActiveSessionsUseCase);
 container
 	.bind(TYPES.UseCases.GetOnboardingCatalog)
 	.to(GetOnboardingCatalogUseCase);
+container.bind(TYPES.UseCases.GetUsers).to(GetUsersUseCase);
 
 //-------------------------
 // Controllers
@@ -106,5 +109,7 @@ container.bind(AuthController).to(AuthController);
 container.bind(PasswordResetController).to(PasswordResetController);
 container.bind(LogoutController).to(LogoutController);
 container.bind(CatalogController).to(CatalogController);
+container.bind(UserManagementController).to(UserManagementController);
+container.bind(TYPES.Controllers.UserManagement).to(UserManagementController);
 
 export { container };
