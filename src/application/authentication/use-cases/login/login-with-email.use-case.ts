@@ -67,7 +67,7 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 		});
 
 		const refreshTokenHash = this._tokenService.hashToken(refreshToken);
-		const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN);
+		const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN * 1000);
 
 		const session = new Session(
 			"",

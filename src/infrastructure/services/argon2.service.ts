@@ -9,7 +9,7 @@ export class Argon2HasherService implements IHasherService {
 	}
 
 	async compare(password: string, hash: string): Promise<boolean> {
-		return argon2.verify(password, hash);
+		return argon2.verify(hash, password);
 	}
 
 	async fakeCompare(): Promise<boolean> {

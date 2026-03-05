@@ -21,10 +21,10 @@ export interface SetupTokenPayload {
 	sub: string;
 }
 
-export const ACCESS_TOKEN_EXPIRES_IN = "15m";
-export const REFRESH_TOKEN_EXPIRES_IN = "7d";
-export const RESET_TOKEN_EXPIRES_IN = "15m";
-export const SETUP_TOKEN_EXPIRES_IN = "30m";
+export const ACCESS_TOKEN_EXPIRES_IN = 15 * 60;
+export const REFRESH_TOKEN_EXPIRES_IN = 7 * 24 * 60 * 60;
+export const RESET_TOKEN_EXPIRES_IN = 15 * 60;
+export const SETUP_TOKEN_EXPIRES_IN = 30 * 60;
 
 export interface ITokenService {
 	generateAccessToken(payload: AccessTokenPayload): string;

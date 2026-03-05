@@ -8,7 +8,10 @@ import type {
 import { UserPreferencesLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import { formatDeviceString } from "../../../../shared/utiliites/device.util";
-import type { ITokenService } from "../../../services";
+import {
+	type ITokenService,
+	REFRESH_TOKEN_EXPIRES_IN,
+} from "../../../services";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	SaveUserInterestsInput,
@@ -84,7 +87,7 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 		});
 
 		const refreshTokenHash = this._tokenService.hashToken(refreshToken);
-		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+		const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN * 1000);
 
 		const session = new Session(
 			"",
