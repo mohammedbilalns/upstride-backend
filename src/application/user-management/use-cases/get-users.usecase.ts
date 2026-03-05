@@ -15,7 +15,7 @@ export class GetUsersUseCase implements IGetUsersUseCase {
 	async execute(input: GetUsersInput): Promise<GetUsersResponse> {
 		const query: UserQuery = {
 			search: input.search,
-			role: input.role,
+			role: input.role ? input.role : ["USER", "MENTOR"],
 			isBlocked:
 				input.status === "blocked"
 					? true

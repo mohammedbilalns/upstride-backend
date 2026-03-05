@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { UserRoleValues } from "../../../domain/entities/user.entity";
 
 export const UsersQuerySchema = z.object({
 	page: z.coerce.number().int().positive().default(1),
@@ -11,7 +10,7 @@ export const UsersQuerySchema = z.object({
 		})
 		.default(10),
 	search: z.string().optional(),
-	role: z.enum(UserRoleValues).optional(),
+	role: z.enum(["USER", "MENTOR"]).optional(),
 	status: z.enum(["active", "blocked"]).optional(),
 	sort: z.enum(["recent", "old"]).default("recent"),
 });

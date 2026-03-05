@@ -5,7 +5,7 @@ import type { PaginatableRepository } from "./capabilities/paginatable.repositor
 import type { UpdatableByIdRepository } from "./capabilities/updatable-by-id.repository.interface";
 
 export interface UserQuery {
-	role?: UserRole;
+	role?: UserRole | UserRole[];
 	isBlocked?: boolean;
 	search?: string;
 }

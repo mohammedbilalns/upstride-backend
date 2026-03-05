@@ -8,6 +8,7 @@ export class UserListMapper {
 			id: user.id,
 			name: user.name,
 			email: user.email,
+			role: user.role,
 			joinedAt: user.createdAt || new Date(),
 			status: user.isBlocked ? "blocked" : "active",
 			profilePictureUrl: tempProfilePictureUrl,

@@ -4,7 +4,7 @@ export interface GetUsersInput {
 	page: number;
 	limit: number;
 	search?: string;
-	role?: UserRole;
+	role?: UserRole | UserRole[];
 	status?: "active" | "blocked";
 	sort?: "recent" | "old";
 }
@@ -13,6 +13,7 @@ export interface UserListDTO {
 	id: string;
 	name: string;
 	email: string;
+	role: UserRole;
 	joinedAt: Date;
 	status: "active" | "blocked";
 	profilePictureUrl: string | null;
