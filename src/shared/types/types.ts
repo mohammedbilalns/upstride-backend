@@ -40,9 +40,11 @@ export const TYPES = {
 		BlockUser: Symbol.for("BlockUserUseCase"),
 		UnblockUser: Symbol.for("UnblockUserUseCase"),
 		GetPreSignedUploadUrl: Symbol.for("GetPreSignedUploadUrlUseCase"),
+		GetMentorRegistrationInfo: Symbol.for("GetMentorRegistrationInfoUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
 		File: Symbol.for("FileController"),
+		Mentor: Symbol.for("MentorController"),
 	},
 };

@@ -16,6 +16,8 @@ import { ResendOtpUseCase } from "../application/authentication/use-cases/resend
 import { SaveUserInterestsUseCase } from "../application/authentication/use-cases/save-user-interests/save-user-interests.usecase";
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
 import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
+import { GetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase";
+import type { IGetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase.interface";
 import type { IHasherService, IStorageService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
 import { GetPreSignedUploadUrlUseCase } from "../application/storage-management/use-cases/get-presigned-upload-url.usecase";
@@ -42,6 +44,7 @@ import {
 	CatalogController,
 	FileController,
 	LogoutController,
+	MentorController,
 	PasswordResetController,
 	UserManagementController,
 } from "../interfaces/http/controllers";
@@ -114,6 +117,11 @@ container.bind(TYPES.UseCases.UnblockUser).to(UnblockUserUseCase);
 container
 	.bind(TYPES.UseCases.GetPreSignedUploadUrl)
 	.to(GetPreSignedUploadUrlUseCase);
+container
+	.bind<IGetMentorRegistrationInfoUseCase>(
+		TYPES.UseCases.GetMentorRegistrationInfo,
+	)
+	.to(GetMentorRegistrationInfoUseCase);
 
 //-------------------------
 // Controllers
@@ -126,5 +134,7 @@ container.bind(UserManagementController).to(UserManagementController);
 container.bind(TYPES.Controllers.UserManagement).to(UserManagementController);
 container.bind(FileController).to(FileController);
 container.bind(TYPES.Controllers.File).to(FileController);
+container.bind(MentorController).to(MentorController);
+container.bind(TYPES.Controllers.Mentor).to(MentorController);
 
 export { container };

@@ -33,4 +33,8 @@ export const ROUTES = {
 		BASE: "/storage",
 		GET_PRESIGNED_URL: "/presigned-upload-url",
 	},
+	MENTOR: {
+		BASE: "/mentor",
+		REGISTRATION_INFO: "/registration-info",
+	},
 };
