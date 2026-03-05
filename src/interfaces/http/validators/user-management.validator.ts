@@ -15,3 +15,7 @@ export const UsersQuerySchema = z.object({
 	status: z.enum(["active", "blocked"]).optional(),
 	sort: z.enum(["recent", "old"]).default("recent"),
 });
+
+export const UserIdParamSchema = z.object({
+	id: z.string().min(1, "User ID is required"),
+});

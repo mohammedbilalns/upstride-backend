@@ -18,7 +18,9 @@ import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify
 import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
 import type { IHasherService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
+import { BlockUserUseCase } from "../application/user-management/use-cases/block-user.usecase";
 import { GetUsersUseCase } from "../application/user-management/use-cases/get-users.usecase";
+import { UnblockUserUseCase } from "../application/user-management/use-cases/unblock-user.usecase";
 import {
 	MongoInterestRepository,
 	MongoSessionRepository,
@@ -101,6 +103,8 @@ container
 	.bind(TYPES.UseCases.GetOnboardingCatalog)
 	.to(GetOnboardingCatalogUseCase);
 container.bind(TYPES.UseCases.GetUsers).to(GetUsersUseCase);
+container.bind(TYPES.UseCases.BlockUser).to(BlockUserUseCase);
+container.bind(TYPES.UseCases.UnblockUser).to(UnblockUserUseCase);
 
 //-------------------------
 // Controllers

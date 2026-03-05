@@ -21,4 +21,6 @@ export const CatalogResponseMessages = {
 
 export const UserManagementResponseMessages = {
 	USERS_FETCHED_SUCCESS: "Users fetched successfully",
+	USER_UNBLOCKED_SUCCESS: "User unblocked successfully",
+	USER_BLOCKED_SUCCESS: "User blocked successfully",
 };
