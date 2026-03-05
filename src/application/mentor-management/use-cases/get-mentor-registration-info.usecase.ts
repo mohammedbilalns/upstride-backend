@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { MAX_MENTOR_APPLICATION_ATTEMPTS } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import type {
@@ -12,8 +13,6 @@ import type { IGetMentorRegistrationInfoUseCase } from "./get-mentor-registratio
 export class GetMentorRegistrationInfoUseCase
 	implements IGetMentorRegistrationInfoUseCase
 {
-	private readonly MAX_ATTEMPTS = 3;
-
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
 		private readonly mentorRepository: IMentorRepository,
@@ -25,13 +24,13 @@ export class GetMentorRegistrationInfoUseCase
 		const mentor = await this.mentorRepository.findByUserId(userId);
 
 		const attemptsCount = mentor?.applicationAttempts ?? 0;
-		const canApply = attemptsCount < this.MAX_ATTEMPTS;
+		const canApply = attemptsCount < MAX_MENTOR_APPLICATION_ATTEMPTS;
 
 		return MentorRegistrationResponseMapper.toDto(
 			mentor,
 			canApply,
 			attemptsCount,
-			this.MAX_ATTEMPTS,
+			MAX_MENTOR_APPLICATION_ATTEMPTS,
 		);
 	}
 }

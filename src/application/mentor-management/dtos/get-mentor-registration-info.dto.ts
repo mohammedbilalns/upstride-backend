@@ -28,7 +28,7 @@ export interface MentorDto {
 	experience: MentorExperienceDto[];
 	isApproved: boolean;
 	applicationAttempts: number;
-	createdAt: Date;
+	isRejected: boolean;
 	updatedAt: Date;
 	rejectionReason: string | null;
 }

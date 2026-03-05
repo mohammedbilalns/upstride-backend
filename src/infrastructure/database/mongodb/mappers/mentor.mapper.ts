@@ -28,6 +28,7 @@ export class MentorMapper {
 			})),
 			doc.isApproved,
 			doc.applicationAttempts,
+			doc.isRejected,
 			doc.createdAt,
 			doc.updatedAt,
 			doc.rejectionReason,
@@ -53,6 +54,7 @@ export class MentorMapper {
 			})),
 			experience: entity.experience,
 			isApproved: entity.isApproved,
+			isRejected: entity.isRejected,
 			applicationAttempts: entity.applicationAttempts,
 			rejectionReason: entity.rejectionReason,
 		};

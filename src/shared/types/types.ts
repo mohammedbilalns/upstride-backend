@@ -41,6 +41,8 @@ export const TYPES = {
 		UnblockUser: Symbol.for("UnblockUserUseCase"),
 		GetPreSignedUploadUrl: Symbol.for("GetPreSignedUploadUrlUseCase"),
 		GetMentorRegistrationInfo: Symbol.for("GetMentorRegistrationInfoUseCase"),
+		RegisterMentor: Symbol.for("RegisterMentorUseCase"),
+		ResubmitMentor: Symbol.for("ResubmitMentorUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),

@@ -36,5 +36,7 @@ export const ROUTES = {
 	MENTOR: {
 		BASE: "/mentor",
 		REGISTRATION_INFO: "/registration-info",
+		REGISTER: "/register",
+		RESUBMIT: "/resubmit",
 	},
 };

@@ -24,3 +24,11 @@ export const UserManagementResponseMessages = {
 	USER_UNBLOCKED_SUCCESS: "User unblocked successfully",
 	USER_BLOCKED_SUCCESS: "User blocked successfully",
 };
+
+export const MentorResponseMessages = {
+	FETCH_REGISTRATION_INFO_SUCCESS:
+		"Mentor registration info fetched successfully",
+	REGISTRATION_SUBMITTED_SUCCESS: "Mentor registration submitted successfully",
+	REGISTRATION_RESUBMITTED_SUCCESS:
+		"Mentor registration resubmitted successfully",
+};

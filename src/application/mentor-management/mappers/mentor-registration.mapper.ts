@@ -36,8 +36,8 @@ export class MentorRegistrationResponseMapper {
 							to: exp.to,
 						})),
 						isApproved: mentor.isApproved,
+						isRejected: mentor.isRejected,
 						applicationAttempts: mentor.applicationAttempts,
-						createdAt: mentor.createdAt,
 						updatedAt: mentor.updatedAt,
 						rejectionReason: mentor.rejectionReason,
 					}

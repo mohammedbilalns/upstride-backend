@@ -18,6 +18,10 @@ import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify
 import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
 import { GetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase";
 import type { IGetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase.interface";
+import { RegisterMentorUseCase } from "../application/mentor-management/use-cases/register-mentor.usecase";
+import type { IRegisterMentorUseCase } from "../application/mentor-management/use-cases/register-mentor.usecase.interface";
+import { ResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase";
+import type { IResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase.interface";
 import type { IHasherService, IStorageService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
 import { GetPreSignedUploadUrlUseCase } from "../application/storage-management/use-cases/get-presigned-upload-url.usecase";
@@ -122,6 +126,12 @@ container
 		TYPES.UseCases.GetMentorRegistrationInfo,
 	)
 	.to(GetMentorRegistrationInfoUseCase);
+container
+	.bind<IRegisterMentorUseCase>(TYPES.UseCases.RegisterMentor)
+	.to(RegisterMentorUseCase);
+container
+	.bind<IResubmitMentorUseCase>(TYPES.UseCases.ResubmitMentor)
+	.to(ResubmitMentorUseCase);
 
 //-------------------------
 // Controllers
