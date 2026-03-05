@@ -7,6 +7,7 @@ import { TYPES } from "../../../shared/types/types";
 import type { ITokenService } from "../../services";
 import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos/verify-otp.dto";
 import { InvalidOtpError } from "../errors/invalid-otp.error";
+import { MaxAttemptsExceededError } from "../errors/max-attempts-exceeded.error";
 import { UserNotFoundError } from "../errors/user-not-found.error";
 import type { IVerifyOtpUseCase } from "./verify-otp.usecase.interface";
 
@@ -30,6 +31,15 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 				? new RegisterOtpPolicy()
 				: new ResetPasswordOtpPolicy();
 
+		const currentAttempts = await this._otpRepository.getAttempts(
+			user.id,
+			policy.purpose,
+		);
+
+		if (currentAttempts >= policy.maxAttempts) {
+			throw new MaxAttemptsExceededError();
+		}
+
 		const storedCode = await this._otpRepository.getCode(
 			user.id,
 			policy.purpose,
@@ -43,6 +53,7 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 			);
 			if (attempts >= policy.maxAttempts) {
 				await this._otpRepository.deleteAll(user.id, policy.purpose);
+				throw new MaxAttemptsExceededError();
 			}
 			throw new InvalidOtpError();
 		}

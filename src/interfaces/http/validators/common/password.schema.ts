@@ -6,4 +6,8 @@ export const passwordSchema = z
 	.max(128, "Password must be at most 128 characters long")
 	.regex(/[a-z]/, "Password must contain at least one lowercase letter")
 	.regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-	.regex(/[0-9]/, "Password must contain at least one number");
+	.regex(/[0-9]/, "Password must contain at least one number")
+	.regex(
+		/[^a-zA-Z0-9]/,
+		"Password must contain at least one special character (e.g. @, !, #)",
+	);

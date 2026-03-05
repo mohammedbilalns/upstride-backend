@@ -39,7 +39,7 @@ export class MongoInterestRepository
 		update: Partial<Interest>,
 	): Promise<Interest | null> {
 		const doc = await this.model
-			.findByIdAndUpdate(id, update, { new: true })
+			.findByIdAndUpdate(id, update, { returnDocument: "after" })
 			.lean();
 
 		return doc ? this.toDomain(doc as InterestDocument) : null;

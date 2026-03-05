@@ -33,7 +33,7 @@ export class MongoSkillRepository
 
 	async updateById(id: string, update: Partial<Skill>): Promise<Skill | null> {
 		const doc = await this.model
-			.findByIdAndUpdate(id, update, { new: true })
+			.findByIdAndUpdate(id, update, { returnDocument: "after" })
 			.lean();
 
 		return doc ? this.toDomain(doc as SkillDocument) : null;

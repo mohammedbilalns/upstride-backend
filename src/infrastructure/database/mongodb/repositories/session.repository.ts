@@ -41,7 +41,9 @@ export class MongoSessionRepository
 		update: Partial<Session>,
 	): Promise<Session | null> {
 		const doc = await this.model
-			.findOneAndUpdate({ userId: ownerId }, update, { new: true })
+			.findOneAndUpdate({ userId: ownerId }, update, {
+				returnDocument: "after",
+			})
 			.lean();
 		return doc ? this.toDomain(doc as SessionDocument) : null;
 	}

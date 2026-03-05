@@ -37,7 +37,7 @@ export class MongoUserRepository
 
 	async updateById(id: string, update: Partial<User>) {
 		const doc = await this.model
-			.findByIdAndUpdate(id, update, { new: true })
+			.findByIdAndUpdate(id, update, { returnDocument: "after" })
 			.lean();
 
 		return doc ? this.toDomain(doc as UserDocument) : null;

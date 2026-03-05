@@ -50,7 +50,9 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 
 		if (
 			input.skills.length < UserPreferencesLimits.MIN_SKILLS_PER_INTEREST ||
-			input.skills.length > UserPreferencesLimits.MAX_SKILLS_PER_INTEREST
+			input.skills.length >
+				UserPreferencesLimits.MAX_INTERESTS *
+					UserPreferencesLimits.MAX_SKILLS_PER_INTEREST
 		) {
 			throw new ValidationError();
 		}

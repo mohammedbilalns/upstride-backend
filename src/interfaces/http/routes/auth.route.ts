@@ -80,7 +80,8 @@ router.post(
 	passwordResetController.changePassword,
 );
 
-router.post(ROUTES.AUTH.LOGOUT, verifySession, logoutController.logout);
+router.use(verifySession);
+router.post(ROUTES.AUTH.LOGOUT, logoutController.logout);
 
 router.post(
 	ROUTES.AUTH.REVOKE_SESSION,
