@@ -32,5 +32,6 @@ export const TYPES = {
 		RevokeAllOtherSessions: Symbol.for("RevokeAllOtherSessionsUseCase"),
 		SaveUserInterests: Symbol.for("SaveUserInterestsUseCase"),
 		GetOnboardingCatalog: Symbol.for("GetOnboardingCatalogUseCase"),
+		GetMe: Symbol.for("GetMeUseCase"),
 	},
 };

@@ -1,5 +1,6 @@
 import { Queue } from "bullmq";
 import { Container } from "inversify";
+import { GetMeUseCase } from "../application/authentication/use-cases/get-me.usecase";
 import { LoginWithEmailUseCase } from "../application/authentication/use-cases/login/login-with-email.use-case";
 import { LogoutUseCase } from "../application/authentication/use-cases/logout/logout.usecase";
 import { RevokeAllOtherSessionsUseCase } from "../application/authentication/use-cases/logout/revoke-all-other-sessions.usecase";
@@ -91,6 +92,7 @@ container
 	.bind(TYPES.UseCases.RevokeAllOtherSessions)
 	.to(RevokeAllOtherSessionsUseCase);
 container.bind(TYPES.UseCases.SaveUserInterests).to(SaveUserInterestsUseCase);
+container.bind(TYPES.UseCases.GetMe).to(GetMeUseCase);
 container
 	.bind(TYPES.UseCases.GetOnboardingCatalog)
 	.to(GetOnboardingCatalogUseCase);
