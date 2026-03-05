@@ -14,6 +14,7 @@ export interface SaveUserInterestsInput {
 	deviceOs?: string;
 	ipAddress?: string;
 	userAgent?: string;
+	browser?: string;
 }
 
 export type SaveUserInterestsResponse = LoginResponse;

@@ -9,6 +9,7 @@ export interface LoginWithEmailInput {
 	deviceOs?: string;
 	ipAddress?: string;
 	userAgent?: string;
+	browser?: string;
 }
 
 export interface AuthenticatedUserDTO {

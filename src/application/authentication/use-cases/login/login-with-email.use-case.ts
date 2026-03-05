@@ -77,7 +77,12 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 			expiresAt,
 			input.ipAddress || "unknown",
 			input.userAgent || "unknown",
-			formatDeviceString(input.deviceVendor, input.deviceModel, input.deviceOs),
+			formatDeviceString(
+				input.browser,
+				input.deviceVendor,
+				input.deviceModel,
+				input.deviceOs,
+			),
 			input.deviceType || "unknown",
 			false,
 			new Date(),
