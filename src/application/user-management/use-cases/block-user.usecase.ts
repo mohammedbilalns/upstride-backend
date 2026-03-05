@@ -4,8 +4,10 @@ import type {
 	ISessionRepository,
 	IUserRepository,
 } from "../../../domain/repositories";
+import type { ITokenRevocationRepository } from "../../../domain/repositories/token-revokation.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import { UserNotFoundError } from "../../authentication/errors";
+import { REFRESH_TOKEN_EXPIRES_IN } from "../../services";
 import type { BlockUserInput } from "../dtos/block-user.dto";
 import type { IBlockUserUseCase } from "./block-user.usecase.interface";
 
@@ -16,6 +18,8 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		private _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.SessionRepository)
 		private _sessionRepository: ISessionRepository,
+		@inject(TYPES.Repositories.TokenRevocationRepository)
+		private _tokenRevocationRepository: ITokenRevocationRepository,
 	) {}
 
 	async execute(input: BlockUserInput): Promise<void> {
@@ -26,7 +30,6 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 
 		await this._userRepository.updateById(input.userId, { isBlocked: true });
 
-		// Revoke all active sessions
 		const sessions = await this._sessionRepository.findAllByUserId(
 			input.userId,
 		);
@@ -35,7 +38,15 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 			.map((s: Session) => s.sid);
 
 		if (sids.length > 0) {
-			await this._sessionRepository.revokeMultiple(sids);
+			await Promise.all([
+				this._sessionRepository.revokeMultiple(sids),
+				this._tokenRevocationRepository.revokeMultiple(
+					sids.map((sid) => ({
+						sessionId: sid,
+						ttl: REFRESH_TOKEN_EXPIRES_IN,
+					})),
+				),
+			]);
 		}
 	}
 }

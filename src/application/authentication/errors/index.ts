@@ -4,4 +4,5 @@ export * from "./max-attempts-exceeded.error";
 export * from "./max-resend-exceeded.error";
 export * from "./unauthorized.error";
 export * from "./user-already-exists.error";
+export * from "./user-blocked.error";
 export * from "./user-not-found.error";

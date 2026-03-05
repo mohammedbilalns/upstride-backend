@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { container } from "../../../main/container";
 import { TYPES } from "../../../shared/types/types";
+import { ROUTES } from "../constants/route-paths";
 import type { UserManagementController } from "../controllers/user-management.controller";
 import { authorizeRoles } from "../middlewares/role.middleware";
 import { verifySession } from "../middlewares/session.middleware";
-
 import { validate } from "../middlewares/validator.middleware";
 import {
 	UserIdParamSchema,
@@ -19,7 +19,7 @@ const controller = container.get<UserManagementController>(
 router.use(verifySession, authorizeRoles(["ADMIN", "SUPER_ADMIN"]));
 
 router.get(
-	"/",
+	ROUTES.USER_MANAGEMENT.FETCH_USERS,
 	validate({ query: UsersQuerySchema }),
 	controller.getUsers.bind(controller),
 );
