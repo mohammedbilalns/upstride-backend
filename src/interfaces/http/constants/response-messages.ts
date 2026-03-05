@@ -18,3 +18,9 @@ export const AuthResponseMessages = {
 export const CatalogResponseMessages = {
 	CATALOG_FETCHED_SUCCESS: "Onboarding catalog fetched successfully",
 };
+
+export const UserManagementResponseMessages = {
+	USERS_FETCHED_SUCCESS: "Users fetched successfully",
+	USER_UNBLOCKED_SUCCESS: "User unblocked successfully",
+	USER_BLOCKED_SUCCESS: "User blocked successfully",
+};

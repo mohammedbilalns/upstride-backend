@@ -10,7 +10,11 @@ import type {
 	RefreshSessionInput,
 	RefreshSessionOutput,
 } from "../../dtos/refresh-session.dto";
-import { AuthenticationError, UnauthorizedError } from "../../errors";
+import {
+	AuthenticationError,
+	UnauthorizedError,
+	UserBlockedError,
+} from "../../errors";
 import type { IRefreshSessionUseCase } from "./refresh-session.usecase.interface";
 
 @injectable()
@@ -49,7 +53,15 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 
 		const user = await this._userRepository.findById(session.userId);
 
-		if (!user || user.isBlocked || !user.isVerified) {
+		if (!user) {
+			throw new AuthenticationError();
+		}
+
+		if (user.isBlocked) {
+			throw new UserBlockedError();
+		}
+
+		if (!user.isVerified) {
 			throw new AuthenticationError();
 		}
 

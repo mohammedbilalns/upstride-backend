@@ -34,5 +34,11 @@ export const TYPES = {
 		GetOnboardingCatalog: Symbol.for("GetOnboardingCatalogUseCase"),
 		GetMe: Symbol.for("GetMeUseCase"),
 		GetActiveSessions: Symbol.for("GetActiveSessionsUseCase"),
+		GetUsers: Symbol.for("GetUsersUseCase"),
+		BlockUser: Symbol.for("BlockUserUseCase"),
+		UnblockUser: Symbol.for("UnblockUserUseCase"),
+	},
+	Controllers: {
+		UserManagement: Symbol.for("UserManagementController"),
 	},
 };

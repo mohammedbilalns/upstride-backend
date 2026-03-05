@@ -14,6 +14,7 @@ import {
 } from "../../../services";
 import type { LoginResponse, LoginWithEmailInput } from "../../dtos/login.dto";
 import { AuthenticationError } from "../../errors/authentication.error";
+import { UserBlockedError } from "../../errors/user-blocked.error";
 import { LoginResponseMapper } from "../../mappers/login-response.mapper";
 import type { ILoginWithEmailUseCase } from "./login-with-email.usecase.interface";
 
@@ -37,7 +38,10 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 			throw new AuthenticationError();
 		}
 
-		if (existingUser.isBlocked || !existingUser.isVerified) {
+		if (existingUser.isBlocked) {
+			throw new UserBlockedError();
+		}
+		if (!existingUser.isVerified) {
 			await this._hasherService.fakeCompare();
 			throw new AuthenticationError();
 		}

@@ -51,7 +51,12 @@ export class MongoUserRepository
 	async paginate({ page, limit, query, sort }: PaginateParams<UserQuery>) {
 		const filter: QueryFilter<UserDocument> = {};
 
-		if (query?.role) filter.role = query.role;
+		if (query?.role) {
+			filter.role = Array.isArray(query.role)
+				? { $in: query.role }
+				: query.role;
+		}
+
 		if (query?.isBlocked !== undefined) filter.isBlocked = query.isBlocked;
 
 		if (query?.search) {
