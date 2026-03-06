@@ -1,3 +1,4 @@
+import type { UserWithPopulatedPreferences } from "../../application/profile-management/dtos/get-profile.dto";
 import type { User, UserRole } from "../entities/user.entity";
 import type { CreatableRepository } from "./capabilities/creatable.repository.interface";
 import type { FindByIdRepository } from "./capabilities/find-by-id.repository.interface";
@@ -16,6 +17,6 @@ export interface IUserRepository
 		UpdatableByIdRepository<User>,
 		PaginatableRepository<User, UserQuery> {
 	findByEmail(email: string): Promise<User | null>;
-	findProfileById(id: string): Promise<any | null>;
+	findProfileById(id: string): Promise<UserWithPopulatedPreferences | null>;
 	deleteById(id: string): Promise<void>;
 }

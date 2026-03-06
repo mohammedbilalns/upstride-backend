@@ -23,7 +23,7 @@ export interface UserDocument {
 		interests: Types.ObjectId[];
 		skills: {
 			skillId: Types.ObjectId;
-			levl: SkillLevel;
+			level: SkillLevel;
 		}[];
 	};
 	createdAt: Date;

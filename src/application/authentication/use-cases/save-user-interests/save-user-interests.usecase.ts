@@ -12,6 +12,7 @@ import {
 	type ITokenService,
 	REFRESH_TOKEN_EXPIRES_IN,
 } from "../../../services";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	SaveUserInterestsInput,
@@ -31,6 +32,8 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 		private readonly _sessionRepository: ISessionRepository,
 		@inject(TYPES.Services.TokenService)
 		private readonly _tokenService: ITokenService,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(
@@ -110,14 +113,18 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 
 		await this._sessionRepository.create(session);
 
-		// dummy profile picture url
-		const tempProfilePictureUrl = "https://picsum.photos/200";
+		let profilePictureUrl: string | null = null;
+		if (finalUser.profilePictureId) {
+			profilePictureUrl = await this._storageService.getSignedUrl(
+				finalUser.profilePictureId,
+			);
+		}
 
 		return LoginResponseMapper.toDto(
 			finalUser,
 			accessToken,
 			refreshToken,
-			tempProfilePictureUrl,
+			profilePictureUrl,
 		);
 	}
 }

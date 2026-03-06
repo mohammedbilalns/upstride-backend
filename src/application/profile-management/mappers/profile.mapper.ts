@@ -1,7 +1,45 @@
-import type { UserProfileDTO } from "../dtos/get-profile.dto";
+import type { SkillLevel } from "../../../domain/entities/user.entity";
+import type {
+	PopulatedInterest,
+	PopulatedSkill,
+	UserProfileDTO,
+	UserWithPopulatedPreferences,
+} from "../dtos/get-profile.dto";
 
 export class ProfileMapper {
-	static toDTO(user: any, profilePictureUrl: string | null): UserProfileDTO {
+	static toDTO(
+		user: UserWithPopulatedPreferences,
+		profilePictureUrl: string | null,
+	): UserProfileDTO {
+		const interests = (user.preferences?.interests || []).map(
+			(i: PopulatedInterest) => ({
+				id: (i._id || i.id)?.toString() || "",
+				name: i.name,
+				skills: [] as { skillId: string; name: string; level: SkillLevel }[],
+			}),
+		);
+
+		const skills = (user.preferences?.skills || []).map(
+			(s: PopulatedSkill) => ({
+				skillId: (s.skillId._id || s.skillId.id)?.toString() || "",
+				name: s.skillId.name || "Unknown",
+				interestId: s.skillId.interestId.toString(),
+				level: s.level,
+			}),
+		);
+
+		// Group skills under each interest
+		for (const skill of skills) {
+			const interest = interests.find((i) => i.id === skill.interestId);
+			if (interest) {
+				interest.skills.push({
+					skillId: skill.skillId,
+					name: skill.name,
+					level: skill.level,
+				});
+			}
+		}
+
 		return {
 			id: user.id,
 			name: user.name,
@@ -11,16 +49,7 @@ export class ProfileMapper {
 			profilePictureUrl,
 			preferences: user.preferences
 				? {
-						interests: (user.preferences.interests || []).map((i: any) => ({
-							id: i._id?.toString() || i.id?.toString(),
-							name: i.name,
-						})),
-						skills: (user.preferences.skills || []).map((s: any) => ({
-							skillId: s.skillId?._id?.toString() || s.skillId?.id?.toString(),
-							name: s.skillId?.name || "Unknown",
-							interestId: s.skillId?.interestId?.toString(),
-							level: s.level,
-						})),
+						interests: interests,
 					}
 				: undefined,
 		};

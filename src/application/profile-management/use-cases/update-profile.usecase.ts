@@ -3,6 +3,7 @@ import type { IUserRepository } from "../../../domain/repositories";
 import { UserPreferencesLimits } from "../../../shared/constants/app.constants";
 import { TYPES } from "../../../shared/types/types";
 import { UserNotFoundError } from "../../authentication/errors";
+import type { IStorageService } from "../../services/storage.service.interface";
 import { ValidationError } from "../../shared/errors/validation-error";
 import type { UpdateProfileInput } from "../dtos/update-profile.dto";
 import type { IUpdateProfileUseCase } from "./update-profile.usecase.interface";
@@ -12,6 +13,8 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: UpdateProfileInput): Promise<void> {
@@ -27,6 +30,9 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 		}
 
 		if (input.profilePictureId) {
+			if (user.profilePictureId) {
+				await this._storageService.delete(user.profilePictureId);
+			}
 			updateData.profilePictureId = input.profilePictureId;
 		}
 

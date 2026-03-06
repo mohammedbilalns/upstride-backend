@@ -7,6 +7,35 @@ export interface GetProfileInput {
 	userId: string;
 }
 
+export interface PopulatedInterest {
+	_id?: { toString(): string };
+	id?: { toString(): string };
+	name: string;
+}
+
+export interface PopulatedSkill {
+	skillId: {
+		_id?: { toString(): string };
+		id?: { toString(): string };
+		name: string;
+		interestId: { toString(): string };
+	};
+	level: SkillLevel;
+}
+
+export interface UserWithPopulatedPreferences {
+	id: string;
+	name: string;
+	email: string;
+	phone: string;
+	role: UserRole;
+	profilePictureId: string | null;
+	preferences?: {
+		interests: PopulatedInterest[];
+		skills: PopulatedSkill[];
+	};
+}
+
 export interface UserProfileDTO {
 	id: string;
 	name: string;
@@ -18,12 +47,11 @@ export interface UserProfileDTO {
 		interests: {
 			id: string;
 			name: string;
-		}[];
-		skills: {
-			skillId: string;
-			name: string;
-			interestId: string;
-			level: SkillLevel;
+			skills: {
+				skillId: string;
+				name: string;
+				level: SkillLevel;
+			}[];
 		}[];
 	};
 }

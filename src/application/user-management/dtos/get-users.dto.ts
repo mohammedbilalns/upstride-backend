@@ -16,7 +16,6 @@ export interface UserListDTO {
 	role: UserRole;
 	joinedAt: Date;
 	status: "active" | "blocked";
-	profilePictureUrl: string | null;
 }
 
 export interface GetUsersResponse {

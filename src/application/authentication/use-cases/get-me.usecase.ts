@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
+import type { IStorageService } from "../../services/storage.service.interface";
 import type { GetMeInput, GetMeOutput } from "../dtos/get-me.dto";
 import { UserNotFoundError } from "../errors";
 import { GetMeResponseMapper } from "../mappers/get-me-response.mapper";
@@ -11,6 +12,8 @@ export class GetMeUseCase implements IGetMeUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: GetMeInput): Promise<GetMeOutput> {
@@ -18,8 +21,13 @@ export class GetMeUseCase implements IGetMeUseCase {
 
 		if (!user) throw new UserNotFoundError();
 
-		const tempProfilePictureUrl: string = "https://picsum.photos/200";
+		let profilePictureUrl: string | null = null;
+		if (user.profilePictureId) {
+			profilePictureUrl = await this._storageService.getSignedUrl(
+				user.profilePictureId,
+			);
+		}
 
-		return GetMeResponseMapper.toDto(user, tempProfilePictureUrl);
+		return GetMeResponseMapper.toDto(user, profilePictureUrl);
 	}
 }
