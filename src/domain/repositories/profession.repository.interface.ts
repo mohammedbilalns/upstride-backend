@@ -14,4 +14,6 @@ export interface IProfessionRepository
 	extends CreatableRepository<Profession>,
 		UpdatableByIdRepository<Profession>,
 		QueryableRepository<Profession, ProfessionQuery>,
-		DisablableRepository {}
+		DisablableRepository {
+	findAllActive(): Promise<Profession[]>;
+}

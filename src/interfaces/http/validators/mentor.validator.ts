@@ -1,0 +1,203 @@
+import { z } from "zod";
+import {
+	MAX_MENTOR_AREAS_OF_EXPERTISE,
+	MAX_MENTOR_EDUCATION_ITEMS,
+	MAX_MENTOR_EXPERIENCE_ITEMS,
+} from "../../../domain/entities/mentor.entity";
+import { SkillLevelValues } from "../../../domain/entities/user.entity";
+
+export const registerMentorSchema = z.object({
+	bio: z.string().min(10, "Bio must be at least 10 characters long"),
+	currentRoleId: z.string().min(1, "Current role is required"),
+	organization: z.string().min(1, "Organization is required"),
+	yearsOfExperience: z
+		.number()
+		.min(0, "Years of experience must be at least 0"),
+	personalWebsite: z
+		.string()
+		.url("Invalid website URL")
+		.or(z.literal(""))
+		.nullish(),
+	resumeId: z.string().min(1, "Resume is required"),
+	educationalQualifications: z
+		.array(z.string().min(1))
+		.min(1, "At least one qualification is required")
+		.max(
+			MAX_MENTOR_EDUCATION_ITEMS,
+			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
+		),
+	areasOfExpertise: z
+		.array(z.string().min(1))
+		.min(1, "At least one area of expertise is required")
+		.max(
+			MAX_MENTOR_AREAS_OF_EXPERTISE,
+			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of expertise allowed`,
+		),
+	toolsAndSkills: z
+		.array(
+			z.object({
+				skillId: z.string().min(1),
+				level: z.enum(SkillLevelValues),
+			}),
+		)
+		.min(1, "At least one skill is required"),
+	experience: z
+		.array(
+			z.object({
+				company: z.string().min(1, "Company name is required"),
+				role: z.string().min(1, "Role is required"),
+				description: z.string().min(1, "Description is required"),
+				from: z.string().datetime({ message: "Invalid from date" }),
+				to: z.string().datetime({ message: "Invalid to date" }).nullable(),
+			}),
+		)
+		.min(1, "At least one experience item is required")
+		.max(
+			MAX_MENTOR_EXPERIENCE_ITEMS,
+			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
+		)
+		.superRefine((experience, ctx) => {
+			const now = new Date();
+			for (let i = 0; i < experience.length; i++) {
+				const exp = experience[i];
+				const fromDate = new Date(exp.from);
+				if (fromDate > now) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "From date cannot be in the future",
+						path: [i, "from"],
+					});
+				}
+				if (exp.to) {
+					const toDate = new Date(exp.to);
+					if (toDate > now) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "To date cannot be in the future",
+							path: [i, "to"],
+						});
+					}
+					if (fromDate > toDate) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "From date cannot be after To date",
+							path: [i, "from"],
+						});
+					}
+				}
+			}
+		}),
+});
+
+export const resubmitMentorSchema = z.object({
+	bio: z.string().min(10, "Bio must be at least 10 characters long").optional(),
+	currentRoleId: z.string().min(1, "Current role is required").optional(),
+	organization: z.string().min(1, "Organization is required").optional(),
+	yearsOfExperience: z
+		.number()
+		.min(0, "Years of experience must be at least 0")
+		.optional(),
+	personalWebsite: z
+		.string()
+		.url("Invalid website URL")
+		.or(z.literal(""))
+		.nullish(),
+	resumeId: z.string().min(1, "Resume is required").optional(),
+	educationalQualifications: z
+		.array(z.string().min(1))
+		.min(1, "At least one qualification is required")
+		.max(
+			MAX_MENTOR_EDUCATION_ITEMS,
+			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
+		)
+		.optional(),
+	areasOfExpertise: z
+		.array(z.string().min(1))
+		.min(1, "At least one area of expertise is required")
+		.max(
+			MAX_MENTOR_AREAS_OF_EXPERTISE,
+			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of expertise allowed`,
+		)
+		.optional(),
+	toolsAndSkills: z
+		.array(
+			z.object({
+				skillId: z.string().min(1),
+				level: z.enum(SkillLevelValues),
+			}),
+		)
+		.min(1, "At least one skill is required")
+		.optional(),
+	experience: z
+		.array(
+			z.object({
+				company: z.string().min(1, "Company name is required"),
+				role: z.string().min(1, "Role is required"),
+				description: z.string().min(1, "Description is required"),
+				from: z.string().datetime({ message: "Invalid from date" }),
+				to: z.string().datetime({ message: "Invalid to date" }).nullable(),
+			}),
+		)
+		.min(1, "At least one experience item is required")
+		.max(
+			MAX_MENTOR_EXPERIENCE_ITEMS,
+			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
+		)
+		.superRefine((experience, ctx) => {
+			const now = new Date();
+			for (let i = 0; i < experience.length; i++) {
+				const exp = experience[i];
+				const fromDate = new Date(exp.from);
+				if (fromDate > now) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "From date cannot be in the future",
+						path: [i, "from"],
+					});
+				}
+				if (exp.to) {
+					const toDate = new Date(exp.to);
+					if (toDate > now) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "To date cannot be in the future",
+							path: [i, "to"],
+						});
+					}
+					if (fromDate > toDate) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "From date cannot be after To date",
+							path: [i, "from"],
+						});
+					}
+				}
+			}
+		})
+		.optional(),
+});
+
+export const MentorApplicationsQuerySchema = z.object({
+	page: z.coerce.number().int().positive().default(1),
+	limit: z.coerce
+		.number()
+		.int()
+		.refine((val: number) => [10, 20, 50].includes(val), {
+			message: "Limit must be 10, 20, or 50",
+		})
+		.default(10),
+	status: z.enum(["approved", "rejected", "pending"]).optional(),
+	sort: z.enum(["recent", "old", "status"]).optional().default("recent"),
+});
+
+export type MentorApplicationsQueryData = z.infer<
+	typeof MentorApplicationsQuerySchema
+>;
+
+export const MentorIdParamSchema = z.object({
+	id: z.string().min(1, "Invalid mentor ID"),
+});
+
+export const rejectMentorSchema = z.object({
+	reason: z.string().min(10, "Rejection reason must be at least 10 characters"),
+});

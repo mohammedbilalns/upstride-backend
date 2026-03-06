@@ -17,8 +17,8 @@ export abstract class AbstractMongoRepository<TDomain, TDocument> {
 		return doc ? this.toDomain(doc as TDocument) : null;
 	}
 
-	protected buildPaginatedResult(
-		items: TDomain[],
+	protected buildPaginatedResult<T = TDomain>(
+		items: T[],
 		total: number,
 		page: number,
 		limit: number,

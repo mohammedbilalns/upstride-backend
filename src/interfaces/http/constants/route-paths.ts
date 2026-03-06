@@ -22,11 +22,26 @@ export const ROUTES = {
 	CATALOG: {
 		BASE: "/catalog",
 		ONBOARDING: "/onboarding",
+		PROFESSIONS: "/professions",
 	},
 	USER_MANAGEMENT: {
 		BASE: "/user-management",
 		FETCH_USERS: "/fetch-users",
 		BLOCK: (id: string) => `/${id}/block`,
 		UNBLOCK: (id: string) => `/${id}/unblock`,
+	},
+	STORAGE: {
+		BASE: "/storage",
+		GET_PRESIGNED_URL: "/presigned-upload-url",
+		DELETE: "/delete",
+	},
+	MENTOR: {
+		BASE: "/mentor",
+		REGISTRATION_INFO: "/registration-info",
+		REGISTER: "/register",
+		RESUBMIT: "/resubmit",
+		APPLICATIONS: "/applications",
+		APPROVE: (id: string) => `/applications/${id}/approve`,
+		REJECT: (id: string) => `/applications/${id}/reject`,
 	},
 };
