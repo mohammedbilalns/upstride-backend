@@ -40,6 +40,8 @@ export const TYPES = {
 		BlockUser: Symbol.for("BlockUserUseCase"),
 		UnblockUser: Symbol.for("UnblockUserUseCase"),
 		GetPreSignedUploadUrl: Symbol.for("GetPreSignedUploadUrlUseCase"),
+		GetPreSignedDownloadUrl: Symbol.for("GetPreSignedDownloadUrlUseCase"),
+		DeleteFile: Symbol.for("DeleteFileUseCase"),
 		GetMentorRegistrationInfo: Symbol.for("GetMentorRegistrationInfoUseCase"),
 		RegisterMentor: Symbol.for("RegisterMentorUseCase"),
 		ResubmitMentor: Symbol.for("ResubmitMentorUseCase"),

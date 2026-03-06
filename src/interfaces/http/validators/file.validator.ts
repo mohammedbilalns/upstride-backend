@@ -9,3 +9,7 @@ export const getPreSignedUploadUrlSchema = z.object({
 export type GetPreSignedUploadUrlPayload = z.infer<
 	typeof getPreSignedUploadUrlSchema
 >;
+
+export const deleteFileSchema = z.object({
+	key: z.string().min(1),
+});

@@ -14,4 +14,10 @@ fileRouter.post(
 	fileController.getPreSignedUploadUrl,
 );
 
+fileRouter.delete(
+	ROUTES.STORAGE.DELETE,
+	verifySession,
+	fileController.deleteFile,
+);
+
 export { fileRouter };

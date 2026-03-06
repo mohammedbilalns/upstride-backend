@@ -32,6 +32,7 @@ export const ROUTES = {
 	STORAGE: {
 		BASE: "/storage",
 		GET_PRESIGNED_URL: "/presigned-upload-url",
+		DELETE: "/delete",
 	},
 	MENTOR: {
 		BASE: "/mentor",

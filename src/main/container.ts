@@ -24,6 +24,7 @@ import { ResubmitMentorUseCase } from "../application/mentor-management/use-case
 import type { IResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase.interface";
 import type { IHasherService, IStorageService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
+import { DeleteFileUseCase } from "../application/storage-management/use-cases/delete-file.usecase";
 import { GetPreSignedUploadUrlUseCase } from "../application/storage-management/use-cases/get-presigned-upload-url.usecase";
 import { BlockUserUseCase } from "../application/user-management/use-cases/block-user.usecase";
 import { GetUsersUseCase } from "../application/user-management/use-cases/get-users.usecase";
@@ -121,6 +122,7 @@ container.bind(TYPES.UseCases.UnblockUser).to(UnblockUserUseCase);
 container
 	.bind(TYPES.UseCases.GetPreSignedUploadUrl)
 	.to(GetPreSignedUploadUrlUseCase);
+container.bind(TYPES.UseCases.DeleteFile).to(DeleteFileUseCase);
 container
 	.bind<IGetMentorRegistrationInfoUseCase>(
 		TYPES.UseCases.GetMentorRegistrationInfo,
