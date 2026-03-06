@@ -50,10 +50,17 @@ export const TYPES = {
 		GetMentorApplications: Symbol.for("GetMentorApplicationsUseCase"),
 		ApproveMentor: Symbol.for("ApproveMentorUseCase"),
 		RejectMentor: Symbol.for("RejectMentorUseCase"),
+		GetProfile: Symbol.for("GetProfileUseCase"),
+		UpdateProfile: Symbol.for("UpdateProfileUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
-		File: Symbol.for("FileController"),
+		Authentication: Symbol.for("AuthenticationController"),
+		SkillManagement: Symbol.for("SkillManagementController"),
+		CatalogManagement: Symbol.for("CatalogManagementController"),
+		System: Symbol.for("SystemController"),
 		Mentor: Symbol.for("MentorController"),
+		Profile: Symbol.for("ProfileController"),
+		File: Symbol.for("FileController"),
 	},
 };

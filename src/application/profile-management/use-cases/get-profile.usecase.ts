@@ -1,14 +1,17 @@
 import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
+import { UserNotFoundError } from "../../authentication/errors";
 import type { IStorageService } from "../../services/storage.service.interface";
-import type { GetMeInput, GetMeOutput } from "../dtos/get-me.dto";
-import { UserNotFoundError } from "../errors";
-import { GetMeResponseMapper } from "../mappers/get-me-response.mapper";
-import type { IGetMeUseCase } from "./get-me.usecase.interface";
+import type {
+	GetProfileInput,
+	GetProfileOutput,
+} from "../dtos/get-profile.dto";
+import { ProfileMapper } from "../mappers/profile.mapper";
+import type { IGetProfileUseCase } from "./get-profile.usecase.interface";
 
 @injectable()
-export class GetMeUseCase implements IGetMeUseCase {
+export class GetProfileUseCase implements IGetProfileUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
@@ -16,10 +19,12 @@ export class GetMeUseCase implements IGetMeUseCase {
 		private readonly _storageService: IStorageService,
 	) {}
 
-	async execute(input: GetMeInput): Promise<GetMeOutput> {
-		const user = await this._userRepository.findById(input.usrId);
+	async execute(input: GetProfileInput): Promise<GetProfileOutput> {
+		const user = await this._userRepository.findProfileById(input.userId);
 
-		if (!user) throw new UserNotFoundError();
+		if (!user) {
+			throw new UserNotFoundError();
+		}
 
 		let profilePictureUrl: string | null = null;
 		if (user.profilePictureId) {
@@ -28,6 +33,8 @@ export class GetMeUseCase implements IGetMeUseCase {
 			);
 		}
 
-		return GetMeResponseMapper.toDto(user, profilePictureUrl);
+		return {
+			profile: ProfileMapper.toDTO(user, profilePictureUrl),
+		};
 	}
 }

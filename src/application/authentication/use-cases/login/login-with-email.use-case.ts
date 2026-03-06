@@ -12,6 +12,7 @@ import {
 	type ITokenService,
 	REFRESH_TOKEN_EXPIRES_IN,
 } from "../../../services";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import type { LoginResponse, LoginWithEmailInput } from "../../dtos/login.dto";
 import { AuthenticationError } from "../../errors/authentication.error";
 import { UserBlockedError } from "../../errors/user-blocked.error";
@@ -28,6 +29,7 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 		@inject(TYPES.Services.Hasher)
 		private _hasherService: IHasherService,
 		@inject(TYPES.Services.TokenService) private _tokenService: ITokenService,
+		@inject(TYPES.Services.Storage) private _storageService: IStorageService,
 	) {}
 
 	async execute(input: LoginWithEmailInput): Promise<LoginResponse> {
@@ -94,14 +96,18 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 
 		await this._sessionRepository.create(session);
 
-		//TODO: fetch secure profile picture url and send it instead
-		const tempProfilePictureUrl: string = "https://picsum.photos/200";
+		let profilePictureUrl: string | null = null;
+		if (existingUser.profilePictureId) {
+			profilePictureUrl = await this._storageService.getSignedUrl(
+				existingUser.profilePictureId,
+			);
+		}
 
 		return LoginResponseMapper.toDto(
 			existingUser,
 			accessToken,
 			refreshToken,
-			tempProfilePictureUrl,
+			profilePictureUrl,
 		);
 	}
 }

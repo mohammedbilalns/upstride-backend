@@ -1,5 +1,10 @@
 import { injectable } from "inversify";
 import type { QueryFilter } from "mongoose";
+import type {
+	PopulatedInterest,
+	PopulatedSkill,
+	UserWithPopulatedPreferences,
+} from "../../../../application/profile-management/dtos/get-profile.dto";
 import type { User } from "../../../../domain/entities/user.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type {
@@ -9,6 +14,13 @@ import type {
 import { UserMapper } from "../mappers/user.mapper";
 import { type UserDocument, UserModel } from "../models/user.model";
 import { AbstractMongoRepository } from "./abstract.repository";
+
+interface PopulatedUserDoc extends Omit<UserDocument, "preferences"> {
+	preferences?: {
+		interests: PopulatedInterest[];
+		skills: PopulatedSkill[];
+	};
+}
 
 @injectable()
 export class MongoUserRepository
@@ -81,6 +93,28 @@ export class MongoUserRepository
 		const items = docs.map((doc) => this.toDomain(doc as UserDocument));
 
 		return this.buildPaginatedResult(items, total, page, limit);
+	}
+
+	async findProfileById(
+		id: string,
+	): Promise<UserWithPopulatedPreferences | null> {
+		const doc = (await this.model
+			.findById(id)
+			.populate("preferences.interests", "name")
+			.populate("preferences.skills.skillId", "name interestId")
+			.lean()) as PopulatedUserDoc | null;
+
+		if (!doc) return null;
+
+		return {
+			id: doc._id.toString(),
+			name: doc.name,
+			email: doc.email,
+			phone: doc.phone || "",
+			role: doc.role,
+			profilePictureId: doc.profilePictureId,
+			preferences: doc.preferences,
+		};
 	}
 
 	async deleteById(id: string): Promise<void> {

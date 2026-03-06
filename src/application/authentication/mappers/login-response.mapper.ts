@@ -6,7 +6,7 @@ export class LoginResponseMapper {
 		user: User,
 		accessToken: string,
 		refreshToken: string,
-		profilePictureUrl: string,
+		profilePictureUrl: string | null,
 	): LoginResponse {
 		return {
 			user: {
