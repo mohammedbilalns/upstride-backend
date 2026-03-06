@@ -18,6 +18,7 @@ export const ROUTES = {
 		REVOKE_ALL_OTHER_SESSIONS: "/revoke-all-other-sessions",
 		ACTIVE_SESSIONS: "/active-sessions",
 		ME: "/me",
+		PROFILE: "/profile",
 	},
 	CATALOG: {
 		BASE: "/catalog",

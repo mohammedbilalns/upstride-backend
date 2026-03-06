@@ -83,6 +83,21 @@ export class MongoUserRepository
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
 
+	async findProfileById(id: string): Promise<any | null> {
+		const doc = await this.model
+			.findById(id)
+			.populate("preferences.interests", "name")
+			.populate("preferences.skills.skillId", "name interestId")
+			.lean();
+
+		if (!doc) return null;
+
+		return {
+			...this.toDomain(doc as UserDocument),
+			preferences: doc.preferences,
+		};
+	}
+
 	async deleteById(id: string): Promise<void> {
 		await this.model.deleteOne({ _id: id });
 	}

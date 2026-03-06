@@ -35,3 +35,8 @@ export const MentorResponseMessages = {
 	APPROVE_APPLICATION_SUCCESS: "Mentor application approved successfully",
 	REJECT_APPLICATION_SUCCESS: "Mentor application rejected successfully",
 };
+
+export const ProfileResponseMessages = {
+	FETCH_PROFILE_SUCCESS: "User profile fetched successfully",
+	UPDATE_PROFILE_SUCCESS: "User profile updated successfully",
+};

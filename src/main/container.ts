@@ -29,6 +29,10 @@ import { RejectMentorUseCase } from "../application/mentor-management/use-cases/
 import type { IRejectMentorUseCase } from "../application/mentor-management/use-cases/reject-mentor.usecase.interface";
 import { ResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase";
 import type { IResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase.interface";
+import { GetProfileUseCase } from "../application/profile-management/use-cases/get-profile.usecase";
+import type { IGetProfileUseCase } from "../application/profile-management/use-cases/get-profile.usecase.interface";
+import { UpdateProfileUseCase } from "../application/profile-management/use-cases/update-profile.usecase";
+import type { IUpdateProfileUseCase } from "../application/profile-management/use-cases/update-profile.usecase.interface";
 import type { IHasherService, IStorageService } from "../application/services";
 import type { IMailService } from "../application/services/mail.service.interface";
 import { DeleteFileUseCase } from "../application/storage-management/use-cases/delete-file.usecase";
@@ -63,6 +67,7 @@ import {
 	LogoutController,
 	MentorController,
 	PasswordResetController,
+	ProfileController,
 	UserManagementController,
 } from "../interfaces/http/controllers";
 import { TYPES } from "../shared/types/types";
@@ -137,6 +142,14 @@ container
 	.to(GetOnboardingCatalogUseCase)
 	.inSingletonScope();
 container
+	.bind<IGetProfileUseCase>(TYPES.UseCases.GetProfile)
+	.to(GetProfileUseCase)
+	.inSingletonScope();
+container
+	.bind<IUpdateProfileUseCase>(TYPES.UseCases.UpdateProfile)
+	.to(UpdateProfileUseCase)
+	.inSingletonScope();
+container
 	.bind<GetProfessionsUseCase>(TYPES.UseCases.GetProfessions)
 	.to(GetProfessionsUseCase)
 	.inSingletonScope();
@@ -181,5 +194,9 @@ container.bind(FileController).to(FileController);
 container.bind(TYPES.Controllers.File).to(FileController);
 container.bind(MentorController).to(MentorController);
 container.bind(TYPES.Controllers.Mentor).to(MentorController);
+container.bind(ProfileController).to(ProfileController);
+container
+	.bind<ProfileController>(TYPES.Controllers.Profile)
+	.to(ProfileController);
 
 export { container };
