@@ -27,7 +27,7 @@ export class Mentor {
 		public readonly currentRoleId: string,
 		public readonly organization: string,
 		public readonly yearsOfExperience: number,
-		public readonly personalWebsite: string | null = null,
+		public readonly personalWebsite: string | null,
 		public readonly resumeId: string,
 		public readonly educationalQualifications: string[],
 		public readonly areasOfExpertise: string[],

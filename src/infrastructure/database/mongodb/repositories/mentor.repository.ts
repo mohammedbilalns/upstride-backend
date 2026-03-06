@@ -103,7 +103,7 @@ export class MongoMentorRepository
 				.populate("userId", "name email avatar")
 				.populate("currentRoleId", "name")
 				.populate("areasOfExpertise", "name")
-				.populate("toolsAndSkills.skillId", "name")
+				.populate("toolsAndSkills.skillId", "name interestId")
 				.lean(),
 			this.model.countDocuments(filter),
 		]);
@@ -114,8 +114,17 @@ export class MongoMentorRepository
 				...mentor,
 				user: doc.userId,
 				currentRoleDetails: doc.currentRoleId,
-				expertisesDetails: doc.areasOfExpertise,
-				skillsDetails: doc.toolsAndSkills,
+				expertisesDetails: (doc.areasOfExpertise || []).map((e: any) => ({
+					id: e._id?.toString() || e.id?.toString(),
+					name: e.name,
+				})),
+				skillsDetails: (doc.toolsAndSkills || []).map((ts: any) => ({
+					skillId: {
+						name: ts.skillId?.name,
+						interestId: ts.skillId?.interestId?.toString(),
+					},
+					level: ts.level,
+				})),
 			} as MentorApplicationDetails;
 		});
 

@@ -4,6 +4,7 @@ import type {
 	MentorQuery,
 } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
+import type { IStorageService } from "../../services/storage.service.interface";
 import type {
 	GetMentorApplicationsInput,
 	GetMentorApplicationsResponse,
@@ -18,6 +19,8 @@ export class GetMentorApplicationsUseCase
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
 		private _mentorRepository: IMentorRepository,
+		@inject(TYPES.Services.Storage)
+		private _storageService: IStorageService,
 	) {}
 
 	async execute(
@@ -50,8 +53,17 @@ export class GetMentorApplicationsUseCase
 			sort,
 		});
 
+		const items = await Promise.all(
+			result.items.map(async (item) => {
+				const resumeUrl = await this._storageService.getSignedUrl(
+					item.resumeId,
+				);
+				return MentorApplicationMapper.toDTO(item, resumeUrl);
+			}),
+		);
+
 		return {
-			items: MentorApplicationMapper.toDTOs(result.items),
+			items,
 			total: result.total,
 			page: result.page,
 			limit: result.limit,

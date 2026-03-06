@@ -23,11 +23,13 @@ export interface MentorApplicationDetails extends Mentor {
 		name: string;
 	};
 	expertisesDetails: {
+		id: string;
 		name: string;
 	}[];
 	skillsDetails: {
 		skillId: {
 			name: string;
+			interestId: string;
 		};
 		level: string;
 	}[];

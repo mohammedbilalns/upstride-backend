@@ -2,14 +2,31 @@ import type { MentorApplicationDetails } from "../../../domain/repositories/ment
 import type { MentorApplicationDTO } from "../dtos/get-mentor-applications.dto";
 
 export class MentorApplicationMapper {
-	static toDTOs(items: MentorApplicationDetails[]): MentorApplicationDTO[] {
-		return items.map((item) => MentorApplicationMapper.toDTO(item));
-	}
-
-	static toDTO(item: MentorApplicationDetails): MentorApplicationDTO {
+	static toDTO(
+		item: MentorApplicationDetails,
+		resumeUrl: string,
+	): MentorApplicationDTO {
 		let status: "approved" | "rejected" | "pending" = "pending";
 		if (item.isApproved) status = "approved";
 		else if (item.isRejected) status = "rejected";
+
+		const expertises = (item.expertisesDetails || []).map((exp) => {
+			const skills = (item.skillsDetails || [])
+				.filter((sd) => {
+					const skillInterestId = sd.skillId?.interestId?.toString();
+					const expId = exp.id?.toString();
+					return skillInterestId && expId && skillInterestId === expId;
+				})
+				.map((sd) => ({
+					name: sd.skillId?.name || "Unknown",
+					level: sd.level,
+				}));
+
+			return {
+				name: exp.name,
+				skills,
+			};
+		});
 
 		return {
 			id: item.id,
@@ -19,11 +36,11 @@ export class MentorApplicationMapper {
 			organization: item.organization,
 			yearsOfExperience: item.yearsOfExperience,
 			currentRole: item.currentRoleDetails.name,
-			expertises: item.expertisesDetails.map((e) => e.name),
-			skills: item.skillsDetails.map((s) => ({
-				name: s.skillId.name,
-				level: s.level,
-			})),
+			bio: item.bio,
+			personalWebsite: item.personalWebsite,
+			expertises,
+			resumeUrl,
+			resubmissionCount: item.applicationAttempts,
 			status,
 			appliedAt: item.createdAt,
 			updatedAt: item.updatedAt,

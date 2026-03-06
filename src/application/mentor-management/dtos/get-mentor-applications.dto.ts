@@ -13,11 +13,17 @@ export interface MentorApplicationDTO {
 	organization: string;
 	yearsOfExperience: number;
 	currentRole: string;
-	expertises: string[];
-	skills: {
+	bio: string;
+	personalWebsite: string | null;
+	expertises: {
 		name: string;
-		level: string;
+		skills: {
+			name: string;
+			level: string;
+		}[];
 	}[];
+	resumeUrl: string;
+	resubmissionCount: number;
 	status: "approved" | "rejected" | "pending";
 	appliedAt: Date;
 	updatedAt: Date;

@@ -22,7 +22,7 @@ const mentorController = container.get<MentorController>(
 mentorRouter.get(
 	ROUTES.MENTOR.REGISTRATION_INFO,
 	verifySession,
-	authorizeRoles(["USER"]),
+	authorizeRoles(["USER", "MENTOR"]),
 	mentorController.getRegistrationInfo,
 );
 

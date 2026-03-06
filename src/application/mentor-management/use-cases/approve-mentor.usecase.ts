@@ -1,7 +1,9 @@
 import { inject, injectable } from "inversify";
+import { MentorApprovalMailTemplate } from "../../../domain/mail/mentor-approval-mail.template";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import type { IUserRepository } from "../../../domain/repositories/user.repository.interface";
 import { TYPES } from "../../../shared/types/types";
+import type { IMailService } from "../../services/mail.service.interface";
 import { MentorApplicationNotFoundError } from "../errors/mentor-application-not-found.error";
 import type { IApproveMentorUseCase } from "./approve-mentor.usecase.interface";
 
@@ -12,6 +14,8 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		private readonly mentorRepository: IMentorRepository,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly userRepository: IUserRepository,
+		@inject(TYPES.Services.MailService)
+		private readonly mailService: IMailService,
 	) {}
 
 	async execute(mentorId: string): Promise<void> {
@@ -20,7 +24,16 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 			throw new MentorApplicationNotFoundError();
 		}
 
+		const user = await this.userRepository.findById(mentor.userId);
+		if (!user) {
+			return;
+		}
+
 		await this.mentorRepository.approve(mentorId);
 		await this.userRepository.updateById(mentor.userId, { role: "MENTOR" });
+
+		await this.mailService.send(user.email, new MentorApprovalMailTemplate(), {
+			name: user.name,
+		});
 	}
 }
