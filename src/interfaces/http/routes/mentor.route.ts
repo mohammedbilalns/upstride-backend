@@ -7,7 +7,10 @@ import { authorizeRoles } from "../middlewares/role.middleware";
 import { verifySession } from "../middlewares/session.middleware";
 import { validate } from "../middlewares/validator.middleware";
 import {
+	MentorApplicationsQuerySchema,
+	MentorIdParamSchema,
 	registerMentorSchema,
+	rejectMentorSchema,
 	resubmitMentorSchema,
 } from "../validators/mentor.validator";
 
@@ -37,6 +40,30 @@ mentorRouter.patch(
 	authorizeRoles(["USER"]),
 	validate({ body: resubmitMentorSchema }),
 	mentorController.resubmit,
+);
+
+mentorRouter.get(
+	ROUTES.MENTOR.APPLICATIONS,
+	verifySession,
+	authorizeRoles(["ADMIN", "SUPER_ADMIN"]),
+	validate({ query: MentorApplicationsQuerySchema }),
+	mentorController.getApplications,
+);
+
+mentorRouter.patch(
+	ROUTES.MENTOR.APPROVE(":id"),
+	verifySession,
+	authorizeRoles(["ADMIN", "SUPER_ADMIN"]),
+	validate({ params: MentorIdParamSchema }),
+	mentorController.approveApplication,
+);
+
+mentorRouter.patch(
+	ROUTES.MENTOR.REJECT(":id"),
+	verifySession,
+	authorizeRoles(["ADMIN", "SUPER_ADMIN"]),
+	validate({ params: MentorIdParamSchema, body: rejectMentorSchema }),
+	mentorController.rejectApplication,
 );
 
 export { mentorRouter };

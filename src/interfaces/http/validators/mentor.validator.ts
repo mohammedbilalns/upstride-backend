@@ -176,3 +176,28 @@ export const resubmitMentorSchema = z.object({
 		})
 		.optional(),
 });
+
+export const MentorApplicationsQuerySchema = z.object({
+	page: z.coerce.number().int().positive().default(1),
+	limit: z.coerce
+		.number()
+		.int()
+		.refine((val: number) => [10, 20, 50].includes(val), {
+			message: "Limit must be 10, 20, or 50",
+		})
+		.default(10),
+	status: z.enum(["approved", "rejected", "pending"]).optional(),
+	sort: z.enum(["recent", "old", "status"]).optional().default("recent"),
+});
+
+export type MentorApplicationsQueryData = z.infer<
+	typeof MentorApplicationsQuerySchema
+>;
+
+export const MentorIdParamSchema = z.object({
+	id: z.string().min(1, "Invalid mentor ID"),
+});
+
+export const rejectMentorSchema = z.object({
+	reason: z.string().min(10, "Rejection reason must be at least 10 characters"),
+});

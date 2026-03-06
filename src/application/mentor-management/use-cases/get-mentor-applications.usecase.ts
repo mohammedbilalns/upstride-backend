@@ -1,0 +1,61 @@
+import { inject, injectable } from "inversify";
+import type {
+	IMentorRepository,
+	MentorQuery,
+} from "../../../domain/repositories";
+import { TYPES } from "../../../shared/types/types";
+import type {
+	GetMentorApplicationsInput,
+	GetMentorApplicationsResponse,
+} from "../dtos/get-mentor-applications.dto";
+import { MentorApplicationMapper } from "../mappers/mentor-application.mapper";
+import type { IGetMentorApplicationsUseCase } from "./get-mentor-applications.usecase.interface";
+
+@injectable()
+export class GetMentorApplicationsUseCase
+	implements IGetMentorApplicationsUseCase
+{
+	constructor(
+		@inject(TYPES.Repositories.MentorRepository)
+		private _mentorRepository: IMentorRepository,
+	) {}
+
+	async execute(
+		input: GetMentorApplicationsInput,
+	): Promise<GetMentorApplicationsResponse> {
+		const query: MentorQuery = {};
+
+		if (input.status === "approved") {
+			query.isApproved = true;
+			query.isRejected = false;
+		} else if (input.status === "rejected") {
+			query.isApproved = false;
+			query.isRejected = true;
+		} else if (input.status === "pending") {
+			query.isApproved = false;
+			query.isRejected = false;
+		}
+
+		let sort: Record<string, 1 | -1> = { createdAt: -1 };
+		if (input.sort === "old") {
+			sort = { createdAt: 1 };
+		} else if (input.sort === "status") {
+			sort = { isApproved: -1, isRejected: -1, createdAt: -1 };
+		}
+
+		const result = await this._mentorRepository.paginate({
+			page: input.page,
+			limit: input.limit,
+			query,
+			sort,
+		});
+
+		return {
+			items: MentorApplicationMapper.toDTOs(result.items),
+			total: result.total,
+			page: result.page,
+			limit: result.limit,
+			totalPages: result.totalPages,
+		};
+	}
+}

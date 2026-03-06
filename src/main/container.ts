@@ -17,10 +17,16 @@ import { SaveUserInterestsUseCase } from "../application/authentication/use-case
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
 import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
 import { GetProfessionsUseCase } from "../application/catalog-management/use-cases/get-professions.usecase";
+import { ApproveMentorUseCase } from "../application/mentor-management/use-cases/approve-mentor.usecase";
+import type { IApproveMentorUseCase } from "../application/mentor-management/use-cases/approve-mentor.usecase.interface";
+import { GetMentorApplicationsUseCase } from "../application/mentor-management/use-cases/get-mentor-applications.usecase";
+import type { IGetMentorApplicationsUseCase } from "../application/mentor-management/use-cases/get-mentor-applications.usecase.interface";
 import { GetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase";
 import type { IGetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase.interface";
 import { RegisterMentorUseCase } from "../application/mentor-management/use-cases/register-mentor.usecase";
 import type { IRegisterMentorUseCase } from "../application/mentor-management/use-cases/register-mentor.usecase.interface";
+import { RejectMentorUseCase } from "../application/mentor-management/use-cases/reject-mentor.usecase";
+import type { IRejectMentorUseCase } from "../application/mentor-management/use-cases/reject-mentor.usecase.interface";
 import { ResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase";
 import type { IResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase.interface";
 import type { IHasherService, IStorageService } from "../application/services";
@@ -152,6 +158,15 @@ container
 container
 	.bind<IResubmitMentorUseCase>(TYPES.UseCases.ResubmitMentor)
 	.to(ResubmitMentorUseCase);
+container
+	.bind<IGetMentorApplicationsUseCase>(TYPES.UseCases.GetMentorApplications)
+	.to(GetMentorApplicationsUseCase);
+container
+	.bind<IApproveMentorUseCase>(TYPES.UseCases.ApproveMentor)
+	.to(ApproveMentorUseCase);
+container
+	.bind<IRejectMentorUseCase>(TYPES.UseCases.RejectMentor)
+	.to(RejectMentorUseCase);
 
 //-------------------------
 // Controllers

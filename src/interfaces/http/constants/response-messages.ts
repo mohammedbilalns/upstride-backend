@@ -31,4 +31,7 @@ export const MentorResponseMessages = {
 	REGISTRATION_SUBMITTED_SUCCESS: "Mentor registration submitted successfully",
 	REGISTRATION_RESUBMITTED_SUCCESS:
 		"Mentor registration resubmitted successfully",
+	FETCH_APPLICATIONS_SUCCESS: "Mentor applications fetched successfully",
+	APPROVE_APPLICATION_SUCCESS: "Mentor application approved successfully",
+	REJECT_APPLICATION_SUCCESS: "Mentor application rejected successfully",
 };

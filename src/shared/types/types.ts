@@ -47,6 +47,9 @@ export const TYPES = {
 		GetMentorRegistrationInfo: Symbol.for("GetMentorRegistrationInfoUseCase"),
 		RegisterMentor: Symbol.for("RegisterMentorUseCase"),
 		ResubmitMentor: Symbol.for("ResubmitMentorUseCase"),
+		GetMentorApplications: Symbol.for("GetMentorApplicationsUseCase"),
+		ApproveMentor: Symbol.for("ApproveMentorUseCase"),
+		RejectMentor: Symbol.for("RejectMentorUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),

@@ -2,8 +2,10 @@ import { injectable } from "inversify";
 import type { QueryFilter } from "mongoose";
 import type { Mentor } from "../../../../domain/entities/mentor.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
+import type { PaginatedResult } from "../../../../domain/repositories/capabilities/paginatable.repository.interface";
 import type {
 	IMentorRepository,
+	MentorApplicationDetails,
 	MentorQuery,
 } from "../../../../domain/repositories/mentor.repository.interface";
 import { MentorMapper } from "../mappers/mentor.mapper";
@@ -68,11 +70,22 @@ export class MongoMentorRepository
 		return doc ? this.toDomain(doc as MentorDocument) : null;
 	}
 
-	async paginate({ page, limit, query, sort }: PaginateParams<MentorQuery>) {
+	async paginate({
+		page,
+		limit,
+		query,
+		sort,
+	}: PaginateParams<MentorQuery>): Promise<
+		PaginatedResult<MentorApplicationDetails>
+	> {
 		const filter: QueryFilter<MentorDocument> = {};
 
 		if (query?.isApproved !== undefined) {
 			filter.isApproved = query.isApproved;
+		}
+
+		if (query?.isRejected !== undefined) {
+			filter.isRejected = query.isRejected;
 		}
 
 		if (query?.userId) {
@@ -87,12 +100,52 @@ export class MongoMentorRepository
 				.sort(sort ?? { createdAt: -1 })
 				.skip(skip)
 				.limit(limit)
+				.populate("userId", "name email avatar")
+				.populate("currentRoleId", "name")
+				.populate("areasOfExpertise", "name")
+				.populate("toolsAndSkills.skillId", "name")
 				.lean(),
 			this.model.countDocuments(filter),
 		]);
 
-		const items = docs.map((doc) => this.toDomain(doc as MentorDocument));
+		const items = docs.map((doc: any) => {
+			const mentor = this.toDomain(doc as MentorDocument);
+			return {
+				...mentor,
+				user: doc.userId,
+				currentRoleDetails: doc.currentRoleId,
+				expertisesDetails: doc.areasOfExpertise,
+				skillsDetails: doc.toolsAndSkills,
+			} as MentorApplicationDetails;
+		});
 
-		return this.buildPaginatedResult(items, total, page, limit);
+		return this.buildPaginatedResult<MentorApplicationDetails>(
+			items,
+			total,
+			page,
+			limit,
+		);
+	}
+
+	async approve(id: string): Promise<Mentor | null> {
+		const doc = await this.model
+			.findByIdAndUpdate(
+				id,
+				{ isApproved: true, isRejected: false, rejectionReason: null },
+				{ returnDocument: "after" },
+			)
+			.lean();
+		return doc ? this.toDomain(doc as MentorDocument) : null;
+	}
+
+	async reject(id: string, reason: string): Promise<Mentor | null> {
+		const doc = await this.model
+			.findByIdAndUpdate(
+				id,
+				{ isApproved: false, isRejected: true, rejectionReason: reason },
+				{ returnDocument: "after" },
+			)
+			.lean();
+		return doc ? this.toDomain(doc as MentorDocument) : null;
 	}
 }
