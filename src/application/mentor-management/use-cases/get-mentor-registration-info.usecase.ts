@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import type { IStorageService } from "../../../application/services/storage.service.interface";
 import { MAX_MENTOR_APPLICATION_ATTEMPTS } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import { TYPES } from "../../../shared/types/types";
@@ -16,6 +17,8 @@ export class GetMentorRegistrationInfoUseCase
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
 		private readonly mentorRepository: IMentorRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly storageService: IStorageService,
 	) {}
 
 	async execute({
@@ -26,11 +29,17 @@ export class GetMentorRegistrationInfoUseCase
 		const attemptsCount = mentor?.applicationAttempts ?? 0;
 		const canApply = attemptsCount < MAX_MENTOR_APPLICATION_ATTEMPTS;
 
+		let resumeUrl: string | null = null;
+		if (mentor?.resumeId) {
+			resumeUrl = await this.storageService.getSignedUrl(mentor.resumeId);
+		}
+
 		return MentorRegistrationResponseMapper.toDto(
 			mentor,
 			canApply,
 			attemptsCount,
 			MAX_MENTOR_APPLICATION_ATTEMPTS,
+			resumeUrl,
 		);
 	}
 }

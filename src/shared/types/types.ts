@@ -17,6 +17,7 @@ export const TYPES = {
 		InterestRepository: Symbol.for("InterestRepository"),
 		SkillRepository: Symbol.for("SkillRepository"),
 		MentorRepository: Symbol.for("MentorRepository"),
+		ProfessionRepository: Symbol.for("ProfessionRepository"),
 	},
 	Databases: {
 		Redis: Symbol.for("Redis"),
@@ -33,7 +34,8 @@ export const TYPES = {
 		RevokeSession: Symbol.for("RevokeSessionUseCase"),
 		RevokeAllOtherSessions: Symbol.for("RevokeAllOtherSessionsUseCase"),
 		SaveUserInterests: Symbol.for("SaveUserInterestsUseCase"),
-		GetOnboardingCatalog: Symbol.for("GetOnboardingCatalogUseCase"),
+		GetOnboardingCatalog: Symbol.for("GetOnboardingCatalog"),
+		GetProfessions: Symbol.for("GetProfessions"),
 		GetMe: Symbol.for("GetMeUseCase"),
 		GetActiveSessions: Symbol.for("GetActiveSessionsUseCase"),
 		GetUsers: Symbol.for("GetUsersUseCase"),

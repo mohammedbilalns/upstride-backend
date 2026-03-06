@@ -20,8 +20,9 @@ export interface MentorDto {
 	currentRoleId: string;
 	organization: string;
 	yearsOfExperience: number;
-	personalWebsite: string;
+	personalWebsite: string | null;
 	resumeId: string;
+	resumeUrl: string | null;
 	educationalQualifications: string[];
 	areasOfExpertise: string[];
 	toolsAndSkills: MentorSkillDto[];

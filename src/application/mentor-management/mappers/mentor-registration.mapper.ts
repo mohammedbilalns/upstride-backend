@@ -7,6 +7,7 @@ export class MentorRegistrationResponseMapper {
 		canApply: boolean,
 		attemptsCount: number,
 		maxAttempts: number,
+		resumeUrl: string | null = null,
 	): MentorRegistrationInfoOutput {
 		return {
 			canApply,
@@ -22,6 +23,7 @@ export class MentorRegistrationResponseMapper {
 						yearsOfExperience: mentor.yearsOfExperience,
 						personalWebsite: mentor.personalWebsite,
 						resumeId: mentor.resumeId,
+						resumeUrl,
 						educationalQualifications: mentor.educationalQualifications,
 						areasOfExpertise: mentor.areasOfExpertise,
 						toolsAndSkills: mentor.toolsAndSkills.map((ts) => ({

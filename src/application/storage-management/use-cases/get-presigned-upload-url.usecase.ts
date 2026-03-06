@@ -22,11 +22,11 @@ export class GetPreSignedUploadUrlUseCase {
 		const fileExtension = fileName.split(".").pop();
 		const key = `${category}/${randomUUID()}.${fileExtension}`;
 
-		const uploadUrl = await this.storageService.getSignedUploadUrl(
+		const { url, fields } = await this.storageService.getPresignedPost(
 			key,
 			mimetype,
 		);
 
-		return { uploadUrl, key };
+		return { url, fields, key };
 	}
 }

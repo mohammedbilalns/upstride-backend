@@ -5,6 +5,7 @@ export interface GetPreSignedUploadUrlInput {
 }
 
 export interface GetPreSignedUploadUrlOutput {
-	uploadUrl: string;
+	url: string;
+	fields: Record<string, string>;
 	key: string;
 }

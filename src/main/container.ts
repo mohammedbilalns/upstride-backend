@@ -16,6 +16,7 @@ import { ResendOtpUseCase } from "../application/authentication/use-cases/resend
 import { SaveUserInterestsUseCase } from "../application/authentication/use-cases/save-user-interests/save-user-interests.usecase";
 import { VerifyOtpUseCase } from "../application/authentication/use-cases/verify-otp.usecase";
 import { GetOnboardingCatalogUseCase } from "../application/catalog-management/use-cases/get-onboarding-catalog.usecase";
+import { GetProfessionsUseCase } from "../application/catalog-management/use-cases/get-professions.usecase";
 import { GetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase";
 import type { IGetMentorRegistrationInfoUseCase } from "../application/mentor-management/use-cases/get-mentor-registration-info.usecase.interface";
 import { RegisterMentorUseCase } from "../application/mentor-management/use-cases/register-mentor.usecase";
@@ -29,6 +30,10 @@ import { GetPreSignedUploadUrlUseCase } from "../application/storage-management/
 import { BlockUserUseCase } from "../application/user-management/use-cases/block-user.usecase";
 import { GetUsersUseCase } from "../application/user-management/use-cases/get-users.usecase";
 import { UnblockUserUseCase } from "../application/user-management/use-cases/unblock-user.usecase";
+import type {
+	IMentorRepository,
+	IProfessionRepository,
+} from "../domain/repositories";
 import {
 	MongoInterestRepository,
 	MongoMentorRepository,
@@ -36,6 +41,7 @@ import {
 	MongoSkillRepository,
 	MongoUserRepository,
 } from "../infrastructure/database/mongodb/repositories";
+import { MongoProfessionRepository } from "../infrastructure/database/mongodb/repositories/profession.repository";
 import { redisClient } from "../infrastructure/database/redis/redis.connection";
 import { RedisOtpRepository } from "../infrastructure/database/redis/repositories/otp.repository";
 import { RedisTokenRevocationRepository } from "../infrastructure/database/redis/repositories/token-revokation.repository";
@@ -85,7 +91,14 @@ container
 	.bind(TYPES.Repositories.InterestRepository)
 	.to(MongoInterestRepository);
 container.bind(TYPES.Repositories.SkillRepository).to(MongoSkillRepository);
-container.bind(TYPES.Repositories.MentorRepository).to(MongoMentorRepository);
+container
+	.bind<IProfessionRepository>(TYPES.Repositories.ProfessionRepository)
+	.to(MongoProfessionRepository)
+	.inSingletonScope();
+container
+	.bind<IMentorRepository>(TYPES.Repositories.MentorRepository)
+	.to(MongoMentorRepository)
+	.inSingletonScope();
 
 //-------------------------
 // Databases
@@ -114,8 +127,13 @@ container.bind(TYPES.UseCases.SaveUserInterests).to(SaveUserInterestsUseCase);
 container.bind(TYPES.UseCases.GetMe).to(GetMeUseCase);
 container.bind(TYPES.UseCases.GetActiveSessions).to(GetActiveSessionsUseCase);
 container
-	.bind(TYPES.UseCases.GetOnboardingCatalog)
-	.to(GetOnboardingCatalogUseCase);
+	.bind<GetOnboardingCatalogUseCase>(TYPES.UseCases.GetOnboardingCatalog)
+	.to(GetOnboardingCatalogUseCase)
+	.inSingletonScope();
+container
+	.bind<GetProfessionsUseCase>(TYPES.UseCases.GetProfessions)
+	.to(GetProfessionsUseCase)
+	.inSingletonScope();
 container.bind(TYPES.UseCases.GetUsers).to(GetUsersUseCase);
 container.bind(TYPES.UseCases.BlockUser).to(BlockUserUseCase);
 container.bind(TYPES.UseCases.UnblockUser).to(UnblockUserUseCase);

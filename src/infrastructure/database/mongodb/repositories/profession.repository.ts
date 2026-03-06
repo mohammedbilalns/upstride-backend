@@ -70,4 +70,9 @@ export class MongoProfessionRepository
 
 		return docs.map((doc) => this.toDomain(doc as ProfessionDocument));
 	}
+
+	async findAllActive(): Promise<Profession[]> {
+		const docs = await this.model.find({ isActive: true }).lean();
+		return docs.map((doc) => this.toDomain(doc as ProfessionDocument));
+	}
 }

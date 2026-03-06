@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
 	MAX_MENTOR_AREAS_OF_EXPERTISE,
+	MAX_MENTOR_EDUCATION_ITEMS,
 	MAX_MENTOR_EXPERIENCE_ITEMS,
 } from "../../../domain/entities/mentor.entity";
 import { SkillLevelValues } from "../../../domain/entities/user.entity";
@@ -12,11 +13,19 @@ export const registerMentorSchema = z.object({
 	yearsOfExperience: z
 		.number()
 		.min(0, "Years of experience must be at least 0"),
-	personalWebsite: z.string().url("Invalid website URL").or(z.literal("")),
+	personalWebsite: z
+		.string()
+		.url("Invalid website URL")
+		.or(z.literal(""))
+		.nullish(),
 	resumeId: z.string().min(1, "Resume is required"),
 	educationalQualifications: z
 		.array(z.string().min(1))
-		.min(1, "At least one qualification is required"),
+		.min(1, "At least one qualification is required")
+		.max(
+			MAX_MENTOR_EDUCATION_ITEMS,
+			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
+		),
 	areasOfExpertise: z
 		.array(z.string().min(1))
 		.min(1, "At least one area of expertise is required")
@@ -46,7 +55,38 @@ export const registerMentorSchema = z.object({
 		.max(
 			MAX_MENTOR_EXPERIENCE_ITEMS,
 			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
-		),
+		)
+		.superRefine((experience, ctx) => {
+			const now = new Date();
+			for (let i = 0; i < experience.length; i++) {
+				const exp = experience[i];
+				const fromDate = new Date(exp.from);
+				if (fromDate > now) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "From date cannot be in the future",
+						path: [i, "from"],
+					});
+				}
+				if (exp.to) {
+					const toDate = new Date(exp.to);
+					if (toDate > now) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "To date cannot be in the future",
+							path: [i, "to"],
+						});
+					}
+					if (fromDate > toDate) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "From date cannot be after To date",
+							path: [i, "from"],
+						});
+					}
+				}
+			}
+		}),
 });
 
 export const resubmitMentorSchema = z.object({
@@ -61,11 +101,15 @@ export const resubmitMentorSchema = z.object({
 		.string()
 		.url("Invalid website URL")
 		.or(z.literal(""))
-		.optional(),
+		.nullish(),
 	resumeId: z.string().min(1, "Resume is required").optional(),
 	educationalQualifications: z
 		.array(z.string().min(1))
 		.min(1, "At least one qualification is required")
+		.max(
+			MAX_MENTOR_EDUCATION_ITEMS,
+			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
+		)
 		.optional(),
 	areasOfExpertise: z
 		.array(z.string().min(1))
@@ -99,5 +143,36 @@ export const resubmitMentorSchema = z.object({
 			MAX_MENTOR_EXPERIENCE_ITEMS,
 			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
 		)
+		.superRefine((experience, ctx) => {
+			const now = new Date();
+			for (let i = 0; i < experience.length; i++) {
+				const exp = experience[i];
+				const fromDate = new Date(exp.from);
+				if (fromDate > now) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "From date cannot be in the future",
+						path: [i, "from"],
+					});
+				}
+				if (exp.to) {
+					const toDate = new Date(exp.to);
+					if (toDate > now) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "To date cannot be in the future",
+							path: [i, "to"],
+						});
+					}
+					if (fromDate > toDate) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "From date cannot be after To date",
+							path: [i, "from"],
+						});
+					}
+				}
+			}
+		})
 		.optional(),
 });

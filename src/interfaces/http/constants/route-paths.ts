@@ -22,6 +22,7 @@ export const ROUTES = {
 	CATALOG: {
 		BASE: "/catalog",
 		ONBOARDING: "/onboarding",
+		PROFESSIONS: "/professions",
 	},
 	USER_MANAGEMENT: {
 		BASE: "/user-management",

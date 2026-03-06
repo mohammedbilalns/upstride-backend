@@ -4,6 +4,7 @@ import type { SkillLevel } from "./user.entity";
 export const MAX_MENTOR_APPLICATION_ATTEMPTS = 3;
 export const MAX_MENTOR_EXPERIENCE_ITEMS = 7;
 export const MAX_MENTOR_AREAS_OF_EXPERTISE = 2;
+export const MAX_MENTOR_EDUCATION_ITEMS = 5;
 
 export interface MentorExperience {
 	company: string;
@@ -26,7 +27,7 @@ export class Mentor {
 		public readonly currentRoleId: string,
 		public readonly organization: string,
 		public readonly yearsOfExperience: number,
-		public readonly personalWebsite: string,
+		public readonly personalWebsite: string | null = null,
 		public readonly resumeId: string,
 		public readonly educationalQualifications: string[],
 		public readonly areasOfExpertise: string[],
@@ -47,6 +48,11 @@ export class Mentor {
 		}
 		if (this.areasOfExpertise.length > 2) {
 			throw new ValidationError("Maximum of 2 areas of expertise allowed.");
+		}
+		if (this.educationalQualifications.length > MAX_MENTOR_EDUCATION_ITEMS) {
+			throw new ValidationError(
+				`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed.`,
+			);
 		}
 	}
 }
