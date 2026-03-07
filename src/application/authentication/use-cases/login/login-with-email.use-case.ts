@@ -16,7 +16,10 @@ import type { IStorageService } from "../../../services/storage.service.interfac
 import type { LoginResponse, LoginWithEmailInput } from "../../dtos/login.dto";
 import { AuthenticationError } from "../../errors/authentication.error";
 import { LoginResponseMapper } from "../../mappers/login-response.mapper";
-import { assertUserCanAuthenticate } from "../helpers/assert-user-can-authenticate";
+import {
+	assertAuthEligibility,
+	getAuthEligibility,
+} from "../helpers/assert-user-can-authenticate";
 import type { ILoginWithEmailUseCase } from "./login-with-email.usecase.interface";
 
 @injectable()
@@ -40,15 +43,13 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 			throw new AuthenticationError();
 		}
 
-		try {
-			assertUserCanAuthenticate(existingUser);
-		} catch (error) {
-			if (error instanceof AuthenticationError) {
-				await this._hasherService.fakeCompare();
-			}
+		const eligibility = getAuthEligibility(existingUser);
 
-			throw error;
+		if (eligibility === "unverified") {
+			await this._hasherService.fakeCompare();
 		}
+
+		assertAuthEligibility(eligibility);
 
 		const isPasswordCorrect = await this._hasherService.compare(
 			input.password,
