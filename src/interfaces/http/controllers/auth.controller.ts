@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { UAParser } from "ua-parser-js";
-import { UnauthorizedError } from "../../../application/authentication/errors";
 import type { IGetMeUseCase } from "../../../application/authentication/use-cases/get-me.usecase.interface";
 import type { ILoginWithEmailUseCase } from "../../../application/authentication/use-cases/login/login-with-email.usecase.interface";
 import type { IRefreshSessionUseCase } from "../../../application/authentication/use-cases/refresh-session/refresh-session.usecase.interface";
@@ -16,6 +15,13 @@ import type { AuthenticatedRequest } from "../../../shared/types/authenticated-r
 import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages } from "../constants/response-messages";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	LoginBody,
+	RegisterBody,
+	ResendOtpBody,
+	SaveInterestsBody,
+	VerifyOtpBody,
+} from "../validators/auth";
 
 @injectable()
 export class AuthController {
@@ -37,7 +43,9 @@ export class AuthController {
 	) {}
 
 	register = asyncHandler(async (req, res) => {
-		await this._registerWithEmailUseCase.execute(req.body);
+		await this._registerWithEmailUseCase.execute(
+			req.validated?.body as RegisterBody,
+		);
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: AuthResponseMessages.REGISTER_SUCCESS,
@@ -46,7 +54,7 @@ export class AuthController {
 
 	verifyRegisterOtp = asyncHandler(async (req, res) => {
 		const data = await this._verifyOtpUseCase.execute({
-			...req.body,
+			...(req.validated?.body as VerifyOtpBody),
 			type: OtpPurpose.REGISTER,
 		});
 
@@ -58,7 +66,7 @@ export class AuthController {
 
 	resendRegisterOtp = asyncHandler(async (req, res) => {
 		await this._resendOtpUseCase.execute({
-			...req.body,
+			...(req.validated?.body as ResendOtpBody),
 			type: OtpPurpose.REGISTER,
 		});
 
@@ -72,7 +80,7 @@ export class AuthController {
 
 		const { refreshToken, ...data } = await this._loginWithEmailUseCase.execute(
 			{
-				...req.body,
+				...(req.validated?.body as LoginBody),
 				...deviceInfo,
 			},
 		);
@@ -89,7 +97,7 @@ export class AuthController {
 
 		const { refreshToken, ...data } =
 			await this._saveUserInterestsUseCase.execute({
-				...req.body,
+				...(req.validated?.body as SaveInterestsBody),
 				...deviceInfo,
 			});
 
@@ -102,10 +110,6 @@ export class AuthController {
 
 	refreshSession = asyncHandler(async (req, res) => {
 		const refreshToken = req.cookies.refreshToken;
-
-		if (!refreshToken) {
-			throw new UnauthorizedError();
-		}
 		const { refreshToken: newRefreshToken, ...data } =
 			await this._refreshSessionUseCase.execute({ refreshToken });
 
@@ -117,12 +121,9 @@ export class AuthController {
 		});
 	});
 
-	getMe = asyncHandler(async (req: AuthenticatedRequest, res) => {
-		if (!req.user) {
-			throw new UnauthorizedError();
-		}
-		const userId = req.user.id;
-		const data = await this._getMeUseCase.execute({ usrId: userId });
+	getMe = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const data = await this._getMeUseCase.execute({ userId });
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.FETCH_USER_SUCCESS,

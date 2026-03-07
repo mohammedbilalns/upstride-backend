@@ -1,15 +1,17 @@
 import { z } from "zod";
 
-export const getPreSignedUploadUrlSchema = z.object({
+export const getPreSignedUploadUrlBodySchema = z.object({
 	fileName: z.string().min(1),
 	mimetype: z.string().min(1),
 	category: z.enum(["resume", "profile-picture"]),
 });
 
-export type GetPreSignedUploadUrlPayload = z.infer<
-	typeof getPreSignedUploadUrlSchema
+export type GetPreSignedUploadUrlBody = z.infer<
+	typeof getPreSignedUploadUrlBodySchema
 >;
 
-export const deleteFileSchema = z.object({
+export const deleteFileBodySchema = z.object({
 	key: z.string().min(1),
 });
+
+export type DeleteFileBodyPayload = z.infer<typeof deleteFileBodySchema>;

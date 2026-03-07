@@ -17,7 +17,7 @@ export class GetMeUseCase implements IGetMeUseCase {
 	) {}
 
 	async execute(input: GetMeInput): Promise<GetMeOutput> {
-		const user = await this._userRepository.findById(input.usrId);
+		const user = await this._userRepository.findById(input.userId);
 
 		if (!user) throw new UserNotFoundError();
 

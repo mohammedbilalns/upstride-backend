@@ -16,10 +16,10 @@ import {
 	resendOtpBodySchema,
 	saveInterestsBodySchema,
 	verifyOtpBodySchema,
-} from "../validators";
-import { changePasswordBodySchema } from "../validators/change-password.schema";
+} from "../validators/auth";
+import { changePasswordBodySchema } from "../validators/auth/change-password.validator";
+import { revokeSessionBodySchema } from "../validators/auth/revokation.validator";
 import { updateProfileBodySchema } from "../validators/profile.validator";
-import { revokeSessionBodySchema } from "../validators/revokation.schema";
 
 const router = Router();
 const authController = container.get(AuthController);

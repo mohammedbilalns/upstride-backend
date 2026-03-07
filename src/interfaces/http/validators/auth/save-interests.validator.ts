@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserPreferencesLimits } from "../../../shared/constants/app.constants";
+import { UserPreferencesLimits } from "../../../../shared/constants/app.constants";
 
 export const saveInterestsBodySchema = z.object({
 	setupToken: z.string().min(1, "Setup token is required"),
@@ -32,3 +32,5 @@ export const saveInterestsBodySchema = z.object({
 			"Too many skills selected",
 		),
 });
+
+export type SaveInterestsBody = z.infer<typeof saveInterestsBodySchema>;
