@@ -7,8 +7,7 @@ import { TYPES } from "../../../../shared/types/types";
 import type { IOtpGenerator } from "../../../services";
 import type { IMailService } from "../../../services/mail.service.interface";
 import type { RequestPasswordResetInput } from "../../dtos/reset-password.dto";
-import { AuthenticationError } from "../../errors";
-import { UserBlockedError } from "../../errors/user-blocked.error";
+import { assertUserCanAuthenticate } from "../helpers/assert-user-can-authenticate";
 import type { IRequestPasswordResetUseCase } from "./request-password-reset.usecase.interface";
 
 @injectable()
@@ -31,13 +30,7 @@ export class RequestPasswordResetUseCase
 		const user = await this._userRepository.findByEmail(email);
 
 		if (user) {
-			if (user.isBlocked) {
-				throw new UserBlockedError();
-			}
-
-			if (!user.isVerified) {
-				throw new AuthenticationError();
-			}
+			assertUserCanAuthenticate(user);
 
 			const policy = new ResetPasswordOtpPolicy();
 			const otp = this._otpGeneratorService.generate(6);
