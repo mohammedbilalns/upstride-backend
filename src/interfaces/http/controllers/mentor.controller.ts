@@ -1,4 +1,3 @@
-import type { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import type { IApproveMentorUseCase } from "../../../application/mentor-management/use-cases/approve-mentor.usecase.interface";
 import type { IGetMentorApplicationsUseCase } from "../../../application/mentor-management/use-cases/get-mentor-applications.usecase.interface";
@@ -7,7 +6,10 @@ import type { IRegisterMentorUseCase } from "../../../application/mentor-managem
 import type { IRejectMentorUseCase } from "../../../application/mentor-management/use-cases/reject-mentor.usecase.interface";
 import type { IResubmitMentorUseCase } from "../../../application/mentor-management/use-cases/resubmit-mentor.usecase.interface";
 import { MentorResponseMessages } from "../../../interfaces/http/constants/response-messages";
-import type { MentorApplicationsQueryData } from "../../../interfaces/http/validators/mentor.validator";
+import type {
+	MentorApplicationsQuery,
+	RejectMentorBody,
+} from "../../../interfaces/http/validators/mentor.validator";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
@@ -30,8 +32,8 @@ export class MentorController {
 		private readonly rejectMentorUseCase: IRejectMentorUseCase,
 	) {}
 
-	getApplications = asyncHandler(async (req: Request, res: Response) => {
-		const query = req.query as unknown as MentorApplicationsQueryData;
+	getApplications = asyncHandler(async (req, res) => {
+		const query = req.query as unknown as MentorApplicationsQuery;
 
 		const result = await this.getMentorApplicationsUseCase.execute(query);
 
@@ -41,7 +43,7 @@ export class MentorController {
 		});
 	});
 
-	approveApplication = asyncHandler(async (req: Request, res: Response) => {
+	approveApplication = asyncHandler(async (req, res) => {
 		const id = req.params.id as string;
 		await this.approveMentorUseCase.execute(id);
 
@@ -50,9 +52,9 @@ export class MentorController {
 		});
 	});
 
-	rejectApplication = asyncHandler(async (req: Request, res: Response) => {
+	rejectApplication = asyncHandler(async (req, res) => {
 		const id = req.params.id as string;
-		const { reason } = req.body;
+		const { reason } = req.validated?.body as RejectMentorBody;
 		await this.rejectMentorUseCase.execute({ mentorId: id, reason });
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -60,22 +62,20 @@ export class MentorController {
 		});
 	});
 
-	getRegistrationInfo = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const userId = req.user.id;
-			const result = await this.getMentorRegistrationInfoUseCase.execute({
-				userId,
-			});
+	getRegistrationInfo = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const result = await this.getMentorRegistrationInfoUseCase.execute({
+			userId,
+		});
 
-			return sendSuccess(res, HttpStatus.OK, {
-				message: MentorResponseMessages.FETCH_REGISTRATION_INFO_SUCCESS,
-				data: result,
-			});
-		},
-	);
+		return sendSuccess(res, HttpStatus.OK, {
+			message: MentorResponseMessages.FETCH_REGISTRATION_INFO_SUCCESS,
+			data: result,
+		});
+	});
 
-	register = asyncHandler(async (req: Request, res: Response) => {
-		const userId = req.user!.id;
+	register = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
 		await this.registerMentorUseCase.execute({
 			...req.body,
 			userId,
@@ -86,8 +86,8 @@ export class MentorController {
 		});
 	});
 
-	resubmit = asyncHandler(async (req: Request, res: Response) => {
-		const userId = req.user!.id;
+	resubmit = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
 		await this.resubmitMentorUseCase.execute({
 			...req.body,
 			userId,

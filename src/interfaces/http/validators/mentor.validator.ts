@@ -89,6 +89,8 @@ export const registerMentorSchema = z.object({
 		}),
 });
 
+export type RegisterMentorBody = z.infer<typeof registerMentorSchema>;
+
 export const resubmitMentorSchema = z.object({
 	bio: z.string().min(10, "Bio must be at least 10 characters long").optional(),
 	currentRoleId: z.string().min(1, "Current role is required").optional(),
@@ -177,6 +179,8 @@ export const resubmitMentorSchema = z.object({
 		.optional(),
 });
 
+export type ResubmitMentorBody = z.infer<typeof resubmitMentorSchema>;
+
 export const MentorApplicationsQuerySchema = z.object({
 	page: z.coerce.number().int().positive().default(1),
 	limit: z.coerce
@@ -190,7 +194,7 @@ export const MentorApplicationsQuerySchema = z.object({
 	sort: z.enum(["recent", "old", "status"]).optional().default("recent"),
 });
 
-export type MentorApplicationsQueryData = z.infer<
+export type MentorApplicationsQuery = z.infer<
 	typeof MentorApplicationsQuerySchema
 >;
 
@@ -198,6 +202,10 @@ export const MentorIdParamSchema = z.object({
 	id: z.string().min(1, "Invalid mentor ID"),
 });
 
-export const rejectMentorSchema = z.object({
+export type MentorIdParam = z.infer<typeof MentorIdParamSchema>;
+
+export const rejectMentorBodySchema = z.object({
 	reason: z.string().min(10, "Rejection reason must be at least 10 characters"),
 });
+
+export type RejectMentorBody = z.infer<typeof rejectMentorBodySchema>;

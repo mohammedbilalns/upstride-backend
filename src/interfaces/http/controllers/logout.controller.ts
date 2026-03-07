@@ -9,6 +9,7 @@ import type { AuthenticatedRequest } from "../../../shared/types/authenticated-r
 import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages } from "../constants/response-messages";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type { RevokeSessionBody } from "../validators/auth";
 
 @injectable()
 export class LogoutController {
@@ -23,8 +24,8 @@ export class LogoutController {
 		private _getActiveSessionsUseCase: IGetActiveSessionsUseCase,
 	) {}
 
-	logout = asyncHandler(async (req: AuthenticatedRequest, res) => {
-		const sessionId = req.user.sid;
+	logout = asyncHandler(async (req, res) => {
+		const sessionId = (req as AuthenticatedRequest).user.sid;
 
 		await this._logoutUseCase.execute({ sessionId });
 
@@ -39,9 +40,9 @@ export class LogoutController {
 		});
 	});
 
-	revokeSession = asyncHandler(async (req: AuthenticatedRequest, res) => {
-		const requesterUserId = req.user.id;
-		const { targetSessionId } = req.body;
+	revokeSession = asyncHandler(async (req, res) => {
+		const requesterUserId = (req as AuthenticatedRequest).user.id;
+		const { targetSessionId } = req.body as RevokeSessionBody;
 
 		await this._revokeSessionUseCase.execute({
 			requesterUserId,
@@ -53,25 +54,23 @@ export class LogoutController {
 		});
 	});
 
-	revokeAllOtherSessions = asyncHandler(
-		async (req: AuthenticatedRequest, res) => {
-			const requesterUserId = req.user.id;
-			const requesterSessionId = req.user.sid;
+	revokeAllOtherSessions = asyncHandler(async (req, res) => {
+		const requesterUserId = (req as AuthenticatedRequest).user.id;
+		const requesterSessionId = (req as AuthenticatedRequest).user.sid;
 
-			await this._revokeAllOtherSessionsUseCase.execute({
-				requesterUserId,
-				requesterSessionId,
-			});
+		await this._revokeAllOtherSessionsUseCase.execute({
+			requesterUserId,
+			requesterSessionId,
+		});
 
-			sendSuccess(res, HttpStatus.OK, {
-				message: AuthResponseMessages.ALL_OTHER_SESSIONS_REVOKED,
-			});
-		},
-	);
+		sendSuccess(res, HttpStatus.OK, {
+			message: AuthResponseMessages.ALL_OTHER_SESSIONS_REVOKED,
+		});
+	});
 
-	getActiveSessions = asyncHandler(async (req: AuthenticatedRequest, res) => {
-		const userId = req.user.id;
-		const currentSessionId = req.user.sid;
+	getActiveSessions = asyncHandler(async (req, res) => {
+		const { id: userId, sid: currentSessionId } = (req as AuthenticatedRequest)
+			.user;
 
 		const data = await this._getActiveSessionsUseCase.execute(
 			{ userId },

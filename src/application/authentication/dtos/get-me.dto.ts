@@ -1,7 +1,7 @@
 import type { AuthenticatedUserDTO } from "./login.dto";
 
 export interface GetMeInput {
-	usrId: string;
+	userId: string;
 }
 
 export interface GetMeOutput {

@@ -10,7 +10,7 @@ import {
 	MentorApplicationsQuerySchema,
 	MentorIdParamSchema,
 	registerMentorSchema,
-	rejectMentorSchema,
+	rejectMentorBodySchema,
 	resubmitMentorSchema,
 } from "../validators/mentor.validator";
 
@@ -62,7 +62,7 @@ mentorRouter.patch(
 	ROUTES.MENTOR.REJECT(":id"),
 	verifySession,
 	authorizeRoles(["ADMIN", "SUPER_ADMIN"]),
-	validate({ params: MentorIdParamSchema, body: rejectMentorSchema }),
+	validate({ params: MentorIdParamSchema, body: rejectMentorBodySchema }),
 	mentorController.rejectApplication,
 );
 
