@@ -1,6 +1,5 @@
 import type express from "express";
 import { ZodError, type ZodType } from "zod";
-import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import logger from "../../../shared/logging/logger";
 
@@ -18,11 +17,9 @@ export const validate =
 		next: express.NextFunction,
 	): void => {
 		try {
-			if (env.NODE_ENV !== "production") {
-				logger.info({ body: req.body }, "Request body");
-				logger.info({ params: req.params }, "Request params");
-				logger.info({ query: req.query }, "Request query");
-			}
+			logger.debug({ body: req.body }, "Request body");
+			logger.debug({ params: req.params }, "Request params");
+			logger.debug({ query: req.query }, "Request query");
 
 			const validated: ValidatedRequestData = {};
 

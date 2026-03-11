@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import type {
-	IChangePasswordUseCase,
 	IRequestPasswordResetUseCase,
+	IUpdatePasswordUseCase,
 } from "../../../application/authentication/use-cases/password-reset";
 import type { IResendOtpUseCase } from "../../../application/authentication/use-cases/resend-otp.usecase.interface";
 import type { IVerifyOtpUseCase } from "../../../application/authentication/use-cases/verify-otp.usecase.interface";
@@ -21,7 +21,7 @@ export class PasswordResetController {
 		@inject(TYPES.UseCases.ResendOtp)
 		private _resendOtpUseCase: IResendOtpUseCase,
 		@inject(TYPES.UseCases.ChangePassword)
-		private _changePasswordUseCase: IChangePasswordUseCase,
+		private _changePasswordUseCase: IUpdatePasswordUseCase,
 	) {}
 
 	requestPasswordReset = asyncHandler(async (req, res) => {
@@ -54,7 +54,7 @@ export class PasswordResetController {
 		});
 	});
 
-	changePassword = asyncHandler(async (req, res) => {
+	updatePassword = asyncHandler(async (req, res) => {
 		await this._changePasswordUseCase.execute(req.body);
 
 		sendSuccess(res, HttpStatus.OK, {

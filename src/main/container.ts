@@ -7,8 +7,8 @@ import { LogoutUseCase } from "../application/authentication/use-cases/logout/lo
 import { RevokeAllOtherSessionsUseCase } from "../application/authentication/use-cases/logout/revoke-all-other-sessions.usecase";
 import { RevokeSessionUseCase } from "../application/authentication/use-cases/logout/revoke-session.usecase";
 import {
-	ChangePasswordUseCase,
 	RequestPasswordResetUseCase,
+	UpdatePasswordUseCase,
 } from "../application/authentication/use-cases/password-reset";
 import { RefreshSessionUseCase } from "../application/authentication/use-cases/refresh-session/refresh-session.usecase";
 import { RegisterWithEmailUseCase } from "../application/authentication/use-cases/registration/register-with-email.usecase";
@@ -125,7 +125,7 @@ container.bind(TYPES.UseCases.RegisterWithEmail).to(RegisterWithEmailUseCase);
 container
 	.bind(TYPES.UseCases.RequestPasswordReset)
 	.to(RequestPasswordResetUseCase);
-container.bind(TYPES.UseCases.ChangePassword).to(ChangePasswordUseCase);
+container.bind(TYPES.UseCases.ChangePassword).to(UpdatePasswordUseCase);
 container.bind(TYPES.UseCases.VerifyOtp).to(VerifyOtpUseCase);
 container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
 container.bind(TYPES.UseCases.RefreshSession).to(RefreshSessionUseCase);

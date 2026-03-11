@@ -80,7 +80,7 @@ router.post(
 router.post(
 	ROUTES.AUTH.CHANGE_PASSWORD,
 	validate({ body: changePasswordBodySchema }),
-	passwordResetController.changePassword,
+	passwordResetController.updatePassword,
 );
 
 router.use(verifySession);

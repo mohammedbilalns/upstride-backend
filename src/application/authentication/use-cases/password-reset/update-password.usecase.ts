@@ -2,12 +2,12 @@ import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IHasherService, ITokenService } from "../../../services";
-import type { ChangePasswordInput } from "../../dtos/reset-password.dto";
+import type { UpdatePasswordInput } from "../../dtos/reset-password.dto";
 import { AuthenticationError, UserNotFoundError } from "../../errors";
-import type { IChangePasswordUseCase } from "./change-password.usecase.interface";
+import type { IUpdatePasswordUseCase } from "./update-password.usecase.interface";
 
 @injectable()
-export class ChangePasswordUseCase implements IChangePasswordUseCase {
+export class UpdatePasswordUseCase implements IUpdatePasswordUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
@@ -17,7 +17,7 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
 		private readonly _tokenService: ITokenService,
 	) {}
 
-	async execute(input: ChangePasswordInput): Promise<void> {
+	async execute(input: UpdatePasswordInput): Promise<void> {
 		const user = await this._userRepository.findByEmail(input.email);
 
 		if (!user) throw new UserNotFoundError();
