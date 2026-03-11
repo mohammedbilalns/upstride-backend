@@ -17,7 +17,7 @@ let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;
 let mailWorker: Worker;
 
-async function bootStrap() {
+async function start() {
 	logger.info("Starting...");
 
 	await Promise.all([connectToMongo(), redisClient.ping()]);
@@ -76,4 +76,4 @@ process.on(
 	},
 );
 
-bootStrap();
+start();

@@ -15,6 +15,7 @@ const seedSkills = async () => {
 		await connectToMongo();
 
 		const filePath = path.join(__dirname, "../interest_skills.txt");
+		// Load the text file
 		const data = await fs.readFile(filePath, "utf-8");
 
 		const lines = data
@@ -31,6 +32,7 @@ const seedSkills = async () => {
 
 		for (const line of lines) {
 			// Check if line is a category header
+			// Line ending with : is Category
 			if (line.endsWith(":")) {
 				currentInterestName = line.slice(0, -1).trim();
 				// Find the interest in the database to get its ObjectId

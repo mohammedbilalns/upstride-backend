@@ -1,5 +1,6 @@
 import pino from "pino";
 import env from "../config/env";
+import { RequestContext } from "../context/request-context";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -43,6 +44,10 @@ const logger = pino(
 		level: isProd ? "info" : "debug",
 		timestamp: pino.stdTimeFunctions.unixTime,
 		errorKey: "stack",
+		mixin: () => {
+			const requestId = RequestContext.getRequestId();
+			return requestId ? { requestId } : {};
+		},
 	},
 	transport,
 );

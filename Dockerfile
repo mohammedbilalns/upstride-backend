@@ -51,5 +51,3 @@ USER app
 EXPOSE 3001
 
 CMD ["pnpm", "run", "start"]
-
-

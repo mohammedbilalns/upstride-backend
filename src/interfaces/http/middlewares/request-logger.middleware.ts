@@ -1,4 +1,6 @@
+import { randomUUID } from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
+import { RequestContext } from "../../../shared/context/request-context";
 import logger from "../../../shared/logging/logger";
 
 export const requestLogger = (
@@ -7,6 +9,9 @@ export const requestLogger = (
 	next: NextFunction,
 ) => {
 	const start = Date.now();
+	const requestId = randomUUID();
+
+	res.setHeader("x-request-id", requestId);
 
 	res.on("finish", () => {
 		const duration = Date.now() - start;
@@ -24,5 +29,7 @@ export const requestLogger = (
 		}
 	});
 
-	next();
+	RequestContext.run({ requestId }, () => {
+		next();
+	});
 };
