@@ -17,11 +17,11 @@ import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	SaveUserInterestsInput,
 	SaveUserInterestsResponse,
-} from "../../dtos/save-user-interests.dto";
+} from "../../dtos";
 import { AuthenticationError } from "../../errors/authentication.error";
 import { UserNotFoundError } from "../../errors/user-not-found.error";
 import { LoginResponseMapper } from "../../mappers/login-response.mapper";
-import type { ISaveUserInterestsUseCase } from "./save-user-interests.usecase.interface";
+import type { ISaveUserInterestsUseCase } from ".";
 
 @injectable()
 export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {

@@ -3,7 +3,7 @@ import type { ISessionRepository } from "../../../../domain/repositories";
 import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revokation.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { ValidationError } from "../../../shared/errors/validation-error";
-import type { RevokeSessionInput } from "../../dtos/logout.dto";
+import type { RevokeSessionInput } from "../../dtos/session/logout.dto";
 import { UnauthorizedError } from "../../errors";
 import type { IRevokeSessionUseCase } from "./revoke-session.usecase.interface";
 

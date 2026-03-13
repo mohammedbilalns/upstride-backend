@@ -11,7 +11,7 @@ import type {
 	File,
 	IStorageService,
 	PresignedPostResponse,
-} from "../../application/services/storage.service.interface";
+} from "../../application/services";
 import env from "../../shared/config/env";
 
 export class S3StorageService implements IStorageService {

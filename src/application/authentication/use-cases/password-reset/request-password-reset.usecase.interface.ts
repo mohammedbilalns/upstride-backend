@@ -1,4 +1,4 @@
-import type { RequestPasswordResetInput } from "../../dtos/reset-password.dto";
+import type { RequestPasswordResetInput } from "../../dtos";
 
 export interface IRequestPasswordResetUseCase {
 	execute(input: RequestPasswordResetInput): Promise<void>;

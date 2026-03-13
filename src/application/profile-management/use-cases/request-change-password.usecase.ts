@@ -4,14 +4,15 @@ import { ChangePasswordOtpPolicy } from "../../../domain/policies/change-passwor
 import type { IUserRepository } from "../../../domain/repositories";
 import type { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../shared/types/types";
-import type { RequestChangePasswordInput } from "../../authentication/dtos/request-change-password.dto";
+import type { RequestChangePasswordInput } from "../../authentication/dtos";
 import {
 	InvalidPasswordError,
 	MaxResendsExceededError,
 	UserNotFoundError,
 } from "../../authentication/errors";
-import type { IHasherService, IOtpGenerator } from "../../services";
+import type { IOtpGenerator } from "../../services";
 import type { IMailService } from "../../services/mail.service.interface";
+import type { IPasswordService } from "../../services/password.service.interface";
 import type { IRequestChangePasswordUseCase } from "./request-change-password.usecase.interface";
 
 @injectable()
@@ -27,8 +28,8 @@ export class RequestChangePasswordUseCase
 		private readonly _otpGeneratorService: IOtpGenerator,
 		@inject(TYPES.Services.MailService)
 		private readonly _mailService: IMailService,
-		@inject(TYPES.Services.Hasher)
-		private readonly _hasherService: IHasherService,
+		@inject(TYPES.Services.Password)
+		private readonly _passwordService: IPasswordService,
 	) {}
 
 	async execute(input: RequestChangePasswordInput): Promise<void> {
@@ -38,7 +39,7 @@ export class RequestChangePasswordUseCase
 			throw new UserNotFoundError();
 		}
 
-		const isPasswordCorrect = await this._hasherService.compare(
+		const isPasswordCorrect = await this._passwordService.verifyPassword(
 			input.oldPassword,
 			user.passwordHash,
 		);

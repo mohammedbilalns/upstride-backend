@@ -1,5 +1,5 @@
 import type { User } from "../../../domain/entities/user.entity";
-import type { LoginResponse } from "../dtos/login.dto";
+import type { LoginResponse } from "../dtos";
 
 export class LoginResponseMapper {
 	static toDto(

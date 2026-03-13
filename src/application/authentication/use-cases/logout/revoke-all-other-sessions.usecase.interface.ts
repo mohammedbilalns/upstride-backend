@@ -1,4 +1,4 @@
-import type { RevokeAllOtherSessionsInput } from "../../dtos/logout.dto";
+import type { RevokeAllOtherSessionsInput } from "../../dtos/session/logout.dto";
 
 export interface IRevokeAllOtherSessionsUseCase {
 	execute(input: RevokeAllOtherSessionsInput): Promise<void>;

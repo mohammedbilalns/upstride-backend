@@ -7,7 +7,7 @@ import type { IUserRepository } from "../../../domain/repositories";
 import type { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import type { ITokenService } from "../../services";
-import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos/verify-otp.dto";
+import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos";
 import { InvalidOtpError } from "../errors/invalid-otp.error";
 import { MaxAttemptsExceededError } from "../errors/max-attempts-exceeded.error";
 import { UserNotFoundError } from "../errors/user-not-found.error";

@@ -1,6 +1,6 @@
 import type { Queue } from "bullmq";
 import { inject, injectable } from "inversify";
-import type { IMailService } from "../../application/services/mail.service.interface";
+import type { IMailService } from "../../application/services";
 import type { IMailTemplate } from "../../domain/mail";
 import { TYPES } from "../../shared/types/types";
 

@@ -1,4 +1,4 @@
-import type { RequestChangePasswordInput } from "../../authentication/dtos/request-change-password.dto";
+import type { RequestChangePasswordInput } from "../../authentication/dtos";
 
 export interface IRequestChangePasswordUseCase {
 	execute(input: RequestChangePasswordInput): Promise<void>;

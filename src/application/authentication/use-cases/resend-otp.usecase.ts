@@ -7,7 +7,7 @@ import type { IUserRepository } from "../../../domain/repositories";
 import type { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import type { IMailService, IOtpGenerator } from "../../services";
-import type { ResendOtpInput } from "../dtos/resend-otp.dto";
+import type { ResendOtpInput } from "../dtos";
 import { MaxResendsExceededError } from "../errors/max-resend-exceeded.error";
 import { UserNotFoundError } from "../errors/user-not-found.error";
 import type { IResendOtpUseCase } from "./resend-otp.usecase.interface";

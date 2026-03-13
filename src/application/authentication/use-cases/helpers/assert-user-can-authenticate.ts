@@ -1,16 +1,16 @@
 import { AuthenticationError } from "../../errors/authentication.error";
 import { UserBlockedError } from "../../errors/user-blocked.error";
 
-export type AuthEligibility = "eligible" | "blocked" | "unverified";
+export type AuthenticationStatus = "allowed" | "blocked" | "unverified";
 
-type AuthenticatableUser = {
+export type AuthenticatableUser = {
 	isBlocked: boolean;
 	isVerified: boolean;
 };
 
-export const getAuthEligibility = (
+export const resolveAuthenticationStatus = (
 	user: AuthenticatableUser,
-): AuthEligibility => {
+): AuthenticationStatus => {
 	if (user.isBlocked) {
 		return "blocked";
 	}
@@ -19,19 +19,21 @@ export const getAuthEligibility = (
 		return "unverified";
 	}
 
-	return "eligible";
+	return "allowed";
 };
 
-export const assertAuthEligibility = (eligibility: AuthEligibility): void => {
-	if (eligibility === "blocked") {
+export const assertAuthenticationAllowed = (
+	status: AuthenticationStatus,
+): void => {
+	if (status === "blocked") {
 		throw new UserBlockedError();
 	}
 
-	if (eligibility === "unverified") {
+	if (status === "unverified") {
 		throw new AuthenticationError();
 	}
 };
 
 export const assertUserCanAuthenticate = (user: AuthenticatableUser): void => {
-	assertAuthEligibility(getAuthEligibility(user));
+	assertAuthenticationAllowed(resolveAuthenticationStatus(user));
 };

@@ -4,9 +4,9 @@ import { TYPES } from "../../../../shared/types/types";
 import type {
 	GetActiveSessionsInput,
 	GetActiveSessionsResponse,
-} from "../../dtos/get-active-sessions.dto";
+} from "../../dtos";
 import { ActiveSessionMapper } from "../../mappers/active-session.mapper";
-import type { IGetActiveSessionsUseCase } from "./get-active-sessions.usecase.interface";
+import type { IGetActiveSessionsUseCase } from ".";
 
 @injectable()
 export class GetActiveSessionsUseCase implements IGetActiveSessionsUseCase {

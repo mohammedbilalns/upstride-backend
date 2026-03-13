@@ -1,7 +1,7 @@
 import type {
 	GetActiveSessionsInput,
 	GetActiveSessionsResponse,
-} from "../../dtos/get-active-sessions.dto";
+} from "../../dtos";
 
 export interface IGetActiveSessionsUseCase {
 	execute(
