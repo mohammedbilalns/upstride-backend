@@ -7,6 +7,7 @@ const envSchema = z.object({
 	APP_URL: z.string().min(1),
 	CLIENT_URL: z.string().min(1),
 	NODE_ENV: z.enum(["development", "production", "test"]),
+	LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]),
 	LOKI_HOST: z.string().min(1),
 	JWT_ACCESS_SECRET: z.string().min(1),
 	JWT_REFRESH_SECRET: z.string().min(1),

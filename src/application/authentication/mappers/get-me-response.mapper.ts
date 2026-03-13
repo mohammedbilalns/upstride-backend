@@ -9,6 +9,7 @@ export class GetMeResponseMapper {
 				name: user.name,
 				role: user.role,
 				profilePictureUrl: profilePictureUrl,
+				isLocalAuth: user.authType === "LOCAL",
 			},
 		};
 	}

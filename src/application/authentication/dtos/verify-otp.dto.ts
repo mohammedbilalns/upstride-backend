@@ -21,7 +21,12 @@ interface VerifyRegisterOtpResponse {
 	setupToken: string;
 }
 
+interface VerifyChangePasswordOtpResponse {
+	resetToken: string;
+}
+
 export type VerifyOtpResponse =
 	| VerifyResetOtpResponse
 	| VerifyRegisterOtpResponse
+	| VerifyChangePasswordOtpResponse
 	| LoginResponse;

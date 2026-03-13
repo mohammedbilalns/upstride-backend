@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import type { DeleteFileUseCase } from "../../../application/storage-management/use-cases/delete-file.usecase";
 import type { GetPreSignedUploadUrlUseCase } from "../../../application/storage-management/use-cases/get-presigned-upload-url.usecase";
 import { HttpStatus } from "../../../shared/constants";
-import { SuccessMessage } from "../../../shared/constants/responses-messages";
 import { TYPES } from "../../../shared/types/types";
+import { FileResponseMessages } from "../constants/response-messages";
 import { asyncHandler } from "../helpers";
 import { sendSuccess } from "../helpers/response";
 import type {
@@ -26,7 +26,7 @@ export class FileController {
 		);
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: SuccessMessage.FILE.PRESIGNED_URL_GENERATED,
+			message: FileResponseMessages.PRESIGNED_URL_GENERATED,
 			data: result,
 		});
 	});
@@ -37,7 +37,7 @@ export class FileController {
 		);
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: SuccessMessage.FILE.DELETED,
+			message: FileResponseMessages.DELETED,
 		});
 	});
 }

@@ -73,12 +73,12 @@ export class RedisOtpRepository implements IOtpRepository {
 
 	async getAttempts(identifier: string, purpose: string): Promise<number> {
 		const count = await this.redis.get(this.attemptsKey(identifier, purpose));
-		return count ? Number.parseInt(count) : 0;
+		return count ? Number.parseInt(count, 10) : 0;
 	}
 
 	async getResends(identifier: string, purpose: string): Promise<number> {
 		const count = await this.redis.get(this.resendKey(identifier, purpose));
-		return count ? Number.parseInt(count) : 0;
+		return count ? Number.parseInt(count, 10) : 0;
 	}
 
 	async resetAttempts(identifier: string, purpose: string): Promise<void> {

@@ -13,6 +13,7 @@ export const AuthResponseMessages = {
 	ALL_OTHER_SESSIONS_REVOKED: "All other sessions revoked successfully",
 	FETCH_USER_SUCCESS: "User fetched successfully",
 	FETCH_SESSIONS_SUCCESS: "Active sessions fetched successfully",
+	OTP_SENT: "An OTP has been sent to your email address",
 };
 
 export const CatalogResponseMessages = {
@@ -39,4 +40,10 @@ export const MentorResponseMessages = {
 export const ProfileResponseMessages = {
 	FETCH_PROFILE_SUCCESS: "User profile fetched successfully",
 	UPDATE_PROFILE_SUCCESS: "User profile updated successfully",
+	CHANGE_PASSWORD_SUCCESS: "Password changed successfully",
+};
+
+export const FileResponseMessages = {
+	PRESIGNED_URL_GENERATED: "Pre-signed URL generated successfully.",
+	DELETED: "File deleted successfully.",
 };

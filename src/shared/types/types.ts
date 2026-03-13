@@ -29,6 +29,8 @@ export const TYPES = {
 		VerifyOtp: Symbol.for("VerifyOtpUseCase"),
 		ResendOtp: Symbol.for("ResendOtpUseCase"),
 		ChangePassword: Symbol.for("ChangePasswordUseCase"),
+		RequestChangePassword: Symbol.for("RequestChangePasswordUseCase"),
+		UpdatePassword: Symbol.for("UpdatePasswordUseCase"),
 		RefreshSession: Symbol.for("RefreshSessionUseCase"),
 		Logout: Symbol.for("LogoutUseCase"),
 		RevokeSession: Symbol.for("RevokeSessionUseCase"),

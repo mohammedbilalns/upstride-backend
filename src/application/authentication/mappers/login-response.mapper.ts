@@ -14,6 +14,7 @@ export class LoginResponseMapper {
 				name: user.name,
 				role: user.role,
 				profilePictureUrl: profilePictureUrl,
+				isLocalAuth: user.authType === "LOCAL",
 			},
 			accessToken,
 			refreshToken,

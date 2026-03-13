@@ -1,8 +1,4 @@
 import "reflect-metadata";
-import {
-	AuthTypeValues,
-	UserRoleValues,
-} from "../src/domain/entities/user.entity";
 import { UserModel } from "../src/infrastructure/database/mongodb/models/user.model";
 import {
 	connectToMongo,

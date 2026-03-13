@@ -2,8 +2,6 @@ import pino from "pino";
 import env from "../config/env";
 import { RequestContext } from "../context/request-context";
 
-const isProd = process.env.NODE_ENV === "production";
-
 /**
  * Pino transport pipeline.
  *
@@ -16,7 +14,7 @@ const transport = pino.transport({
 		//  Console output using pino pretty
 		{
 			target: "pino-pretty",
-			level: isProd ? "info" : "debug",
+			level: env.LOG_LEVEL,
 			options: {
 				colorize: true,
 				translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
@@ -27,7 +25,7 @@ const transport = pino.transport({
 		// Loki transport for centralized logging
 		{
 			target: "pino-loki",
-			level: isProd ? "info" : "debug",
+			level: env.LOG_LEVEL,
 			options: {
 				batching: true,
 				interval: 5,
@@ -41,13 +39,14 @@ const transport = pino.transport({
 
 const logger = pino(
 	{
-		level: isProd ? "info" : "debug",
+		level: env.LOG_LEVEL,
 		timestamp: pino.stdTimeFunctions.unixTime,
 		errorKey: "stack",
 		mixin: () => {
 			const requestId = RequestContext.getRequestId();
 			return requestId ? { requestId } : {};
 		},
+		redact: ["password", "token", "apiKey", "req.headers.authorization"],
 	},
 	transport,
 );

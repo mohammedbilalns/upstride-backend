@@ -1,6 +1,6 @@
 import type express from "express";
 import { MongooseError } from "mongoose";
-import { ErrorMessage, HttpStatus } from "../../../shared/constants";
+import { ErrorMessages, HttpStatus } from "../../../shared/constants";
 import { BaseError } from "../../../shared/errors/base.error";
 import logger from "../../../shared/logging/logger";
 
@@ -26,7 +26,7 @@ export function errorHandler(
 
 		return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
 			success: false,
-			message: ErrorMessage.INTERNAL_SERVER_ERROR,
+			message: ErrorMessages.INTERNAL_SERVER_ERROR,
 		});
 	}
 
@@ -36,7 +36,7 @@ export function errorHandler(
 
 		return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
 			success: false,
-			message: ErrorMessage.INTERNAL_SERVER_ERROR,
+			message: ErrorMessages.INTERNAL_SERVER_ERROR,
 		});
 	}
 
@@ -45,6 +45,6 @@ export function errorHandler(
 
 	return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
 		success: false,
-		message: ErrorMessage.INTERNAL_SERVER_ERROR,
+		message: ErrorMessages.INTERNAL_SERVER_ERROR,
 	});
 }

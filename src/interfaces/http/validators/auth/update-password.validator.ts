@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { passwordSchema } from "../common";
 
-export const changePasswordBodySchema = z.object({
+export const updatePasswordBodySchema = z.object({
 	email: z.email().trim(),
 	newPassword: passwordSchema,
 });
 
-export type ChangePasswordBody = z.infer<typeof changePasswordBodySchema>;
+export type UpdatePasswordBody = z.infer<typeof updatePasswordBodySchema>;

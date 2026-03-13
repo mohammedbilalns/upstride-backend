@@ -29,8 +29,12 @@ import { RejectMentorUseCase } from "../application/mentor-management/use-cases/
 import type { IRejectMentorUseCase } from "../application/mentor-management/use-cases/reject-mentor.usecase.interface";
 import { ResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase";
 import type { IResubmitMentorUseCase } from "../application/mentor-management/use-cases/resubmit-mentor.usecase.interface";
+import { ChangePasswordUseCase } from "../application/profile-management/use-cases/change-password.usecase";
+import type { IChangePasswordUseCase } from "../application/profile-management/use-cases/change-password.usecase.interface";
 import { GetProfileUseCase } from "../application/profile-management/use-cases/get-profile.usecase";
 import type { IGetProfileUseCase } from "../application/profile-management/use-cases/get-profile.usecase.interface";
+import { RequestChangePasswordUseCase } from "../application/profile-management/use-cases/request-change-password.usecase";
+import type { IRequestChangePasswordUseCase } from "../application/profile-management/use-cases/request-change-password.usecase.interface";
 import { UpdateProfileUseCase } from "../application/profile-management/use-cases/update-profile.usecase";
 import type { IUpdateProfileUseCase } from "../application/profile-management/use-cases/update-profile.usecase.interface";
 import type { IHasherService, IStorageService } from "../application/services";
@@ -78,6 +82,7 @@ const container = new Container();
 // Queues
 //-------------------------
 export const mailQueue = new Queue("mailQueue", { connection: redisClient });
+//TODO: move this to a different file
 container.bind<Queue>(TYPES.Queues.MailQueue).toConstantValue(mailQueue);
 
 //-------------------------
@@ -125,7 +130,7 @@ container.bind(TYPES.UseCases.RegisterWithEmail).to(RegisterWithEmailUseCase);
 container
 	.bind(TYPES.UseCases.RequestPasswordReset)
 	.to(RequestPasswordResetUseCase);
-container.bind(TYPES.UseCases.ChangePassword).to(UpdatePasswordUseCase);
+container.bind(TYPES.UseCases.UpdatePassword).to(UpdatePasswordUseCase);
 container.bind(TYPES.UseCases.VerifyOtp).to(VerifyOtpUseCase);
 container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
 container.bind(TYPES.UseCases.RefreshSession).to(RefreshSessionUseCase);
@@ -149,6 +154,12 @@ container
 	.bind<IUpdateProfileUseCase>(TYPES.UseCases.UpdateProfile)
 	.to(UpdateProfileUseCase)
 	.inSingletonScope();
+container
+	.bind<IRequestChangePasswordUseCase>(TYPES.UseCases.RequestChangePassword)
+	.to(RequestChangePasswordUseCase);
+container
+	.bind<IChangePasswordUseCase>(TYPES.UseCases.ChangePassword)
+	.to(ChangePasswordUseCase);
 container
 	.bind<GetProfessionsUseCase>(TYPES.UseCases.GetProfessions)
 	.to(GetProfessionsUseCase)

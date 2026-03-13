@@ -5,7 +5,6 @@ import {
 	AuthController,
 	LogoutController,
 	PasswordResetController,
-	ProfileController,
 } from "../controllers";
 import { verifySession } from "../middlewares";
 import { validate } from "../middlewares/validator.middleware";
@@ -17,15 +16,13 @@ import {
 	saveInterestsBodySchema,
 	verifyOtpBodySchema,
 } from "../validators/auth";
-import { changePasswordBodySchema } from "../validators/auth/change-password.validator";
 import { revokeSessionBodySchema } from "../validators/auth/revokation.validator";
-import { updateProfileBodySchema } from "../validators/profile.validator";
+import { updatePasswordBodySchema } from "../validators/auth/update-password.validator";
 
 const router = Router();
 const authController = container.get(AuthController);
 const passwordResetController = container.get(PasswordResetController);
 const logoutController = container.get(LogoutController);
-const profileController = container.get(ProfileController);
 
 router.post(
 	ROUTES.AUTH.LOGIN,
@@ -78,20 +75,13 @@ router.post(
 );
 
 router.post(
-	ROUTES.AUTH.CHANGE_PASSWORD,
-	validate({ body: changePasswordBodySchema }),
+	ROUTES.AUTH.UPDATE_PASSWORD,
+	validate({ body: updatePasswordBodySchema }),
 	passwordResetController.updatePassword,
 );
 
 router.use(verifySession);
 
-router.get(ROUTES.AUTH.ME, authController.getMe);
-router.get(ROUTES.AUTH.PROFILE, profileController.getProfile);
-router.put(
-	ROUTES.AUTH.PROFILE,
-	validate({ body: updateProfileBodySchema }),
-	profileController.updateProfile,
-);
 router.get(ROUTES.AUTH.ACTIVE_SESSIONS, logoutController.getActiveSessions);
 
 router.post(ROUTES.AUTH.LOGOUT, logoutController.logout);

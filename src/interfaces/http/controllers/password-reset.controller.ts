@@ -20,8 +20,8 @@ export class PasswordResetController {
 		private _verifyOtpUseCase: IVerifyOtpUseCase,
 		@inject(TYPES.UseCases.ResendOtp)
 		private _resendOtpUseCase: IResendOtpUseCase,
-		@inject(TYPES.UseCases.ChangePassword)
-		private _changePasswordUseCase: IUpdatePasswordUseCase,
+		@inject(TYPES.UseCases.UpdatePassword)
+		private _updatePasswordUseCase: IUpdatePasswordUseCase,
 	) {}
 
 	requestPasswordReset = asyncHandler(async (req, res) => {
@@ -55,7 +55,7 @@ export class PasswordResetController {
 	});
 
 	updatePassword = asyncHandler(async (req, res) => {
-		await this._changePasswordUseCase.execute(req.body);
+		await this._updatePasswordUseCase.execute(req.body);
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.PASSWORD_CHANGED,

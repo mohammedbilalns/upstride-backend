@@ -23,7 +23,7 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 			throw new UserNotFoundError();
 		}
 
-		const updateData: any = {};
+		const updateData: Record<string, unknown> = {};
 
 		if (input.name) {
 			updateData.name = input.name;

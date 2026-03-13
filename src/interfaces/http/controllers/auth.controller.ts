@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { UAParser } from "ua-parser-js";
-import type { IGetMeUseCase } from "../../../application/authentication/use-cases/get-me.usecase.interface";
 import type { ILoginWithEmailUseCase } from "../../../application/authentication/use-cases/login/login-with-email.usecase.interface";
 import type { IRefreshSessionUseCase } from "../../../application/authentication/use-cases/refresh-session/refresh-session.usecase.interface";
 import type { IRegisterWithEmailUseCase } from "../../../application/authentication/use-cases/registration/register-with-email.usecase.interface";
@@ -11,7 +10,6 @@ import type { IVerifyOtpUseCase } from "../../../application/authentication/use-
 import { OtpPurpose } from "../../../domain/policies/otp-purposes";
 import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
-import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages } from "../constants/response-messages";
 import { asyncHandler, sendSuccess } from "../helpers";
@@ -38,8 +36,6 @@ export class AuthController {
 		private _refreshSessionUseCase: IRefreshSessionUseCase,
 		@inject(TYPES.UseCases.SaveUserInterests)
 		private _saveUserInterestsUseCase: ISaveUserInterestsUseCase,
-		@inject(TYPES.UseCases.GetMe)
-		private _getMeUseCase: IGetMeUseCase,
 	) {}
 
 	register = asyncHandler(async (req, res) => {
@@ -117,16 +113,6 @@ export class AuthController {
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.REFRESH_SESSION_SUCCESS,
-			data,
-		});
-	});
-
-	getMe = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-		const data = await this._getMeUseCase.execute({ userId });
-
-		sendSuccess(res, HttpStatus.OK, {
-			message: AuthResponseMessages.FETCH_USER_SUCCESS,
 			data,
 		});
 	});

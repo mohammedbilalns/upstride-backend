@@ -17,6 +17,7 @@ export interface AuthenticatedUserDTO {
 	name: string;
 	role: UserRole;
 	profilePictureUrl: string | null;
+	isLocalAuth: boolean;
 }
 
 export interface LoginResponse {
