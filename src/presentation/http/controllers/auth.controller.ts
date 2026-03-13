@@ -97,31 +97,43 @@ export class AuthController {
 
 	loginWithGoogle = asyncHandler(async (req, res) => {
 		const deviceInfo = this._extractDeviceInfo(req);
-		const { refreshToken, ...data } = await this._socialLoginUseCase.execute({
+		const data = await this._socialLoginUseCase.execute({
 			provider: "GOOGLE",
-			credential: (req.validated?.body as GoogleLoginBody).idToken,
+			credential: (req.validated?.body as GoogleLoginBody).accessToken,
 			...deviceInfo,
 		});
 
-		this._setRefreshTokenCookie(res, refreshToken);
+		if ("refreshToken" in data) {
+			this._setRefreshTokenCookie(res, data.refreshToken);
+		}
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
-			data,
+			data:
+				"refreshToken" in data
+					? (({ refreshToken, ...rest }) => rest)(data)
+					: data,
 		});
 	});
 
 	loginWithLinkedIn = asyncHandler(async (req, res) => {
 		const deviceInfo = this._extractDeviceInfo(req);
-		const { refreshToken, ...data } = await this._socialLoginUseCase.execute({
+		const body = req.validated?.body as LinkedInLoginBody;
+		// Pass code and redirectUri concatenated; the service splits them
+		const data = await this._socialLoginUseCase.execute({
 			provider: "LINKEDIN",
-			credential: (req.validated?.body as LinkedInLoginBody).accessToken,
+			credential: `${body.code}::${body.redirectUri}`,
 			...deviceInfo,
 		});
 
-		this._setRefreshTokenCookie(res, refreshToken);
+		if ("refreshToken" in data) {
+			this._setRefreshTokenCookie(res, data.refreshToken);
+		}
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
-			data,
+			data:
+				"refreshToken" in data
+					? (({ refreshToken, ...rest }) => rest)(data)
+					: data,
 		});
 	});
 

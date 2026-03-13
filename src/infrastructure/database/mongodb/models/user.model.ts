@@ -12,6 +12,8 @@ export interface UserDocument {
 	_id: Types.ObjectId;
 	name: string;
 	email: string;
+	googleId: string | null;
+	linkedinId: string | null;
 	phone?: string;
 	passwordHash: string;
 	authType: AuthType;
@@ -34,6 +36,8 @@ export const userSchema = new Schema<UserDocument>(
 	{
 		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
+		googleId: { type: String, default: null, sparse: true },
+		linkedinId: { type: String, default: null, sparse: true },
 		phone: { type: String },
 		passwordHash: { type: String, required: true },
 		authType: { type: String, enum: AuthTypeValues, required: true },

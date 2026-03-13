@@ -1,5 +1,5 @@
-import type { LoginResponse, SocialLoginInput } from "../../dtos";
+import type { SocialLoginInput, SocialLoginResponse } from "../../dtos";
 
 export interface ISocialLoginUseCase {
-	execute(input: SocialLoginInput): Promise<LoginResponse>;
+	execute(input: SocialLoginInput): Promise<SocialLoginResponse>;
 }

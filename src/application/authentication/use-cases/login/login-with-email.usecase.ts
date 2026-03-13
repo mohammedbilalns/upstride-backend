@@ -30,6 +30,11 @@ export class LoginWithEmailUseCase implements ILoginWithEmailUseCase {
 			throw new AuthenticationError();
 		}
 
+		if (existingUser.authType !== "LOCAL") {
+			await this._passwordService.fakeVerify();
+			throw new AuthenticationError();
+		}
+
 		const authenticationStatus = resolveAuthenticationStatus(existingUser);
 
 		if (authenticationStatus === "unverified") {

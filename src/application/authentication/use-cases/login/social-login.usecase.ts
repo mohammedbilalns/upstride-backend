@@ -5,11 +5,12 @@ import { TYPES } from "../../../../shared/types/types";
 import type {
 	IOAuthIdentityProvider,
 	IPasswordService,
+	ITokenService,
 } from "../../../services";
 import type {
-	LoginResponse,
 	OAuthProvider,
 	SocialLoginInput,
+	SocialLoginResponse,
 } from "../../dtos";
 import { AuthenticationError, UserBlockedError } from "../../errors";
 import type { IAuthSessionService } from "../../services/auth-session.service.interface";
@@ -28,6 +29,8 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 		linkedInOAuthProvider: IOAuthIdentityProvider,
 		@inject(TYPES.Services.Password)
 		private readonly _passwordService: IPasswordService,
+		@inject(TYPES.Services.TokenService)
+		private readonly _tokenService: ITokenService,
 		@inject(TYPES.Services.AuthSession)
 		private readonly _authSessionService: IAuthSessionService,
 	) {
@@ -37,7 +40,7 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 		]);
 	}
 
-	async execute(input: SocialLoginInput): Promise<LoginResponse> {
+	async execute(input: SocialLoginInput): Promise<SocialLoginResponse> {
 		const provider = this._providers.get(input.provider);
 
 		if (!provider) {
@@ -45,9 +48,29 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 		}
 
 		const identity = await provider.getIdentity(input.credential);
+		const existingUserByProvider =
+			input.provider === "GOOGLE"
+				? await this._userRepository.findByGoogleId(identity.providerUserId)
+				: await this._userRepository.findByLinkedinId(identity.providerUserId);
+
+		if (existingUserByProvider?.isBlocked) {
+			throw new UserBlockedError();
+		}
+
+		if (existingUserByProvider) {
+			return this._authSessionService.createLoginResponse(
+				existingUserByProvider,
+				input,
+			);
+		}
+
 		const existingUser = await this._userRepository.findByEmail(identity.email);
 
-		if (existingUser && existingUser.authType !== input.provider) {
+		if (
+			existingUser &&
+			existingUser.authType !== "LOCAL" &&
+			existingUser.authType !== input.provider
+		) {
 			throw new AuthenticationError();
 		}
 
@@ -55,20 +78,47 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 			throw new UserBlockedError();
 		}
 
-		const user =
-			existingUser ??
-			(await this._userRepository.create({
-				name: identity.name,
-				email: identity.email,
-				phone: "",
-				passwordHash: await this._passwordService.hashPlaceholderPassword(),
-				authType: input.provider,
-				profilePictureId: null,
-				role: "USER",
-				isBlocked: false,
-				isVerified: identity.isVerified,
-			} as User));
+		if (existingUser) {
+			const linkedUser = await this._userRepository.updateById(
+				existingUser.id,
+				{
+					googleId:
+						input.provider === "GOOGLE"
+							? identity.providerUserId
+							: existingUser.googleId,
+					linkedinId:
+						input.provider === "LINKEDIN"
+							? identity.providerUserId
+							: existingUser.linkedinId,
+					isVerified: existingUser.isVerified || identity.isVerified,
+				},
+			);
 
-		return this._authSessionService.createLoginResponse(user, input);
+			return this._authSessionService.createLoginResponse(
+				linkedUser ?? existingUser,
+				input,
+			);
+		}
+
+		const user = await this._userRepository.create({
+			name: identity.name,
+			email: identity.email,
+			googleId: input.provider === "GOOGLE" ? identity.providerUserId : null,
+			linkedinId:
+				input.provider === "LINKEDIN" ? identity.providerUserId : null,
+			phone: "",
+			passwordHash: await this._passwordService.hashPlaceholderPassword(),
+			authType: input.provider,
+			profilePictureId: null,
+			role: "USER",
+			isBlocked: false,
+			isVerified: identity.isVerified,
+		} as User);
+
+		return {
+			setupToken: this._tokenService.generateSetupToken({
+				sub: user.id,
+			}),
+		};
 	}
 }

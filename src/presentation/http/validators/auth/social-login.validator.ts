@@ -1,11 +1,12 @@
 import z from "zod";
 
 export const googleLoginBodySchema = z.object({
-	idToken: z.string().trim().min(1),
+	accessToken: z.string().trim().min(1),
 });
 
 export const linkedinLoginBodySchema = z.object({
-	accessToken: z.string().trim().min(1),
+	code: z.string().trim().min(1),
+	redirectUri: z.string().trim().min(1),
 });
 
 export type GoogleLoginBody = z.infer<typeof googleLoginBodySchema>;

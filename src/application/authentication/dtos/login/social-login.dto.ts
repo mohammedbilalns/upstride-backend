@@ -10,6 +10,7 @@ export type OAuthProvider = Exclude<AuthType, "LOCAL">;
 export interface SocialIdentityDto {
 	email: string;
 	name: string;
+	providerUserId: string;
 	authType: OAuthProvider;
 	isVerified: boolean;
 }
@@ -19,4 +20,8 @@ export interface SocialLoginInput extends AuthDeviceContext {
 	credential: string;
 }
 
-export type SocialLoginResponse = LoginResponse;
+export interface SocialOnboardingResponse {
+	setupToken: string;
+}
+
+export type SocialLoginResponse = LoginResponse | SocialOnboardingResponse;

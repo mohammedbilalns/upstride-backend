@@ -22,6 +22,8 @@ export class User {
 		public readonly id: string,
 		public readonly name: string,
 		public readonly email: string,
+		public readonly googleId: string | null,
+		public readonly linkedinId: string | null,
 		public readonly phone: string,
 		public readonly passwordHash: string,
 		public readonly authType: AuthType,
