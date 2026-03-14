@@ -25,6 +25,7 @@ export interface MentorApplicationDTO {
 	resumeUrl: string;
 	resubmissionCount: number;
 	status: "approved" | "rejected" | "pending";
+	rejectionReason: string | null;
 	appliedAt: Date;
 	updatedAt: Date;
 }

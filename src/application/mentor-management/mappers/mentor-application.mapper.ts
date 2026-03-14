@@ -42,6 +42,7 @@ export class MentorApplicationMapper {
 			resumeUrl,
 			resubmissionCount: item.applicationAttempts,
 			status,
+			rejectionReason: item.rejectionReason,
 			appliedAt: item.createdAt,
 			updatedAt: item.updatedAt,
 		};
