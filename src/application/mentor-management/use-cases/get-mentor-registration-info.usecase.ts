@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import type { IStorageService } from "../../../application/services/storage.service.interface";
+import type { IStorageService } from "../../../application/services";
 import { MAX_MENTOR_APPLICATION_ATTEMPTS } from "../../../domain/entities/mentor.entity";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import { TYPES } from "../../../shared/types/types";

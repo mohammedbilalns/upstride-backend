@@ -9,11 +9,12 @@ import { RegisterOtpPolicy } from "../../../../domain/policies/register-otp.poli
 import type { IUserRepository } from "../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import type { IHasherService, IOtpGenerator } from "../../../services";
+import type { IOtpGenerator } from "../../../services";
 import type { IMailService } from "../../../services/mail.service.interface";
-import type { RegisterWithEmailInput } from "../../dtos/registration.dto";
+import type { IPasswordService } from "../../../services/password.service.interface";
+import type { RegisterWithEmailInput } from "../../dtos";
 import { UserAlreadyExistsError } from "../../errors/user-already-exists.error";
-import type { IRegisterWithEmailUseCase } from "./register-with-email.usecase.interface";
+import type { IRegisterWithEmailUseCase } from ".";
 
 @injectable()
 export class RegisterWithEmailUseCase implements IRegisterWithEmailUseCase {
@@ -22,8 +23,8 @@ export class RegisterWithEmailUseCase implements IRegisterWithEmailUseCase {
 		private _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.OtpRepository)
 		private _otpRepository: IOtpRepository,
-		@inject(TYPES.Services.Hasher)
-		private _passwordHasherService: IHasherService,
+		@inject(TYPES.Services.Password)
+		private _passwordService: IPasswordService,
 		@inject(TYPES.Services.OtpGenerator)
 		private _otpGeneratorService: IOtpGenerator,
 		@inject(TYPES.Services.MailService)
@@ -39,7 +40,7 @@ export class RegisterWithEmailUseCase implements IRegisterWithEmailUseCase {
 			await this._userRepository.deleteById(existingUser.id);
 		}
 
-		const hashedPassword = await this._passwordHasherService.hash(
+		const hashedPassword = await this._passwordService.hashPassword(
 			input.password,
 		);
 

@@ -1,14 +1,11 @@
 import "reflect-metadata";
-import {
-	AuthTypeValues,
-	UserRoleValues,
-} from "../src/domain/entities/user.entity";
 import { UserModel } from "../src/infrastructure/database/mongodb/models/user.model";
 import {
 	connectToMongo,
 	disconnectFromMongo,
 } from "../src/infrastructure/database/mongodb/mongodb.connection";
 import { Argon2HasherService } from "../src/infrastructure/services/argon2.service";
+
 import logger from "../src/shared/logging/logger";
 
 const seedSuperAdmin = async () => {

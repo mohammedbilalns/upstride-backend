@@ -1,5 +1,5 @@
 import type { User } from "../../../domain/entities/user.entity";
-import type { GetMeOutput } from "../dtos/get-me.dto";
+import type { GetMeOutput } from "../dtos";
 
 export class GetMeResponseMapper {
 	static toDto(user: User, profilePictureUrl: string | null): GetMeOutput {
@@ -9,6 +9,7 @@ export class GetMeResponseMapper {
 				name: user.name,
 				role: user.role,
 				profilePictureUrl: profilePictureUrl,
+				isLocalAuth: user.authType === "LOCAL",
 			},
 		};
 	}

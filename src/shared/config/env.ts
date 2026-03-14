@@ -7,6 +7,7 @@ const envSchema = z.object({
 	APP_URL: z.string().min(1),
 	CLIENT_URL: z.string().min(1),
 	NODE_ENV: z.enum(["development", "production", "test"]),
+	LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]),
 	LOKI_HOST: z.string().min(1),
 	JWT_ACCESS_SECRET: z.string().min(1),
 	JWT_REFRESH_SECRET: z.string().min(1),
@@ -20,6 +21,11 @@ const envSchema = z.object({
 	AWS_ACCESS_KEY_ID: z.string().min(1),
 	AWS_SECRET_ACCESS_KEY: z.string().min(1),
 	AWS_REGION: z.string().min(1),
+	GOOGLE_CLIENT_ID: z.string().min(1),
+	GOOGLE_CLIENT_SECRET: z.string().min(1),
+	LINKEDIN_CLIENT_ID: z.string().min(1),
+	LINKEDIN_CLIENT_SECRET: z.string().min(1),
+	LINKEDIN_REDIRECT_URL: z.string().min(1),
 });
 
 const env = envSchema.parse(process.env);

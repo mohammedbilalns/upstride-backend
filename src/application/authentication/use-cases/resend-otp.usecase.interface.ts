@@ -1,4 +1,4 @@
-import type { ResendOtpInput } from "../dtos/resend-otp.dto";
+import type { ResendOtpInput } from "../dtos";
 
 export interface IResendOtpUseCase {
 	execute(input: ResendOtpInput): Promise<void>;

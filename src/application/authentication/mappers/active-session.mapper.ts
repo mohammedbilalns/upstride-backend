@@ -1,5 +1,5 @@
 import type { Session } from "../../../domain/entities/session.entity";
-import type { ActiveSessionDTO } from "../dtos/get-active-sessions.dto";
+import type { ActiveSessionDTO } from "../dtos";
 
 export class ActiveSessionMapper {
 	static toDTO(session: Session, currentSessionId: string): ActiveSessionDTO {

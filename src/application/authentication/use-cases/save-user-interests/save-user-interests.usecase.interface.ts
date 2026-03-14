@@ -1,7 +1,7 @@
 import type {
 	SaveUserInterestsInput,
 	SaveUserInterestsResponse,
-} from "../../dtos/save-user-interests.dto";
+} from "../../dtos";
 
 export interface ISaveUserInterestsUseCase {
 	execute(input: SaveUserInterestsInput): Promise<SaveUserInterestsResponse>;

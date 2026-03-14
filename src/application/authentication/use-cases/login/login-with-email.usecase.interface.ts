@@ -1,4 +1,4 @@
-import type { LoginResponse, LoginWithEmailInput } from "../../dtos/login.dto";
+import type { LoginResponse, LoginWithEmailInput } from "../../dtos";
 
 export interface ILoginWithEmailUseCase {
 	execute(input: LoginWithEmailInput): Promise<LoginResponse>;

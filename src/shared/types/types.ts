@@ -1,9 +1,12 @@
 export const TYPES = {
 	Services: {
-		Hasher: Symbol.for("Hasher"),
+		Password: Symbol.for("Password"),
 		TokenService: Symbol.for("TokenService"),
 		MailService: Symbol.for("MailService"),
 		OtpGenerator: Symbol.for("OtpGenerator"),
+		GoogleOAuth: Symbol.for("GoogleOAuth"),
+		LinkedInOAuth: Symbol.for("LinkedInOAuth"),
+		AuthSession: Symbol.for("AuthSession"),
 		Storage: Symbol.for("Storage"),
 	},
 	Queues: {
@@ -24,11 +27,14 @@ export const TYPES = {
 	},
 	UseCases: {
 		LoginWithEmail: Symbol.for("LoginWithEmailUseCase"),
+		SocialLogin: Symbol.for("SocialLoginUseCase"),
 		RequestPasswordReset: Symbol.for("RequestPasswordResetUseCase"),
 		RegisterWithEmail: Symbol.for("RegisterWithEmailUseCase"),
 		VerifyOtp: Symbol.for("VerifyOtpUseCase"),
 		ResendOtp: Symbol.for("ResendOtpUseCase"),
 		ChangePassword: Symbol.for("ChangePasswordUseCase"),
+		RequestChangePassword: Symbol.for("RequestChangePasswordUseCase"),
+		UpdatePassword: Symbol.for("UpdatePasswordUseCase"),
 		RefreshSession: Symbol.for("RefreshSessionUseCase"),
 		Logout: Symbol.for("LogoutUseCase"),
 		RevokeSession: Symbol.for("RevokeSessionUseCase"),

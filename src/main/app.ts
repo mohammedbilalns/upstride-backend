@@ -4,10 +4,10 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
 import helmet from "helmet";
-import { corsOptions } from "../interfaces/http/config/cors.config";
-import { errorHandler, requestLogger } from "../interfaces/http/middlewares";
-import { router as v1Router } from "../interfaces/http/routes/v1.route";
-import { HttpStatus } from "../shared/constants/http-status-codes";
+import { corsOptions } from "../presentation/http/config";
+import { errorHandler, requestLogger } from "../presentation/http/middlewares";
+import { router as v1Router } from "../presentation/http/routes";
+import { HttpStatus } from "../shared/constants";
 import logger from "../shared/logging/logger";
 
 /**

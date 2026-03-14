@@ -6,9 +6,9 @@ import type { IOtpRepository } from "../../../../domain/repositories/otp.reposit
 import { TYPES } from "../../../../shared/types/types";
 import type { IOtpGenerator } from "../../../services";
 import type { IMailService } from "../../../services/mail.service.interface";
-import type { RequestPasswordResetInput } from "../../dtos/reset-password.dto";
+import type { RequestPasswordResetInput } from "../../dtos";
 import { assertUserCanAuthenticate } from "../helpers/assert-user-can-authenticate";
-import type { IRequestPasswordResetUseCase } from "./request-password-reset.usecase.interface";
+import type { IRequestPasswordResetUseCase } from ".";
 
 @injectable()
 export class RequestPasswordResetUseCase

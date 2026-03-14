@@ -7,6 +7,8 @@ export class UserMapper {
 			id: doc._id.toString(),
 			name: doc.name,
 			email: doc.email,
+			googleId: doc.googleId ?? null,
+			linkedinId: doc.linkedinId ?? null,
 			phone: doc.phone || "",
 			passwordHash: doc.passwordHash,
 			authType: doc.authType,
@@ -23,6 +25,8 @@ export class UserMapper {
 		return {
 			name: entity.name,
 			email: entity.email,
+			googleId: entity.googleId,
+			linkedinId: entity.linkedinId,
 			phone: entity.phone,
 			passwordHash: entity.passwordHash,
 			authType: entity.authType,

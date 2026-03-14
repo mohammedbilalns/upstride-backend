@@ -43,16 +43,16 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			input.areasOfExpertise ?? existingMentor.areasOfExpertise,
 			input.toolsAndSkills
 				? input.toolsAndSkills.map((ts) => ({
-						skillId: ts.skillId!,
-						level: ts.level!,
+						skillId: ts.skillId as string,
+						level: ts.level as "BEGINNER" | "INTERMEDIATE" | "ADVANCED",
 					}))
 				: existingMentor.toolsAndSkills,
 			input.experience
 				? input.experience.map((exp) => ({
-						company: exp.company!,
-						role: exp.role!,
-						description: exp.description!,
-						from: new Date(exp.from!),
+						company: exp.company as string,
+						role: exp.role as string,
+						description: exp.description as string,
+						from: new Date(exp.from as string),
 						to: exp.to ? new Date(exp.to) : null,
 					}))
 				: existingMentor.experience,

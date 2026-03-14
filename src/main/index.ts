@@ -22,7 +22,7 @@ async function start() {
 
 	await Promise.all([connectToMongo(), redisClient.ping()]);
 
-	// start background worker for mail processing
+	//worker for mail processing
 	mailWorker = createMailWorker(redisClient);
 
 	// initialize http server
@@ -43,7 +43,7 @@ async function shutdown(signal: string) {
 
 	try {
 		if (appInstance) await appInstance.close();
-		await Promise.all([
+		await Promise.allSettled([
 			disconnectFromMongo(),
 			mailWorker?.close(),
 			mailQueue.close(),

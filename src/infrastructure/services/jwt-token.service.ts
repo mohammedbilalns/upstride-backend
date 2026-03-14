@@ -11,7 +11,7 @@ import {
 	type ResetTokenPayload,
 	SETUP_TOKEN_EXPIRES_IN,
 	type SetupTokenPayload,
-} from "../../application/services/token.service.interace";
+} from "../../application/services";
 import env from "../../shared/config/env";
 
 @injectable()

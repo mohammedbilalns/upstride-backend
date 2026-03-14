@@ -1,11 +1,13 @@
 import { inject, injectable } from "inversify";
+import { ChangePasswordOtpPolicy } from "../../../domain/policies/change-password-otp.policy";
+import type { IOtpPolicy } from "../../../domain/policies/otp.policy";
 import { RegisterOtpPolicy } from "../../../domain/policies/register-otp.policy";
 import { ResetPasswordOtpPolicy } from "../../../domain/policies/reset-password-otp.policy";
 import type { IUserRepository } from "../../../domain/repositories";
 import type { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import type { ITokenService } from "../../services";
-import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos/verify-otp.dto";
+import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos";
 import { InvalidOtpError } from "../errors/invalid-otp.error";
 import { MaxAttemptsExceededError } from "../errors/max-attempts-exceeded.error";
 import { UserNotFoundError } from "../errors/user-not-found.error";
@@ -26,10 +28,16 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 		const user = await this._userRepository.findByEmail(input.email);
 		if (!user) throw new UserNotFoundError();
 
-		const policy =
-			input.type === "REGISTER"
-				? new RegisterOtpPolicy()
-				: new ResetPasswordOtpPolicy();
+		let policy: IOtpPolicy;
+		if (input.type === "REGISTER") {
+			policy = new RegisterOtpPolicy();
+		} else if (input.type === "RESET_PASSWORD") {
+			policy = new ResetPasswordOtpPolicy();
+		} else if (input.type === "CHANGE_PASSWORD") {
+			policy = new ChangePasswordOtpPolicy();
+		} else {
+			throw new Error("Invalid OTP type");
+		}
 
 		const currentAttempts = await this._otpRepository.getAttempts(
 			user.id,
@@ -74,7 +82,10 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 			return {
 				setupToken,
 			};
-		} else if (input.type === "RESET_PASSWORD") {
+		} else if (
+			input.type === "RESET_PASSWORD" ||
+			input.type === "CHANGE_PASSWORD"
+		) {
 			const resetToken = this._tokenService.generateResetToken({
 				sub: user.id,
 			});

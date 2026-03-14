@@ -60,6 +60,16 @@ export class MongoUserRepository
 		return doc ? this.toDomain(doc as UserDocument) : null;
 	}
 
+	async findByGoogleId(googleId: string) {
+		const doc = await this.model.findOne({ googleId }).lean();
+		return doc ? this.toDomain(doc as UserDocument) : null;
+	}
+
+	async findByLinkedinId(linkedinId: string) {
+		const doc = await this.model.findOne({ linkedinId }).lean();
+		return doc ? this.toDomain(doc as UserDocument) : null;
+	}
+
 	async paginate({ page, limit, query, sort }: PaginateParams<UserQuery>) {
 		const filter: QueryFilter<UserDocument> = {};
 

@@ -6,13 +6,10 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { ITokenService } from "../../../services";
-import type {
-	RefreshSessionInput,
-	RefreshSessionOutput,
-} from "../../dtos/refresh-session.dto";
+import type { RefreshSessionInput, RefreshSessionOutput } from "../../dtos";
 import { AuthenticationError, UnauthorizedError } from "../../errors";
 import { assertUserCanAuthenticate } from "../helpers/assert-user-can-authenticate";
-import type { IRefreshSessionUseCase } from "./refresh-session.usecase.interface";
+import type { IRefreshSessionUseCase } from ".";
 
 @injectable()
 export class RefreshSessionUseCase implements IRefreshSessionUseCase {

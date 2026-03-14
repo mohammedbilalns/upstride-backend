@@ -58,7 +58,7 @@ export class MongoMentorRepository
 		isApproved: boolean,
 		rejectionReason?: string | null,
 	): Promise<Mentor | null> {
-		const update: any = { isApproved };
+		const update: Record<string, unknown> = { isApproved };
 		if (rejectionReason !== undefined) {
 			update.rejectionReason = rejectionReason;
 		}
@@ -108,23 +108,40 @@ export class MongoMentorRepository
 			this.model.countDocuments(filter),
 		]);
 
-		const items = docs.map((doc: any) => {
-			const mentor = this.toDomain(doc as MentorDocument);
+		const items = docs.map((doc: MentorDocument) => {
+			const mentor = this.toDomain(doc);
 			return {
 				...mentor,
-				user: doc.userId,
-				currentRoleDetails: doc.currentRoleId,
-				expertisesDetails: (doc.areasOfExpertise || []).map((e: any) => ({
-					id: e._id?.toString() || e.id?.toString(),
-					name: e.name,
-				})),
-				skillsDetails: (doc.toolsAndSkills || []).map((ts: any) => ({
-					skillId: {
-						name: ts.skillId?.name,
-						interestId: ts.skillId?.interestId?.toString(),
-					},
-					level: ts.level,
-				})),
+				user: doc.userId as unknown as {
+					name: string;
+					email: string;
+					avatar?: string;
+				},
+				currentRoleDetails: doc.currentRoleId as unknown as { name: string },
+				expertisesDetails: (doc.areasOfExpertise || []).map((e: unknown) => {
+					const exp = e as unknown as {
+						_id?: string;
+						id?: string;
+						name?: string;
+					};
+					return {
+						id: exp._id?.toString() || exp.id?.toString(),
+						name: exp.name,
+					};
+				}),
+				skillsDetails: (doc.toolsAndSkills || []).map((ts: unknown) => {
+					const skill = ts as unknown as {
+						skillId?: { name?: string; interestId?: string };
+						level?: string;
+					};
+					return {
+						skillId: {
+							name: skill.skillId?.name,
+							interestId: skill.skillId?.interestId?.toString(),
+						},
+						level: skill.level,
+					};
+				}),
 			} as MentorApplicationDetails;
 		});
 

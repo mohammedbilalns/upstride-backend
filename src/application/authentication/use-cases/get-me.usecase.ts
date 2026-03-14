@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
 import type { IStorageService } from "../../services/storage.service.interface";
-import type { GetMeInput, GetMeOutput } from "../dtos/get-me.dto";
+import type { GetMeInput, GetMeOutput } from "../dtos";
 import { UserNotFoundError } from "../errors";
 import { GetMeResponseMapper } from "../mappers/get-me-response.mapper";
 import type { IGetMeUseCase } from "./get-me.usecase.interface";
