@@ -101,14 +101,12 @@ router.post(ROUTES.AUTH.LOGOUT, logoutController.logout);
 
 router.post(
 	ROUTES.AUTH.REVOKE_SESSION,
-	verifySession,
 	validate({ body: revokeSessionBodySchema }),
 	logoutController.revokeSession,
 );
 
 router.post(
 	ROUTES.AUTH.REVOKE_ALL_OTHER_SESSIONS,
-	verifySession,
 	logoutController.revokeAllOtherSessions,
 );
 export { router as authRouter };

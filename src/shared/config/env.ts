@@ -21,11 +21,11 @@ const envSchema = z.object({
 	AWS_ACCESS_KEY_ID: z.string().min(1),
 	AWS_SECRET_ACCESS_KEY: z.string().min(1),
 	AWS_REGION: z.string().min(1),
-	GOOGLE_CLIENT_ID: z.string().min(1).optional(),
-	GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
-	LINKEDIN_CLIENT_ID: z.string().min(1).optional(),
-	LINKEDIN_CLIENT_SECRET: z.string().min(1).optional(),
-	LINKEDIN_REDIRECT_URL: z.string().min(1).optional(),
+	GOOGLE_CLIENT_ID: z.string().min(1),
+	GOOGLE_CLIENT_SECRET: z.string().min(1),
+	LINKEDIN_CLIENT_ID: z.string().min(1),
+	LINKEDIN_CLIENT_SECRET: z.string().min(1),
+	LINKEDIN_REDIRECT_URL: z.string().min(1),
 });
 
 const env = envSchema.parse(process.env);

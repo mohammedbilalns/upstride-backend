@@ -3,6 +3,7 @@ export * from "./invalid-otp.error";
 export * from "./invalid-password.error";
 export * from "./max-attempts-exceeded.error";
 export * from "./max-resend-exceeded.error";
+export * from "./oauth-provider.error";
 export * from "./unauthorized.error";
 export * from "./user-already-exists.error";
 export * from "./user-blocked.error";

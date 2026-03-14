@@ -99,7 +99,7 @@ export class AuthController {
 		const deviceInfo = this._extractDeviceInfo(req);
 		const data = await this._socialLoginUseCase.execute({
 			provider: "GOOGLE",
-			credential: (req.validated?.body as GoogleLoginBody).accessToken,
+			credential: (req.validated?.body as GoogleLoginBody).code,
 			...deviceInfo,
 		});
 
@@ -118,7 +118,7 @@ export class AuthController {
 	loginWithLinkedIn = asyncHandler(async (req, res) => {
 		const deviceInfo = this._extractDeviceInfo(req);
 		const body = req.validated?.body as LinkedInLoginBody;
-		// Pass code and redirectUri concatenated; the service splits them
+
 		const data = await this._socialLoginUseCase.execute({
 			provider: "LINKEDIN",
 			credential: `${body.code}::${body.redirectUri}`,

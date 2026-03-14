@@ -79,6 +79,10 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 		}
 
 		if (existingUser) {
+			if (existingUser.authType === "LOCAL" && !identity.isVerified) {
+				throw new AuthenticationError();
+			}
+
 			const linkedUser = await this._userRepository.updateById(
 				existingUser.id,
 				{

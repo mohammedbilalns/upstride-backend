@@ -1,8 +1,12 @@
 import { injectable } from "inversify";
 import type { SocialIdentityDto } from "../../application/authentication/dtos";
-import { AuthenticationError } from "../../application/authentication/errors";
+import {
+	AuthenticationError,
+	OAuthProviderError,
+} from "../../application/authentication/errors";
 import type { IOAuthIdentityProvider } from "../../application/services";
 import env from "../../shared/config/env";
+import { fetchWithDiagnostics } from "../../shared/utiliites/outbound-fetch.util";
 
 interface LinkedInTokenResponse {
 	access_token?: string;
@@ -23,8 +27,6 @@ export class LinkedInOAuthService implements IOAuthIdentityProvider {
 	readonly provider = "LINKEDIN" as const;
 
 	async getIdentity(credential: string): Promise<SocialIdentityDto> {
-		// credential is an auth code + redirectUri separated by ::
-		// Format: "code::redirectUri"
 		const [code, redirectUri] = credential.split("::");
 
 		if (!code || !redirectUri) {
@@ -37,17 +39,21 @@ export class LinkedInOAuthService implements IOAuthIdentityProvider {
 		// Use the access token to get user info
 		let response: Response;
 		try {
-			response = await fetch("https://api.linkedin.com/v2/userinfo", {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
+			response = await fetchWithDiagnostics({
+				service: "linkedin.userinfo",
+				url: "https://api.linkedin.com/v2/userinfo",
+				init: {
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
 				},
 			});
 		} catch {
-			throw new AuthenticationError();
+			throw new OAuthProviderError();
 		}
 
 		if (!response.ok) {
-			throw new AuthenticationError();
+			throw this._handleProviderResponse(response);
 		}
 
 		const payload = (await response.json()) as LinkedInUserInfoResponse;
@@ -100,20 +106,21 @@ export class LinkedInOAuthService implements IOAuthIdentityProvider {
 
 		let tokenResponse: Response;
 		try {
-			tokenResponse = await fetch(
-				"https://www.linkedin.com/oauth/v2/accessToken",
-				{
+			tokenResponse = await fetchWithDiagnostics({
+				service: "linkedin.access-token",
+				url: "https://www.linkedin.com/oauth/v2/accessToken",
+				init: {
 					method: "POST",
 					headers: { "Content-Type": "application/x-www-form-urlencoded" },
 					body: body.toString(),
 				},
-			);
+			});
 		} catch {
-			throw new AuthenticationError();
+			throw new OAuthProviderError();
 		}
 
 		if (!tokenResponse.ok) {
-			throw new AuthenticationError();
+			throw this._handleProviderResponse(tokenResponse);
 		}
 
 		const tokenData = (await tokenResponse.json()) as LinkedInTokenResponse;
@@ -123,5 +130,15 @@ export class LinkedInOAuthService implements IOAuthIdentityProvider {
 		}
 
 		return tokenData.access_token;
+	}
+
+	private _handleProviderResponse(
+		response: Response,
+	): AuthenticationError | OAuthProviderError {
+		if (response.status >= 500) {
+			return new OAuthProviderError();
+		}
+
+		return new AuthenticationError();
 	}
 }

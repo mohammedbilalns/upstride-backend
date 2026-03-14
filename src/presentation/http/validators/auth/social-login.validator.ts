@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const googleLoginBodySchema = z.object({
-	accessToken: z.string().trim().min(1),
+	code: z.string().trim().min(1),
 });
 
 export const linkedinLoginBodySchema = z.object({
