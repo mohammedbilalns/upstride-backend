@@ -18,6 +18,12 @@ export const AuthResponseMessages = {
 
 export const CatalogResponseMessages = {
 	CATALOG_FETCHED_SUCCESS: "Onboarding catalog fetched successfully",
+	INTEREST_ADDED_SUCCESS: "Interest added successfully",
+	INTEREST_DISABLED_SUCCESS: "Interest disabled successfully",
+	SKILL_ADDED_SUCCESS: "Skill added successfully",
+	SKILL_DISABLED_SUCCESS: "Skill disabled successfully",
+	PROFESSION_ADDED_SUCCESS: "Profession added successfully",
+	PROFESSION_DISABLED_SUCCESS: "Profession disabled successfully",
 };
 
 export const UserManagementResponseMessages = {

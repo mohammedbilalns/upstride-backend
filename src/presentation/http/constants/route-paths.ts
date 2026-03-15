@@ -31,6 +31,12 @@ export const ROUTES = {
 		ONBOARDING: "/onboarding",
 		PROFESSIONS: "/professions",
 		FETCH: "/fetch",
+		ADD_INTEREST: "/interests",
+		DISABLE_INTEREST: (id: string) => `/interests/${id}/disable`,
+		ADD_SKILL: "/skills",
+		DISABLE_SKILL: (id: string) => `/skills/${id}/disable`,
+		ADD_PROFESSION: "/professions",
+		DISABLE_PROFESSION: (id: string) => `/professions/${id}/disable`,
 	},
 	USER_MANAGEMENT: {
 		BASE: "/user-management",

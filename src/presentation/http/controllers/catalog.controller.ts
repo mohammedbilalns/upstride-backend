@@ -1,5 +1,11 @@
 import { inject, injectable } from "inversify";
 import type {
+	IAddInterestUseCase,
+	IAddProfessionUseCase,
+	IAddSkillUseCase,
+	IDisableInterestUseCase,
+	IDisableProfessionUseCase,
+	IDisableSkillUseCase,
 	IFetchCatalogUseCase,
 	IGetOnboardingCatalogUseCase,
 	IGetProfessionsUseCase,
@@ -18,6 +24,18 @@ export class CatalogController {
 		private _getProfessionsUseCase: IGetProfessionsUseCase,
 		@inject(TYPES.UseCases.FetchCatalog)
 		private _fetchCatalogUseCase: IFetchCatalogUseCase,
+		@inject(TYPES.UseCases.AddInterest)
+		private _addInterestUseCase: IAddInterestUseCase,
+		@inject(TYPES.UseCases.DisableInterest)
+		private _disableInterestUseCase: IDisableInterestUseCase,
+		@inject(TYPES.UseCases.AddSkill)
+		private _addSkillUseCase: IAddSkillUseCase,
+		@inject(TYPES.UseCases.DisableSkill)
+		private _disableSkillUseCase: IDisableSkillUseCase,
+		@inject(TYPES.UseCases.AddProfession)
+		private _addProfessionUseCase: IAddProfessionUseCase,
+		@inject(TYPES.UseCases.DisableProfession)
+		private _disableProfessionUseCase: IDisableProfessionUseCase,
 	) {}
 
 	fetchCatalog = asyncHandler(async (_req, res) => {
@@ -44,6 +62,60 @@ export class CatalogController {
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.CATALOG_FETCHED_SUCCESS,
 			data,
+		});
+	});
+
+	addInterest = asyncHandler(async (req, res) => {
+		await this._addInterestUseCase.execute(req.body);
+
+		sendSuccess(res, HttpStatus.CREATED, {
+			message: CatalogResponseMessages.INTEREST_ADDED_SUCCESS,
+		});
+	});
+
+	disableInterest = asyncHandler(async (req, res) => {
+		await this._disableInterestUseCase.execute({
+			interestId: req.params.id as string,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.INTEREST_DISABLED_SUCCESS,
+		});
+	});
+
+	addSkill = asyncHandler(async (req, res) => {
+		await this._addSkillUseCase.execute(req.body);
+
+		sendSuccess(res, HttpStatus.CREATED, {
+			message: CatalogResponseMessages.SKILL_ADDED_SUCCESS,
+		});
+	});
+
+	disableSkill = asyncHandler(async (req, res) => {
+		await this._disableSkillUseCase.execute({
+			skillId: req.params.id as string,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.SKILL_DISABLED_SUCCESS,
+		});
+	});
+
+	addProfession = asyncHandler(async (req, res) => {
+		await this._addProfessionUseCase.execute(req.body);
+
+		sendSuccess(res, HttpStatus.CREATED, {
+			message: CatalogResponseMessages.PROFESSION_ADDED_SUCCESS,
+		});
+	});
+
+	disableProfession = asyncHandler(async (req, res) => {
+		await this._disableProfessionUseCase.execute({
+			professionId: req.params.id as string,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.PROFESSION_DISABLED_SUCCESS,
 		});
 	});
 }
