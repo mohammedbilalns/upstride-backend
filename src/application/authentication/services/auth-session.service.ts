@@ -4,7 +4,7 @@ import { Session } from "../../../domain/entities/session.entity";
 import type { User } from "../../../domain/entities/user.entity";
 import type { ISessionRepository } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
-import { formatDeviceString } from "../../../shared/utiliites/device.util";
+import { formatDeviceString } from "../../../shared/utilities/device.util";
 import {
 	type IStorageService,
 	type ITokenService,

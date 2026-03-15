@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import type {
+	IFetchCatalogUseCase,
 	IGetOnboardingCatalogUseCase,
 	IGetProfessionsUseCase,
 } from "../../../application/catalog-management/use-cases";
@@ -15,7 +16,18 @@ export class CatalogController {
 		private _getOnboardingCatalogUseCase: IGetOnboardingCatalogUseCase,
 		@inject(TYPES.UseCases.GetProfessions)
 		private _getProfessionsUseCase: IGetProfessionsUseCase,
+		@inject(TYPES.UseCases.FetchCatalog)
+		private _fetchCatalogUseCase: IFetchCatalogUseCase,
 	) {}
+
+	fetchCatalog = asyncHandler(async (_req, res) => {
+		const data = await this._fetchCatalogUseCase.execute();
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.CATALOG_FETCHED_SUCCESS,
+			data,
+		});
+	});
 
 	getOnboardingCatalog = asyncHandler(async (_req, res) => {
 		const data = await this._getOnboardingCatalogUseCase.execute();

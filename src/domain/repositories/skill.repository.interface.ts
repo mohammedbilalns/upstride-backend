@@ -8,6 +8,7 @@ import type {
 
 export interface SkillQuery {
 	name?: string;
+	slug?: string;
 }
 
 export interface ISkillRepository

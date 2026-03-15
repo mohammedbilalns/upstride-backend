@@ -30,6 +30,7 @@ export const ROUTES = {
 		BASE: "/catalog",
 		ONBOARDING: "/onboarding",
 		PROFESSIONS: "/professions",
+		FETCH: "/fetch",
 	},
 	USER_MANAGEMENT: {
 		BASE: "/user-management",

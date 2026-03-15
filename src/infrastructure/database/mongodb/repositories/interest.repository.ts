@@ -34,6 +34,10 @@ export class MongoInterestRepository
 		return this.createDocument(interest);
 	}
 
+	async findById(id: string): Promise<Interest | null> {
+		return this.findByIdDocument(id);
+	}
+
 	async updateById(
 		id: string,
 		update: Partial<Interest>,
@@ -61,6 +65,10 @@ export class MongoInterestRepository
 
 		if (query?.name) {
 			filter.name = { $regex: query.name, $options: "i" };
+		}
+
+		if (query?.slug) {
+			filter.slug = query.slug;
 		}
 
 		const docs = await this.model

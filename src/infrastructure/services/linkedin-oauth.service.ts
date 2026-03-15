@@ -6,7 +6,7 @@ import {
 } from "../../application/authentication/errors";
 import type { IOAuthIdentityProvider } from "../../application/services";
 import env from "../../shared/config/env";
-import { fetchWithDiagnostics } from "../../shared/utiliites/outbound-fetch.util";
+import { fetchWithDiagnostics } from "../../shared/utilities/outbound-fetch.util";
 
 interface LinkedInTokenResponse {
 	access_token?: string;

@@ -8,6 +8,7 @@ import type {
 
 export interface ProfessionQuery {
 	name?: string;
+	slug?: string;
 }
 
 export interface IProfessionRepository
