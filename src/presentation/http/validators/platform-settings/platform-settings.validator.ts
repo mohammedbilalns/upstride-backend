@@ -9,9 +9,7 @@ const positiveNumberSchema = z
 	.number()
 	.positive("Value must be greater than 0");
 
-const nonNegativeNumberSchema = z
-	.number()
-	.min(0, "Value must be at least 0");
+const nonNegativeNumberSchema = z.number().min(0, "Value must be at least 0");
 
 const purchaseRateSchema = z
 	.object({
