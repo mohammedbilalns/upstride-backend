@@ -88,5 +88,6 @@ export const TYPES = {
 		Mentor: Symbol.for("MentorController"),
 		Profile: Symbol.for("ProfileController"),
 		File: Symbol.for("FileController"),
+		PlatformSettings: Symbol.for("PlatformSettingsController"),
 	},
 };

@@ -6,6 +6,7 @@ import {
 	LogoutController,
 	MentorController,
 	PasswordResetController,
+	PlatformSettingsController,
 	ProfileController,
 	UserManagementController,
 } from "../../presentation/http/controllers";
@@ -22,6 +23,10 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(TYPES.Controllers.File).to(FileController);
 	container.bind(MentorController).to(MentorController);
 	container.bind(TYPES.Controllers.Mentor).to(MentorController);
+	container.bind(PlatformSettingsController).to(PlatformSettingsController);
+	container
+		.bind(TYPES.Controllers.PlatformSettings)
+		.to(PlatformSettingsController);
 	container.bind(ProfileController).to(ProfileController);
 	container
 		.bind<ProfileController>(TYPES.Controllers.Profile)

@@ -5,6 +5,7 @@ import {
 	catalogRouter,
 	fileRouter,
 	mentorRouter,
+	platformSettingsRouter,
 	profileRouter,
 	userManagementRouter,
 } from ".";
@@ -21,3 +22,4 @@ router.use(ROUTES.CATALOG.BASE, catalogRouter);
 router.use(ROUTES.USER_MANAGEMENT.BASE, userManagementRouter);
 router.use(ROUTES.STORAGE.BASE, fileRouter);
 router.use(ROUTES.MENTOR.BASE, mentorRouter);
+router.use(ROUTES.PLATFORM_SETTINGS.BASE, platformSettingsRouter);

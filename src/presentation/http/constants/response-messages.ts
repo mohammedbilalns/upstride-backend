@@ -56,3 +56,11 @@ export const FileResponseMessages = {
 	PRESIGNED_URL_GENERATED: "Pre-signed URL generated successfully.",
 	DELETED: "File deleted successfully.",
 };
+
+export const PlatformSettingsResponseMessages = {
+	SETTINGS_FETCHED_SUCCESS: "Platform settings fetched successfully",
+	ECONOMY_UPDATED_SUCCESS: "Economy settings updated successfully",
+	MENTORS_UPDATED_SUCCESS: "Mentor settings updated successfully",
+	CONTENT_UPDATED_SUCCESS: "Content settings updated successfully",
+	SESSIONS_UPDATED_SUCCESS: "Session settings updated successfully",
+};

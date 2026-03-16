@@ -61,4 +61,12 @@ export const ROUTES = {
 		APPROVE: (id: string) => `/applications/${id}/approve`,
 		REJECT: (id: string) => `/applications/${id}/reject`,
 	},
+	PLATFORM_SETTINGS: {
+		BASE: "/platform-settings",
+		FETCH: "/fetch",
+		ECONOMY: "/economy",
+		MENTORS: "/mentors",
+		CONTENT: "/content",
+		SESSIONS: "/sessions",
+	},
 };
