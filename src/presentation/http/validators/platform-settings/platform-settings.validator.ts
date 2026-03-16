@@ -9,7 +9,9 @@ const positiveNumberSchema = z
 	.number()
 	.positive("Value must be greater than 0");
 
-const nonNegativeNumberSchema = z.number().min(0, "Value must be at least 0");
+const nonNegativeNumberSchema = z
+	.number()
+	.min(0, "Value must be at least 0");
 
 const purchaseRateSchema = z
 	.object({
@@ -135,10 +137,10 @@ export const updateEconomySettingsBodySchema = z
 
 const mentorTierSchema = z
 	.object({
-		id: z.string().min(1, "Tier id is required"),
-		name: z.string().min(1, "Tier name is required"),
-		rateForThirtyMinSession: nonNegativeNumberSchema,
-		rateForSixtyMinSession: nonNegativeNumberSchema,
+		id: z.string().trim().min(1, "Tier id is required"),
+		name: z.string().trim().min(1, "Tier name is required"),
+		rateForThirtyMinSession: nonNegativeIntSchema,
+		rateForSixtyMinSession: nonNegativeIntSchema,
 		minFreeArticlesPercentage: percentageSchema,
 		maxArticlesPerWeek: nonNegativeIntSchema,
 		minSessionCompleted: nonNegativeIntSchema,
