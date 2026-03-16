@@ -1,14 +1,14 @@
 import {
-	ContentSettings,
-	FeedSettings,
-	PremiumArticleRequirement,
-} from "../entities/platform-settings/content-settings";
-import {
 	EconomySettings,
 	PayoutRate,
 	PurchaseRate,
 	SubscriptionPlan,
-} from "../entities/platform-settings/economy-settings";
+} from "../entities/platform-settings/coin-settings";
+import {
+	ContentSettings,
+	FeedSettings,
+	PremiumArticleRequirement,
+} from "../entities/platform-settings/content-settings";
 import {
 	MentorSettings,
 	MentorTier,
@@ -35,8 +35,8 @@ export const DEFAULT_PLATFORM_SETTINGS: DefaultPlatformSettingsMap = {
 			new PurchaseRate(1000, 1400),
 		],
 		[
-			new PayoutRate(0, 1000, 0.6),
-			new PayoutRate(1000, 5000, 0.75),
+			new PayoutRate(1, 999, 0.6),
+			new PayoutRate(1000, 4999, 0.75),
 			new PayoutRate(5000, 999999, 0.9),
 		],
 		[
@@ -45,10 +45,9 @@ export const DEFAULT_PLATFORM_SETTINGS: DefaultPlatformSettingsMap = {
 			new SubscriptionPlan("yearly-basic", 3600, "yearly"),
 		],
 		200,
-		500,
+		10000,
 		300,
 		200,
-		15,
 	),
 	mentors: new MentorSettings([
 		new MentorTier("tier-1", "Tier 1", 200, 350, 80, 7, 0, 0),
