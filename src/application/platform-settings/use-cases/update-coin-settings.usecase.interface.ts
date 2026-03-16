@@ -1,7 +1,7 @@
 import type {
 	UpdateEconomySettingsInput,
 	UpdateEconomySettingsResponse,
-} from "../dtos/update-economy-settings.dto";
+} from "../dtos/update-coin-settings.dto";
 
 export interface IUpdateEconomySettingsUseCase {
 	execute(

@@ -6,9 +6,9 @@ import { NotFoundError } from "../../shared/errors/not-found-error";
 import type {
 	UpdateEconomySettingsInput,
 	UpdateEconomySettingsResponse,
-} from "../dtos/update-economy-settings.dto";
+} from "../dtos/update-coin-settings.dto";
 import { PlatformSettingsDtoMapper } from "../mappers/platform-settings.mapper";
-import type { IUpdateEconomySettingsUseCase } from "./update-economy-settings.usecase.interface";
+import type { IUpdateEconomySettingsUseCase } from "./update-coin-settings.usecase.interface";
 
 @injectable()
 export class UpdateEconomySettingsUseCase
@@ -30,7 +30,7 @@ export class UpdateEconomySettingsUseCase
 		);
 
 		if (!updated) {
-			throw new NotFoundError("Platform economy settings not found");
+			throw new NotFoundError("Platform coin settings not found");
 		}
 
 		await this._platformSettingsService.refresh();

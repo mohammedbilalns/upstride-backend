@@ -26,6 +26,18 @@ import type {
 } from "../dtos/platform-settings.types.dto";
 
 export class PlatformSettingsDtoMapper {
+	private static getPayoutRateForCoins(
+		settings: EconomySettings,
+		coinsCount: number,
+	) {
+		return (
+			settings.payoutRates.find(
+				(rate) =>
+					coinsCount >= rate.coinsCountFrom && coinsCount <= rate.coinsCountTo,
+			) ?? settings.payoutRates.at(-1)
+		);
+	}
+
 	static toFetchResponse(
 		settings: PlatformSettingsDataMap,
 	): FetchPlatformSettingsResponse {
@@ -44,6 +56,11 @@ export class PlatformSettingsDtoMapper {
 			purchaseRates: settings.purchaseRates.map((rate) => ({
 				price: rate.price,
 				coinsCount: rate.coinsCount,
+				revenuePercentage: PlatformSettingsDtoMapper.calculateRevenuePercentage(
+					settings,
+					rate.price,
+					rate.coinsCount,
+				),
 			})),
 			payoutRates: settings.payoutRates.map((rate) => ({
 				coinsCountFrom: rate.coinsCountFrom,
@@ -59,7 +76,6 @@ export class PlatformSettingsDtoMapper {
 			maxCoinsEarnablePerDay: settings.maxCoinsEarnablePerDay,
 			maxCoinsFromReadingPerDay: settings.maxCoinsFromReadingPerDay,
 			maxCoinsFromEngagementPerDay: settings.maxCoinsFromEngagementPerDay,
-			platformCommissionPercentage: settings.platformCommissionPercentage,
 		};
 	}
 
@@ -125,8 +141,36 @@ export class PlatformSettingsDtoMapper {
 			dto.maxCoinsEarnablePerDay,
 			dto.maxCoinsFromReadingPerDay,
 			dto.maxCoinsFromEngagementPerDay,
-			dto.platformCommissionPercentage,
 		);
+	}
+
+	private static calculateRevenuePercentage(
+		settings: EconomySettings,
+		price: number,
+		coinsCount: number,
+	): number | undefined {
+		if (price <= 0 || coinsCount <= 0) {
+			return undefined;
+		}
+
+		const payoutRate = PlatformSettingsDtoMapper.getPayoutRateForCoins(
+			settings,
+			coinsCount,
+		);
+
+		if (!payoutRate) {
+			return undefined;
+		}
+
+		const coinValue = price / coinsCount;
+		if (coinValue <= 0) {
+			return undefined;
+		}
+
+		const revenuePercentage =
+			(1 - payoutRate.payoutPerCoinRate / coinValue) * 100;
+
+		return Math.max(0, Number(revenuePercentage.toFixed(2)));
 	}
 
 	static toMentorSettingsEntity(dto: MentorSettingsDto): MentorSettings {

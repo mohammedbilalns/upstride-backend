@@ -1,6 +1,7 @@
 export interface PurchaseRateDto {
 	price: number;
 	coinsCount: number;
+	revenuePercentage?: number;
 }
 
 export interface PayoutRateDto {
@@ -23,7 +24,6 @@ export interface EconomySettingsDto {
 	maxCoinsEarnablePerDay: number;
 	maxCoinsFromReadingPerDay: number;
 	maxCoinsFromEngagementPerDay: number;
-	platformCommissionPercentage: number;
 }
 
 export interface MentorTierDto {
