@@ -4,9 +4,11 @@ import type {
 	IInterestRepository,
 	ISkillRepository,
 } from "../../../domain/repositories";
+import { CatalogLimits } from "../../../shared/constants/app.constants";
 import { TYPES } from "../../../shared/types/types";
 import { createUniqueSlug } from "../../shared/utilities/slug.util";
 import type { AddSkillInput } from "../dtos/add-skill.dto";
+import { CatalogLimitExceededError } from "../errors/catalog-limit-exceeded.error";
 import { InterestNotFound } from "../errors/interest-not-found.error";
 import { SkillConflictError } from "../errors/skill-conflict.error";
 import type { IAddSkillUseCase } from "./add-skill.usecase.interface";
@@ -26,6 +28,15 @@ export class AddSkillUseCase implements IAddSkillUseCase {
 
 		if (!interest) {
 			throw new InterestNotFound();
+		}
+
+		const skillsInInterest = await this._skillRepository.query({
+			query: { interestId: input.interestId },
+		});
+		if (skillsInInterest.length >= CatalogLimits.MAX_SKILLS_PER_INTEREST) {
+			throw new CatalogLimitExceededError(
+				`Maximum limit of ${CatalogLimits.MAX_SKILLS_PER_INTEREST} skills for this interest reached`,
+			);
 		}
 
 		const existingByName = await this._skillRepository.query({
