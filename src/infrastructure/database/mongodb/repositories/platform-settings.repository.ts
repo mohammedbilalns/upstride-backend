@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import type {
 	DefaultPlatformSettingsMap,
 	PlatformSetting,
+	PlatformSettingsDataMap,
 	PlatformSettingsType,
 } from "../../../../domain/entities/platform-settings.entity";
 import { PlatformSetting as PlatformSettingEntity } from "../../../../domain/entities/platform-settings.entity";
@@ -41,6 +42,35 @@ export class MongoPlatformSettingsRepository
 		type: TType,
 	): Promise<PlatformSetting<TType> | null> {
 		const doc = await this.model.findOne({ type }).lean();
+		return doc
+			? (this.toDomain(
+					doc as PlatformSettingDocument,
+				) as PlatformSetting<TType>)
+			: null;
+	}
+
+	async updateByType<TType extends PlatformSettingsType>(
+		type: TType,
+		data: PlatformSettingsDataMap[TType],
+	): Promise<PlatformSetting<TType> | null> {
+		const doc = await this.model
+			.findOneAndUpdate(
+				{ type },
+				{
+					$set: {
+						data: PlatformSettingsMapper.toDocument({
+							type,
+							data,
+							version: 1,
+						}).data,
+					},
+					$inc: { version: 1 },
+					$setOnInsert: { type },
+				},
+				{ upsert: true, returnDocument: "after" },
+			)
+			.lean();
+
 		return doc
 			? (this.toDomain(
 					doc as PlatformSettingDocument,

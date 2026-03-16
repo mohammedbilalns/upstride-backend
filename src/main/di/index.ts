@@ -2,6 +2,7 @@ export * from "./authentication.di";
 export * from "./catalog.di";
 export * from "./common.di";
 export * from "./mentor.di";
+export * from "./platform-settings.di";
 export * from "./presentation.di";
 export * from "./profile.di";
 export * from "./storage.di";
