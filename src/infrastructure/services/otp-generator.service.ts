@@ -3,6 +3,7 @@ import { injectable } from "inversify";
 import type { IOtpGenerator } from "../../application/services";
 
 @injectable()
+// Generates numeric OTP values with cryptographic randomness.
 export class CryptoOtpGenerator implements IOtpGenerator {
 	generate(length: number): string {
 		let otp = "";

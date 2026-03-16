@@ -14,6 +14,7 @@ import type {
 } from "../../application/services";
 import env from "../../shared/config/env";
 
+// Stores files in S3 and issues signed access/upload URLs.
 export class S3StorageService implements IStorageService {
 	private s3: S3Client;
 	private bucket: string;

@@ -21,6 +21,7 @@ interface GoogleUserInfoResponse {
 }
 
 @injectable()
+// Exchanges Google auth codes for normalized social identity data.
 export class GoogleOAuthService implements IOAuthIdentityProvider {
 	readonly provider = "GOOGLE" as const;
 

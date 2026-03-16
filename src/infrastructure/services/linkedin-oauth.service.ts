@@ -23,6 +23,7 @@ interface LinkedInUserInfoResponse {
 }
 
 @injectable()
+// Exchanges LinkedIn auth codes for normalized social identity data.
 export class LinkedInOAuthService implements IOAuthIdentityProvider {
 	readonly provider = "LINKEDIN" as const;
 
