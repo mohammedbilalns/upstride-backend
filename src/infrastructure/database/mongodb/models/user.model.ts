@@ -15,6 +15,7 @@ export interface UserDocument {
 	googleId: string | null;
 	linkedinId: string | null;
 	phone?: string;
+	coinBalance: number;
 	passwordHash: string;
 	authType: AuthType;
 	profilePictureId: string | null;
@@ -39,6 +40,7 @@ export const userSchema = new Schema<UserDocument>(
 		googleId: { type: String, default: null },
 		linkedinId: { type: String, default: null },
 		phone: { type: String },
+		coinBalance: { type: Number, required: true, default: 0 },
 		passwordHash: { type: String, required: true },
 		authType: { type: String, enum: AuthTypeValues, required: true },
 		profilePictureId: { type: String },

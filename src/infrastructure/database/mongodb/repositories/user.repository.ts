@@ -121,6 +121,7 @@ export class MongoUserRepository
 			name: doc.name,
 			email: doc.email,
 			phone: doc.phone || "",
+			coinBalance: doc.coinBalance ?? 0,
 			role: doc.role,
 			profilePictureId: doc.profilePictureId,
 			preferences: doc.preferences,

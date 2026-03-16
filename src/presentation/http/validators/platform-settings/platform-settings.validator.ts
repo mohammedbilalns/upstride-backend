@@ -41,7 +41,6 @@ export const updateEconomySettingsBodySchema = z
 			maxCoinsEarnablePerDay: positiveIntSchema,
 			maxCoinsFromReadingPerDay: nonNegativeIntSchema,
 			maxCoinsFromEngagementPerDay: nonNegativeIntSchema,
-			platformCommissionPercentage: percentageSchema,
 		}),
 	})
 	.refine(

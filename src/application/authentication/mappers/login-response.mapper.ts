@@ -13,6 +13,7 @@ export class LoginResponseMapper {
 				id: user.id,
 				name: user.name,
 				role: user.role,
+				coinBalance: user.coinBalance,
 				profilePictureUrl: profilePictureUrl,
 				isLocalAuth: user.authType === "LOCAL",
 			},

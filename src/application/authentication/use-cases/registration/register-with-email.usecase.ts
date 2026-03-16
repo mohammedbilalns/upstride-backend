@@ -48,6 +48,7 @@ export class RegisterWithEmailUseCase implements IRegisterWithEmailUseCase {
 			name: input.name,
 			email: input.email,
 			phone: input.phone,
+			coinBalance: 0,
 			passwordHash: hashedPassword,
 			authType: AuthTypeValues[0],
 			profilePictureId: null,

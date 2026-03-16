@@ -111,6 +111,7 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 			linkedinId:
 				input.provider === "LINKEDIN" ? identity.providerUserId : null,
 			phone: "",
+			coinBalance: 0,
 			passwordHash: await this._passwordService.hashPlaceholderPassword(),
 			authType: input.provider,
 			profilePictureId: null,

@@ -14,6 +14,7 @@ export interface UserListDTO {
 	name: string;
 	email: string;
 	role: UserRole;
+	coinBalance: number;
 	joinedAt: Date;
 	status: "active" | "blocked";
 }

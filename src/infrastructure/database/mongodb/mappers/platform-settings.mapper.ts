@@ -81,7 +81,6 @@ export class PlatformSettingsMapper {
 			maxCoinsEarnablePerDay: number;
 			maxCoinsFromReadingPerDay: number;
 			maxCoinsFromEngagementPerDay: number;
-			platformCommissionPercentage: number;
 		};
 
 		return new EconomySettingsEntity(
@@ -104,7 +103,6 @@ export class PlatformSettingsMapper {
 			economy.maxCoinsEarnablePerDay,
 			economy.maxCoinsFromReadingPerDay,
 			economy.maxCoinsFromEngagementPerDay,
-			economy.platformCommissionPercentage,
 		);
 	}
 

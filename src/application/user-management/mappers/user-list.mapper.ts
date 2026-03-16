@@ -8,6 +8,7 @@ export class UserListMapper {
 			name: user.name,
 			email: user.email,
 			role: user.role,
+			coinBalance: user.coinBalance,
 			joinedAt: user.createdAt || new Date(),
 			status: user.isBlocked ? "blocked" : "active",
 		};

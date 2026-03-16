@@ -59,7 +59,7 @@ export const FileResponseMessages = {
 
 export const PlatformSettingsResponseMessages = {
 	SETTINGS_FETCHED_SUCCESS: "Platform settings fetched successfully",
-	ECONOMY_UPDATED_SUCCESS: "Economy settings updated successfully",
+	ECONOMY_UPDATED_SUCCESS: "Coin settings updated successfully",
 	MENTORS_UPDATED_SUCCESS: "Mentor settings updated successfully",
 	CONTENT_UPDATED_SUCCESS: "Content settings updated successfully",
 	SESSIONS_UPDATED_SUCCESS: "Session settings updated successfully",
