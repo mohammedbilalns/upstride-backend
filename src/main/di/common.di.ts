@@ -3,15 +3,20 @@ import type { Container } from "inversify";
 import type {
 	IMailService,
 	IPasswordService,
+	IPlatformSettingsCache,
 	IStorageService,
 } from "../../application/services";
+import { PlatformSettingsService } from "../../application/services";
 import type {
 	IMentorRepository,
+	IPlatformSettingsRepository,
 	IProfessionRepository,
 } from "../../domain/repositories";
+import { RedisPlatformSettingsCache } from "../../infrastructure/cache/redis-platform-settings.cache";
 import {
 	MongoInterestRepository,
 	MongoMentorRepository,
+	MongoPlatformSettingsRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
 	MongoUserRepository,
@@ -45,6 +50,14 @@ export const registerCommonBindings = (container: Container): void => {
 	container.bind(TYPES.Services.GoogleOAuth).to(GoogleOAuthService);
 	container.bind(TYPES.Services.LinkedInOAuth).to(LinkedInOAuthService);
 	container.bind<IStorageService>(TYPES.Services.Storage).to(S3StorageService);
+	container
+		.bind<IPlatformSettingsCache>(TYPES.Caches.PlatformSettings)
+		.to(RedisPlatformSettingsCache)
+		.inSingletonScope();
+	container
+		.bind<PlatformSettingsService>(TYPES.Services.PlatformSettings)
+		.to(PlatformSettingsService)
+		.inSingletonScope();
 
 	container
 		.bind(TYPES.Repositories.UserRepository)
@@ -61,6 +74,12 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind(TYPES.Repositories.TokenRevocationRepository)
 		.to(RedisTokenRevocationRepository)
+		.inSingletonScope();
+	container
+		.bind<IPlatformSettingsRepository>(
+			TYPES.Repositories.PlatformSettingsRepository,
+		)
+		.to(MongoPlatformSettingsRepository)
 		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.InterestRepository)

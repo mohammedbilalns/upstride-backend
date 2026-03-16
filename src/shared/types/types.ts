@@ -7,7 +7,11 @@ export const TYPES = {
 		GoogleOAuth: Symbol.for("GoogleOAuth"),
 		LinkedInOAuth: Symbol.for("LinkedInOAuth"),
 		AuthSession: Symbol.for("AuthSession"),
+		PlatformSettings: Symbol.for("PlatformSettings"),
 		Storage: Symbol.for("Storage"),
+	},
+	Caches: {
+		PlatformSettings: Symbol.for("PlatformSettingsCache"),
 	},
 	Queues: {
 		MailQueue: Symbol.for("MailQueue"),
@@ -17,6 +21,7 @@ export const TYPES = {
 		OtpRepository: Symbol.for("OtpRepository"),
 		SessionRepository: Symbol.for("SessionRepository"),
 		TokenRevocationRepository: Symbol.for("TokenRevocationRepository"),
+		PlatformSettingsRepository: Symbol.for("PlatformSettingsRepository"),
 		InterestRepository: Symbol.for("InterestRepository"),
 		SkillRepository: Symbol.for("SkillRepository"),
 		MentorRepository: Symbol.for("MentorRepository"),
