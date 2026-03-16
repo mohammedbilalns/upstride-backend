@@ -4,6 +4,7 @@ import type { IInterestRepository } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
 import { createUniqueSlug } from "../../shared/utilities/slug.util";
 import type { AddInterestInput } from "../dtos/add-interest.dto";
+import { InterestConflictError } from "../errors/interest-conflict.error";
 import type { IAddInterestUseCase } from "./add-interest.usecase.interface";
 
 @injectable()
@@ -15,6 +16,16 @@ export class AddInterestUseCase implements IAddInterestUseCase {
 
 	async execute(input: AddInterestInput): Promise<void> {
 		const name = input.name.trim();
+
+		const existingByName = await this._interestRepository.query({
+			query: { name },
+		});
+
+		if (existingByName.length > 0) {
+			throw new InterestConflictError(
+				`Interest with name "${name}" already exists`,
+			);
+		}
 
 		const slug = await createUniqueSlug(name, async (s: string) => {
 			const existing = await this._interestRepository.query({

@@ -6,6 +6,9 @@ import type {
 	IDisableInterestUseCase,
 	IDisableProfessionUseCase,
 	IDisableSkillUseCase,
+	IEnableInterestUseCase,
+	IEnableProfessionUseCase,
+	IEnableSkillUseCase,
 	IFetchCatalogUseCase,
 	IGetOnboardingCatalogUseCase,
 	IGetProfessionsUseCase,
@@ -36,6 +39,12 @@ export class CatalogController {
 		private _addProfessionUseCase: IAddProfessionUseCase,
 		@inject(TYPES.UseCases.DisableProfession)
 		private _disableProfessionUseCase: IDisableProfessionUseCase,
+		@inject(TYPES.UseCases.EnableInterest)
+		private _enableInterestUseCase: IEnableInterestUseCase,
+		@inject(TYPES.UseCases.EnableSkill)
+		private _enableSkillUseCase: IEnableSkillUseCase,
+		@inject(TYPES.UseCases.EnableProfession)
+		private _enableProfessionUseCase: IEnableProfessionUseCase,
 	) {}
 
 	fetchCatalog = asyncHandler(async (_req, res) => {
@@ -116,6 +125,36 @@ export class CatalogController {
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.PROFESSION_DISABLED_SUCCESS,
+		});
+	});
+
+	enableInterest = asyncHandler(async (req, res) => {
+		await this._enableInterestUseCase.execute({
+			interestId: req.params.id as string,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.INTEREST_ENABLED_SUCCESS,
+		});
+	});
+
+	enableSkill = asyncHandler(async (req, res) => {
+		await this._enableSkillUseCase.execute({
+			skillId: req.params.id as string,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.SKILL_ENABLED_SUCCESS,
+		});
+	});
+
+	enableProfession = asyncHandler(async (req, res) => {
+		await this._enableProfessionUseCase.execute({
+			professionId: req.params.id as string,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.PROFESSION_ENABLED_SUCCESS,
 		});
 	});
 }

@@ -23,6 +23,7 @@ export class FetchCatalogResponseMapper {
 					id: skill.id,
 					name: skill.name,
 					slug: skill.slug,
+					isActive: skill.isActive,
 				});
 				return acc;
 			},
@@ -34,6 +35,7 @@ export class FetchCatalogResponseMapper {
 				id: interest.id,
 				name: interest.name,
 				slug: interest.slug,
+				isActive: interest.isActive,
 				skills: groupedSkills[interest.id] || [],
 			}),
 		);
@@ -43,6 +45,7 @@ export class FetchCatalogResponseMapper {
 				id: p.id,
 				name: p.name,
 				slug: p.slug,
+				isActive: p.isActive,
 			}),
 		);
 

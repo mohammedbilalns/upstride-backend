@@ -20,10 +20,13 @@ export const CatalogResponseMessages = {
 	CATALOG_FETCHED_SUCCESS: "Onboarding catalog fetched successfully",
 	INTEREST_ADDED_SUCCESS: "Interest added successfully",
 	INTEREST_DISABLED_SUCCESS: "Interest disabled successfully",
+	INTEREST_ENABLED_SUCCESS: "Interest enabled successfully",
 	SKILL_ADDED_SUCCESS: "Skill added successfully",
 	SKILL_DISABLED_SUCCESS: "Skill disabled successfully",
+	SKILL_ENABLED_SUCCESS: "Skill enabled successfully",
 	PROFESSION_ADDED_SUCCESS: "Profession added successfully",
 	PROFESSION_DISABLED_SUCCESS: "Profession disabled successfully",
+	PROFESSION_ENABLED_SUCCESS: "Profession enabled successfully",
 };
 
 export const UserManagementResponseMessages = {

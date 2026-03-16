@@ -22,7 +22,7 @@ export class FetchCatalogUseCase implements IFetchCatalogUseCase {
 
 	async execute(): Promise<FetchCatalogResponse> {
 		const [professions, interests, skills] = await Promise.all([
-			this._professionRepository.findAllActive(),
+			this._professionRepository.query({}),
 			this._interestRepository.query({}),
 			this._skillRepository.query({}),
 		]);

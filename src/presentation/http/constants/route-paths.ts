@@ -33,10 +33,13 @@ export const ROUTES = {
 		FETCH: "/fetch",
 		ADD_INTEREST: "/interests",
 		DISABLE_INTEREST: (id: string) => `/interests/${id}/disable`,
+		ENABLE_INTEREST: (id: string) => `/interests/${id}/enable`,
 		ADD_SKILL: "/skills",
 		DISABLE_SKILL: (id: string) => `/skills/${id}/disable`,
+		ENABLE_SKILL: (id: string) => `/skills/${id}/enable`,
 		ADD_PROFESSION: "/professions",
 		DISABLE_PROFESSION: (id: string) => `/professions/${id}/disable`,
+		ENABLE_PROFESSION: (id: string) => `/professions/${id}/enable`,
 	},
 	USER_MANAGEMENT: {
 		BASE: "/user-management",

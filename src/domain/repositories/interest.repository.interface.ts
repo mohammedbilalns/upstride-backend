@@ -2,6 +2,7 @@ import type { Interest } from "../entities/interest.entity";
 import type {
 	CreatableRepository,
 	DisablableRepository,
+	EnableableRepository,
 	FindByIdRepository,
 	QueryableRepository,
 	UpdatableByIdRepository,
@@ -17,4 +18,5 @@ export interface IInterestRepository
 		FindByIdRepository<Interest>,
 		UpdatableByIdRepository<Interest>,
 		QueryableRepository<Interest, InterestQuery>,
-		DisablableRepository {}
+		DisablableRepository,
+		EnableableRepository {}

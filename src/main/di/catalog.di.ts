@@ -6,6 +6,9 @@ import {
 	DisableInterestUseCase,
 	DisableProfessionUseCase,
 	DisableSkillUseCase,
+	EnableInterestUseCase,
+	EnableProfessionUseCase,
+	EnableSkillUseCase,
 	FetchCatalogUseCase,
 	GetOnboardingCatalogUseCase,
 	GetProfessionsUseCase,
@@ -15,6 +18,9 @@ import {
 	type IDisableInterestUseCase,
 	type IDisableProfessionUseCase,
 	type IDisableSkillUseCase,
+	type IEnableInterestUseCase,
+	type IEnableProfessionUseCase,
+	type IEnableSkillUseCase,
 	type IFetchCatalogUseCase,
 	type IGetOnboardingCatalogUseCase,
 	type IGetProfessionsUseCase,
@@ -57,5 +63,17 @@ export const registerCatalogBindings = (container: Container): void => {
 	container
 		.bind<IGetProfessionsUseCase>(TYPES.UseCases.GetProfessions)
 		.to(GetProfessionsUseCase)
+		.inSingletonScope();
+	container
+		.bind<IEnableSkillUseCase>(TYPES.UseCases.EnableSkill)
+		.to(EnableSkillUseCase)
+		.inSingletonScope();
+	container
+		.bind<IEnableInterestUseCase>(TYPES.UseCases.EnableInterest)
+		.to(EnableInterestUseCase)
+		.inSingletonScope();
+	container
+		.bind<IEnableProfessionUseCase>(TYPES.UseCases.EnableProfession)
+		.to(EnableProfessionUseCase)
 		.inSingletonScope();
 };

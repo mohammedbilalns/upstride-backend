@@ -8,6 +8,7 @@ import { TYPES } from "../../../shared/types/types";
 import { createUniqueSlug } from "../../shared/utilities/slug.util";
 import type { AddSkillInput } from "../dtos/add-skill.dto";
 import { InterestNotFound } from "../errors/interest-not-found.error";
+import { SkillConflictError } from "../errors/skill-conflict.error";
 import type { IAddSkillUseCase } from "./add-skill.usecase.interface";
 
 @injectable()
@@ -25,6 +26,16 @@ export class AddSkillUseCase implements IAddSkillUseCase {
 
 		if (!interest) {
 			throw new InterestNotFound();
+		}
+
+		const existingByName = await this._skillRepository.query({
+			query: { name, interestId: input.interestId },
+		});
+
+		if (existingByName.length > 0) {
+			throw new SkillConflictError(
+				`Skill with name "${name}" already exists in this interest`,
+			);
 		}
 
 		const slug = await createUniqueSlug(name, async (s: string) => {
