@@ -30,6 +30,7 @@ export class Mentor {
 		public readonly score: number,
 		public readonly tierName: string | null,
 		public readonly tierMax30minPayment: number | null,
+		public readonly currentPricePer30Min: number | null,
 		public readonly personalWebsite: string | null,
 		public readonly resumeId: string,
 		public readonly educationalQualifications: string[],
@@ -53,6 +54,14 @@ export class Mentor {
 		) {
 			throw new ValidationError(
 				"Tier name and tier max 30 min payment must be set together.",
+			);
+		}
+		if (
+			this.currentPricePer30Min !== null &&
+			(this.currentPricePer30Min < 100 || this.currentPricePer30Min > 10000)
+		) {
+			throw new ValidationError(
+				"Current price per 30 min must be between 100 and 10000.",
 			);
 		}
 		if (this.experience.length > 7) {

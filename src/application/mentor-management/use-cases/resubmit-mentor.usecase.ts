@@ -46,6 +46,7 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			existingMentor.score,
 			existingMentor.tierName ?? null,
 			existingMentor.tierMax30minPayment ?? null,
+			existingMentor.currentPricePer30Min ?? null,
 			input.personalWebsite ?? existingMentor.personalWebsite,
 			resumeId,
 			educationalQualifications,

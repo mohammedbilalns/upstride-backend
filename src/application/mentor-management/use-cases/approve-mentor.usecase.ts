@@ -36,6 +36,7 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		await this._mentorRepository.approve(mentorId, {
 			name: starterTier.name,
 			max30minPayment: starterTier.maxPricePer30Min,
+			currentPricePer30Min: starterTier.maxPricePer30Min,
 			score: starterTier.minScore,
 		});
 		await this._userRepository.updateById(mentor.userId, { role: "MENTOR" });

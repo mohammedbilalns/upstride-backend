@@ -163,6 +163,7 @@ export class MongoMentorRepository
 			name: string | null;
 			max30minPayment: number | null;
 			score?: number;
+			currentPricePer30Min?: number | null;
 		},
 	): Promise<Mentor | null> {
 		const update: Partial<MentorDocument> = {
@@ -173,6 +174,8 @@ export class MongoMentorRepository
 		if (tier) {
 			update.tierName = tier.name ?? null;
 			update.tierMax30minPayment = tier.max30minPayment ?? null;
+			update.currentPricePer30Min =
+				tier.currentPricePer30Min ?? tier.max30minPayment ?? null;
 			if (tier.score !== undefined) {
 				update.score = tier.score;
 			}

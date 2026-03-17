@@ -14,6 +14,7 @@ export interface MentorDocument {
 	score: number;
 	tierName?: string | null;
 	tierMax30minPayment?: number | null;
+	currentPricePer30Min?: number | null;
 	personalWebsite?: string;
 	resumeId: string;
 	educationalQualifications: string[];
@@ -52,6 +53,7 @@ const mentorSchema = new Schema<MentorDocument>(
 		score: { type: Number, default: 0 },
 		tierName: { type: String },
 		tierMax30minPayment: { type: Number },
+		currentPricePer30Min: { type: Number },
 		personalWebsite: { type: String },
 		resumeId: { type: String, required: true },
 		educationalQualifications: [{ type: String }],
