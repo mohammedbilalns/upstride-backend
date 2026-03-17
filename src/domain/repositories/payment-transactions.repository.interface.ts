@@ -26,4 +26,8 @@ export interface IPaymentTransactionRepository
 		providerPaymentId: string,
 	): Promise<PaymentTransaction | null>;
 	findAllByUserId(userId: string): Promise<PaymentTransaction[]>;
+	updateStatusByProviderPaymentId(
+		providerPaymentId: string,
+		status: PaymentStatus,
+	): Promise<PaymentTransaction | null>;
 }

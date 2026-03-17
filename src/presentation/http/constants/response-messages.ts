@@ -64,3 +64,7 @@ export const PlatformSettingsResponseMessages = {
 	CONTENT_UPDATED_SUCCESS: "Content settings updated successfully",
 	SESSIONS_UPDATED_SUCCESS: "Session settings updated successfully",
 };
+
+export const PaymentResponseMessages = {
+	CHECKOUT_SESSION_CREATED: "Checkout session created successfully",
+};

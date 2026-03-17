@@ -6,6 +6,7 @@ import {
 	LogoutController,
 	MentorController,
 	PasswordResetController,
+	PaymentController,
 	PlatformSettingsController,
 	ProfileController,
 	UserManagementController,
@@ -23,6 +24,8 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(TYPES.Controllers.File).to(FileController);
 	container.bind(MentorController).to(MentorController);
 	container.bind(TYPES.Controllers.Mentor).to(MentorController);
+	container.bind(PaymentController).to(PaymentController);
+	container.bind(TYPES.Controllers.Payment).to(PaymentController);
 	container.bind(PlatformSettingsController).to(PlatformSettingsController);
 	container
 		.bind(TYPES.Controllers.PlatformSettings)

@@ -82,6 +82,8 @@ export const TYPES = {
 		UpdateSessionSettings: Symbol.for("UpdateSessionSettingsUseCase"),
 		GetProfile: Symbol.for("GetProfileUseCase"),
 		UpdateProfile: Symbol.for("UpdateProfileUseCase"),
+		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
+		HandleStripeWebhook: Symbol.for("HandleStripeWebhookUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
@@ -93,5 +95,6 @@ export const TYPES = {
 		Profile: Symbol.for("ProfileController"),
 		File: Symbol.for("FileController"),
 		PlatformSettings: Symbol.for("PlatformSettingsController"),
+		Payment: Symbol.for("PaymentController"),
 	},
 };

@@ -69,4 +69,9 @@ export const ROUTES = {
 		CONTENT: "/content",
 		SESSIONS: "/sessions",
 	},
+	PAYMENTS: {
+		BASE: "/payments",
+		CHECKOUT_SESSION: "/checkout-session",
+		WEBHOOK: "/webhook",
+	},
 };

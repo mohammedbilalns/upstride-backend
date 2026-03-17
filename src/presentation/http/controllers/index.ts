@@ -4,6 +4,7 @@ export * from "./file.controller";
 export * from "./logout.controller";
 export * from "./mentor.controller";
 export * from "./password-reset.controller";
+export * from "./payment.controller";
 export * from "./platform-settings.controller";
 export * from "./profile.controller";
 export * from "./user-management.controller";

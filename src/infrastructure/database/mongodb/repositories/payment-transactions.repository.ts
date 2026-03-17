@@ -1,6 +1,9 @@
 import { injectable } from "inversify";
 import type { QueryFilter } from "mongoose";
-import type { PaymentTransaction } from "../../../../domain/entities/payment-transactions.entity";
+import type {
+	PaymentStatus,
+	PaymentTransaction,
+} from "../../../../domain/entities/payment-transactions.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type { QueryParams } from "../../../../domain/repositories/capabilities";
 import type { PaginatedResult } from "../../../../domain/repositories/capabilities/paginatable.repository.interface";
@@ -59,6 +62,21 @@ export class MongoPaymentTransactionRepository
 			.lean();
 
 		return docs.map((doc) => this.toDomain(doc as PaymentTransactionDocument));
+	}
+
+	async updateStatusByProviderPaymentId(
+		providerPaymentId: string,
+		status: PaymentStatus,
+	): Promise<PaymentTransaction | null> {
+		const doc = await this.model
+			.findOneAndUpdate(
+				{ providerPaymentId },
+				{ $set: { status } },
+				{ new: true },
+			)
+			.lean();
+
+		return doc ? this.toDomain(doc as PaymentTransactionDocument) : null;
 	}
 
 	async query({
