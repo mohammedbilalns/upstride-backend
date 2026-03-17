@@ -11,7 +11,7 @@ import type {
 export class GetPreSignedUploadUrlUseCase {
 	constructor(
 		@inject(TYPES.Services.Storage)
-		private readonly storageService: IStorageService,
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute({
@@ -22,7 +22,7 @@ export class GetPreSignedUploadUrlUseCase {
 		const fileExtension = fileName.split(".").pop();
 		const key = `${category}/${randomUUID()}.${fileExtension}`;
 
-		const { url, fields } = await this.storageService.getPresignedPost(
+		const { url, fields } = await this._storageService.getPresignedPost(
 			key,
 			mimetype,
 		);

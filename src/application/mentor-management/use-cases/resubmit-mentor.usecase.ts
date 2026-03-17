@@ -13,11 +13,11 @@ import type { IResubmitMentorUseCase } from "./resubmit-mentor.usecase.interface
 export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
-		private readonly mentorRepository: IMentorRepository,
+		private readonly _mentorRepository: IMentorRepository,
 	) {}
 
 	async execute(input: ResubmitMentorInput): Promise<void> {
-		const existingMentor = await this.mentorRepository.findByUserId(
+		const existingMentor = await this._mentorRepository.findByUserId(
 			input.userId,
 		);
 
@@ -74,6 +74,6 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			existingMentor.avgRating,
 		);
 
-		await this.mentorRepository.updateById(existingMentor.id, updatedMentor);
+		await this._mentorRepository.updateById(existingMentor.id, updatedMentor);
 	}
 }

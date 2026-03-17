@@ -9,15 +9,15 @@ import type { IRejectMentorUseCase } from "./reject-mentor.usecase.interface";
 export class RejectMentorUseCase implements IRejectMentorUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
-		private readonly mentorRepository: IMentorRepository,
+		private readonly _mentorRepository: IMentorRepository,
 	) {}
 
 	async execute(input: RejectMentorInput): Promise<void> {
-		const mentor = await this.mentorRepository.findById(input.mentorId);
+		const mentor = await this._mentorRepository.findById(input.mentorId);
 		if (!mentor) {
 			throw new MentorApplicationNotFoundError();
 		}
 
-		await this.mentorRepository.reject(input.mentorId, input.reason);
+		await this._mentorRepository.reject(input.mentorId, input.reason);
 	}
 }

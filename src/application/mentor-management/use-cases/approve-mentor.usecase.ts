@@ -12,34 +12,34 @@ import type { IApproveMentorUseCase } from "./approve-mentor.usecase.interface";
 export class ApproveMentorUseCase implements IApproveMentorUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
-		private readonly mentorRepository: IMentorRepository,
+		private readonly _mentorRepository: IMentorRepository,
 		@inject(TYPES.Repositories.UserRepository)
-		private readonly userRepository: IUserRepository,
+		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.MailService)
-		private readonly mailService: IMailService,
+		private readonly _mailService: IMailService,
 		@inject(TYPES.Services.PlatformSettings)
-		private readonly platformSettingsService: PlatformSettingsService,
+		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute(mentorId: string): Promise<void> {
-		const mentor = await this.mentorRepository.findById(mentorId);
+		const mentor = await this._mentorRepository.findById(mentorId);
 		if (!mentor) {
 			throw new MentorApplicationNotFoundError();
 		}
 
-		const user = await this.userRepository.findById(mentor.userId);
+		const user = await this._userRepository.findById(mentor.userId);
 		if (!user) {
 			return;
 		}
 
 		const baseTierId = String(
-			this.platformSettingsService.mentors.starter.level,
+			this._platformSettingsService.mentors.starter.level,
 		);
 
-		await this.mentorRepository.approve(mentorId, baseTierId);
-		await this.userRepository.updateById(mentor.userId, { role: "MENTOR" });
+		await this._mentorRepository.approve(mentorId, baseTierId);
+		await this._userRepository.updateById(mentor.userId, { role: "MENTOR" });
 
-		await this.mailService.send(user.email, new MentorApprovalMailTemplate(), {
+		await this._mailService.send(user.email, new MentorApprovalMailTemplate(), {
 			name: user.name,
 		});
 	}

@@ -16,22 +16,22 @@ export class GetMentorRegistrationInfoUseCase
 {
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
-		private readonly mentorRepository: IMentorRepository,
+		private readonly _mentorRepository: IMentorRepository,
 		@inject(TYPES.Services.Storage)
-		private readonly storageService: IStorageService,
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute({
 		userId,
 	}: GetMentorRegistrationInfoInput): Promise<MentorRegistrationInfoOutput> {
-		const mentor = await this.mentorRepository.findByUserId(userId);
+		const mentor = await this._mentorRepository.findByUserId(userId);
 
 		const attemptsCount = mentor?.applicationAttempts ?? 0;
 		const canApply = attemptsCount < MAX_MENTOR_APPLICATION_ATTEMPTS;
 
 		let resumeUrl: string | null = null;
 		if (mentor?.resumeId) {
-			resumeUrl = await this.storageService.getSignedUrl(mentor.resumeId);
+			resumeUrl = await this._storageService.getSignedUrl(mentor.resumeId);
 		}
 
 		return MentorRegistrationResponseMapper.toDto(

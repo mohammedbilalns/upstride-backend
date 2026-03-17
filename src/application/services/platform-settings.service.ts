@@ -37,36 +37,36 @@ const buildSettingsCacheMap = (
 
 @injectable()
 export class PlatformSettingsService {
-	private config: PlatformSettingsDataMap | null = null;
+	private _config: PlatformSettingsDataMap | null = null;
 
 	constructor(
 		@inject(TYPES.Repositories.PlatformSettingsRepository)
-		private readonly repository: IPlatformSettingsRepository,
+		private readonly _repository: IPlatformSettingsRepository,
 		@inject(TYPES.Caches.PlatformSettings)
-		private readonly cache: IPlatformSettingsCache,
+		private readonly _cache: IPlatformSettingsCache,
 	) {}
 
 	async load(forceRefresh = false): Promise<void> {
-		if (this.config && !forceRefresh) {
+		if (this._config && !forceRefresh) {
 			return;
 		}
 
 		if (!forceRefresh) {
-			const cached = await this.cache.get();
+			const cached = await this._cache.get();
 
 			if (cached) {
-				this.config = cached;
+				this._config = cached;
 				return;
 			}
 		}
 
-		const settings = await this.repository.ensureDefaults(
+		const settings = await this._repository.ensureDefaults(
 			DEFAULT_PLATFORM_SETTINGS,
 		);
 		const config = buildSettingsCacheMap(settings);
 
-		await this.cache.set(config);
-		this.config = config;
+		await this._cache.set(config);
+		this._config = config;
 	}
 
 	// Force a repository reload and replace the cached in-memory.
@@ -76,35 +76,35 @@ export class PlatformSettingsService {
 
 	// Clear both process memory and Redis .
 	async invalidate(): Promise<void> {
-		this.config = null;
-		await this.cache.clear();
+		this._config = null;
+		await this._cache.clear();
 	}
 
 	get economy() {
-		return this.getConfig().economy;
+		return this._getConfig().economy;
 	}
 
 	get mentors() {
-		return this.getConfig().mentors;
+		return this._getConfig().mentors;
 	}
 
 	get sessions() {
-		return this.getConfig().sessions;
+		return this._getConfig().sessions;
 	}
 
 	get content() {
-		return this.getConfig().content;
+		return this._getConfig().content;
 	}
 
 	getAll(): PlatformSettingsDataMap {
-		return this.getConfig();
+		return this._getConfig();
 	}
 
-	private getConfig(): PlatformSettingsDataMap {
-		if (!this.config) {
+	private _getConfig(): PlatformSettingsDataMap {
+		if (!this._config) {
 			throw new Error("Platform settings not loaded");
 		}
 
-		return this.config;
+		return this._config;
 	}
 }

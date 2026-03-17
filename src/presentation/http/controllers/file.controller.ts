@@ -16,13 +16,13 @@ import type {
 export class FileController {
 	constructor(
 		@inject(TYPES.UseCases.GetPreSignedUploadUrl)
-		private readonly getPreSignedUploadUrlUseCase: GetPreSignedUploadUrlUseCase,
+		private readonly _getPreSignedUploadUrlUseCase: GetPreSignedUploadUrlUseCase,
 		@inject(TYPES.UseCases.DeleteFile)
-		private readonly deleteFileUseCase: DeleteFileUseCase,
+		private readonly _deleteFileUseCase: DeleteFileUseCase,
 	) {}
 
 	getPreSignedUploadUrl = asyncHandler(async (req, res) => {
-		const result = await this.getPreSignedUploadUrlUseCase.execute(
+		const result = await this._getPreSignedUploadUrlUseCase.execute(
 			req.validated?.body as GetPreSignedUploadUrlBody,
 		);
 
@@ -33,7 +33,7 @@ export class FileController {
 	});
 
 	deleteFile = asyncHandler(async (req, res) => {
-		await this.deleteFileUseCase.execute(
+		await this._deleteFileUseCase.execute(
 			(req.validated?.body as DeleteFileBodyPayload).key,
 		);
 
