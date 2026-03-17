@@ -14,6 +14,8 @@
 		"lint-format": "biome check --write",
 		"test": "vitest",
 		"clear:platform-settings": "npx tsx --env-file=.env scripts/clear-platform-settings.ts",
+		"seed:platform-settings": "npx tsx --env-file=.env scripts/seed-platform-settings.ts",
+		"reset:platform-settings": "npx tsx --env-file=.env scripts/reset-platform-settings.ts",
 		"seed:interests": "npx tsx --env-file=.env scripts/seed-interests.ts",
 		"seed:professions": "npx tsx --env-file=.env scripts/seed-professions.ts",
 		"seed:skills": "npx tsx --env-file=.env scripts/seed-skills.ts",

@@ -1,13 +1,8 @@
-export interface PurchaseRateDto {
-	price: number;
-	coinsCount: number;
-	revenuePercentage?: number;
-}
+import type { MentorTierLevel } from "../../../domain/entities/platform-settings/mentor-settings";
 
-export interface PayoutRateDto {
-	coinsCountFrom: number;
-	coinsCountTo: number;
-	payoutPerCoinRate: number;
+export interface PlatformCommissionsDto {
+	sessionPercentage: number;
+	userTipRewardPercentage: number;
 }
 
 export interface SubscriptionPlanDto {
@@ -17,8 +12,8 @@ export interface SubscriptionPlanDto {
 }
 
 export interface EconomySettingsDto {
-	purchaseRates: PurchaseRateDto[];
-	payoutRates: PayoutRateDto[];
+	coinValue: number;
+	platformCommissions: PlatformCommissionsDto;
 	subscriptions: SubscriptionPlanDto[];
 	userJoinRewardCoinCount: number;
 	maxCoinsEarnablePerDay: number;
@@ -27,10 +22,9 @@ export interface EconomySettingsDto {
 }
 
 export interface MentorTierDto {
-	id: string;
+	level: MentorTierLevel;
 	name: string;
 	rateForThirtyMinSession: number;
-	rateForSixtyMinSession: number;
 	minFreeArticlesPercentage: number;
 	maxArticlesPerWeek: number;
 	minSessionCompleted: number;
@@ -38,7 +32,10 @@ export interface MentorTierDto {
 }
 
 export interface MentorSettingsDto {
-	tiers: MentorTierDto[];
+	starter: MentorTierDto;
+	rising: MentorTierDto;
+	expert: MentorTierDto;
+	elite: MentorTierDto;
 }
 
 export interface PremiumArticleRequirementDto {
@@ -62,5 +59,4 @@ export interface SessionSettingsDto {
 	cancellationWindowHours: number;
 	rescheduleWindowHours: number;
 	maxSessionsPerDayPerMentor: number;
-	platformFeePercentage: number;
 }

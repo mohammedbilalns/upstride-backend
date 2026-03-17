@@ -7,13 +7,10 @@ export class SessionSettings {
 
 	public readonly maxSessionsPerDayPerMentor: number;
 
-	public readonly platformFeePercentage: number;
-
 	constructor(
 		cancellationWindowHours: number,
 		rescheduleWindowHours: number,
 		maxSessionsPerDayPerMentor: number,
-		platformFeePercentage: number,
 	) {
 		if (cancellationWindowHours < rescheduleWindowHours) {
 			throw new EntityValidationError(
@@ -25,7 +22,6 @@ export class SessionSettings {
 		this.cancellationWindowHours = cancellationWindowHours;
 		this.rescheduleWindowHours = rescheduleWindowHours;
 		this.maxSessionsPerDayPerMentor = maxSessionsPerDayPerMentor;
-		this.platformFeePercentage = platformFeePercentage;
 		Object.freeze(this);
 	}
 }

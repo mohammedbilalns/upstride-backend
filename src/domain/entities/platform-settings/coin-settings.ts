@@ -2,61 +2,28 @@ import { freezeArray } from "../../../shared/utilities/freeze-array.util";
 import { EntityValidationError } from "../../errors/entity-validation.error";
 import type { SubscriptionType } from "./shared";
 
-export class PurchaseRate {
-	public readonly price: number;
+export class PlatformCommissions {
+	public readonly sessionPercentage: number;
 
-	public readonly coinsCount: number;
+	public readonly userTipRewardPercentage: number;
 
-	constructor(price: number, coinsCount: number) {
-		if (price <= 0 || coinsCount <= 0) {
+	constructor(sessionPercentage: number, userTipRewardPercentage: number) {
+		if (sessionPercentage < 0 || sessionPercentage > 100) {
 			throw new EntityValidationError(
-				"PurchaseRate",
-				"price and coins count must be greater than 0",
+				"PlatformCommissions",
+				"session percentage must be between 0 and 100",
 			);
 		}
 
-		if (price > coinsCount) {
+		if (userTipRewardPercentage < 0 || userTipRewardPercentage > 100) {
 			throw new EntityValidationError(
-				"PurchaseRate",
-				"price must be less than or equal to coins count",
+				"PlatformCommissions",
+				"user tip/reward percentage must be between 0 and 100",
 			);
 		}
 
-		this.price = price;
-		this.coinsCount = coinsCount;
-		Object.freeze(this);
-	}
-}
-
-export class PayoutRate {
-	public readonly coinsCountFrom: number;
-
-	public readonly coinsCountTo: number;
-
-	public readonly payoutPerCoinRate: number;
-
-	constructor(
-		coinsCountFrom: number,
-		coinsCountTo: number,
-		payoutPerCoinRate: number,
-	) {
-		if (coinsCountFrom <= 0 || coinsCountTo <= 0) {
-			throw new EntityValidationError(
-				"PayoutRate",
-				"coins count from and coins count to must be greater than 0",
-			);
-		}
-
-		if (coinsCountTo <= coinsCountFrom) {
-			throw new EntityValidationError(
-				"PayoutRate",
-				"coins count to must be greater than coins count from",
-			);
-		}
-
-		this.coinsCountFrom = coinsCountFrom;
-		this.coinsCountTo = coinsCountTo;
-		this.payoutPerCoinRate = payoutPerCoinRate;
+		this.sessionPercentage = sessionPercentage;
+		this.userTipRewardPercentage = userTipRewardPercentage;
 		Object.freeze(this);
 	}
 }
@@ -84,9 +51,9 @@ export class SubscriptionPlan {
 }
 
 export class EconomySettings {
-	public readonly purchaseRates: readonly PurchaseRate[];
+	public readonly coinValue: number;
 
-	public readonly payoutRates: readonly PayoutRate[];
+	public readonly platformCommissions: PlatformCommissions;
 
 	public readonly subscriptions: readonly SubscriptionPlan[];
 
@@ -99,14 +66,21 @@ export class EconomySettings {
 	public readonly maxCoinsFromEngagementPerDay: number;
 
 	constructor(
-		purchaseRates: readonly PurchaseRate[],
-		payoutRates: readonly PayoutRate[],
+		coinValue: number,
+		platformCommissions: PlatformCommissions,
 		subscriptions: readonly SubscriptionPlan[],
 		userJoinRewardCoinCount: number,
 		maxCoinsEarnablePerDay: number,
 		maxCoinsFromReadingPerDay: number,
 		maxCoinsFromEngagementPerDay: number,
 	) {
+		if (coinValue <= 0) {
+			throw new EntityValidationError(
+				"EconomySettings",
+				"coin value must be greater than 0",
+			);
+		}
+
 		if (
 			userJoinRewardCoinCount <= 0 ||
 			maxCoinsEarnablePerDay <= 0 ||
@@ -119,14 +93,10 @@ export class EconomySettings {
 			);
 		}
 
-		if (
-			purchaseRates.length <= 0 ||
-			payoutRates.length <= 0 ||
-			subscriptions.length <= 0
-		) {
+		if (subscriptions.length <= 0) {
 			throw new EntityValidationError(
 				"EconomySettings",
-				"purchase rates, payout rates, and subscriptions must have at least one element",
+				"subscriptions must have at least one element",
 			);
 		}
 
@@ -160,72 +130,8 @@ export class EconomySettings {
 			);
 		}
 
-		const sortedPurchaseRates = [...purchaseRates].sort((a, b) => {
-			if (a.price !== b.price) return a.price - b.price;
-			return a.coinsCount - b.coinsCount;
-		});
-
-		const sortedPayoutRates = [...payoutRates].sort((a, b) => {
-			if (a.coinsCountFrom !== b.coinsCountFrom) {
-				return a.coinsCountFrom - b.coinsCountFrom;
-			}
-			return a.coinsCountTo - b.coinsCountTo;
-		});
-
-		for (let i = 1; i < sortedPurchaseRates.length; i += 1) {
-			const prev = sortedPurchaseRates[i - 1];
-			const curr = sortedPurchaseRates[i];
-
-			if (curr.price <= prev.price) {
-				throw new EntityValidationError(
-					"PurchaseRate",
-					"price must be strictly increasing with higher price tiers",
-				);
-			}
-
-			if (curr.coinsCount <= prev.coinsCount) {
-				throw new EntityValidationError(
-					"PurchaseRate",
-					"coins count must be strictly increasing with higher price tiers",
-				);
-			}
-		}
-
-		for (let i = 1; i < sortedPayoutRates.length; i += 1) {
-			const prev = sortedPayoutRates[i - 1];
-			const curr = sortedPayoutRates[i];
-
-			if (curr.coinsCountFrom <= prev.coinsCountFrom) {
-				throw new EntityValidationError(
-					"PayoutRate",
-					"coins count from must be strictly increasing",
-				);
-			}
-
-			if (curr.coinsCountTo <= prev.coinsCountTo) {
-				throw new EntityValidationError(
-					"PayoutRate",
-					"coins count to must be strictly increasing",
-				);
-			}
-
-			if (curr.coinsCountFrom <= prev.coinsCountTo) {
-				throw new EntityValidationError(
-					"PayoutRate",
-					"coins count ranges must not overlap",
-				);
-			}
-
-			if (curr.payoutPerCoinRate < prev.payoutPerCoinRate) {
-				throw new EntityValidationError(
-					"PayoutRate",
-					"payout per coin rate must be non-decreasing for higher coin ranges",
-				);
-			}
-		}
-
-		this.purchaseRates = freezeArray(sortedPurchaseRates);
-		this.payoutRates = freezeArray(sortedPayoutRates);
+		this.coinValue = coinValue;
+		this.platformCommissions = platformCommissions;
 		this.subscriptions = freezeArray(subscriptions);
 		this.userJoinRewardCoinCount = userJoinRewardCoinCount;
 		this.maxCoinsEarnablePerDay = maxCoinsEarnablePerDay;

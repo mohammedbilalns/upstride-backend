@@ -9,28 +9,10 @@ const positiveNumberSchema = z
 	.number()
 	.positive("Value must be greater than 0");
 
-const nonNegativeNumberSchema = z.number().min(0, "Value must be at least 0");
-
-const purchaseRateSchema = z
-	.object({
-		price: positiveNumberSchema,
-		coinsCount: positiveIntSchema,
-	})
-	.refine((rate) => rate.price <= rate.coinsCount, {
-		message: "price must be less than or equal to coins count",
-		path: ["price"],
-	});
-
-const payoutRateSchema = z
-	.object({
-		coinsCountFrom: positiveIntSchema,
-		coinsCountTo: positiveIntSchema,
-		payoutPerCoinRate: nonNegativeNumberSchema,
-	})
-	.refine((rate) => rate.coinsCountTo > rate.coinsCountFrom, {
-		message: "coinsCountTo must be greater than coinsCountFrom",
-		path: ["coinsCountTo"],
-	});
+const platformCommissionsSchema = z.object({
+	sessionPercentage: percentageSchema,
+	userTipRewardPercentage: percentageSchema,
+});
 
 const subscriptionPlanSchema = z.object({
 	id: z.string().min(1, "Subscription id is required"),
@@ -41,8 +23,8 @@ const subscriptionPlanSchema = z.object({
 export const updateEconomySettingsBodySchema = z
 	.object({
 		economy: z.object({
-			purchaseRates: z.array(purchaseRateSchema).min(1),
-			payoutRates: z.array(payoutRateSchema).min(1),
+			coinValue: positiveNumberSchema,
+			platformCommissions: platformCommissionsSchema,
 			subscriptions: z.array(subscriptionPlanSchema).min(1),
 			userJoinRewardCoinCount: nonNegativeIntSchema,
 			maxCoinsEarnablePerDay: nonNegativeIntSchema,
@@ -50,58 +32,6 @@ export const updateEconomySettingsBodySchema = z
 			maxCoinsFromEngagementPerDay: nonNegativeIntSchema,
 		}),
 	})
-	.refine(
-		(input) => {
-			const sortedPurchaseRates = [...input.economy.purchaseRates].sort(
-				(a, b) => {
-					if (a.price !== b.price) return a.price - b.price;
-					return a.coinsCount - b.coinsCount;
-				},
-			);
-
-			for (let i = 1; i < sortedPurchaseRates.length; i += 1) {
-				const prev = sortedPurchaseRates[i - 1];
-				const curr = sortedPurchaseRates[i];
-
-				if (curr.price <= prev.price) return false;
-				if (curr.coinsCount <= prev.coinsCount) return false;
-			}
-
-			return true;
-		},
-		{
-			message:
-				"purchase rates must have strictly increasing prices and coin counts",
-			path: ["economy", "purchaseRates"],
-		},
-	)
-	.refine(
-		(input) => {
-			const sortedPayoutRates = [...input.economy.payoutRates].sort((a, b) => {
-				if (a.coinsCountFrom !== b.coinsCountFrom) {
-					return a.coinsCountFrom - b.coinsCountFrom;
-				}
-				return a.coinsCountTo - b.coinsCountTo;
-			});
-
-			for (let i = 1; i < sortedPayoutRates.length; i += 1) {
-				const prev = sortedPayoutRates[i - 1];
-				const curr = sortedPayoutRates[i];
-
-				if (curr.coinsCountFrom <= prev.coinsCountFrom) return false;
-				if (curr.coinsCountTo <= prev.coinsCountTo) return false;
-				if (curr.coinsCountFrom <= prev.coinsCountTo) return false;
-				if (curr.payoutPerCoinRate < prev.payoutPerCoinRate) return false;
-			}
-
-			return true;
-		},
-		{
-			message:
-				"payout rates must be ordered, non-overlapping, and non-decreasing",
-			path: ["economy", "payoutRates"],
-		},
-	)
 	.refine(
 		(input) =>
 			input.economy.maxCoinsFromReadingPerDay <=
@@ -133,63 +63,82 @@ export const updateEconomySettingsBodySchema = z
 		},
 	);
 
-const mentorTierSchema = z
-	.object({
-		id: z.string().trim().min(1, "Tier id is required"),
-		name: z.string().trim().min(1, "Tier name is required"),
-		rateForThirtyMinSession: nonNegativeIntSchema,
-		rateForSixtyMinSession: nonNegativeIntSchema,
-		minFreeArticlesPercentage: percentageSchema,
-		maxArticlesPerWeek: nonNegativeIntSchema,
-		minSessionCompleted: nonNegativeIntSchema,
-		minArticlesPublished: nonNegativeIntSchema,
-	})
-	.refine(
-		(tier) => tier.rateForSixtyMinSession >= tier.rateForThirtyMinSession,
-		{
-			message:
-				"60 minute session rate cannot be less than 30 minute session rate",
-			path: ["rateForSixtyMinSession"],
-		},
-	);
+const mentorTierSchema = z.object({
+	level: z.number().int().min(1).max(4),
+	name: z.string().trim().min(1, "Tier name is required"),
+	rateForThirtyMinSession: nonNegativeIntSchema,
+	minFreeArticlesPercentage: percentageSchema,
+	maxArticlesPerWeek: nonNegativeIntSchema,
+	minSessionCompleted: nonNegativeIntSchema,
+	minArticlesPublished: nonNegativeIntSchema,
+});
 
 export const updateMentorSettingsBodySchema = z
 	.object({
 		mentors: z.object({
-			tiers: z.array(mentorTierSchema).min(1),
+			starter: mentorTierSchema,
+			rising: mentorTierSchema,
+			expert: mentorTierSchema,
+			elite: mentorTierSchema,
 		}),
 	})
 	.refine(
-		(input) => {
-			const ids = new Set(input.mentors.tiers.map((tier) => tier.id));
-			return ids.size === input.mentors.tiers.length;
-		},
+		(input) =>
+			input.mentors.starter.level === 1 &&
+			input.mentors.rising.level === 2 &&
+			input.mentors.expert.level === 3 &&
+			input.mentors.elite.level === 4,
 		{
-			message: "Tier ids must be unique",
-			path: ["mentors", "tiers"],
+			message:
+				"Mentor tier levels must be Starter(1), Rising(2), Expert(3), Elite(4)",
+			path: ["mentors"],
 		},
 	)
 	.refine(
 		(input) => {
-			const sortedTiers = [...input.mentors.tiers].sort((a, b) => {
-				if (a.minSessionCompleted !== b.minSessionCompleted) {
-					return a.minSessionCompleted - b.minSessionCompleted;
-				}
-				if (a.minArticlesPublished !== b.minArticlesPublished) {
-					return a.minArticlesPublished - b.minArticlesPublished;
-				}
-				return a.rateForThirtyMinSession - b.rateForThirtyMinSession;
-			});
+			const names = new Set([
+				input.mentors.starter.name,
+				input.mentors.rising.name,
+				input.mentors.expert.name,
+				input.mentors.elite.name,
+			]);
+			return names.size === 4;
+		},
+		{
+			message: "Tier names must be unique",
+			path: ["mentors"],
+		},
+	)
+	.refine(
+		(input) => {
+			const tiers = [
+				input.mentors.starter,
+				input.mentors.rising,
+				input.mentors.expert,
+				input.mentors.elite,
+			];
 
-			for (let i = 1; i < sortedTiers.length; i += 1) {
-				const prev = sortedTiers[i - 1];
-				const curr = sortedTiers[i];
+			for (let i = 1; i < tiers.length; i += 1) {
+				const prev = tiers[i - 1];
+				const curr = tiers[i];
 
-				if (curr.minSessionCompleted < prev.minSessionCompleted) {
+				if (curr.rateForThirtyMinSession <= prev.rateForThirtyMinSession) {
 					return false;
 				}
 
-				if (curr.minArticlesPublished < prev.minArticlesPublished) {
+				if (curr.maxArticlesPerWeek <= prev.maxArticlesPerWeek) {
+					return false;
+				}
+
+				if (curr.minSessionCompleted <= prev.minSessionCompleted) {
+					return false;
+				}
+
+				if (curr.minArticlesPublished <= prev.minArticlesPublished) {
+					return false;
+				}
+
+				if (curr.minFreeArticlesPercentage >= prev.minFreeArticlesPercentage) {
 					return false;
 				}
 			}
@@ -198,8 +147,8 @@ export const updateMentorSettingsBodySchema = z
 		},
 		{
 			message:
-				"min session completed and min articles published must be non-decreasing across tiers",
-			path: ["mentors", "tiers"],
+				"Mentor tiers must be strictly ordered for rates, limits, minimums, and free-article percentage",
+			path: ["mentors"],
 		},
 	);
 
@@ -220,37 +169,26 @@ export const updateContentSettingsBodySchema = z.object({
 			),
 		}),
 		feed: z.object({
-			trendingWindowHours: nonNegativeIntSchema.max(
-				720,
+			trendingWindowHours: positiveIntSchema.max(
+				168,
 				"trending window hours is unrealistically high",
 			),
 			minimumEngagementForTrending: nonNegativeIntSchema.max(
 				1_000_000,
 				"minimum engagement for trending is unrealistically high",
 			),
-			articleDecayRate: nonNegativeNumberSchema.max(
-				10,
-				"article decay rate is unrealistically high",
+			articleDecayRate: nonNegativeIntSchema.max(
+				1,
+				"article decay rate must be between 0 and 1",
 			),
 		}),
 	}),
 });
 
-export const updateSessionSettingsBodySchema = z
-	.object({
-		sessions: z.object({
-			cancellationWindowHours: positiveIntSchema,
-			rescheduleWindowHours: nonNegativeIntSchema,
-			maxSessionsPerDayPerMentor: positiveIntSchema,
-			platformFeePercentage: percentageSchema,
-		}),
-	})
-	.refine(
-		(input) =>
-			input.sessions.cancellationWindowHours >=
-			input.sessions.rescheduleWindowHours,
-		{
-			message: "Cancellation window cannot be less than reschedule window",
-			path: ["sessions", "cancellationWindowHours"],
-		},
-	);
+export const updateSessionSettingsBodySchema = z.object({
+	sessions: z.object({
+		cancellationWindowHours: nonNegativeIntSchema,
+		rescheduleWindowHours: nonNegativeIntSchema,
+		maxSessionsPerDayPerMentor: positiveIntSchema,
+	}),
+});

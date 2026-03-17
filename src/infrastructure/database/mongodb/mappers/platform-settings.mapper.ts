@@ -14,10 +14,9 @@ import {
 	FeedSettings as FeedSettingsEntity,
 	MentorSettings as MentorSettingsEntity,
 	MentorTier as MentorTierEntity,
-	PayoutRate as PayoutRateEntity,
+	PlatformCommissions as PlatformCommissionsEntity,
 	PlatformSetting as PlatformSettingEntity,
 	PremiumArticleRequirement as PremiumArticleRequirementEntity,
-	PurchaseRate as PurchaseRateEntity,
 	SessionSettings as SessionSettingsEntity,
 	SubscriptionPlan as SubscriptionPlanEntity,
 } from "../../../../domain/entities/platform-settings.entity";
@@ -66,12 +65,11 @@ export class PlatformSettingsMapper {
 
 	private static toEconomySettings(data: unknown): EconomySettings {
 		const economy = data as {
-			purchaseRates: { price: number; coinsCount: number }[];
-			payoutRates: {
-				coinsCountFrom: number;
-				coinsCountTo: number;
-				payoutPerCoinRate: number;
-			}[];
+			coinValue: number;
+			platformCommissions: {
+				sessionPercentage: number;
+				userTipRewardPercentage: number;
+			};
 			subscriptions: {
 				id: string;
 				coinsCost: number;
@@ -84,16 +82,10 @@ export class PlatformSettingsMapper {
 		};
 
 		return new EconomySettingsEntity(
-			economy.purchaseRates.map(
-				(rate) => new PurchaseRateEntity(rate.price, rate.coinsCount),
-			),
-			economy.payoutRates.map(
-				(rate) =>
-					new PayoutRateEntity(
-						rate.coinsCountFrom,
-						rate.coinsCountTo,
-						rate.payoutPerCoinRate,
-					),
+			economy.coinValue,
+			new PlatformCommissionsEntity(
+				economy.platformCommissions.sessionPercentage,
+				economy.platformCommissions.userTipRewardPercentage,
 			),
 			economy.subscriptions.map(
 				(plan) =>
@@ -108,31 +100,80 @@ export class PlatformSettingsMapper {
 
 	private static toMentorSettings(data: unknown): MentorSettings {
 		const mentors = data as {
-			tiers: {
-				id: string;
+			starter: {
+				level: number;
 				name: string;
 				rateForThirtyMinSession: number;
-				rateForSixtyMinSession: number;
 				minFreeArticlesPercentage: number;
 				maxArticlesPerWeek: number;
 				minSessionCompleted: number;
 				minArticlesPublished: number;
-			}[];
+			};
+			rising: {
+				level: number;
+				name: string;
+				rateForThirtyMinSession: number;
+				minFreeArticlesPercentage: number;
+				maxArticlesPerWeek: number;
+				minSessionCompleted: number;
+				minArticlesPublished: number;
+			};
+			expert: {
+				level: number;
+				name: string;
+				rateForThirtyMinSession: number;
+				minFreeArticlesPercentage: number;
+				maxArticlesPerWeek: number;
+				minSessionCompleted: number;
+				minArticlesPublished: number;
+			};
+			elite: {
+				level: number;
+				name: string;
+				rateForThirtyMinSession: number;
+				minFreeArticlesPercentage: number;
+				maxArticlesPerWeek: number;
+				minSessionCompleted: number;
+				minArticlesPublished: number;
+			};
 		};
 
 		return new MentorSettingsEntity(
-			mentors.tiers.map(
-				(tier) =>
-					new MentorTierEntity(
-						tier.id,
-						tier.name,
-						tier.rateForThirtyMinSession,
-						tier.rateForSixtyMinSession,
-						tier.minFreeArticlesPercentage,
-						tier.maxArticlesPerWeek,
-						tier.minSessionCompleted,
-						tier.minArticlesPublished,
-					),
+			new MentorTierEntity(
+				mentors.starter.level,
+				mentors.starter.name,
+				mentors.starter.rateForThirtyMinSession,
+				mentors.starter.minFreeArticlesPercentage,
+				mentors.starter.maxArticlesPerWeek,
+				mentors.starter.minSessionCompleted,
+				mentors.starter.minArticlesPublished,
+			),
+			new MentorTierEntity(
+				mentors.rising.level,
+				mentors.rising.name,
+				mentors.rising.rateForThirtyMinSession,
+				mentors.rising.minFreeArticlesPercentage,
+				mentors.rising.maxArticlesPerWeek,
+				mentors.rising.minSessionCompleted,
+				mentors.rising.minArticlesPublished,
+			),
+			new MentorTierEntity(
+				mentors.expert.level,
+				mentors.expert.name,
+				mentors.expert.rateForThirtyMinSession,
+				mentors.expert.minFreeArticlesPercentage,
+				mentors.expert.maxArticlesPerWeek,
+				mentors.expert.minSessionCompleted,
+				mentors.expert.minArticlesPublished,
+			),
+			new MentorTierEntity(
+				mentors.elite.level,
+				mentors.elite.name,
+				mentors.elite.rateForThirtyMinSession,
+				mentors.elite.minFreeArticlesPercentage,
+				mentors.elite.maxArticlesPerWeek,
+				mentors.elite.minSessionCompleted,
+				mentors.elite.minArticlesPublished,
 			),
 		);
 	}
@@ -170,14 +211,12 @@ export class PlatformSettingsMapper {
 			cancellationWindowHours: number;
 			rescheduleWindowHours: number;
 			maxSessionsPerDayPerMentor: number;
-			platformFeePercentage: number;
 		};
 
 		return new SessionSettingsEntity(
 			session.cancellationWindowHours,
 			session.rescheduleWindowHours,
 			session.maxSessionsPerDayPerMentor,
-			session.platformFeePercentage,
 		);
 	}
 

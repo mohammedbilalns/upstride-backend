@@ -11,9 +11,8 @@ import {
 	FeedSettings as FeedSettingsEntity,
 	MentorSettings as MentorSettingsEntity,
 	MentorTier as MentorTierEntity,
-	PayoutRate as PayoutRateEntity,
+	PlatformCommissions as PlatformCommissionsEntity,
 	PremiumArticleRequirement as PremiumArticleRequirementEntity,
-	PurchaseRate as PurchaseRateEntity,
 	SessionSettings as SessionSettingsEntity,
 	SubscriptionPlan as SubscriptionPlanEntity,
 } from "../../../domain/entities/platform-settings.entity";
@@ -22,22 +21,32 @@ import type {
 	ContentSettingsDto,
 	EconomySettingsDto,
 	MentorSettingsDto,
+	MentorTierDto,
 	SessionSettingsDto,
 } from "../dtos/platform-settings.types.dto";
 
-export class PlatformSettingsDtoMapper {
-	private static getPayoutRateForCoins(
-		settings: EconomySettings,
-		coinsCount: number,
-	) {
-		return (
-			settings.payoutRates.find(
-				(rate) =>
-					coinsCount >= rate.coinsCountFrom && coinsCount <= rate.coinsCountTo,
-			) ?? settings.payoutRates.at(-1)
-		);
-	}
+const toMentorTierDto = (tier: MentorTierEntity): MentorTierDto => ({
+	level: tier.level,
+	name: tier.name,
+	rateForThirtyMinSession: tier.rateForThirtyMinSession,
+	minFreeArticlesPercentage: tier.minFreeArticlesPercentage,
+	maxArticlesPerWeek: tier.maxArticlesPerWeek,
+	minSessionCompleted: tier.minSessionCompleted,
+	minArticlesPublished: tier.minArticlesPublished,
+});
 
+const toMentorTierEntity = (tier: MentorTierDto): MentorTierEntity =>
+	new MentorTierEntity(
+		tier.level,
+		tier.name,
+		tier.rateForThirtyMinSession,
+		tier.minFreeArticlesPercentage,
+		tier.maxArticlesPerWeek,
+		tier.minSessionCompleted,
+		tier.minArticlesPublished,
+	);
+
+export class PlatformSettingsDtoMapper {
 	static toFetchResponse(
 		settings: PlatformSettingsDataMap,
 	): FetchPlatformSettingsResponse {
@@ -53,20 +62,12 @@ export class PlatformSettingsDtoMapper {
 
 	static toEconomySettingsDto(settings: EconomySettings): EconomySettingsDto {
 		return {
-			purchaseRates: settings.purchaseRates.map((rate) => ({
-				price: rate.price,
-				coinsCount: rate.coinsCount,
-				revenuePercentage: PlatformSettingsDtoMapper.calculateRevenuePercentage(
-					settings,
-					rate.price,
-					rate.coinsCount,
-				),
-			})),
-			payoutRates: settings.payoutRates.map((rate) => ({
-				coinsCountFrom: rate.coinsCountFrom,
-				coinsCountTo: rate.coinsCountTo,
-				payoutPerCoinRate: rate.payoutPerCoinRate,
-			})),
+			coinValue: settings.coinValue,
+			platformCommissions: {
+				sessionPercentage: settings.platformCommissions.sessionPercentage,
+				userTipRewardPercentage:
+					settings.platformCommissions.userTipRewardPercentage,
+			},
 			subscriptions: settings.subscriptions.map((plan) => ({
 				id: plan.id,
 				coinsCost: plan.coinsCost,
@@ -81,16 +82,10 @@ export class PlatformSettingsDtoMapper {
 
 	static toMentorSettingsDto(settings: MentorSettings): MentorSettingsDto {
 		return {
-			tiers: settings.tiers.map((tier) => ({
-				id: tier.id,
-				name: tier.name,
-				rateForThirtyMinSession: tier.rateForThirtyMinSession,
-				rateForSixtyMinSession: tier.rateForSixtyMinSession,
-				minFreeArticlesPercentage: tier.minFreeArticlesPercentage,
-				maxArticlesPerWeek: tier.maxArticlesPerWeek,
-				minSessionCompleted: tier.minSessionCompleted,
-				minArticlesPublished: tier.minArticlesPublished,
-			})),
+			starter: toMentorTierDto(settings.starter),
+			rising: toMentorTierDto(settings.rising),
+			expert: toMentorTierDto(settings.expert),
+			elite: toMentorTierDto(settings.elite),
 		};
 	}
 
@@ -116,22 +111,15 @@ export class PlatformSettingsDtoMapper {
 			cancellationWindowHours: settings.cancellationWindowHours,
 			rescheduleWindowHours: settings.rescheduleWindowHours,
 			maxSessionsPerDayPerMentor: settings.maxSessionsPerDayPerMentor,
-			platformFeePercentage: settings.platformFeePercentage,
 		};
 	}
 
 	static toEconomySettingsEntity(dto: EconomySettingsDto): EconomySettings {
 		return new EconomySettingsEntity(
-			dto.purchaseRates.map(
-				(rate) => new PurchaseRateEntity(rate.price, rate.coinsCount),
-			),
-			dto.payoutRates.map(
-				(rate) =>
-					new PayoutRateEntity(
-						rate.coinsCountFrom,
-						rate.coinsCountTo,
-						rate.payoutPerCoinRate,
-					),
+			dto.coinValue,
+			new PlatformCommissionsEntity(
+				dto.platformCommissions.sessionPercentage,
+				dto.platformCommissions.userTipRewardPercentage,
 			),
 			dto.subscriptions.map(
 				(plan) =>
@@ -144,50 +132,12 @@ export class PlatformSettingsDtoMapper {
 		);
 	}
 
-	private static calculateRevenuePercentage(
-		settings: EconomySettings,
-		price: number,
-		coinsCount: number,
-	): number | undefined {
-		if (price <= 0 || coinsCount <= 0) {
-			return undefined;
-		}
-
-		const payoutRate = PlatformSettingsDtoMapper.getPayoutRateForCoins(
-			settings,
-			coinsCount,
-		);
-
-		if (!payoutRate) {
-			return undefined;
-		}
-
-		const coinValue = price / coinsCount;
-		if (coinValue <= 0) {
-			return undefined;
-		}
-
-		const revenuePercentage =
-			(1 - payoutRate.payoutPerCoinRate / coinValue) * 100;
-
-		return Math.max(0, Number(revenuePercentage.toFixed(2)));
-	}
-
 	static toMentorSettingsEntity(dto: MentorSettingsDto): MentorSettings {
 		return new MentorSettingsEntity(
-			dto.tiers.map(
-				(tier) =>
-					new MentorTierEntity(
-						tier.id,
-						tier.name,
-						tier.rateForThirtyMinSession,
-						tier.rateForSixtyMinSession,
-						tier.minFreeArticlesPercentage,
-						tier.maxArticlesPerWeek,
-						tier.minSessionCompleted,
-						tier.minArticlesPublished,
-					),
-			),
+			toMentorTierEntity(dto.starter),
+			toMentorTierEntity(dto.rising),
+			toMentorTierEntity(dto.expert),
+			toMentorTierEntity(dto.elite),
 		);
 	}
 
@@ -211,7 +161,6 @@ export class PlatformSettingsDtoMapper {
 			dto.cancellationWindowHours,
 			dto.rescheduleWindowHours,
 			dto.maxSessionsPerDayPerMentor,
-			dto.platformFeePercentage,
 		);
 	}
 }
