@@ -252,6 +252,7 @@ export class MongoMentorRepository
 				.populate("userId", "name profilePictureId")
 				.populate("currentRoleId", "name")
 				.populate("areasOfExpertise", "name")
+				.populate("toolsAndSkills.skillId", "name")
 				.lean(),
 			this.model.countDocuments(filter),
 		]);
@@ -281,6 +282,27 @@ export class MongoMentorRepository
 						name: category.name,
 					};
 				}),
+				skills: (doc.toolsAndSkills || [])
+					.slice(0, 3)
+					.map((item: { skillId?: unknown }) => {
+						const skill = item.skillId as
+							| {
+									_id?: { toString?: () => string };
+									id?: { toString?: () => string };
+									name?: string;
+									toString?: () => string;
+							  }
+							| undefined;
+						return {
+							id:
+								skill?._id?.toString?.() ||
+								skill?.id?.toString?.() ||
+								skill?.toString?.() ||
+								"",
+							name: skill?.name,
+						};
+					})
+					.filter((skill) => skill.id),
 			};
 		});
 

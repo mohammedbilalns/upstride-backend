@@ -56,6 +56,10 @@ export interface MentorDiscoveryDetails extends Mentor {
 		id: string;
 		name?: string;
 	}[];
+	skills: {
+		id: string;
+		name?: string;
+	}[];
 }
 
 export interface IMentorRepository
