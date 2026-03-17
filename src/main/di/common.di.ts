@@ -1,5 +1,6 @@
 import { Queue } from "bullmq";
 import type { Container } from "inversify";
+import type { EventBus } from "../../application/events/event-bus.interface";
 import type {
 	IMailService,
 	IPasswordService,
@@ -35,6 +36,7 @@ import {
 	JwtTokenService,
 	LinkedInOAuthService,
 	MailService,
+	NodeEventBus,
 	S3StorageService,
 	WalletService,
 } from "../../infrastructure/services";
@@ -65,6 +67,11 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<IWalletService>(TYPES.Services.WalletService)
 		.to(WalletService)
+		.inSingletonScope();
+
+	container
+		.bind<EventBus>(TYPES.Services.EventBus)
+		.to(NodeEventBus)
 		.inSingletonScope();
 
 	container

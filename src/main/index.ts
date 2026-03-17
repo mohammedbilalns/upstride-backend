@@ -1,5 +1,6 @@
 import type { Worker } from "bullmq";
 import type { PlatformSettingsService } from "../application/services";
+import { bootstrapEvents } from "../infrastructure/bootstrap/events.js";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -28,6 +29,9 @@ async function start() {
 		TYPES.Services.PlatformSettings,
 	);
 	await platformSettingsService.load();
+
+	// Initialize event handlers
+	bootstrapEvents();
 
 	//worker for mail processing
 	mailWorker = createMailWorker(redisClient);

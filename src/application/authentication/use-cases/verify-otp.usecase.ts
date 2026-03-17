@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { UserRegisteredEvent } from "../../../domain/events/user-registered.event";
 import { ChangePasswordOtpPolicy } from "../../../domain/policies/change-password-otp.policy";
 import type { IOtpPolicy } from "../../../domain/policies/otp.policy";
 import { RegisterOtpPolicy } from "../../../domain/policies/register-otp.policy";
@@ -6,6 +7,7 @@ import { ResetPasswordOtpPolicy } from "../../../domain/policies/reset-password-
 import type { IUserRepository } from "../../../domain/repositories";
 import type { IOtpRepository } from "../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../shared/types/types";
+import type { EventBus } from "../../events/event-bus.interface";
 import type { ITokenService } from "../../services";
 import type { VerifyOtpInput, VerifyOtpResponse } from "../dtos";
 import { InvalidOtpError } from "../errors/invalid-otp.error";
@@ -22,6 +24,8 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.TokenService)
 		private readonly _tokenService: ITokenService,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: VerifyOtpInput): Promise<VerifyOtpResponse> {
@@ -74,6 +78,10 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
 			});
 
 			const finalUser = updatedUser || user;
+
+			await this._eventBus.publish(
+				new UserRegisteredEvent(finalUser.id, finalUser.email),
+			);
 
 			const setupToken = this._tokenService.generateSetupToken({
 				sub: finalUser.id,

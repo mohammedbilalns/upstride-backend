@@ -10,6 +10,7 @@ export const TYPES = {
 		PlatformSettings: Symbol.for("PlatformSettings"),
 		Storage: Symbol.for("Storage"),
 		WalletService: Symbol.for("WalletService"),
+		EventBus: Symbol.for("EventBus"),
 	},
 	Caches: {
 		PlatformSettings: Symbol.for("PlatformSettingsCache"),
