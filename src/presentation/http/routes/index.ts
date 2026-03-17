@@ -8,6 +8,7 @@ export * from "./mentor-list.route";
 export * from "./payment.route";
 export * from "./platform-settings.route";
 export * from "./profile.route";
+export * from "./recurring-rule.route";
 export * from "./user-management.route";
 export { default as userManagementRouter } from "./user-management.route";
 export * from "./v1.route";

@@ -27,7 +27,10 @@ import {
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
 	MongoSavedMentorRepository,
+	MongoSessionAvailabilityRepository,
+	MongoSessionBookingRepository,
 	MongoSessionRepository,
+	MongoSessionSlotRepository,
 	MongoSkillRepository,
 	MongoUserRepository,
 } from "../../infrastructure/database/mongodb/repositories";
@@ -143,6 +146,18 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<ISavedMentorRepository>(TYPES.Repositories.SavedMentorRepository)
 		.to(MongoSavedMentorRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.SessionAvailabilityRepository)
+		.to(MongoSessionAvailabilityRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.SessionSlotRepository)
+		.to(MongoSessionSlotRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.SessionBookingRepository)
+		.to(MongoSessionBookingRepository)
 		.inSingletonScope();
 
 	container.bind(TYPES.Databases.Redis).toConstantValue(redisClient);

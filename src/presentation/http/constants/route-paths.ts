@@ -76,6 +76,13 @@ export const ROUTES = {
 		ADD_MENTOR: "/:listId/mentors",
 		REMOVE_MENTOR: "/:listId/mentors/:mentorId",
 	},
+	RECURRING_RULES: {
+		BASE: "/recurring-rules",
+		ROOT: "/",
+		BY_ID: "/:ruleId",
+		ENABLE: (ruleId: string) => `/${ruleId}/enable`,
+		DISABLE: (ruleId: string) => `/${ruleId}/disable`,
+	},
 	PLATFORM_SETTINGS: {
 		BASE: "/platform-settings",
 		FETCH: "/fetch",
