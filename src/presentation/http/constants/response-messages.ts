@@ -64,3 +64,13 @@ export const PlatformSettingsResponseMessages = {
 	CONTENT_UPDATED_SUCCESS: "Content settings updated successfully",
 	SESSIONS_UPDATED_SUCCESS: "Session settings updated successfully",
 };
+
+export const PaymentResponseMessages = {
+	CHECKOUT_SESSION_CREATED: "Checkout session created successfully",
+};
+
+export const WalletResponseMessages = {
+	COIN_BALANCE_FETCHED: "Coin balance fetched successfully",
+	COIN_TRANSACTIONS_FETCHED: "Coin transactions fetched successfully",
+	PAYMENT_TRANSACTIONS_FETCHED: "Payment transactions fetched successfully",
+};

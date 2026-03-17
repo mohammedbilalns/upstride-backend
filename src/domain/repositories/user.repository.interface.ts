@@ -21,4 +21,5 @@ export interface IUserRepository
 	findByLinkedinId(linkedinId: string): Promise<User | null>;
 	findProfileById(id: string): Promise<UserWithPopulatedPreferences | null>;
 	deleteById(id: string): Promise<void>;
+	incrementBalance(userId: string, amount: number): Promise<void>;
 }

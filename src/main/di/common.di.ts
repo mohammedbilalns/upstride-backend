@@ -1,10 +1,14 @@
 import { Queue } from "bullmq";
 import type { Container } from "inversify";
+import type { EventBus } from "../../application/events/event-bus.interface";
 import type {
+	IIdGenerator,
 	IMailService,
 	IPasswordService,
+	IPaymentService,
 	IPlatformSettingsCache,
 	IStorageService,
+	IWalletService,
 } from "../../application/services";
 import { PlatformSettingsService } from "../../application/services";
 import type {
@@ -14,8 +18,10 @@ import type {
 } from "../../domain/repositories";
 import { RedisPlatformSettingsCache } from "../../infrastructure/cache/redis-platform-settings.cache";
 import {
+	MongoCoinTransactionRepository,
 	MongoInterestRepository,
 	MongoMentorRepository,
+	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
@@ -32,7 +38,11 @@ import {
 	JwtTokenService,
 	LinkedInOAuthService,
 	MailService,
+	NodeEventBus,
 	S3StorageService,
+	StripePaymentService,
+	UuidGenerator,
+	WalletService,
 } from "../../infrastructure/services";
 import { TYPES } from "../../shared/types/types";
 
@@ -58,14 +68,39 @@ export const registerCommonBindings = (container: Container): void => {
 		.bind<PlatformSettingsService>(TYPES.Services.PlatformSettings)
 		.to(PlatformSettingsService)
 		.inSingletonScope();
+	container
+		.bind<IWalletService>(TYPES.Services.WalletService)
+		.to(WalletService)
+		.inSingletonScope();
+	container
+		.bind<IPaymentService>(TYPES.Services.PaymentService)
+		.to(StripePaymentService)
+		.inSingletonScope();
+	container
+		.bind<IIdGenerator>(TYPES.Services.IdGenerator)
+		.to(UuidGenerator)
+		.inSingletonScope();
+
+	container
+		.bind<EventBus>(TYPES.Services.EventBus)
+		.to(NodeEventBus)
+		.inSingletonScope();
 
 	container
 		.bind(TYPES.Repositories.UserRepository)
 		.to(MongoUserRepository)
 		.inSingletonScope();
 	container
+		.bind(TYPES.Repositories.CoinTransactionRepository)
+		.to(MongoCoinTransactionRepository)
+		.inSingletonScope();
+	container
 		.bind(TYPES.Repositories.OtpRepository)
 		.to(RedisOtpRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.PaymentTransactionRepository)
+		.to(MongoPaymentTransactionRepository)
 		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.SessionRepository)

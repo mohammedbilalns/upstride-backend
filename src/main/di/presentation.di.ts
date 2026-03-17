@@ -6,9 +6,11 @@ import {
 	LogoutController,
 	MentorController,
 	PasswordResetController,
+	PaymentController,
 	PlatformSettingsController,
 	ProfileController,
 	UserManagementController,
+	WalletController,
 } from "../../presentation/http/controllers";
 import { TYPES } from "../../shared/types/types";
 
@@ -23,6 +25,8 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(TYPES.Controllers.File).to(FileController);
 	container.bind(MentorController).to(MentorController);
 	container.bind(TYPES.Controllers.Mentor).to(MentorController);
+	container.bind(PaymentController).to(PaymentController);
+	container.bind(TYPES.Controllers.Payment).to(PaymentController);
 	container.bind(PlatformSettingsController).to(PlatformSettingsController);
 	container
 		.bind(TYPES.Controllers.PlatformSettings)
@@ -31,4 +35,6 @@ export const registerPresentationBindings = (container: Container): void => {
 	container
 		.bind<ProfileController>(TYPES.Controllers.Profile)
 		.to(ProfileController);
+	container.bind(WalletController).to(WalletController);
+	container.bind(TYPES.Controllers.Wallet).to(WalletController);
 };

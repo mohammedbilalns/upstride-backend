@@ -131,4 +131,14 @@ export class MongoUserRepository
 	async deleteById(id: string): Promise<void> {
 		await this.model.deleteOne({ _id: id });
 	}
+
+	async incrementBalance(userId: string, amount: number): Promise<void> {
+		const doc = await this.model
+			.findByIdAndUpdate(userId, { $inc: { coinBalance: amount } })
+			.lean();
+
+		if (!doc) {
+			throw new Error("User not found");
+		}
+	}
 }
