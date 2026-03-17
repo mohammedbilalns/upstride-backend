@@ -15,7 +15,7 @@ export class GetAdminsUseCase implements IGetAdminsUseCase {
 	async execute(input: GetAdminsInput): Promise<GetAdminsResponse> {
 		const query: UserQuery = {
 			search: input.search,
-			role: ["ADMIN", "SUPER_ADMIN"],
+			role: "ADMIN",
 			isBlocked:
 				input.status === "blocked"
 					? true
