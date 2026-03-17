@@ -25,6 +25,10 @@ export interface MentorDiscoveryDto {
 		id: string;
 		name?: string;
 	}[];
+	skills: {
+		id: string;
+		name?: string;
+	}[];
 	createdAt: Date;
 }
 

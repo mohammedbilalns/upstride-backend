@@ -15,6 +15,7 @@ export class MentorDiscoveryMapper {
 			tierId: entity.tierId,
 			categoryIds: entity.areasOfExpertise,
 			categories: entity.categories,
+			skills: entity.skills,
 			createdAt: entity.createdAt,
 		};
 	}

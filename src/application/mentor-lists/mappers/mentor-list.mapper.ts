@@ -12,6 +12,16 @@ export class MentorListMapper {
 		};
 	}
 
+	static toDtoWithCount(
+		entity: MentorList,
+		mentorCount: number,
+	): MentorListDto {
+		return {
+			...MentorListMapper.toDto(entity),
+			mentorCount,
+		};
+	}
+
 	static toDtos(entities: MentorList[]): MentorListDto[] {
 		return entities.map((entity) => MentorListMapper.toDto(entity));
 	}
