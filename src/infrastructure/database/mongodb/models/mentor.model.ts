@@ -30,6 +30,7 @@ export interface MentorDocument {
 	applicationAttempts: number;
 	isRejected: boolean;
 	rejectionReason: string | null;
+	avgRating: number;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -82,6 +83,7 @@ const mentorSchema = new Schema<MentorDocument>(
 		},
 		isApproved: { type: Boolean, default: false },
 		isRejected: { type: Boolean, default: false },
+		avgRating: { type: Number, default: 0 },
 		applicationAttempts: {
 			type: Number,
 			default: 0,

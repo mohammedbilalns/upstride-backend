@@ -39,6 +39,7 @@ export class Mentor {
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
 		public readonly rejectionReason: string | null = null,
+		public readonly avgRating: number = 0,
 	) {
 		if (this.experience.length > 7) {
 			throw new ValidationError("Maximum of 7 experience items allowed.");
