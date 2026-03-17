@@ -18,6 +18,7 @@ export class PaymentTransaction {
 	public readonly currency: string;
 	public readonly status: PaymentStatus;
 	public readonly coinsGranted: number;
+	public readonly createdAt: Date;
 
 	constructor(
 		id: string,
@@ -28,6 +29,7 @@ export class PaymentTransaction {
 		currency: string,
 		status: PaymentStatus,
 		coinsGranted: number,
+		createdAt?: Date,
 	) {
 		if (!providerPaymentId)
 			throw new EntityValidationError(
@@ -43,6 +45,7 @@ export class PaymentTransaction {
 		this.currency = currency;
 		this.status = status;
 		this.coinsGranted = coinsGranted;
+		this.createdAt = createdAt ?? new Date();
 
 		Object.freeze(this);
 	}

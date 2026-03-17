@@ -10,6 +10,7 @@ import {
 	PlatformSettingsController,
 	ProfileController,
 	UserManagementController,
+	WalletController,
 } from "../../presentation/http/controllers";
 import { TYPES } from "../../shared/types/types";
 
@@ -34,4 +35,6 @@ export const registerPresentationBindings = (container: Container): void => {
 	container
 		.bind<ProfileController>(TYPES.Controllers.Profile)
 		.to(ProfileController);
+	container.bind(WalletController).to(WalletController);
+	container.bind(TYPES.Controllers.Wallet).to(WalletController);
 };

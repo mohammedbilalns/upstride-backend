@@ -4,7 +4,7 @@ export interface CreateCheckoutSessionInput {
 }
 
 export interface CreateCheckoutSessionOutput {
-	sessionId: string;
+	paymentId: string;
 	url: string | null;
 	amount: number;
 	currency: string;

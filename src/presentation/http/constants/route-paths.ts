@@ -74,4 +74,10 @@ export const ROUTES = {
 		CHECKOUT_SESSION: "/checkout-session",
 		WEBHOOK: "/webhook",
 	},
+	WALLET: {
+		BASE: "/wallet",
+		COIN_BALANCE: "/balance",
+		COIN_TRANSACTIONS: "/coin-transactions",
+		PAYMENT_TRANSACTIONS: "/payment-transactions",
+	},
 };

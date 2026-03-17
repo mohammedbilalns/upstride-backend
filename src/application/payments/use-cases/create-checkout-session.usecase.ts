@@ -1,6 +1,4 @@
-import { randomUUID } from "node:crypto";
 import { inject, injectable } from "inversify";
-import Stripe from "stripe";
 import {
 	PaymentProvider,
 	PaymentStatus,
@@ -9,14 +7,15 @@ import {
 import type { IPaymentTransactionRepository } from "../../../domain/repositories/payment-transactions.repository.interface";
 import env from "../../../shared/config/env";
 import { TYPES } from "../../../shared/types/types";
+import type { IIdGenerator } from "../../services/id-generator.service.interface";
+import type { IPaymentService } from "../../services/payment.service.interface";
 import type { PlatformSettingsService } from "../../services/platform-settings.service";
 import type {
 	CreateCheckoutSessionInput,
 	CreateCheckoutSessionOutput,
 } from "../dtos/create-checkout-session.dto";
+import { InvalidAmountError } from "../errors/invalid-amount.error";
 import type { ICreateCheckoutSessionUseCase } from "./create-checkout-session.usecase.interface";
-
-const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
 @injectable()
 export class CreateCheckoutSessionUseCase
@@ -25,6 +24,10 @@ export class CreateCheckoutSessionUseCase
 	constructor(
 		@inject(TYPES.Services.PlatformSettings)
 		private readonly platformSettingsService: PlatformSettingsService,
+		@inject(TYPES.Services.PaymentService)
+		private readonly paymentService: IPaymentService,
+		@inject(TYPES.Services.IdGenerator)
+		private readonly idGenerator: IIdGenerator,
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
 		private readonly paymentTransactionRepository: IPaymentTransactionRepository,
 	) {}
@@ -39,33 +42,19 @@ export class CreateCheckoutSessionUseCase
 		const amountInMinor = Math.round(amountInCurrency * 100);
 
 		if (amountInMinor <= 0) {
-			throw new Error("Invalid purchase amount");
+			throw new InvalidAmountError();
 		}
 
-		const successUrl =
-			env.STRIPE_SUCCESS_URL ??
-			`${env.CLIENT_URL}/wallet?status=success&session_id={CHECKOUT_SESSION_ID}`;
-		const cancelUrl =
-			env.STRIPE_CANCEL_URL ?? `${env.CLIENT_URL}/wallet?status=cancel`;
+		const successUrl = env.STRIPE_SUCCESS_URL;
+		const cancelUrl = env.STRIPE_CANCEL_URL;
 
-		const session = await stripe.checkout.sessions.create({
-			mode: "payment",
-			payment_method_types: ["card"],
-			line_items: [
-				{
-					price_data: {
-						currency: "inr",
-						product_data: {
-							name: "Coins",
-							description: `${input.coins} coins`,
-						},
-						unit_amount: amountInMinor,
-					},
-					quantity: 1,
-				},
-			],
-			success_url: successUrl,
-			cancel_url: cancelUrl,
+		const session = await this.paymentService.createCheckoutSession({
+			userId: input.userId,
+			coins: input.coins,
+			amount: amountInMinor,
+			currency: "inr",
+			successUrl,
+			cancelUrl,
 			metadata: {
 				userId: input.userId,
 				coins: String(input.coins),
@@ -73,8 +62,9 @@ export class CreateCheckoutSessionUseCase
 			},
 		});
 
+		const transactionId = this.idGenerator.generate();
 		const transaction = new PaymentTransaction(
-			randomUUID(),
+			transactionId,
 			input.userId,
 			PaymentProvider.Stripe,
 			session.id,
@@ -87,9 +77,9 @@ export class CreateCheckoutSessionUseCase
 		await this.paymentTransactionRepository.create(transaction);
 
 		return {
-			sessionId: session.id,
+			paymentId: transactionId,
 			url: session.url ?? null,
-			amount: amountInMinor,
+			amount: amountInCurrency,
 			currency: "inr",
 			coins: input.coins,
 		};

@@ -7,6 +7,7 @@ import {
 export interface PaymentTransactionDocument {
 	_id: Types.ObjectId;
 	userId: Types.ObjectId;
+	paymentId: string;
 	provider: PaymentProvider;
 	providerPaymentId: string;
 	amount: number;
@@ -20,6 +21,7 @@ export interface PaymentTransactionDocument {
 export const paymentTransactionSchema = new Schema<PaymentTransactionDocument>(
 	{
 		userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+		paymentId: { type: String, required: true, unique: true },
 		provider: {
 			type: String,
 			enum: Object.values(PaymentProvider),

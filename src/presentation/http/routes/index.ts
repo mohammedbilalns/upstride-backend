@@ -8,3 +8,4 @@ export * from "./profile.route";
 export * from "./user-management.route";
 export { default as userManagementRouter } from "./user-management.route";
 export * from "./v1.route";
+export * from "./wallet.route";

@@ -5,7 +5,7 @@ import type { PaymentTransactionDocument } from "../models/payment-transactions.
 export class PaymentTransactionMapper {
 	static toDomain(doc: PaymentTransactionDocument): PaymentTransaction {
 		return new PaymentTransaction(
-			doc._id.toString(),
+			doc.paymentId,
 			doc.userId.toString(),
 			doc.provider,
 			doc.providerPaymentId,
@@ -13,6 +13,7 @@ export class PaymentTransactionMapper {
 			doc.currency,
 			doc.status,
 			doc.coinsGranted,
+			doc.createdAt,
 		);
 	}
 
@@ -21,12 +22,14 @@ export class PaymentTransactionMapper {
 	): Partial<PaymentTransactionDocument> {
 		return {
 			userId: new Types.ObjectId(entity.userId),
+			paymentId: entity.id,
 			provider: entity.provider,
 			providerPaymentId: entity.providerPaymentId,
 			amount: entity.amount,
 			currency: entity.currency,
 			status: entity.status,
 			coinsGranted: entity.coinsGranted,
+			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};
 	}
 }

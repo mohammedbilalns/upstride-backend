@@ -8,3 +8,4 @@ export * from "./presentation.di";
 export * from "./profile.di";
 export * from "./storage.di";
 export * from "./user-management.di";
+export * from "./wallet.di";
