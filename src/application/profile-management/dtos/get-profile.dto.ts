@@ -28,6 +28,7 @@ export interface UserWithPopulatedPreferences {
 	name: string;
 	email: string;
 	phone: string;
+	coinBalance: number;
 	role: UserRole;
 	profilePictureId: string | null;
 	preferences?: {
@@ -41,6 +42,7 @@ export interface UserProfileDTO {
 	name: string;
 	email: string;
 	phone: string;
+	coinBalance: number;
 	role: UserRole;
 	profilePictureUrl: string | null;
 	preferences?: {

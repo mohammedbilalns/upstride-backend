@@ -45,6 +45,7 @@ export class ProfileMapper {
 			name: user.name,
 			email: user.email,
 			phone: user.phone,
+			coinBalance: user.coinBalance,
 			role: user.role,
 			profilePictureUrl,
 			preferences: user.preferences

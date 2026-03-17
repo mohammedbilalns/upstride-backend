@@ -6,7 +6,7 @@ import {
 } from "../../application/authentication/errors";
 import type { IOAuthIdentityProvider } from "../../application/services";
 import env from "../../shared/config/env";
-import { fetchWithDiagnostics } from "../../shared/utiliites/outbound-fetch.util";
+import { fetchWithDiagnostics } from "../../shared/utilities/outbound-fetch.util";
 
 interface LinkedInTokenResponse {
 	access_token?: string;
@@ -23,6 +23,7 @@ interface LinkedInUserInfoResponse {
 }
 
 @injectable()
+// Exchanges LinkedIn auth codes for normalized social identity data.
 export class LinkedInOAuthService implements IOAuthIdentityProvider {
 	readonly provider = "LINKEDIN" as const;
 

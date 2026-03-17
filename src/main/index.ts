@@ -1,4 +1,5 @@
 import type { Worker } from "bullmq";
+import type { PlatformSettingsService } from "../application/services";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -10,8 +11,9 @@ import {
 import { createMailWorker } from "../infrastructure/queue/workers/mail.worker.js";
 import env from "../shared/config/env.js";
 import logger from "../shared/logging/logger.js";
+import { TYPES } from "../shared/types/types.js";
 import App from "./app.js";
-import { mailQueue } from "./container.js";
+import { container, mailQueue } from "./container.js";
 
 let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;
@@ -21,6 +23,11 @@ async function start() {
 	logger.info("Starting...");
 
 	await Promise.all([connectToMongo(), redisClient.ping()]);
+
+	const platformSettingsService = container.get<PlatformSettingsService>(
+		TYPES.Services.PlatformSettings,
+	);
+	await platformSettingsService.load();
 
 	//worker for mail processing
 	mailWorker = createMailWorker(redisClient);

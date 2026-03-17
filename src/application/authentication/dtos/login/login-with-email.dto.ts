@@ -16,6 +16,7 @@ export interface AuthenticatedUserDTO {
 	id: string;
 	name: string;
 	role: UserRole;
+	coinBalance: number;
 	profilePictureUrl: string | null;
 	isLocalAuth: boolean;
 }

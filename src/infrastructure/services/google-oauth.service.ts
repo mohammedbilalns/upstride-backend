@@ -6,7 +6,7 @@ import {
 } from "../../application/authentication/errors";
 import type { IOAuthIdentityProvider } from "../../application/services";
 import env from "../../shared/config/env";
-import { fetchWithDiagnostics } from "../../shared/utiliites/outbound-fetch.util";
+import { fetchWithDiagnostics } from "../../shared/utilities/outbound-fetch.util";
 
 interface GoogleTokenResponse {
 	access_token?: string;
@@ -21,6 +21,7 @@ interface GoogleUserInfoResponse {
 }
 
 @injectable()
+// Exchanges Google auth codes for normalized social identity data.
 export class GoogleOAuthService implements IOAuthIdentityProvider {
 	readonly provider = "GOOGLE" as const;
 

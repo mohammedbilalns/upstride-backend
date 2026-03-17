@@ -1,3 +1,6 @@
+/**
+ * Formats device information into a human-readable string.
+ */
 export const formatDeviceString = (
 	browser?: string,
 	vendor?: string,

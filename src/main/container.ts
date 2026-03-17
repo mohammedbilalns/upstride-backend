@@ -5,6 +5,7 @@ import {
 	registerCatalogBindings,
 	registerCommonBindings,
 	registerMentorBindings,
+	registerPlatformSettingsBindings,
 	registerPresentationBindings,
 	registerProfileBindings,
 	registerStorageBindings,
@@ -17,6 +18,7 @@ registerCommonBindings(container);
 registerAuthenticationBindings(container);
 registerCatalogBindings(container);
 registerMentorBindings(container);
+registerPlatformSettingsBindings(container);
 registerProfileBindings(container);
 registerStorageBindings(container);
 registerUserManagementBindings(container);

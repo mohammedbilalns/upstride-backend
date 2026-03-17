@@ -7,7 +7,7 @@ import type {
 } from "../../../../domain/repositories";
 import { UserPreferencesLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
-import { formatDeviceString } from "../../../../shared/utiliites/device.util";
+import { formatDeviceString } from "../../../../shared/utilities/device.util";
 import {
 	type ITokenService,
 	REFRESH_TOKEN_EXPIRES_IN,

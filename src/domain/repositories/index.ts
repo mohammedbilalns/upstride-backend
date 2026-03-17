@@ -6,6 +6,7 @@ export * from "./capabilities/updatable-by-id.repository.interface";
 export * from "./interest.repository.interface";
 export * from "./mentor.repository.interface";
 export * from "./otp.repository.interface";
+export * from "./platform-settings.repository.interface";
 export * from "./profession.repository.interface";
 export * from "./session.repository.interface";
 export * from "./skill.repository.interface";

@@ -4,11 +4,6 @@ export interface RequestContextData {
 	requestId: string;
 }
 
-/**
- * RequestContext provides a way to store and retrieve data
- * that is unique to the current request execution context.
- * It uses Node.js AsyncLocalStorage to manage the context.
- */
 export class RequestContext {
 	private static storage = new AsyncLocalStorage<RequestContextData>();
 

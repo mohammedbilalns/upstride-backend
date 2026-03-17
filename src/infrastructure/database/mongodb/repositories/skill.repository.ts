@@ -54,6 +54,10 @@ export class MongoSkillRepository
 			filter.name = { $regex: query.name, $options: "i" };
 		}
 
+		if (query?.slug) {
+			filter.slug = query.slug;
+		}
+
 		const docs = await this.model
 			.find(filter)
 			.sort(sort ?? { createdAt: -1 })

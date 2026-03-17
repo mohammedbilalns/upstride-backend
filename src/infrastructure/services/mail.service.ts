@@ -5,6 +5,7 @@ import type { IMailTemplate } from "../../domain/mail";
 import { TYPES } from "../../shared/types/types";
 
 @injectable()
+// Enqueues outgoing mail jobs.
 export class MailService implements IMailService {
 	constructor(
 		@inject(TYPES.Queues.MailQueue) private readonly mailQueue: Queue,

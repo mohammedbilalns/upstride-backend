@@ -1,11 +1,10 @@
 import argon2 from "argon2";
 import { injectable } from "inversify";
-import {
-	type IPasswordService,
-	SOCIAL_AUTH_PASSWORD_PLACEHOLDER,
-} from "../../application/services";
+import type { IPasswordService } from "../../application/services";
+import { SOCIAL_AUTH_PASSWORD_PLACEHOLDER } from "../../domain/config/password.config";
 
 @injectable()
+// Implements password hashing with Argon2.
 export class Argon2PasswordService implements IPasswordService {
 	hashPassword(password: string): Promise<string> {
 		return argon2.hash(password);
