@@ -1,6 +1,7 @@
 import { Container } from "inversify";
 import {
 	mailQueue,
+	registerAdminManagementBindings,
 	registerAuthenticationBindings,
 	registerCatalogBindings,
 	registerCommonBindings,
@@ -20,6 +21,7 @@ const container = new Container();
 
 registerCommonBindings(container);
 registerAuthenticationBindings(container);
+registerAdminManagementBindings(container);
 registerCatalogBindings(container);
 registerMentorBindings(container);
 registerMentorDiscoveryBindings(container);

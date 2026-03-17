@@ -47,6 +47,13 @@ export const ROUTES = {
 		BLOCK: (id: string) => `/${id}/block`,
 		UNBLOCK: (id: string) => `/${id}/unblock`,
 	},
+	ADMIN_MANAGEMENT: {
+		BASE: "/admin-management",
+		FETCH_ADMINS: "/fetch-admins",
+		CREATE_ADMIN: "/create",
+		BLOCK: (id: string) => `/${id}/block`,
+		UNBLOCK: (id: string) => `/${id}/unblock`,
+	},
 	STORAGE: {
 		BASE: "/storage",
 		GET_PRESIGNED_URL: "/presigned-upload-url",

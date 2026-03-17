@@ -1,3 +1,5 @@
+export * from "./admin-management.route";
+export { default as adminManagementRouter } from "./admin-management.route";
 export * from "./auth.route";
 export * from "./catalog.route";
 export * from "./file.route";
