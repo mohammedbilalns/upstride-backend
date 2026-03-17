@@ -18,22 +18,22 @@ const MAX_MENTORS_PER_LIST = 150;
 export class AddMentorToListUseCase implements IAddMentorToListUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorListRepository)
-		private readonly mentorListRepository: IMentorListRepository,
+		private readonly _mentorListRepository: IMentorListRepository,
 		@inject(TYPES.Repositories.SavedMentorRepository)
-		private readonly savedMentorRepository: ISavedMentorRepository,
+		private readonly _savedMentorRepository: ISavedMentorRepository,
 		@inject(TYPES.Services.IdGenerator)
-		private readonly idGenerator: IIdGenerator,
+		private readonly _idGenerator: IIdGenerator,
 	) {}
 
 	async execute(input: AddMentorToListInput): Promise<void> {
 		const [list, existing, count] = await Promise.all([
-			this.mentorListRepository.findByIdAndUserId(input.listId, input.userId),
-			this.savedMentorRepository.findByUserMentorList(
+			this._mentorListRepository.findByIdAndUserId(input.listId, input.userId),
+			this._savedMentorRepository.findByUserMentorList(
 				input.userId,
 				input.mentorId,
 				input.listId,
 			),
-			this.savedMentorRepository.countByListId(input.listId),
+			this._savedMentorRepository.countByListId(input.listId),
 		]);
 
 		if (!list) {
@@ -48,13 +48,12 @@ export class AddMentorToListUseCase implements IAddMentorToListUseCase {
 		}
 
 		const saved = new SavedMentor(
-			this.idGenerator.generate(),
+			this._idGenerator.generate(),
 			input.userId,
 			input.mentorId,
 			input.listId,
-			new Date(),
 		);
 
-		await this.savedMentorRepository.create(saved);
+		await this._savedMentorRepository.create(saved);
 	}
 }

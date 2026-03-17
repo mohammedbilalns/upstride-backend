@@ -4,6 +4,6 @@ export class SavedMentor {
 		public readonly userId: string,
 		public readonly mentorId: string,
 		public readonly listId: string,
-		public readonly createdAt: Date,
+		public readonly createdAt: Date = new Date(),
 	) {}
 }
