@@ -1,15 +1,19 @@
 import { injectable } from "inversify";
 import type { QueryFilter } from "mongoose";
+import { Types } from "mongoose";
 import type { Mentor } from "../../../../domain/entities/mentor.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type { PaginatedResult } from "../../../../domain/repositories/capabilities/paginatable.repository.interface";
 import type {
 	IMentorRepository,
 	MentorApplicationDetails,
+	MentorDiscoveryDetails,
+	MentorDiscoveryQuery,
 	MentorQuery,
 } from "../../../../domain/repositories/mentor.repository.interface";
 import { MentorMapper } from "../mappers/mentor.mapper";
 import { type MentorDocument, MentorModel } from "../models/mentor.model";
+import { UserModel } from "../models/user.model";
 import { AbstractMongoRepository } from "./abstract.repository";
 
 @injectable()
@@ -153,13 +157,18 @@ export class MongoMentorRepository
 		);
 	}
 
-	async approve(id: string): Promise<Mentor | null> {
+	async approve(id: string, tierId?: string | null): Promise<Mentor | null> {
+		const update: Partial<MentorDocument> = {
+			isApproved: true,
+			isRejected: false,
+			rejectionReason: null,
+		};
+		if (tierId !== undefined) {
+			update.tierId = tierId;
+		}
+
 		const doc = await this.model
-			.findByIdAndUpdate(
-				id,
-				{ isApproved: true, isRejected: false, rejectionReason: null },
-				{ returnDocument: "after" },
-			)
+			.findByIdAndUpdate(id, update, { returnDocument: "after" })
 			.lean();
 		return doc ? this.toDomain(doc as MentorDocument) : null;
 	}
@@ -173,5 +182,94 @@ export class MongoMentorRepository
 			)
 			.lean();
 		return doc ? this.toDomain(doc as MentorDocument) : null;
+	}
+
+	async paginateDiscoverable({
+		page,
+		limit,
+		query,
+		sort,
+	}: PaginateParams<MentorDiscoveryQuery>): Promise<
+		PaginatedResult<MentorDiscoveryDetails>
+	> {
+		const filter: QueryFilter<MentorDocument> = {
+			isApproved: true,
+			isRejected: false,
+		};
+
+		if (query?.categoryId) {
+			filter.areasOfExpertise = new Types.ObjectId(query.categoryId);
+		}
+
+		if (query?.tierId) {
+			filter.tierId = query.tierId;
+		}
+
+		if (
+			query?.minExperience !== undefined ||
+			query?.maxExperience !== undefined
+		) {
+			const experienceFilter: { $gte?: number; $lte?: number } = {};
+			if (query.minExperience !== undefined) {
+				experienceFilter.$gte = query.minExperience;
+			}
+			if (query.maxExperience !== undefined) {
+				experienceFilter.$lte = query.maxExperience;
+			}
+			filter.yearsOfExperience = experienceFilter;
+		}
+
+		if (query?.search) {
+			const users = await UserModel.find(
+				{ name: { $regex: query.search, $options: "i" } },
+				{ _id: 1 },
+			)
+				.lean()
+				.exec();
+			const ids = users.map((u) => u._id);
+			if (ids.length === 0) {
+				return this.buildPaginatedResult([], 0, page, limit);
+			}
+			filter.userId = { $in: ids };
+		}
+
+		const skip = (page - 1) * limit;
+		const [docs, total] = await Promise.all([
+			this.model
+				.find(filter)
+				.sort(sort ?? { avgRating: -1, createdAt: -1 })
+				.skip(skip)
+				.limit(limit)
+				.populate("userId", "name")
+				.populate("areasOfExpertise", "name")
+				.lean(),
+			this.model.countDocuments(filter),
+		]);
+
+		const items = docs.map((doc: MentorDocument) => {
+			const mentor = this.toDomain(doc);
+			return {
+				...mentor,
+				user: doc.userId as unknown as { name: string },
+				categories: (doc.areasOfExpertise || []).map((item: unknown) => {
+					const category = item as {
+						_id?: { toString?: () => string };
+						id?: { toString?: () => string };
+						name?: string;
+						toString?: () => string;
+					};
+					return {
+						id:
+							category._id?.toString?.() ||
+							category.id?.toString?.() ||
+							category.toString?.() ||
+							"",
+						name: category.name,
+					};
+				}),
+			};
+		});
+
+		return this.buildPaginatedResult(items, total, page, limit);
 	}
 }

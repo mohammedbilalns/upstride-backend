@@ -4,6 +4,7 @@ import type { IMentorRepository } from "../../../domain/repositories/mentor.repo
 import type { IUserRepository } from "../../../domain/repositories/user.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import type { IMailService } from "../../services/mail.service.interface";
+import type { PlatformSettingsService } from "../../services/platform-settings.service";
 import { MentorApplicationNotFoundError } from "../errors/mentor-application-not-found.error";
 import type { IApproveMentorUseCase } from "./approve-mentor.usecase.interface";
 
@@ -16,6 +17,8 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		private readonly userRepository: IUserRepository,
 		@inject(TYPES.Services.MailService)
 		private readonly mailService: IMailService,
+		@inject(TYPES.Services.PlatformSettings)
+		private readonly platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute(mentorId: string): Promise<void> {
@@ -29,7 +32,11 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 			return;
 		}
 
-		await this.mentorRepository.approve(mentorId);
+		const baseTierId = String(
+			this.platformSettingsService.mentors.starter.level,
+		);
+
+		await this.mentorRepository.approve(mentorId, baseTierId);
 		await this.userRepository.updateById(mentor.userId, { role: "MENTOR" });
 
 		await this.mailService.send(user.email, new MentorApprovalMailTemplate(), {

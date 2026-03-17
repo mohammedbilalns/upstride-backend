@@ -13,6 +13,14 @@ export interface MentorQuery {
 	userId?: string;
 }
 
+export interface MentorDiscoveryQuery {
+	search?: string;
+	categoryId?: string;
+	tierId?: string;
+	minExperience?: number;
+	maxExperience?: number;
+}
+
 export interface MentorApplicationDetails extends Mentor {
 	user: {
 		name: string;
@@ -35,6 +43,16 @@ export interface MentorApplicationDetails extends Mentor {
 	}[];
 }
 
+export interface MentorDiscoveryDetails extends Mentor {
+	user: {
+		name: string;
+	};
+	categories: {
+		id: string;
+		name?: string;
+	}[];
+}
+
 export interface IMentorRepository
 	extends FindByIdRepository<Mentor>,
 		CreatableRepository<Mentor>,
@@ -45,9 +63,12 @@ export interface IMentorRepository
 		isApproved: boolean,
 		rejectionReason?: string | null,
 	): Promise<Mentor | null>;
-	approve(id: string): Promise<Mentor | null>;
+	approve(id: string, tierId?: string | null): Promise<Mentor | null>;
 	reject(id: string, reason: string): Promise<Mentor | null>;
 	paginate(
 		params: PaginateParams<MentorQuery>,
 	): Promise<PaginatedResult<MentorApplicationDetails>>;
+	paginateDiscoverable(
+		params: PaginateParams<MentorDiscoveryQuery>,
+	): Promise<PaginatedResult<MentorDiscoveryDetails>>;
 }

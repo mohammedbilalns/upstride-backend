@@ -87,6 +87,7 @@ export const TYPES = {
 		AddMentorToList: Symbol.for("AddMentorToListUseCase"),
 		RemoveMentorFromList: Symbol.for("RemoveMentorFromListUseCase"),
 		DeleteMentorList: Symbol.for("DeleteMentorListUseCase"),
+		GetMentorsDiscovery: Symbol.for("GetMentorsDiscoveryUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),

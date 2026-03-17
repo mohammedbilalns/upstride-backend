@@ -6,6 +6,7 @@ import type { MentorController } from "../controllers/mentor.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	MentorApplicationsQuerySchema,
+	MentorDiscoveryQuerySchema,
 	MentorIdParamSchema,
 	registerMentorSchema,
 	rejectMentorBodySchema,
@@ -38,6 +39,14 @@ mentorRouter.patch(
 	authorizeRoles(["USER"]),
 	validate({ body: resubmitMentorSchema }),
 	mentorController.resubmit,
+);
+
+mentorRouter.get(
+	ROUTES.MENTOR.DISCOVERY,
+	verifySession,
+	authorizeRoles(["USER", "MENTOR"]),
+	validate({ query: MentorDiscoveryQuerySchema }),
+	mentorController.getDiscovery,
 );
 
 mentorRouter.get(

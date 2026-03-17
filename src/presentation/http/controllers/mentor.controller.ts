@@ -1,4 +1,6 @@
 import { inject, injectable } from "inversify";
+import type { GetMentorsInput } from "../../../application/mentor-discovery/dtos/get-mentors.dto";
+import type { IGetMentorsUseCase } from "../../../application/mentor-discovery/use-cases";
 import type {
 	IApproveMentorUseCase,
 	IGetMentorApplicationsUseCase,
@@ -9,6 +11,7 @@ import type {
 } from "../../../application/mentor-management/use-cases";
 import type {
 	MentorApplicationsQuery,
+	MentorDiscoveryQuery,
 	RejectMentorBody,
 } from "../../../presentation/http/validators/mentor.validator";
 import { HttpStatus } from "../../../shared/constants";
@@ -28,6 +31,8 @@ export class MentorController {
 		private readonly resubmitMentorUseCase: IResubmitMentorUseCase,
 		@inject(TYPES.UseCases.GetMentorApplications)
 		private readonly getMentorApplicationsUseCase: IGetMentorApplicationsUseCase,
+		@inject(TYPES.UseCases.GetMentorsDiscovery)
+		private readonly getMentorsDiscoveryUseCase: IGetMentorsUseCase,
 		@inject(TYPES.UseCases.ApproveMentor)
 		private readonly approveMentorUseCase: IApproveMentorUseCase,
 		@inject(TYPES.UseCases.RejectMentor)
@@ -41,6 +46,19 @@ export class MentorController {
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.FETCH_APPLICATIONS_SUCCESS,
+			data: result,
+		});
+	});
+
+	getDiscovery = asyncHandler(async (req, res) => {
+		const query = req.validated?.query as MentorDiscoveryQuery;
+
+		const result = await this.getMentorsDiscoveryUseCase.execute(
+			query as GetMentorsInput,
+		);
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: MentorResponseMessages.FETCH_DISCOVERY_SUCCESS,
 			data: result,
 		});
 	});

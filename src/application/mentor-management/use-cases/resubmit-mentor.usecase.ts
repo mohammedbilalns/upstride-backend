@@ -29,6 +29,13 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			throw new MaxApplicationAttemptsExceededError();
 		}
 
+		const resumeId = input.resumeId ?? existingMentor.resumeId;
+		const educationalQualifications =
+			input.educationalQualifications ??
+			existingMentor.educationalQualifications;
+		const areasOfExpertise =
+			input.areasOfExpertise ?? existingMentor.areasOfExpertise;
+
 		const updatedMentor = new Mentor(
 			existingMentor.id,
 			input.userId,
@@ -36,11 +43,11 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			input.currentRoleId ?? existingMentor.currentRoleId,
 			input.organization ?? existingMentor.organization,
 			input.yearsOfExperience ?? existingMentor.yearsOfExperience,
+			existingMentor.tierId ?? null,
 			input.personalWebsite ?? existingMentor.personalWebsite,
-			input.resumeId ?? existingMentor.resumeId,
-			input.educationalQualifications ??
-				existingMentor.educationalQualifications,
-			input.areasOfExpertise ?? existingMentor.areasOfExpertise,
+			resumeId,
+			educationalQualifications,
+			areasOfExpertise,
 			input.toolsAndSkills
 				? input.toolsAndSkills.map((ts) => ({
 						skillId: ts.skillId as string,
@@ -64,6 +71,7 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			existingMentor.createdAt,
 			new Date(),
 			null,
+			existingMentor.avgRating,
 		);
 
 		await this.mentorRepository.updateById(existingMentor.id, updatedMentor);
