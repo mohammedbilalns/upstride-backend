@@ -1,6 +1,8 @@
 import { inject, injectable } from "inversify";
 import type { IMentorListRepository } from "../../../domain/repositories/mentor-list.repository.interface";
+import type { ISavedMentorRepository } from "../../../domain/repositories/saved-mentor.repository.interface";
 import { TYPES } from "../../../shared/types/types";
+import { MentorDiscoveryMapper } from "../../mentor-discovery/mappers/mentor-discovery.mapper";
 import type {
 	GetMentorListInput,
 	GetMentorListOutput,
@@ -14,6 +16,8 @@ export class GetMentorListUseCase implements IGetMentorListUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorListRepository)
 		private readonly _mentorListRepository: IMentorListRepository,
+		@inject(TYPES.Repositories.SavedMentorRepository)
+		private readonly _savedMentorRepository: ISavedMentorRepository,
 	) {}
 
 	async execute(input: GetMentorListInput): Promise<GetMentorListOutput> {
@@ -26,6 +30,16 @@ export class GetMentorListUseCase implements IGetMentorListUseCase {
 			throw new MentorListNotFoundError();
 		}
 
-		return { list: MentorListMapper.toDto(list) };
+		const mentors = await this._savedMentorRepository.findMentorsByListId(
+			input.userId,
+			input.listId,
+		);
+
+		return {
+			list: {
+				...MentorListMapper.toDtoWithCount(list, mentors.length),
+				mentors: MentorDiscoveryMapper.toDtos(mentors),
+			},
+		};
 	}
 }

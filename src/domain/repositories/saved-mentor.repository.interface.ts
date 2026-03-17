@@ -1,5 +1,6 @@
 import type { SavedMentor } from "../entities/saved-mentor.entity";
 import type { CreatableRepository } from "./capabilities/creatable.repository.interface";
+import type { MentorDiscoveryDetails } from "./mentor.repository.interface";
 
 export interface ISavedMentorRepository
 	extends CreatableRepository<SavedMentor> {
@@ -8,6 +9,10 @@ export interface ISavedMentorRepository
 		mentorId: string,
 		listId: string,
 	): Promise<SavedMentor | null>;
+	findMentorsByListId(
+		userId: string,
+		listId: string,
+	): Promise<MentorDiscoveryDetails[]>;
 	countByListId(listId: string): Promise<number>;
 	deleteByUserMentorList(
 		userId: string,
