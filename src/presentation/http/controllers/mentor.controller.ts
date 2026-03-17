@@ -52,10 +52,19 @@ export class MentorController {
 
 	getDiscovery = asyncHandler(async (req, res) => {
 		const query = req.validated?.query as MentorDiscoveryQuery;
+		const userId = (req as AuthenticatedRequest).user.id;
 
-		const result = await this._getMentorsDiscoveryUseCase.execute(
-			query as GetMentorsInput,
-		);
+		const result = await this._getMentorsDiscoveryUseCase.execute({
+			page: query.page,
+			limit: 12,
+			excludeUserId: userId,
+			search: query.search,
+			categoryId: query.categoryId,
+			tierId: query.tierId,
+			minExperience: query.minExperience,
+			maxExperience: query.maxExperience,
+			sort: query.sort,
+		} as GetMentorsInput);
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.FETCH_DISCOVERY_SUCCESS,

@@ -197,6 +197,10 @@ export class MongoMentorRepository
 			isRejected: false,
 		};
 
+		if (query?.excludeUserId) {
+			filter.userId = { $ne: new Types.ObjectId(query.excludeUserId) };
+		}
+
 		if (query?.categoryId) {
 			filter.areasOfExpertise = new Types.ObjectId(query.categoryId);
 		}
@@ -230,7 +234,12 @@ export class MongoMentorRepository
 			if (ids.length === 0) {
 				return this.buildPaginatedResult([], 0, page, limit);
 			}
-			filter.userId = { $in: ids };
+			filter.userId = {
+				$in: ids,
+				...(query.excludeUserId
+					? { $ne: new Types.ObjectId(query.excludeUserId) }
+					: {}),
+			};
 		}
 
 		const skip = (page - 1) * limit;
@@ -240,7 +249,8 @@ export class MongoMentorRepository
 				.sort(sort ?? { avgRating: -1, createdAt: -1 })
 				.skip(skip)
 				.limit(limit)
-				.populate("userId", "name")
+				.populate("userId", "name profilePictureId")
+				.populate("currentRoleId", "name")
 				.populate("areasOfExpertise", "name")
 				.lean(),
 			this.model.countDocuments(filter),
@@ -250,7 +260,11 @@ export class MongoMentorRepository
 			const mentor = this.toDomain(doc);
 			return {
 				...mentor,
-				user: doc.userId as unknown as { name: string },
+				user: doc.userId as unknown as {
+					name: string;
+					profilePictureId?: string;
+				},
+				currentRoleDetails: doc.currentRoleId as unknown as { name: string },
 				categories: (doc.areasOfExpertise || []).map((item: unknown) => {
 					const category = item as {
 						_id?: { toString?: () => string };

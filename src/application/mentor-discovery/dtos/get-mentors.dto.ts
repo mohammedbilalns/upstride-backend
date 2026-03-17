@@ -1,6 +1,7 @@
 export interface GetMentorsInput {
 	page: number;
 	limit: number;
+	excludeUserId?: string;
 	search?: string;
 	categoryId?: string;
 	tierId?: string;
@@ -13,6 +14,8 @@ export interface MentorDiscoveryDto {
 	id: string;
 	userId: string;
 	name: string;
+	avatar?: string;
+	designation?: string;
 	bio: string;
 	yearsOfExperience: number;
 	avgRating: number;

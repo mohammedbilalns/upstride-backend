@@ -7,6 +7,8 @@ export class MentorDiscoveryMapper {
 			id: entity.id,
 			userId: entity.userId,
 			name: entity.user.name,
+			avatar: entity.user.profilePictureId,
+			designation: entity.currentRoleDetails?.name,
 			bio: entity.bio,
 			yearsOfExperience: entity.yearsOfExperience,
 			avgRating: entity.avgRating,

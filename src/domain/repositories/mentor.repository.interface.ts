@@ -17,6 +17,7 @@ export interface MentorDiscoveryQuery {
 	search?: string;
 	categoryId?: string;
 	tierId?: string;
+	excludeUserId?: string;
 	minExperience?: number;
 	maxExperience?: number;
 }
@@ -45,6 +46,10 @@ export interface MentorApplicationDetails extends Mentor {
 
 export interface MentorDiscoveryDetails extends Mentor {
 	user: {
+		name: string;
+		profilePictureId?: string;
+	};
+	currentRoleDetails: {
 		name: string;
 	};
 	categories: {

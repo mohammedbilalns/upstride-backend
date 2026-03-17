@@ -4,6 +4,7 @@ import type {
 	MentorDiscoveryQuery,
 } from "../../../domain/repositories/mentor.repository.interface";
 import { TYPES } from "../../../shared/types/types";
+import type { IStorageService } from "../../services/storage.service.interface";
 import type {
 	GetMentorsInput,
 	GetMentorsResponse,
@@ -16,6 +17,8 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
 		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: GetMentorsInput): Promise<GetMentorsResponse> {
@@ -23,6 +26,7 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 			search: input.search,
 			categoryId: input.categoryId,
 			tierId: input.tierId,
+			excludeUserId: input.excludeUserId,
 			minExperience: input.minExperience,
 			maxExperience: input.maxExperience,
 		};
@@ -37,8 +41,22 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 			sort,
 		});
 
+		const items = await Promise.all(
+			result.items.map(async (item) => {
+				const dto = MentorDiscoveryMapper.toDto(item);
+				if (item.user.profilePictureId) {
+					dto.avatar = await this._storageService.getSignedUrl(
+						item.user.profilePictureId,
+					);
+				} else {
+					dto.avatar = undefined;
+				}
+				return dto;
+			}),
+		);
+
 		return {
-			items: MentorDiscoveryMapper.toDtos(result.items),
+			items,
 			total: result.total,
 			page: result.page,
 			limit: result.limit,
