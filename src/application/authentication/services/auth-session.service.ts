@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { inject, injectable } from "inversify";
 import { Session } from "../../../domain/entities/session.entity";
 import type { User } from "../../../domain/entities/user.entity";
@@ -6,6 +5,7 @@ import type { ISessionRepository } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
 import { formatDeviceString } from "../../../shared/utilities/device.util";
 import {
+	type IIdGenerator,
 	type IStorageService,
 	type ITokenService,
 	REFRESH_TOKEN_EXPIRES_IN,
@@ -21,6 +21,8 @@ export class AuthSessionService implements IAuthSessionService {
 		private readonly _sessionRepository: ISessionRepository,
 		@inject(TYPES.Services.TokenService)
 		private readonly _tokenService: ITokenService,
+		@inject(TYPES.Services.IdGenerator)
+		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}
@@ -29,9 +31,9 @@ export class AuthSessionService implements IAuthSessionService {
 		user: User,
 		deviceContext: AuthDeviceContext,
 	): Promise<LoginResponse> {
-		const sessionId = randomUUID();
-		const refreshTokenId = randomUUID();
-		const accessTokenId = randomUUID();
+		const sessionId = this._idGenerator.generate();
+		const refreshTokenId = this._idGenerator.generate();
+		const accessTokenId = this._idGenerator.generate();
 
 		const accessToken = this._tokenService.generateAccessToken({
 			sub: user.id,

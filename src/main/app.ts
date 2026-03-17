@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { corsOptions } from "../presentation/http/config";
 import { errorHandler, requestLogger } from "../presentation/http/middlewares";
 import { router as v1Router } from "../presentation/http/routes";
+import { stripeWebhookRouter } from "../presentation/http/routes/stripe-webhook.route";
 import { HttpStatus } from "../shared/constants";
 import logger from "../shared/logging/logger";
 
@@ -25,6 +26,7 @@ class App {
 	constructor() {
 		this._app = express();
 		this._server = createServer(this._app);
+		this._setupWebhookRoutes();
 		this._setupMiddlewares();
 		this._setupRoutes();
 		this._setupErrorHandlers();
@@ -48,6 +50,9 @@ class App {
 			.use(express.json())
 			.use(express.urlencoded({ extended: true }))
 			.use(cookieParser());
+	}
+	private _setupWebhookRoutes() {
+		this._app.use("/api/webhooks/stripe", stripeWebhookRouter);
 	}
 	private _setupRoutes() {
 		this._app.use("/api/v1", v1Router);

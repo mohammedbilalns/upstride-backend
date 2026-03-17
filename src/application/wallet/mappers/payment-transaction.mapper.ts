@@ -1,0 +1,20 @@
+import type { PaymentTransaction } from "../../../domain/entities/payment-transactions.entity";
+import type { PaymentTransactionDto } from "../dtos/get-payment-transactions.dto";
+
+export class PaymentTransactionDtoMapper {
+	static toDTO(entity: PaymentTransaction): PaymentTransactionDto {
+		return {
+			id: entity.id,
+			paymentId: entity.id,
+			provider: entity.provider,
+			amount: entity.amount / 100,
+			currency: entity.currency,
+			coinsGranted: entity.coinsGranted,
+			createdAt: entity.createdAt,
+		};
+	}
+
+	static toDTOs(entities: PaymentTransaction[]): PaymentTransactionDto[] {
+		return entities.map((entity) => PaymentTransactionDtoMapper.toDTO(entity));
+	}
+}

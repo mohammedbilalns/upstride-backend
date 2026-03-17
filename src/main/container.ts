@@ -7,11 +7,13 @@ import {
 	registerMentorBindings,
 	registerMentorDiscoveryBindings,
 	registerMentorListsBindings,
+	registerPaymentsBindings,
 	registerPlatformSettingsBindings,
 	registerPresentationBindings,
 	registerProfileBindings,
 	registerStorageBindings,
 	registerUserManagementBindings,
+	registerWalletBindings,
 } from "./di";
 
 const container = new Container();
@@ -22,10 +24,12 @@ registerCatalogBindings(container);
 registerMentorBindings(container);
 registerMentorDiscoveryBindings(container);
 registerMentorListsBindings(container);
+registerPaymentsBindings(container);
 registerPlatformSettingsBindings(container);
 registerProfileBindings(container);
 registerStorageBindings(container);
 registerUserManagementBindings(container);
+registerWalletBindings(container);
 registerPresentationBindings(container);
 
 export { container, mailQueue };

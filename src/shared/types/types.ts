@@ -9,6 +9,9 @@ export const TYPES = {
 		AuthSession: Symbol.for("AuthSession"),
 		PlatformSettings: Symbol.for("PlatformSettings"),
 		Storage: Symbol.for("Storage"),
+		WalletService: Symbol.for("WalletService"),
+		EventBus: Symbol.for("EventBus"),
+		PaymentService: Symbol.for("PaymentService"),
 		IdGenerator: Symbol.for("IdGenerator"),
 	},
 	Caches: {
@@ -19,7 +22,9 @@ export const TYPES = {
 	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),
+		CoinTransactionRepository: Symbol.for("CoinTransactionRepository"),
 		OtpRepository: Symbol.for("OtpRepository"),
+		PaymentTransactionRepository: Symbol.for("PaymentTransactionRepository"),
 		SessionRepository: Symbol.for("SessionRepository"),
 		TokenRevocationRepository: Symbol.for("TokenRevocationRepository"),
 		PlatformSettingsRepository: Symbol.for("PlatformSettingsRepository"),
@@ -88,6 +93,11 @@ export const TYPES = {
 		RemoveMentorFromList: Symbol.for("RemoveMentorFromListUseCase"),
 		DeleteMentorList: Symbol.for("DeleteMentorListUseCase"),
 		GetMentorsDiscovery: Symbol.for("GetMentorsDiscoveryUseCase"),
+		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
+		HandleStripeWebhook: Symbol.for("HandleStripeWebhookUseCase"),
+		GetCoinBalance: Symbol.for("GetCoinBalanceUseCase"),
+		GetCoinTransactions: Symbol.for("GetCoinTransactionsUseCase"),
+		GetPaymentTransactions: Symbol.for("GetPaymentTransactionsUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
@@ -100,5 +110,7 @@ export const TYPES = {
 		File: Symbol.for("FileController"),
 		PlatformSettings: Symbol.for("PlatformSettingsController"),
 		MentorList: Symbol.for("MentorListController"),
+		Payment: Symbol.for("PaymentController"),
+		Wallet: Symbol.for("WalletController"),
 	},
 };

@@ -5,6 +5,8 @@ export * from "./logout.controller";
 export * from "./mentor.controller";
 export * from "./mentor-list.controller";
 export * from "./password-reset.controller";
+export * from "./payment.controller";
 export * from "./platform-settings.controller";
 export * from "./profile.controller";
 export * from "./user-management.controller";
+export * from "./wallet.controller";
