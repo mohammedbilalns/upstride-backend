@@ -186,8 +186,8 @@ export const MentorApplicationsQuerySchema = z.object({
 	limit: z.coerce
 		.number()
 		.int()
-		.refine((val: number) => [10, 20, 50].includes(val), {
-			message: "Limit must be 10, 20, or 50",
+		.refine((val: number) => [10, 12, 20, 24, 48, 50].includes(val), {
+			message: "Limit must be 10, 12, 20, 24, 48 or 50",
 		})
 		.default(10),
 	status: z.enum(["approved", "rejected", "pending"]).optional(),
@@ -197,6 +197,29 @@ export const MentorApplicationsQuerySchema = z.object({
 export type MentorApplicationsQuery = z.infer<
 	typeof MentorApplicationsQuerySchema
 >;
+
+export const MentorDiscoveryQuerySchema = z
+	.object({
+		page: z.coerce.number().int().positive().default(1),
+		search: z.string().trim().min(1).optional(),
+		categoryId: z.string().min(1).optional(),
+		tierId: z.string().min(1).optional(),
+		minExperience: z.coerce.number().int().min(0).optional(),
+		maxExperience: z.coerce.number().int().min(0).optional(),
+		sort: z.enum(["rating", "recent"]).optional().default("rating"),
+	})
+	.refine(
+		(input) =>
+			input.minExperience === undefined ||
+			input.maxExperience === undefined ||
+			input.minExperience <= input.maxExperience,
+		{
+			message: "minExperience cannot be greater than maxExperience",
+			path: ["minExperience"],
+		},
+	);
+
+export type MentorDiscoveryQuery = z.infer<typeof MentorDiscoveryQuerySchema>;
 
 export const MentorIdParamSchema = z.object({
 	id: z.string().min(1, "Invalid mentor ID"),

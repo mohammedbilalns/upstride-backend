@@ -57,9 +57,17 @@ export const ROUTES = {
 		REGISTRATION_INFO: "/registration-info",
 		REGISTER: "/register",
 		RESUBMIT: "/resubmit",
+		DISCOVERY: "/discover",
 		APPLICATIONS: "/applications",
 		APPROVE: (id: string) => `/applications/${id}/approve`,
 		REJECT: (id: string) => `/applications/${id}/reject`,
+	},
+	MENTOR_LISTS: {
+		BASE: "/mentor-lists",
+		ROOT: "/",
+		BY_ID: "/:listId",
+		ADD_MENTOR: "/:listId/mentors",
+		REMOVE_MENTOR: "/:listId/mentors/:mentorId",
 	},
 	PLATFORM_SETTINGS: {
 		BASE: "/platform-settings",

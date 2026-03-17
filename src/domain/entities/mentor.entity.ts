@@ -27,6 +27,7 @@ export class Mentor {
 		public readonly currentRoleId: string,
 		public readonly organization: string,
 		public readonly yearsOfExperience: number,
+		public readonly tierId: string | null,
 		public readonly personalWebsite: string | null,
 		public readonly resumeId: string,
 		public readonly educationalQualifications: string[],
@@ -39,6 +40,7 @@ export class Mentor {
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
 		public readonly rejectionReason: string | null = null,
+		public readonly avgRating: number = 0,
 	) {
 		if (this.experience.length > 7) {
 			throw new ValidationError("Maximum of 7 experience items allowed.");

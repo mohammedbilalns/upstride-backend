@@ -6,10 +6,10 @@ import type { IStorageService } from "../../services/storage.service.interface";
 export class DeleteFileUseCase {
 	constructor(
 		@inject(TYPES.Services.Storage)
-		private readonly storageService: IStorageService,
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(key: string): Promise<void> {
-		await this.storageService.delete(key);
+		await this._storageService.delete(key);
 	}
 }

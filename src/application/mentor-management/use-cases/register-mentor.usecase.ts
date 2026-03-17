@@ -20,7 +20,7 @@ export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 	) {}
 
 	async execute(input: RegisterMentorInput): Promise<void> {
-		const existingMentor = await this.mentorRepository.findByUserId(
+		const existingMentor = await this._mentorRepository.findByUserId(
 			input.userId,
 		);
 
@@ -42,6 +42,7 @@ export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 			input.currentRoleId,
 			input.organization,
 			input.yearsOfExperience,
+			null,
 			input.personalWebsite,
 			input.resumeId,
 			input.educationalQualifications,
@@ -66,9 +67,9 @@ export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 		);
 
 		if (existingMentor) {
-			await this.mentorRepository.updateById(existingMentor.id, mentor);
+			await this._mentorRepository.updateById(existingMentor.id, mentor);
 		} else {
-			await this.mentorRepository.create(mentor);
+			await this._mentorRepository.create(mentor);
 		}
 	}
 }

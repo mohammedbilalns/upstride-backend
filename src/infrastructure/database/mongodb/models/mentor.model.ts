@@ -11,6 +11,7 @@ export interface MentorDocument {
 	currentRoleId: Types.ObjectId;
 	organization: string;
 	yearsOfExperience: number;
+	tierId?: string | null;
 	personalWebsite?: string;
 	resumeId: string;
 	educationalQualifications: string[];
@@ -30,6 +31,7 @@ export interface MentorDocument {
 	applicationAttempts: number;
 	isRejected: boolean;
 	rejectionReason: string | null;
+	avgRating: number;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -45,6 +47,7 @@ const mentorSchema = new Schema<MentorDocument>(
 		},
 		organization: { type: String, required: true },
 		yearsOfExperience: { type: Number, required: true },
+		tierId: { type: String },
 		personalWebsite: { type: String },
 		resumeId: { type: String, required: true },
 		educationalQualifications: [{ type: String }],
@@ -82,6 +85,7 @@ const mentorSchema = new Schema<MentorDocument>(
 		},
 		isApproved: { type: Boolean, default: false },
 		isRejected: { type: Boolean, default: false },
+		avgRating: { type: Number, default: 0 },
 		applicationAttempts: {
 			type: Number,
 			default: 0,

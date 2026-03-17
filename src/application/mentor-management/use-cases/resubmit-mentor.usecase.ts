@@ -13,11 +13,11 @@ import type { IResubmitMentorUseCase } from "./resubmit-mentor.usecase.interface
 export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
-		private readonly mentorRepository: IMentorRepository,
+		private readonly _mentorRepository: IMentorRepository,
 	) {}
 
 	async execute(input: ResubmitMentorInput): Promise<void> {
-		const existingMentor = await this.mentorRepository.findByUserId(
+		const existingMentor = await this._mentorRepository.findByUserId(
 			input.userId,
 		);
 
@@ -29,6 +29,13 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			throw new MaxApplicationAttemptsExceededError();
 		}
 
+		const resumeId = input.resumeId ?? existingMentor.resumeId;
+		const educationalQualifications =
+			input.educationalQualifications ??
+			existingMentor.educationalQualifications;
+		const areasOfExpertise =
+			input.areasOfExpertise ?? existingMentor.areasOfExpertise;
+
 		const updatedMentor = new Mentor(
 			existingMentor.id,
 			input.userId,
@@ -36,11 +43,11 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			input.currentRoleId ?? existingMentor.currentRoleId,
 			input.organization ?? existingMentor.organization,
 			input.yearsOfExperience ?? existingMentor.yearsOfExperience,
+			existingMentor.tierId ?? null,
 			input.personalWebsite ?? existingMentor.personalWebsite,
-			input.resumeId ?? existingMentor.resumeId,
-			input.educationalQualifications ??
-				existingMentor.educationalQualifications,
-			input.areasOfExpertise ?? existingMentor.areasOfExpertise,
+			resumeId,
+			educationalQualifications,
+			areasOfExpertise,
 			input.toolsAndSkills
 				? input.toolsAndSkills.map((ts) => ({
 						skillId: ts.skillId as string,
@@ -64,8 +71,9 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			existingMentor.createdAt,
 			new Date(),
 			null,
+			existingMentor.avgRating,
 		);
 
-		await this.mentorRepository.updateById(existingMentor.id, updatedMentor);
+		await this._mentorRepository.updateById(existingMentor.id, updatedMentor);
 	}
 }

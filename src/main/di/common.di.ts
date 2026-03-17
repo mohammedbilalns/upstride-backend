@@ -12,17 +12,21 @@ import type {
 } from "../../application/services";
 import { PlatformSettingsService } from "../../application/services";
 import type {
+	IMentorListRepository,
 	IMentorRepository,
 	IPlatformSettingsRepository,
 	IProfessionRepository,
+	ISavedMentorRepository,
 } from "../../domain/repositories";
 import { RedisPlatformSettingsCache } from "../../infrastructure/cache/redis-platform-settings.cache";
 import {
 	MongoCoinTransactionRepository,
 	MongoInterestRepository,
+	MongoMentorListRepository,
 	MongoMentorRepository,
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
+	MongoSavedMentorRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
 	MongoUserRepository,
@@ -40,6 +44,7 @@ import {
 	MailService,
 	NodeEventBus,
 	S3StorageService,
+	UuidGenerator,
 	StripePaymentService,
 	UuidGenerator,
 	WalletService,
@@ -60,6 +65,10 @@ export const registerCommonBindings = (container: Container): void => {
 	container.bind(TYPES.Services.GoogleOAuth).to(GoogleOAuthService);
 	container.bind(TYPES.Services.LinkedInOAuth).to(LinkedInOAuthService);
 	container.bind<IStorageService>(TYPES.Services.Storage).to(S3StorageService);
+	container
+		.bind<IIdGenerator>(TYPES.Services.IdGenerator)
+		.to(UuidGenerator)
+		.inSingletonScope();
 	container
 		.bind<IPlatformSettingsCache>(TYPES.Caches.PlatformSettings)
 		.to(RedisPlatformSettingsCache)
@@ -131,6 +140,14 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<IMentorRepository>(TYPES.Repositories.MentorRepository)
 		.to(MongoMentorRepository)
+		.inSingletonScope();
+	container
+		.bind<IMentorListRepository>(TYPES.Repositories.MentorListRepository)
+		.to(MongoMentorListRepository)
+		.inSingletonScope();
+	container
+		.bind<ISavedMentorRepository>(TYPES.Repositories.SavedMentorRepository)
+		.to(MongoSavedMentorRepository)
 		.inSingletonScope();
 
 	container.bind(TYPES.Databases.Redis).toConstantValue(redisClient);
