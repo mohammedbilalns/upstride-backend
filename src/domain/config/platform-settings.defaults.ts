@@ -42,10 +42,9 @@ export const DEFAULT_PLATFORM_SETTINGS: DefaultPlatformSettingsMap = {
 		200,
 	),
 	mentors: new MentorSettings(
-		new MentorTier(MentorTierLevel.Starter, "Starter", 200, 80, 7, 0, 0),
-		new MentorTier(MentorTierLevel.Rising, "Rising", 250, 65, 14, 10, 3),
-		new MentorTier(MentorTierLevel.Expert, "Expert", 600, 50, 25, 30, 8),
-		new MentorTier(MentorTierLevel.Elite, "Elite", 1000, 30, 40, 80, 15),
+		new MentorTier(MentorTierLevel.Starter, "Starter", 0, 40, 2000),
+		new MentorTier(MentorTierLevel.Rising, "Rising", 40, 70, 4000),
+		new MentorTier(MentorTierLevel.Expert, "Expert", 70, 100, 10000),
 	),
 	content: new ContentSettings(
 		new PremiumArticleRequirement(5, 100, 20),

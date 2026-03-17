@@ -25,7 +25,7 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 		const query: MentorDiscoveryQuery = {
 			search: input.search,
 			categoryId: input.categoryId,
-			tierId: input.tierId,
+			tierName: input.tierName,
 			excludeUserId: input.excludeUserId,
 			minExperience: input.minExperience,
 			maxExperience: input.maxExperience,

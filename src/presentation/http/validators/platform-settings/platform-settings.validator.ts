@@ -64,13 +64,13 @@ export const updateEconomySettingsBodySchema = z
 	);
 
 const mentorTierSchema = z.object({
-	level: z.number().int().min(1).max(4),
+	level: z.number().int().min(1).max(3),
 	name: z.string().trim().min(1, "Tier name is required"),
-	rateForThirtyMinSession: nonNegativeIntSchema,
-	minFreeArticlesPercentage: percentageSchema,
-	maxArticlesPerWeek: nonNegativeIntSchema,
-	minSessionCompleted: nonNegativeIntSchema,
-	minArticlesPublished: nonNegativeIntSchema,
+	minScore: nonNegativeIntSchema.max(100, "min score must be at most 100"),
+	maxScore: nonNegativeIntSchema.max(100, "max score must be at most 100"),
+	maxPricePer30Min: nonNegativeIntSchema
+		.min(100, "max price per 30 min must be at least 100")
+		.max(10000, "max price per 30 min must be at most 10000"),
 });
 
 export const updateMentorSettingsBodySchema = z
@@ -79,18 +79,15 @@ export const updateMentorSettingsBodySchema = z
 			starter: mentorTierSchema,
 			rising: mentorTierSchema,
 			expert: mentorTierSchema,
-			elite: mentorTierSchema,
 		}),
 	})
 	.refine(
 		(input) =>
 			input.mentors.starter.level === 1 &&
 			input.mentors.rising.level === 2 &&
-			input.mentors.expert.level === 3 &&
-			input.mentors.elite.level === 4,
+			input.mentors.expert.level === 3,
 		{
-			message:
-				"Mentor tier levels must be Starter(1), Rising(2), Expert(3), Elite(4)",
+			message: "Mentor tier levels must be Starter(1), Rising(2), Expert(3)",
 			path: ["mentors"],
 		},
 	)
@@ -100,9 +97,8 @@ export const updateMentorSettingsBodySchema = z
 				input.mentors.starter.name,
 				input.mentors.rising.name,
 				input.mentors.expert.name,
-				input.mentors.elite.name,
 			]);
-			return names.size === 4;
+			return names.size === 3;
 		},
 		{
 			message: "Tier names must be unique",
@@ -115,30 +111,27 @@ export const updateMentorSettingsBodySchema = z
 				input.mentors.starter,
 				input.mentors.rising,
 				input.mentors.expert,
-				input.mentors.elite,
 			];
+
+			for (const tier of tiers) {
+				if (tier.maxScore <= tier.minScore) {
+					return false;
+				}
+			}
 
 			for (let i = 1; i < tiers.length; i += 1) {
 				const prev = tiers[i - 1];
 				const curr = tiers[i];
 
-				if (curr.rateForThirtyMinSession <= prev.rateForThirtyMinSession) {
+				if (curr.maxPricePer30Min <= prev.maxPricePer30Min) {
 					return false;
 				}
 
-				if (curr.maxArticlesPerWeek <= prev.maxArticlesPerWeek) {
+				if (curr.minScore < prev.maxScore) {
 					return false;
 				}
 
-				if (curr.minSessionCompleted <= prev.minSessionCompleted) {
-					return false;
-				}
-
-				if (curr.minArticlesPublished <= prev.minArticlesPublished) {
-					return false;
-				}
-
-				if (curr.minFreeArticlesPercentage >= prev.minFreeArticlesPercentage) {
+				if (curr.maxScore <= prev.maxScore) {
 					return false;
 				}
 			}
@@ -146,8 +139,7 @@ export const updateMentorSettingsBodySchema = z
 			return true;
 		},
 		{
-			message:
-				"Mentor tiers must be strictly ordered for rates, limits, minimums, and free-article percentage",
+			message: "Mentor tiers must be ordered for score ranges and max price",
 			path: ["mentors"],
 		},
 	);

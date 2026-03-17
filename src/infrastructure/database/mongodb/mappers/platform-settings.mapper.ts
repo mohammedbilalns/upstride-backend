@@ -103,38 +103,23 @@ export class PlatformSettingsMapper {
 			starter: {
 				level: number;
 				name: string;
-				rateForThirtyMinSession: number;
-				minFreeArticlesPercentage: number;
-				maxArticlesPerWeek: number;
-				minSessionCompleted: number;
-				minArticlesPublished: number;
+				minScore: number;
+				maxScore: number;
+				maxPricePer30Min: number;
 			};
 			rising: {
 				level: number;
 				name: string;
-				rateForThirtyMinSession: number;
-				minFreeArticlesPercentage: number;
-				maxArticlesPerWeek: number;
-				minSessionCompleted: number;
-				minArticlesPublished: number;
+				minScore: number;
+				maxScore: number;
+				maxPricePer30Min: number;
 			};
 			expert: {
 				level: number;
 				name: string;
-				rateForThirtyMinSession: number;
-				minFreeArticlesPercentage: number;
-				maxArticlesPerWeek: number;
-				minSessionCompleted: number;
-				minArticlesPublished: number;
-			};
-			elite: {
-				level: number;
-				name: string;
-				rateForThirtyMinSession: number;
-				minFreeArticlesPercentage: number;
-				maxArticlesPerWeek: number;
-				minSessionCompleted: number;
-				minArticlesPublished: number;
+				minScore: number;
+				maxScore: number;
+				maxPricePer30Min: number;
 			};
 		};
 
@@ -142,38 +127,23 @@ export class PlatformSettingsMapper {
 			new MentorTierEntity(
 				mentors.starter.level,
 				mentors.starter.name,
-				mentors.starter.rateForThirtyMinSession,
-				mentors.starter.minFreeArticlesPercentage,
-				mentors.starter.maxArticlesPerWeek,
-				mentors.starter.minSessionCompleted,
-				mentors.starter.minArticlesPublished,
+				mentors.starter.minScore,
+				mentors.starter.maxScore,
+				mentors.starter.maxPricePer30Min,
 			),
 			new MentorTierEntity(
 				mentors.rising.level,
 				mentors.rising.name,
-				mentors.rising.rateForThirtyMinSession,
-				mentors.rising.minFreeArticlesPercentage,
-				mentors.rising.maxArticlesPerWeek,
-				mentors.rising.minSessionCompleted,
-				mentors.rising.minArticlesPublished,
+				mentors.rising.minScore,
+				mentors.rising.maxScore,
+				mentors.rising.maxPricePer30Min,
 			),
 			new MentorTierEntity(
 				mentors.expert.level,
 				mentors.expert.name,
-				mentors.expert.rateForThirtyMinSession,
-				mentors.expert.minFreeArticlesPercentage,
-				mentors.expert.maxArticlesPerWeek,
-				mentors.expert.minSessionCompleted,
-				mentors.expert.minArticlesPublished,
-			),
-			new MentorTierEntity(
-				mentors.elite.level,
-				mentors.elite.name,
-				mentors.elite.rateForThirtyMinSession,
-				mentors.elite.minFreeArticlesPercentage,
-				mentors.elite.maxArticlesPerWeek,
-				mentors.elite.minSessionCompleted,
-				mentors.elite.minArticlesPublished,
+				mentors.expert.minScore,
+				mentors.expert.maxScore,
+				mentors.expert.maxPricePer30Min,
 			),
 		);
 	}

@@ -4,7 +4,6 @@ export enum MentorTierLevel {
 	Starter = 1,
 	Rising = 2,
 	Expert = 3,
-	Elite = 4,
 }
 
 export class MentorTier {
@@ -12,53 +11,52 @@ export class MentorTier {
 
 	public readonly name: string;
 
-	public readonly rateForThirtyMinSession: number;
+	public readonly minScore: number;
 
-	public readonly minFreeArticlesPercentage: number;
+	public readonly maxScore: number;
 
-	public readonly maxArticlesPerWeek: number;
-
-	public readonly minSessionCompleted: number;
-
-	public readonly minArticlesPublished: number;
+	public readonly maxPricePer30Min: number;
 
 	constructor(
 		level: MentorTierLevel,
 		name: string,
-		rateForThirtyMinSession: number,
-		minFreeArticlesPercentage: number,
-		maxArticlesPerWeek: number,
-		minSessionCompleted: number,
-		minArticlesPublished: number,
+		minScore: number,
+		maxScore: number,
+		maxPricePer30Min: number,
 	) {
-		if (
-			!name ||
-			rateForThirtyMinSession < 0 ||
-			minFreeArticlesPercentage < 0 ||
-			maxArticlesPerWeek < 0 ||
-			minSessionCompleted < 0 ||
-			minArticlesPublished < 0
-		) {
+		if (!name || minScore < 0 || maxScore < 0) {
 			throw new EntityValidationError(
 				"MentorTier",
-				"name, rate for 30 minute session, and minimums must be valid",
+				"name and scores must be valid",
 			);
 		}
 
-		if (minFreeArticlesPercentage > 100) {
+		if (maxScore > 100 || minScore > 100) {
 			throw new EntityValidationError(
 				"MentorTier",
-				"min free articles percentage must be at most 100",
+				"min/max score must be at most 100",
+			);
+		}
+
+		if (maxScore <= minScore) {
+			throw new EntityValidationError(
+				"MentorTier",
+				"max score must be greater than min score",
+			);
+		}
+
+		if (maxPricePer30Min < 100 || maxPricePer30Min > 10000) {
+			throw new EntityValidationError(
+				"MentorTier",
+				"max price per 30 min must be between 100 and 10000",
 			);
 		}
 
 		this.level = level;
 		this.name = name;
-		this.rateForThirtyMinSession = rateForThirtyMinSession;
-		this.minFreeArticlesPercentage = minFreeArticlesPercentage;
-		this.maxArticlesPerWeek = maxArticlesPerWeek;
-		this.minSessionCompleted = minSessionCompleted;
-		this.minArticlesPublished = minArticlesPublished;
+		this.minScore = minScore;
+		this.maxScore = maxScore;
+		this.maxPricePer30Min = maxPricePer30Min;
 		Object.freeze(this);
 	}
 }
@@ -70,14 +68,7 @@ export class MentorSettings {
 
 	public readonly expert: MentorTier;
 
-	public readonly elite: MentorTier;
-
-	constructor(
-		starter: MentorTier,
-		rising: MentorTier,
-		expert: MentorTier,
-		elite: MentorTier,
-	) {
+	constructor(starter: MentorTier, rising: MentorTier, expert: MentorTier) {
 		if (starter.level !== MentorTierLevel.Starter) {
 			throw new EntityValidationError(
 				"MentorSettings",
@@ -99,59 +90,38 @@ export class MentorSettings {
 			);
 		}
 
-		if (elite.level !== MentorTierLevel.Elite) {
-			throw new EntityValidationError(
-				"MentorSettings",
-				"elite tier level must be Elite",
-			);
-		}
-
-		const names = new Set([starter.name, rising.name, expert.name, elite.name]);
-		if (names.size !== 4) {
+		const names = new Set([starter.name, rising.name, expert.name]);
+		if (names.size !== 3) {
 			throw new EntityValidationError(
 				"MentorSettings",
 				"tier names must be unique",
 			);
 		}
 
-		const tiers = [starter, rising, expert, elite];
+		const tiers = [starter, rising, expert];
 
 		for (let i = 1; i < tiers.length; i += 1) {
 			const prev = tiers[i - 1];
 			const curr = tiers[i];
 
-			if (curr.rateForThirtyMinSession <= prev.rateForThirtyMinSession) {
+			if (curr.maxPricePer30Min <= prev.maxPricePer30Min) {
 				throw new EntityValidationError(
 					"MentorSettings",
-					"rate for 30 minute session must be strictly increasing",
+					"higher tiers must have a strictly higher max price per 30 min",
 				);
 			}
 
-			if (curr.maxArticlesPerWeek <= prev.maxArticlesPerWeek) {
+			if (curr.minScore < prev.maxScore) {
 				throw new EntityValidationError(
 					"MentorSettings",
-					"max articles per week must be strictly increasing",
+					"min score must be greater than or equal to previous max score",
 				);
 			}
 
-			if (curr.minSessionCompleted <= prev.minSessionCompleted) {
+			if (curr.maxScore <= prev.maxScore) {
 				throw new EntityValidationError(
 					"MentorSettings",
-					"min session completed must be strictly increasing",
-				);
-			}
-
-			if (curr.minArticlesPublished <= prev.minArticlesPublished) {
-				throw new EntityValidationError(
-					"MentorSettings",
-					"min articles published must be strictly increasing",
-				);
-			}
-
-			if (curr.minFreeArticlesPercentage >= prev.minFreeArticlesPercentage) {
-				throw new EntityValidationError(
-					"MentorSettings",
-					"min free articles percentage must be strictly decreasing",
+					"max score must be strictly increasing",
 				);
 			}
 		}
@@ -159,7 +129,6 @@ export class MentorSettings {
 		this.starter = starter;
 		this.rising = rising;
 		this.expert = expert;
-		this.elite = elite;
 		Object.freeze(this);
 	}
 }

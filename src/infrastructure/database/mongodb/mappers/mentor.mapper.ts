@@ -11,7 +11,9 @@ export class MentorMapper {
 			doc.currentRoleId.toString(),
 			doc.organization,
 			doc.yearsOfExperience,
-			doc.tierId ?? null,
+			doc.score ?? 0,
+			doc.tierName ?? null,
+			doc.tierMax30minPayment ?? null,
 			doc.personalWebsite || null,
 			doc.resumeId,
 			doc.educationalQualifications,
@@ -33,6 +35,7 @@ export class MentorMapper {
 			doc.createdAt,
 			doc.updatedAt,
 			doc.rejectionReason,
+			doc.avgRating ?? 0,
 		);
 	}
 
@@ -43,7 +46,9 @@ export class MentorMapper {
 			currentRoleId: new Types.ObjectId(entity.currentRoleId),
 			organization: entity.organization,
 			yearsOfExperience: entity.yearsOfExperience,
-			tierId: entity.tierId ?? undefined,
+			score: entity.score,
+			tierName: entity.tierName ?? undefined,
+			tierMax30minPayment: entity.tierMax30minPayment ?? undefined,
 			personalWebsite: entity.personalWebsite ?? undefined,
 			resumeId: entity.resumeId,
 			educationalQualifications: entity.educationalQualifications,
@@ -65,6 +70,7 @@ export class MentorMapper {
 			isRejected: entity.isRejected,
 			applicationAttempts: entity.applicationAttempts,
 			rejectionReason: entity.rejectionReason,
+			avgRating: entity.avgRating,
 		};
 	}
 }

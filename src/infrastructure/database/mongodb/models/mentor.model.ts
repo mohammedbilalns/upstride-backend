@@ -11,7 +11,9 @@ export interface MentorDocument {
 	currentRoleId: Types.ObjectId;
 	organization: string;
 	yearsOfExperience: number;
-	tierId?: string | null;
+	score: number;
+	tierName?: string | null;
+	tierMax30minPayment?: number | null;
 	personalWebsite?: string;
 	resumeId: string;
 	educationalQualifications: string[];
@@ -47,7 +49,9 @@ const mentorSchema = new Schema<MentorDocument>(
 		},
 		organization: { type: String, required: true },
 		yearsOfExperience: { type: Number, required: true },
-		tierId: { type: String },
+		score: { type: Number, default: 0 },
+		tierName: { type: String },
+		tierMax30minPayment: { type: Number },
 		personalWebsite: { type: String },
 		resumeId: { type: String, required: true },
 		educationalQualifications: [{ type: String }],

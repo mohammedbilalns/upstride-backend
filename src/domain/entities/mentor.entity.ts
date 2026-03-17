@@ -27,7 +27,9 @@ export class Mentor {
 		public readonly currentRoleId: string,
 		public readonly organization: string,
 		public readonly yearsOfExperience: number,
-		public readonly tierId: string | null,
+		public readonly score: number,
+		public readonly tierName: string | null,
+		public readonly tierMax30minPayment: number | null,
 		public readonly personalWebsite: string | null,
 		public readonly resumeId: string,
 		public readonly educationalQualifications: string[],
@@ -42,6 +44,17 @@ export class Mentor {
 		public readonly rejectionReason: string | null = null,
 		public readonly avgRating: number = 0,
 	) {
+		if (this.score < 0 || this.score > 100) {
+			throw new ValidationError("Score must be between 0 and 100.");
+		}
+		if (
+			(this.tierName === null && this.tierMax30minPayment !== null) ||
+			(this.tierName !== null && this.tierMax30minPayment === null)
+		) {
+			throw new ValidationError(
+				"Tier name and tier max 30 min payment must be set together.",
+			);
+		}
 		if (this.experience.length > 7) {
 			throw new ValidationError("Maximum of 7 experience items allowed.");
 		}

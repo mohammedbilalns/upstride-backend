@@ -60,7 +60,7 @@ export class MentorController {
 			excludeUserId: userId,
 			search: query.search,
 			categoryId: query.categoryId,
-			tierId: query.tierId,
+			tierName: query.tierName,
 			minExperience: query.minExperience,
 			maxExperience: query.maxExperience,
 			sort: query.sort,

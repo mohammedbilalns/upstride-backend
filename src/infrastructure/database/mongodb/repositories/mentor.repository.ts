@@ -157,14 +157,25 @@ export class MongoMentorRepository
 		);
 	}
 
-	async approve(id: string, tierId?: string | null): Promise<Mentor | null> {
+	async approve(
+		id: string,
+		tier?: {
+			name: string | null;
+			max30minPayment: number | null;
+			score?: number;
+		},
+	): Promise<Mentor | null> {
 		const update: Partial<MentorDocument> = {
 			isApproved: true,
 			isRejected: false,
 			rejectionReason: null,
 		};
-		if (tierId !== undefined) {
-			update.tierId = tierId;
+		if (tier) {
+			update.tierName = tier.name ?? null;
+			update.tierMax30minPayment = tier.max30minPayment ?? null;
+			if (tier.score !== undefined) {
+				update.score = tier.score;
+			}
 		}
 
 		const doc = await this.model
@@ -205,8 +216,8 @@ export class MongoMentorRepository
 			filter.areasOfExpertise = new Types.ObjectId(query.categoryId);
 		}
 
-		if (query?.tierId) {
-			filter.tierId = query.tierId;
+		if (query?.tierName) {
+			filter.tierName = query.tierName;
 		}
 
 		if (

@@ -16,7 +16,7 @@ export interface MentorQuery {
 export interface MentorDiscoveryQuery {
 	search?: string;
 	categoryId?: string;
-	tierId?: string;
+	tierName?: string;
 	excludeUserId?: string;
 	minExperience?: number;
 	maxExperience?: number;
@@ -72,7 +72,14 @@ export interface IMentorRepository
 		isApproved: boolean,
 		rejectionReason?: string | null,
 	): Promise<Mentor | null>;
-	approve(id: string, tierId?: string | null): Promise<Mentor | null>;
+	approve(
+		id: string,
+		tier?: {
+			name: string | null;
+			max30minPayment: number | null;
+			score?: number;
+		},
+	): Promise<Mentor | null>;
 	reject(id: string, reason: string): Promise<Mentor | null>;
 	paginate(
 		params: PaginateParams<MentorQuery>,

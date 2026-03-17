@@ -28,22 +28,18 @@ import type {
 const toMentorTierDto = (tier: MentorTierEntity): MentorTierDto => ({
 	level: tier.level,
 	name: tier.name,
-	rateForThirtyMinSession: tier.rateForThirtyMinSession,
-	minFreeArticlesPercentage: tier.minFreeArticlesPercentage,
-	maxArticlesPerWeek: tier.maxArticlesPerWeek,
-	minSessionCompleted: tier.minSessionCompleted,
-	minArticlesPublished: tier.minArticlesPublished,
+	minScore: tier.minScore,
+	maxScore: tier.maxScore,
+	maxPricePer30Min: tier.maxPricePer30Min,
 });
 
 const toMentorTierEntity = (tier: MentorTierDto): MentorTierEntity =>
 	new MentorTierEntity(
 		tier.level,
 		tier.name,
-		tier.rateForThirtyMinSession,
-		tier.minFreeArticlesPercentage,
-		tier.maxArticlesPerWeek,
-		tier.minSessionCompleted,
-		tier.minArticlesPublished,
+		tier.minScore,
+		tier.maxScore,
+		tier.maxPricePer30Min,
 	);
 
 export class PlatformSettingsDtoMapper {
@@ -85,7 +81,6 @@ export class PlatformSettingsDtoMapper {
 			starter: toMentorTierDto(settings.starter),
 			rising: toMentorTierDto(settings.rising),
 			expert: toMentorTierDto(settings.expert),
-			elite: toMentorTierDto(settings.elite),
 		};
 	}
 
@@ -137,7 +132,6 @@ export class PlatformSettingsDtoMapper {
 			toMentorTierEntity(dto.starter),
 			toMentorTierEntity(dto.rising),
 			toMentorTierEntity(dto.expert),
-			toMentorTierEntity(dto.elite),
 		);
 	}
 

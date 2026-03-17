@@ -32,11 +32,12 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 			return;
 		}
 
-		const baseTierId = String(
-			this._platformSettingsService.mentors.starter.level,
-		);
-
-		await this._mentorRepository.approve(mentorId, baseTierId);
+		const starterTier = this._platformSettingsService.mentors.starter;
+		await this._mentorRepository.approve(mentorId, {
+			name: starterTier.name,
+			max30minPayment: starterTier.maxPricePer30Min,
+			score: starterTier.minScore,
+		});
 		await this._userRepository.updateById(mentor.userId, { role: "MENTOR" });
 
 		await this._mailService.send(user.email, new MentorApprovalMailTemplate(), {

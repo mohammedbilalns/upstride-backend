@@ -42,6 +42,8 @@ export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 			input.currentRoleId,
 			input.organization,
 			input.yearsOfExperience,
+			0,
+			null,
 			null,
 			input.personalWebsite,
 			input.resumeId,

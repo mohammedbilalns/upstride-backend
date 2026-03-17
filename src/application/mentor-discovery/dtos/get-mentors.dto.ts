@@ -4,7 +4,7 @@ export interface GetMentorsInput {
 	excludeUserId?: string;
 	search?: string;
 	categoryId?: string;
-	tierId?: string;
+	tierName?: string;
 	minExperience?: number;
 	maxExperience?: number;
 	sort?: "rating" | "recent";
@@ -19,7 +19,7 @@ export interface MentorDiscoveryDto {
 	bio: string;
 	yearsOfExperience: number;
 	avgRating: number;
-	tierId: string | null;
+	tierName: string | null;
 	categoryIds: string[];
 	categories: {
 		id: string;

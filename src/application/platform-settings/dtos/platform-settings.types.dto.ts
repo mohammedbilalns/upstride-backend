@@ -24,18 +24,15 @@ export interface EconomySettingsDto {
 export interface MentorTierDto {
 	level: MentorTierLevel;
 	name: string;
-	rateForThirtyMinSession: number;
-	minFreeArticlesPercentage: number;
-	maxArticlesPerWeek: number;
-	minSessionCompleted: number;
-	minArticlesPublished: number;
+	minScore: number;
+	maxScore: number;
+	maxPricePer30Min: number;
 }
 
 export interface MentorSettingsDto {
 	starter: MentorTierDto;
 	rising: MentorTierDto;
 	expert: MentorTierDto;
-	elite: MentorTierDto;
 }
 
 export interface PremiumArticleRequirementDto {
