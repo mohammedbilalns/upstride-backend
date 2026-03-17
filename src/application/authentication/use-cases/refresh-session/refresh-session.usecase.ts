@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { inject, injectable } from "inversify";
 import type {
 	ISessionRepository,
@@ -6,6 +5,7 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { ITokenService } from "../../../services";
+import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { RefreshSessionInput, RefreshSessionOutput } from "../../dtos";
 import { AuthenticationError, UnauthorizedError } from "../../errors";
 import { assertUserCanAuthenticate } from "../helpers/assert-user-can-authenticate";
@@ -20,6 +20,8 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 		private _sessionRepository: ISessionRepository,
 		@inject(TYPES.Services.TokenService)
 		private _tokenService: ITokenService,
+		@inject(TYPES.Services.IdGenerator)
+		private _idGenerator: IIdGenerator,
 	) {}
 
 	async execute(input: RefreshSessionInput): Promise<RefreshSessionOutput> {
@@ -58,8 +60,8 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 
 			assertUserCanAuthenticate(user);
 
-			const accessTokenId = randomUUID();
-			const refreshTokenId = randomUUID();
+			const accessTokenId = this._idGenerator.generate();
+			const refreshTokenId = this._idGenerator.generate();
 
 			const newRefreshToken = this._tokenService.generateRefreshToken({
 				sub: user.id,

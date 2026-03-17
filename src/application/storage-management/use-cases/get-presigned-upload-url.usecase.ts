@@ -1,6 +1,6 @@
-import { randomUUID } from "node:crypto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../shared/types/types";
+import type { IIdGenerator } from "../../services/id-generator.service.interface";
 import type { IStorageService } from "../../services/storage.service.interface";
 import type {
 	GetPreSignedUploadUrlInput,
@@ -12,6 +12,8 @@ export class GetPreSignedUploadUrlUseCase {
 	constructor(
 		@inject(TYPES.Services.Storage)
 		private readonly storageService: IStorageService,
+		@inject(TYPES.Services.IdGenerator)
+		private readonly idGenerator: IIdGenerator,
 	) {}
 
 	async execute({
@@ -20,7 +22,7 @@ export class GetPreSignedUploadUrlUseCase {
 		category,
 	}: GetPreSignedUploadUrlInput): Promise<GetPreSignedUploadUrlOutput> {
 		const fileExtension = fileName.split(".").pop();
-		const key = `${category}/${randomUUID()}.${fileExtension}`;
+		const key = `${category}/${this.idGenerator.generate()}.${fileExtension}`;
 
 		const { url, fields } = await this.storageService.getPresignedPost(
 			key,

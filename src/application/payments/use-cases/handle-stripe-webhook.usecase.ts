@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { inject, injectable } from "inversify";
 import Stripe from "stripe";
 import { CoinTransactionType } from "../../../domain/entities/coin-transactions.entity";
@@ -11,6 +10,7 @@ import type { IPaymentTransactionRepository } from "../../../domain/repositories
 import env from "../../../shared/config/env";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";
+import type { IIdGenerator } from "../../services/id-generator.service.interface";
 import type { IWalletService } from "../../services/wallet.service.interface";
 import type { HandleStripeWebhookInput } from "../dtos/handle-stripe-webhook.dto";
 import type { IHandleStripeWebhookUseCase } from "./handle-stripe-webhook.usecase.interface";
@@ -24,6 +24,8 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 		private readonly paymentTransactionRepository: IPaymentTransactionRepository,
 		@inject(TYPES.Services.WalletService)
 		private readonly walletService: IWalletService,
+		@inject(TYPES.Services.IdGenerator)
+		private readonly idGenerator: IIdGenerator,
 	) {}
 
 	async execute(input: HandleStripeWebhookInput): Promise<void> {
@@ -57,7 +59,7 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 				if (!existing) {
 					const amountInMinor = session.amount_total ?? 0;
 					const transaction = new PaymentTransaction(
-						randomUUID(),
+						this.idGenerator.generate(),
 						userId,
 						PaymentProvider.Stripe,
 						session.id,

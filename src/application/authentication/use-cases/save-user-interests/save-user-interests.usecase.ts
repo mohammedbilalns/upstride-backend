@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { inject, injectable } from "inversify";
 import { Session } from "../../../../domain/entities/session.entity";
 import type {
@@ -12,6 +11,7 @@ import {
 	type ITokenService,
 	REFRESH_TOKEN_EXPIRES_IN,
 } from "../../../services";
+import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
@@ -32,6 +32,8 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 		private readonly _sessionRepository: ISessionRepository,
 		@inject(TYPES.Services.TokenService)
 		private readonly _tokenService: ITokenService,
+		@inject(TYPES.Services.IdGenerator)
+		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}
@@ -72,9 +74,9 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 
 		const finalUser = updatedUser || user;
 
-		const refreshTokenId = randomUUID();
-		const accessTokenId = randomUUID();
-		const sessionId = randomUUID();
+		const refreshTokenId = this._idGenerator.generate();
+		const accessTokenId = this._idGenerator.generate();
+		const sessionId = this._idGenerator.generate();
 
 		const accessToken = this._tokenService.generateAccessToken({
 			sub: finalUser.id,

@@ -1,6 +1,5 @@
-import { randomUUID } from "node:crypto";
 import { inject, injectable } from "inversify";
-import type { IWalletService } from "../../application/services/wallet.service.interface";
+import type { IIdGenerator, IWalletService } from "../../application/services";
 import {
 	CoinTransaction,
 	type CoinTransactionType,
@@ -16,6 +15,8 @@ export class WalletService implements IWalletService {
 		private readonly userRepository: IUserRepository,
 		@inject(TYPES.Repositories.CoinTransactionRepository)
 		private readonly transactionRepository: ICoinTransactionRepository,
+		@inject(TYPES.Services.IdGenerator)
+		private readonly idGenerator: IIdGenerator,
 	) {}
 
 	async credit(
@@ -29,7 +30,7 @@ export class WalletService implements IWalletService {
 
 		await this.transactionRepository.create(
 			new CoinTransaction(
-				randomUUID(),
+				this.idGenerator.generate(),
 				userId,
 				amount,
 				type,
@@ -60,7 +61,7 @@ export class WalletService implements IWalletService {
 
 		await this.transactionRepository.create(
 			new CoinTransaction(
-				randomUUID(),
+				this.idGenerator.generate(),
 				userId,
 				-amount,
 				type,

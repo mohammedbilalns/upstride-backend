@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import {
 	DeleteObjectCommand,
 	GetObjectCommand,
@@ -7,19 +6,26 @@ import {
 } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { inject, injectable } from "inversify";
 import type {
 	File,
+	IIdGenerator,
 	IStorageService,
 	PresignedPostResponse,
 } from "../../application/services";
 import env from "../../shared/config/env";
+import { TYPES } from "../../shared/types/types";
 
 // Stores files in S3 and issues signed access/upload URLs.
+@injectable()
 export class S3StorageService implements IStorageService {
 	private s3: S3Client;
 	private bucket: string;
 
-	constructor() {
+	constructor(
+		@inject(TYPES.Services.IdGenerator)
+		private readonly idGenerator: IIdGenerator,
+	) {
 		this.bucket = env.AWS_BUCKET_NAME;
 		this.s3 = new S3Client({
 			region: env.AWS_REGION,
@@ -33,8 +39,8 @@ export class S3StorageService implements IStorageService {
 	async upload(file: File, folder?: string): Promise<string> {
 		const fileExtension = file.originalname.split(".").pop();
 		const key = folder
-			? `${folder}/${randomUUID()}.${fileExtension}`
-			: `${randomUUID()}.${fileExtension}`;
+			? `${folder}/${this.idGenerator.generate()}.${fileExtension}`
+			: `${this.idGenerator.generate()}.${fileExtension}`;
 
 		const command = new PutObjectCommand({
 			Bucket: this.bucket,
