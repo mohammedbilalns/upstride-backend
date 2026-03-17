@@ -7,5 +7,8 @@ export * from "./payment-transactions.repository";
 export * from "./platform-settings.repository";
 export * from "./saved-mentor.repository";
 export * from "./session.repository";
+export * from "./session-availability.repository";
+export * from "./session-booking.repository";
+export * from "./session-slot.repository";
 export * from "./skill.repository";
 export * from "./user.repository";
