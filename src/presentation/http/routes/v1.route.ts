@@ -1,14 +1,13 @@
 import { Router } from "express";
 import { ROUTES } from "../constants";
-import {
-	authRouter,
-	catalogRouter,
-	fileRouter,
-	mentorRouter,
-	platformSettingsRouter,
-	profileRouter,
-	userManagementRouter,
-} from ".";
+import { authRouter } from "./auth.route";
+import { catalogRouter } from "./catalog.route";
+import { fileRouter } from "./file.route";
+import { mentorRouter } from "./mentor.route";
+import { mentorListRouter } from "./mentor-list.route";
+import { platformSettingsRouter } from "./platform-settings.route";
+import { profileRouter } from "./profile.route";
+import userManagementRouter from "./user-management.route";
 
 export const router = Router();
 
@@ -22,4 +21,5 @@ router.use(ROUTES.CATALOG.BASE, catalogRouter);
 router.use(ROUTES.USER_MANAGEMENT.BASE, userManagementRouter);
 router.use(ROUTES.STORAGE.BASE, fileRouter);
 router.use(ROUTES.MENTOR.BASE, mentorRouter);
+router.use(ROUTES.MENTOR_LISTS.BASE, mentorListRouter);
 router.use(ROUTES.PLATFORM_SETTINGS.BASE, platformSettingsRouter);

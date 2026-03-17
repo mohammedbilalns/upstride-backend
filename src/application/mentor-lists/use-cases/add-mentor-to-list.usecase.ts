@@ -8,7 +8,7 @@ import type { AddMentorToListInput } from "../dtos/mentor-list.dto";
 import {
 	MaxMentorsPerListError,
 	MentorAlreadySavedError,
-	MentorNotFoundError,
+	MentorListNotFoundError,
 } from "../errors";
 import type { IAddMentorToListUseCase } from "./add-mentor-to-list.usecase.interface";
 
@@ -37,7 +37,7 @@ export class AddMentorToListUseCase implements IAddMentorToListUseCase {
 		]);
 
 		if (!list) {
-			throw new MentorNotFoundError();
+			throw new MentorListNotFoundError();
 		}
 
 		if (existing) {
