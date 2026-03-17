@@ -10,5 +10,6 @@ export * from "./payment.controller";
 export * from "./platform-settings.controller";
 export * from "./profile.controller";
 export * from "./recurring-rule.controller";
+export * from "./session-slot.controller";
 export * from "./user-management.controller";
 export * from "./wallet.controller";

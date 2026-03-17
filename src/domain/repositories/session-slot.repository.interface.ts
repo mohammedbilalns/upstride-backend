@@ -10,4 +10,10 @@ export interface ISessionSlotRepository
 		FindByIdRepository<SessionSlot>,
 		UpdatableByIdRepository<SessionSlot> {
 	findByMentorId(mentorId: string): Promise<SessionSlot[]>;
+	findByMentorIdAndRange(
+		mentorId: string,
+		startDate: Date,
+		endDate: Date,
+	): Promise<SessionSlot[]>;
+	deleteById(id: string): Promise<void>;
 }

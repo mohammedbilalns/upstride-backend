@@ -38,6 +38,20 @@ export class MongoSessionSlotRepository
 		return docs.map((doc) => this.toDomain(doc as SessionSlotDocument));
 	}
 
+	async findByMentorIdAndRange(
+		mentorId: string,
+		startDate: Date,
+		endDate: Date,
+	): Promise<SessionSlot[]> {
+		const docs = await this.model
+			.find({
+				mentorId,
+				startTime: { $gte: startDate, $lte: endDate },
+			})
+			.lean();
+		return docs.map((doc) => this.toDomain(doc as SessionSlotDocument));
+	}
+
 	async updateById(
 		id: string,
 		data: Partial<SessionSlot>,
@@ -46,5 +60,9 @@ export class MongoSessionSlotRepository
 			.findByIdAndUpdate(id, data, { returnDocument: "after" })
 			.lean();
 		return doc ? this.toDomain(doc as SessionSlotDocument) : null;
+	}
+
+	async deleteById(id: string): Promise<void> {
+		await this.model.findByIdAndDelete(id).lean();
 	}
 }

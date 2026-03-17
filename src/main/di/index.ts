@@ -10,6 +10,7 @@ export * from "./platform-settings.di";
 export * from "./presentation.di";
 export * from "./profile.di";
 export * from "./recurring-rule.di";
+export * from "./session-slot.di";
 export * from "./storage.di";
 export * from "./user-management.di";
 export * from "./wallet.di";

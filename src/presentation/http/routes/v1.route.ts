@@ -10,6 +10,7 @@ import { paymentRouter } from "./payment.route";
 import { platformSettingsRouter } from "./platform-settings.route";
 import { profileRouter } from "./profile.route";
 import { recurringRuleRouter } from "./recurring-rule.route";
+import { sessionSlotRouter } from "./session-slot.route";
 import userManagementRouter from "./user-management.route";
 import { walletRouter } from "./wallet.route";
 
@@ -28,6 +29,7 @@ router.use(ROUTES.STORAGE.BASE, fileRouter);
 router.use(ROUTES.MENTOR.BASE, mentorRouter);
 router.use(ROUTES.MENTOR_LISTS.BASE, mentorListRouter);
 router.use(ROUTES.RECURRING_RULES.BASE, recurringRuleRouter);
+router.use(ROUTES.SESSION_SLOTS.BASE, sessionSlotRouter);
 router.use(ROUTES.PLATFORM_SETTINGS.BASE, platformSettingsRouter);
 router.use(ROUTES.PAYMENTS.BASE, paymentRouter);
 router.use(ROUTES.WALLET.BASE, walletRouter);

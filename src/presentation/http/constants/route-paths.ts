@@ -83,6 +83,15 @@ export const ROUTES = {
 		ENABLE: (ruleId: string) => `/${ruleId}/enable`,
 		DISABLE: (ruleId: string) => `/${ruleId}/disable`,
 	},
+	SESSION_SLOTS: {
+		BASE: "/session-slots",
+		ROOT: "/",
+		CUSTOM: "/custom",
+		GENERATE: "/generate",
+		BY_ID: (slotId: string) => `/${slotId}`,
+		CANCEL: (slotId: string) => `/${slotId}/cancel`,
+		ENABLE: (slotId: string) => `/${slotId}/enable`,
+	},
 	PLATFORM_SETTINGS: {
 		BASE: "/platform-settings",
 		FETCH: "/fetch",
