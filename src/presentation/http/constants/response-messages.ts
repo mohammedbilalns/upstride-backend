@@ -35,6 +35,13 @@ export const UserManagementResponseMessages = {
 	USER_BLOCKED_SUCCESS: "User blocked successfully",
 };
 
+export const AdminManagementResponseMessages = {
+	ADMINS_FETCHED_SUCCESS: "Admins fetched successfully",
+	ADMIN_CREATED_SUCCESS: "Admin created successfully",
+	ADMIN_UNBLOCKED_SUCCESS: "Admin unblocked successfully",
+	ADMIN_BLOCKED_SUCCESS: "Admin blocked successfully",
+};
+
 export const MentorResponseMessages = {
 	FETCH_REGISTRATION_INFO_SUCCESS:
 		"Mentor registration info fetched successfully",

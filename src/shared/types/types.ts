@@ -70,6 +70,10 @@ export const TYPES = {
 		GetUsers: Symbol.for("GetUsersUseCase"),
 		BlockUser: Symbol.for("BlockUserUseCase"),
 		UnblockUser: Symbol.for("UnblockUserUseCase"),
+		GetAdmins: Symbol.for("GetAdminsUseCase"),
+		CreateAdmin: Symbol.for("CreateAdminUseCase"),
+		BlockAdmin: Symbol.for("BlockAdminUseCase"),
+		UnblockAdmin: Symbol.for("UnblockAdminUseCase"),
 		GetPreSignedUploadUrl: Symbol.for("GetPreSignedUploadUrlUseCase"),
 		GetPreSignedDownloadUrl: Symbol.for("GetPreSignedDownloadUrlUseCase"),
 		DeleteFile: Symbol.for("DeleteFileUseCase"),
@@ -101,6 +105,7 @@ export const TYPES = {
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
+		AdminManagement: Symbol.for("AdminManagementController"),
 		Authentication: Symbol.for("AuthenticationController"),
 		SkillManagement: Symbol.for("SkillManagementController"),
 		CatalogManagement: Symbol.for("CatalogManagementController"),
