@@ -5,3 +5,4 @@ export * from "./mail.service";
 export * from "./otp-generator.service";
 export * from "./password.service";
 export * from "./s3-storage.service";
+export * from "./uuid-generator.service";

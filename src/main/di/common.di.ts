@@ -1,6 +1,7 @@
 import { Queue } from "bullmq";
 import type { Container } from "inversify";
 import type {
+	IIdGenerator,
 	IMailService,
 	IPasswordService,
 	IPlatformSettingsCache,
@@ -8,15 +9,19 @@ import type {
 } from "../../application/services";
 import { PlatformSettingsService } from "../../application/services";
 import type {
+	IMentorListRepository,
 	IMentorRepository,
 	IPlatformSettingsRepository,
 	IProfessionRepository,
+	ISavedMentorRepository,
 } from "../../domain/repositories";
 import { RedisPlatformSettingsCache } from "../../infrastructure/cache/redis-platform-settings.cache";
 import {
 	MongoInterestRepository,
+	MongoMentorListRepository,
 	MongoMentorRepository,
 	MongoPlatformSettingsRepository,
+	MongoSavedMentorRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
 	MongoUserRepository,
@@ -33,6 +38,7 @@ import {
 	LinkedInOAuthService,
 	MailService,
 	S3StorageService,
+	UuidGenerator,
 } from "../../infrastructure/services";
 import { TYPES } from "../../shared/types/types";
 
@@ -50,6 +56,10 @@ export const registerCommonBindings = (container: Container): void => {
 	container.bind(TYPES.Services.GoogleOAuth).to(GoogleOAuthService);
 	container.bind(TYPES.Services.LinkedInOAuth).to(LinkedInOAuthService);
 	container.bind<IStorageService>(TYPES.Services.Storage).to(S3StorageService);
+	container
+		.bind<IIdGenerator>(TYPES.Services.IdGenerator)
+		.to(UuidGenerator)
+		.inSingletonScope();
 	container
 		.bind<IPlatformSettingsCache>(TYPES.Caches.PlatformSettings)
 		.to(RedisPlatformSettingsCache)
@@ -96,6 +106,14 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<IMentorRepository>(TYPES.Repositories.MentorRepository)
 		.to(MongoMentorRepository)
+		.inSingletonScope();
+	container
+		.bind<IMentorListRepository>(TYPES.Repositories.MentorListRepository)
+		.to(MongoMentorListRepository)
+		.inSingletonScope();
+	container
+		.bind<ISavedMentorRepository>(TYPES.Repositories.SavedMentorRepository)
+		.to(MongoSavedMentorRepository)
 		.inSingletonScope();
 
 	container.bind(TYPES.Databases.Redis).toConstantValue(redisClient);

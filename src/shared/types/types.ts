@@ -9,6 +9,7 @@ export const TYPES = {
 		AuthSession: Symbol.for("AuthSession"),
 		PlatformSettings: Symbol.for("PlatformSettings"),
 		Storage: Symbol.for("Storage"),
+		IdGenerator: Symbol.for("IdGenerator"),
 	},
 	Caches: {
 		PlatformSettings: Symbol.for("PlatformSettingsCache"),
@@ -26,6 +27,8 @@ export const TYPES = {
 		SkillRepository: Symbol.for("SkillRepository"),
 		MentorRepository: Symbol.for("MentorRepository"),
 		ProfessionRepository: Symbol.for("ProfessionRepository"),
+		MentorListRepository: Symbol.for("MentorListRepository"),
+		SavedMentorRepository: Symbol.for("SavedMentorRepository"),
 	},
 	Databases: {
 		Redis: Symbol.for("Redis"),
@@ -78,6 +81,12 @@ export const TYPES = {
 		UpdateSessionSettings: Symbol.for("UpdateSessionSettingsUseCase"),
 		GetProfile: Symbol.for("GetProfileUseCase"),
 		UpdateProfile: Symbol.for("UpdateProfileUseCase"),
+		GetMentorLists: Symbol.for("GetMentorListsUseCase"),
+		GetMentorList: Symbol.for("GetMentorListUseCase"),
+		CreateMentorList: Symbol.for("CreateMentorListUseCase"),
+		AddMentorToList: Symbol.for("AddMentorToListUseCase"),
+		RemoveMentorFromList: Symbol.for("RemoveMentorFromListUseCase"),
+		DeleteMentorList: Symbol.for("DeleteMentorListUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
