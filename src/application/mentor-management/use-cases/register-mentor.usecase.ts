@@ -14,9 +14,9 @@ import type { IRegisterMentorUseCase } from "./register-mentor.usecase.interface
 export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorRepository)
-		private readonly mentorRepository: IMentorRepository,
+		private readonly _mentorRepository: IMentorRepository,
 		@inject(TYPES.Services.IdGenerator)
-		private readonly idGenerator: IIdGenerator,
+		private readonly _idGenerator: IIdGenerator,
 	) {}
 
 	async execute(input: RegisterMentorInput): Promise<void> {
@@ -36,7 +36,7 @@ export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 		}
 
 		const mentor = new Mentor(
-			existingMentor?.id || this.idGenerator.generate(),
+			existingMentor?.id || this._idGenerator.generate(),
 			input.userId,
 			input.bio,
 			input.currentRoleId,

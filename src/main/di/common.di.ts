@@ -44,7 +44,6 @@ import {
 	MailService,
 	NodeEventBus,
 	S3StorageService,
-	UuidGenerator,
 	StripePaymentService,
 	UuidGenerator,
 	WalletService,
@@ -65,10 +64,6 @@ export const registerCommonBindings = (container: Container): void => {
 	container.bind(TYPES.Services.GoogleOAuth).to(GoogleOAuthService);
 	container.bind(TYPES.Services.LinkedInOAuth).to(LinkedInOAuthService);
 	container.bind<IStorageService>(TYPES.Services.Storage).to(S3StorageService);
-	container
-		.bind<IIdGenerator>(TYPES.Services.IdGenerator)
-		.to(UuidGenerator)
-		.inSingletonScope();
 	container
 		.bind<IPlatformSettingsCache>(TYPES.Caches.PlatformSettings)
 		.to(RedisPlatformSettingsCache)
