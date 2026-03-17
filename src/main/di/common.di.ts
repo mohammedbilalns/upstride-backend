@@ -14,8 +14,10 @@ import type {
 } from "../../domain/repositories";
 import { RedisPlatformSettingsCache } from "../../infrastructure/cache/redis-platform-settings.cache";
 import {
+	MongoCoinTransactionRepository,
 	MongoInterestRepository,
 	MongoMentorRepository,
+	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
@@ -64,8 +66,16 @@ export const registerCommonBindings = (container: Container): void => {
 		.to(MongoUserRepository)
 		.inSingletonScope();
 	container
+		.bind(TYPES.Repositories.CoinTransactionRepository)
+		.to(MongoCoinTransactionRepository)
+		.inSingletonScope();
+	container
 		.bind(TYPES.Repositories.OtpRepository)
 		.to(RedisOtpRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.PaymentTransactionRepository)
+		.to(MongoPaymentTransactionRepository)
 		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.SessionRepository)

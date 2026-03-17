@@ -18,7 +18,9 @@ export const TYPES = {
 	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),
+		CoinTransactionRepository: Symbol.for("CoinTransactionRepository"),
 		OtpRepository: Symbol.for("OtpRepository"),
+		PaymentTransactionRepository: Symbol.for("PaymentTransactionRepository"),
 		SessionRepository: Symbol.for("SessionRepository"),
 		TokenRevocationRepository: Symbol.for("TokenRevocationRepository"),
 		PlatformSettingsRepository: Symbol.for("PlatformSettingsRepository"),

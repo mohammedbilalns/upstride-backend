@@ -1,0 +1,132 @@
+import { injectable } from "inversify";
+import type { QueryFilter } from "mongoose";
+import type { CoinTransaction } from "../../../../domain/entities/coin-transactions.entity";
+import type { PaginateParams } from "../../../../domain/repositories";
+import type { QueryParams } from "../../../../domain/repositories/capabilities";
+import type { PaginatedResult } from "../../../../domain/repositories/capabilities/paginatable.repository.interface";
+import type {
+	CoinTransactionQuery,
+	ICoinTransactionRepository,
+} from "../../../../domain/repositories/coin-transactions.repository.interface";
+import { CoinTransactionMapper } from "../mappers/coin-transactions.mapper";
+import {
+	type CoinTransactionDocument,
+	CoinTransactionModel,
+} from "../models/coin-transactions.model";
+import { AbstractMongoRepository } from "./abstract.repository";
+
+@injectable()
+export class MongoCoinTransactionRepository
+	extends AbstractMongoRepository<CoinTransaction, CoinTransactionDocument>
+	implements ICoinTransactionRepository
+{
+	constructor() {
+		super(CoinTransactionModel);
+	}
+
+	protected toDomain(doc: CoinTransactionDocument): CoinTransaction {
+		return CoinTransactionMapper.toDomain(doc);
+	}
+
+	protected toDocument(
+		entity: CoinTransaction,
+	): Partial<CoinTransactionDocument> {
+		return CoinTransactionMapper.toDocument(entity);
+	}
+
+	async create(transaction: CoinTransaction): Promise<CoinTransaction> {
+		return this.createDocument(transaction);
+	}
+
+	async findById(id: string): Promise<CoinTransaction | null> {
+		return this.findByIdDocument(id);
+	}
+
+	async findAllByUserId(userId: string): Promise<CoinTransaction[]> {
+		const docs = await this.model
+			.find({ userId })
+			.sort({ createdAt: -1 })
+			.lean();
+
+		return docs.map((doc) => this.toDomain(doc as CoinTransactionDocument));
+	}
+
+	async query({
+		query,
+		sort,
+	}: QueryParams<CoinTransactionQuery>): Promise<CoinTransaction[]> {
+		const filter: QueryFilter<CoinTransactionDocument> = {};
+
+		if (query?.userId) {
+			filter.userId = query.userId;
+		}
+
+		if (query?.type) {
+			filter.type = Array.isArray(query.type)
+				? { $in: query.type }
+				: query.type;
+		}
+
+		if (query?.referenceType) {
+			filter.referenceType = query.referenceType;
+		}
+
+		if (query?.referenceId) {
+			filter.referenceId = query.referenceId;
+		}
+
+		const docs = await this.model
+			.find(filter)
+			.sort(sort ?? { createdAt: -1 })
+			.lean();
+
+		return docs.map((doc) => this.toDomain(doc as CoinTransactionDocument));
+	}
+
+	async paginate({
+		page,
+		limit,
+		query,
+		sort,
+	}: PaginateParams<CoinTransactionQuery>): Promise<
+		PaginatedResult<CoinTransaction>
+	> {
+		const filter: QueryFilter<CoinTransactionDocument> = {};
+
+		if (query?.userId) {
+			filter.userId = query.userId;
+		}
+
+		if (query?.type) {
+			filter.type = Array.isArray(query.type)
+				? { $in: query.type }
+				: query.type;
+		}
+
+		if (query?.referenceType) {
+			filter.referenceType = query.referenceType;
+		}
+
+		if (query?.referenceId) {
+			filter.referenceId = query.referenceId;
+		}
+
+		const skip = (page - 1) * limit;
+
+		const [docs, total] = await Promise.all([
+			this.model
+				.find(filter)
+				.sort(sort ?? { createdAt: -1 })
+				.skip(skip)
+				.limit(limit)
+				.lean(),
+			this.model.countDocuments(filter),
+		]);
+
+		const items = docs.map((doc) =>
+			this.toDomain(doc as CoinTransactionDocument),
+		);
+
+		return this.buildPaginatedResult(items, total, page, limit);
+	}
+}
