@@ -7,3 +7,4 @@ export * from "./platform-settings.service";
 export * from "./platform-settings-cache.interface";
 export * from "./storage.service.interface";
 export * from "./token.service.interface";
+export * from "./wallet.service.interface";

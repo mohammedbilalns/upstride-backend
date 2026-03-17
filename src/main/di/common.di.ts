@@ -5,6 +5,7 @@ import type {
 	IPasswordService,
 	IPlatformSettingsCache,
 	IStorageService,
+	IWalletService,
 } from "../../application/services";
 import { PlatformSettingsService } from "../../application/services";
 import type {
@@ -35,6 +36,7 @@ import {
 	LinkedInOAuthService,
 	MailService,
 	S3StorageService,
+	WalletService,
 } from "../../infrastructure/services";
 import { TYPES } from "../../shared/types/types";
 
@@ -59,6 +61,10 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<PlatformSettingsService>(TYPES.Services.PlatformSettings)
 		.to(PlatformSettingsService)
+		.inSingletonScope();
+	container
+		.bind<IWalletService>(TYPES.Services.WalletService)
+		.to(WalletService)
 		.inSingletonScope();
 
 	container

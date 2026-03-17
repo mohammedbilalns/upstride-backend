@@ -9,6 +9,7 @@ export const TYPES = {
 		AuthSession: Symbol.for("AuthSession"),
 		PlatformSettings: Symbol.for("PlatformSettings"),
 		Storage: Symbol.for("Storage"),
+		WalletService: Symbol.for("WalletService"),
 	},
 	Caches: {
 		PlatformSettings: Symbol.for("PlatformSettingsCache"),
