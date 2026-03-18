@@ -1,3 +1,5 @@
+import type { PaymentProvider } from "../../domain/entities/payment-transactions.entity";
+
 export type PaymentWebhookEventType =
 	| "checkout.session.completed"
 	| "checkout.session.expired"
@@ -5,6 +7,7 @@ export type PaymentWebhookEventType =
 
 export interface PaymentWebhookEvent {
 	type: PaymentWebhookEventType;
+	provider: PaymentProvider;
 	sessionId: string;
 	userId?: string;
 	coins: number;

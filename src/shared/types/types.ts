@@ -129,6 +129,7 @@ export const TYPES = {
 		GetMentorBookings: Symbol.for("GetMentorBookingsUseCase"),
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
 		HandlePaymentWebhook: Symbol.for("HandlePaymentWebhookUseCase"),
+		ProcessPaymentEvent: Symbol.for("ProcessPaymentEventUseCase"),
 		GetCoinBalance: Symbol.for("GetCoinBalanceUseCase"),
 		GetCoinTransactions: Symbol.for("GetCoinTransactionsUseCase"),
 		GetPaymentTransactions: Symbol.for("GetPaymentTransactionsUseCase"),

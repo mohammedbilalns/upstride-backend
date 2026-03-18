@@ -6,6 +6,7 @@ import type {
 	PaymentWebhookEventType,
 	PaymentWebhookParseInput,
 } from "../../application/services/payment-webhook.parser.interface";
+import { PaymentProvider } from "../../domain/entities/payment-transactions.entity";
 import env from "../../shared/config/env";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
@@ -44,6 +45,7 @@ export class StripeWebhookParser implements IPaymentWebhookParser {
 
 		return {
 			type,
+			provider: PaymentProvider.Stripe,
 			sessionId: session.id,
 			userId,
 			coins,

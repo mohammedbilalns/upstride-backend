@@ -19,7 +19,6 @@ import type {
 	IProfessionRepository,
 	ISavedMentorRepository,
 } from "../../domain/repositories";
-import { RedisPlatformSettingsCache } from "../../infrastructure/cache/redis-platform-settings.cache";
 import {
 	MongoCoinTransactionRepository,
 	MongoInterestRepository,
@@ -38,6 +37,7 @@ import {
 } from "../../infrastructure/database/mongodb/repositories";
 import { MongoProfessionRepository } from "../../infrastructure/database/mongodb/repositories/profession.repository";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
+import { RedisPlatformSettingsCache } from "../../infrastructure/database/redis/redis-platform-settings.cache";
 import { RedisOtpRepository } from "../../infrastructure/database/redis/repositories/otp.repository";
 import { RedisTokenRevocationRepository } from "../../infrastructure/database/redis/repositories/token-revokation.repository";
 import {
