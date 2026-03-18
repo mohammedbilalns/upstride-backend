@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import { Types } from "mongoose";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import type { ISessionSlotRepository } from "../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../shared/types/types";
@@ -30,10 +29,6 @@ export class GetPublicMentorProfileUseCase
 		mentorId,
 		requesterUserId,
 	}: GetPublicMentorProfileInput): Promise<GetPublicMentorProfileResponse> {
-		if (!Types.ObjectId.isValid(mentorId)) {
-			throw new MentorNotFoundError();
-		}
-
 		const profile = await this._mentorRepository.findProfileById(mentorId);
 		if (!profile || !profile.isApproved || profile.isRejected) {
 			throw new MentorNotFoundError();

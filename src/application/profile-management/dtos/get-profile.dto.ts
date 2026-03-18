@@ -1,4 +1,5 @@
 import type {
+	AuthType,
 	SkillLevel,
 	UserRole,
 } from "../../../domain/entities/user.entity";
@@ -30,6 +31,7 @@ export interface UserWithPopulatedPreferences {
 	phone: string;
 	coinBalance: number;
 	role: UserRole;
+	authType: AuthType;
 	profilePictureId: string | null;
 	preferences?: {
 		interests: PopulatedInterest[];
@@ -44,6 +46,7 @@ export interface UserProfileDTO {
 	phone: string;
 	coinBalance: number;
 	role: UserRole;
+	authType: AuthType;
 	profilePictureUrl: string | null;
 	preferences?: {
 		interests: {
