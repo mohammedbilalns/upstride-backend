@@ -52,6 +52,53 @@ export class MongoSessionSlotRepository
 		return docs.map((doc) => this.toDomain(doc as SessionSlotDocument));
 	}
 
+	async findAvailableByMentorIdAndRange(
+		mentorId: string,
+		startDate: Date,
+		endDate: Date,
+	): Promise<SessionSlot[]> {
+		const docs = await this.model
+			.find({
+				mentorId,
+				status: "available",
+				startTime: { $gte: startDate, $lte: endDate },
+			})
+			.lean();
+		return docs.map((doc) => this.toDomain(doc as SessionSlotDocument));
+	}
+
+	async findUpcomingAvailableByMentorId(
+		mentorId: string,
+		limit: number,
+		startTime: Date = new Date(),
+	): Promise<SessionSlot[]> {
+		const docs = await this.model
+			.find({
+				mentorId,
+				status: "available",
+				startTime: { $gte: startTime },
+			})
+			.sort({ startTime: 1 })
+			.limit(Math.max(0, limit))
+			.lean();
+		return docs.map((doc) => this.toDomain(doc as SessionSlotDocument));
+	}
+
+	async findOverlapping(
+		mentorId: string,
+		startTime: Date,
+		endTime: Date,
+	): Promise<SessionSlot[]> {
+		const docs = await this.model
+			.find({
+				mentorId,
+				startTime: { $lt: endTime },
+				endTime: { $gt: startTime },
+			})
+			.lean();
+		return docs.map((doc) => this.toDomain(doc as SessionSlotDocument));
+	}
+
 	async updateById(
 		id: string,
 		data: Partial<SessionSlot>,

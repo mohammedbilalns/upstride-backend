@@ -10,3 +10,5 @@ export * from "./generate-slots.usecase";
 export * from "./generate-slots.usecase.interface";
 export * from "./get-mentor-slots.usecase";
 export * from "./get-mentor-slots.usecase.interface";
+export * from "./get-public-mentor-available-slots.usecase";
+export * from "./get-public-mentor-available-slots.usecase.interface";

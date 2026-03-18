@@ -15,5 +15,20 @@ export interface ISessionSlotRepository
 		startDate: Date,
 		endDate: Date,
 	): Promise<SessionSlot[]>;
+	findAvailableByMentorIdAndRange(
+		mentorId: string,
+		startDate: Date,
+		endDate: Date,
+	): Promise<SessionSlot[]>;
+	findUpcomingAvailableByMentorId(
+		mentorId: string,
+		limit: number,
+		startTime?: Date,
+	): Promise<SessionSlot[]>;
+	findOverlapping(
+		mentorId: string,
+		startTime: Date,
+		endTime: Date,
+	): Promise<SessionSlot[]>;
 	deleteById(id: string): Promise<void>;
 }

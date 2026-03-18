@@ -43,6 +43,12 @@ export class Availability {
 					"slot duration must be 30 or 60",
 				);
 			}
+			if (rule.endTime - rule.startTime !== rule.slotDuration) {
+				throw new EntityValidationError(
+					"Availability",
+					"end time must match start time plus duration",
+				);
+			}
 		}
 	}
 }

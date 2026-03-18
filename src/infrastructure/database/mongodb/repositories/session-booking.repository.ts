@@ -1,4 +1,5 @@
 import { injectable } from "inversify";
+import type { SortOrder } from "mongoose";
 import type { SessionBooking } from "../../../../domain/entities/session-booking.entity";
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import { SessionBookingMapper } from "../mappers/session-booking.mapper";
@@ -53,5 +54,83 @@ export class MongoSessionBookingRepository
 			.findByIdAndUpdate(id, data, { returnDocument: "after" })
 			.lean();
 		return doc ? this.toDomain(doc as SessionBookingDocument) : null;
+	}
+
+	async paginateByUser(
+		userId: string,
+		filter: "all" | "past" | "cancelled" | "upcoming",
+		page: number,
+		limit: number,
+	) {
+		const { query, sort } = this.buildFilterQuery(filter);
+		const skip = (page - 1) * limit;
+		const fullQuery = { userId, ...query };
+
+		const [docs, total] = await Promise.all([
+			this.model.find(fullQuery).sort(sort).skip(skip).limit(limit).lean(),
+			this.model.countDocuments(fullQuery),
+		]);
+
+		return this.buildPaginatedResult(
+			docs.map((doc) => this.toDomain(doc as SessionBookingDocument)),
+			total,
+			page,
+			limit,
+		);
+	}
+
+	async paginateByMentor(
+		mentorId: string,
+		filter: "all" | "past" | "cancelled" | "upcoming",
+		page: number,
+		limit: number,
+	) {
+		const { query, sort } = this.buildFilterQuery(filter);
+		const skip = (page - 1) * limit;
+		const fullQuery = { mentorId, ...query };
+
+		const [docs, total] = await Promise.all([
+			this.model.find(fullQuery).sort(sort).skip(skip).limit(limit).lean(),
+			this.model.countDocuments(fullQuery),
+		]);
+
+		return this.buildPaginatedResult(
+			docs.map((doc) => this.toDomain(doc as SessionBookingDocument)),
+			total,
+			page,
+			limit,
+		);
+	}
+
+	private buildFilterQuery(filter: "all" | "past" | "cancelled" | "upcoming"): {
+		query: Record<string, unknown>;
+		sort: Record<string, SortOrder>;
+	} {
+		const now = new Date();
+		switch (filter) {
+			case "cancelled":
+				return {
+					query: { status: "cancelled" as const },
+					sort: { updatedAt: -1 },
+				};
+			case "past":
+				return {
+					query: {
+						endTime: { $lt: now },
+						status: { $in: ["confirmed", "completed"] },
+					},
+					sort: { startTime: -1 },
+				};
+			case "upcoming":
+				return {
+					query: {
+						endTime: { $gte: now },
+						status: { $in: ["confirmed", "pending"] },
+					},
+					sort: { startTime: 1 },
+				};
+			default:
+				return { query: {}, sort: { startTime: -1 } };
+		}
 	}
 }

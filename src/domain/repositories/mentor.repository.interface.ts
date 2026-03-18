@@ -62,6 +62,30 @@ export interface MentorDiscoveryDetails extends Mentor {
 	}[];
 }
 
+export interface MentorProfileDetails extends Mentor {
+	user: {
+		name: string;
+		email: string;
+		profilePictureId?: string;
+	};
+	currentRoleDetails: {
+		id: string;
+		name: string;
+	};
+	expertisesDetails: {
+		id: string;
+		name: string;
+	}[];
+	skillsDetails: {
+		skillId: {
+			id: string;
+			name: string;
+			interestId: string;
+		};
+		level: string;
+	}[];
+}
+
 export interface IMentorRepository
 	extends FindByIdRepository<Mentor>,
 		CreatableRepository<Mentor>,
@@ -88,4 +112,6 @@ export interface IMentorRepository
 	paginateDiscoverable(
 		params: PaginateParams<MentorDiscoveryQuery>,
 	): Promise<PaginatedResult<MentorDiscoveryDetails>>;
+	findProfileByUserId(userId: string): Promise<MentorProfileDetails | null>;
+	findProfileById(mentorId: string): Promise<MentorProfileDetails | null>;
 }
