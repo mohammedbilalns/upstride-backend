@@ -1,6 +1,5 @@
 import type { Worker } from "bullmq";
 import type { PlatformSettingsService } from "../application/services";
-import { bootstrapEvents } from "../infrastructure/bootstrap/events.js";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -9,6 +8,7 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
+import { bootstrapEvents } from "../infrastructure/events/bootstrap";
 import { createMailWorker } from "../infrastructure/queue/workers/mail.worker.js";
 import env from "../shared/config/env.js";
 import logger from "../shared/logging/logger.js";

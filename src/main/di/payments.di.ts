@@ -1,9 +1,9 @@
 import type { Container } from "inversify";
 import {
 	CreateCheckoutSessionUseCase,
-	HandleStripeWebhookUseCase,
+	HandlePaymentWebhookUseCase,
 	type ICreateCheckoutSessionUseCase,
-	type IHandleStripeWebhookUseCase,
+	type IHandlePaymentWebhookUseCase,
 } from "../../application/payments/use-cases";
 import { TYPES } from "../../shared/types/types";
 
@@ -13,7 +13,7 @@ export const registerPaymentsBindings = (container: Container): void => {
 		.to(CreateCheckoutSessionUseCase)
 		.inSingletonScope();
 	container
-		.bind<IHandleStripeWebhookUseCase>(TYPES.UseCases.HandleStripeWebhook)
-		.to(HandleStripeWebhookUseCase)
+		.bind<IHandlePaymentWebhookUseCase>(TYPES.UseCases.HandlePaymentWebhook)
+		.to(HandlePaymentWebhookUseCase)
 		.inSingletonScope();
 };

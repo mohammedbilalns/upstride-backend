@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import Stripe from "stripe";
 import { CoinTransactionType } from "../../../domain/entities/coin-transactions.entity";
 import {
 	PaymentProvider,
@@ -7,54 +6,57 @@ import {
 	PaymentTransaction,
 } from "../../../domain/entities/payment-transactions.entity";
 import type { IPaymentTransactionRepository } from "../../../domain/repositories/payment-transactions.repository.interface";
-import env from "../../../shared/config/env";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";
 import type { IIdGenerator } from "../../services/id-generator.service.interface";
+import type { IPaymentWebhookParser } from "../../services/payment-webhook.parser.interface";
 import type { IWalletService } from "../../services/wallet.service.interface";
-import type { HandleStripeWebhookInput } from "../dtos/handle-stripe-webhook.dto";
-import type { IHandleStripeWebhookUseCase } from "./handle-stripe-webhook.usecase.interface";
-
-const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+import type { HandlePaymentWebhookInput } from "../dtos/handle-payment-webhook.dto";
+import type { IHandlePaymentWebhookUseCase } from "./handle-payment-webhook.usecase.interface";
 
 @injectable()
-export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
+export class HandlePaymentWebhookUseCase
+	implements IHandlePaymentWebhookUseCase
+{
 	constructor(
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
 		private readonly paymentTransactionRepository: IPaymentTransactionRepository,
 		@inject(TYPES.Services.WalletService)
 		private readonly walletService: IWalletService,
+		@inject(TYPES.Services.PaymentWebhookParser)
+		private readonly paymentWebhookParser: IPaymentWebhookParser,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly idGenerator: IIdGenerator,
 	) {}
 
-	async execute(input: HandleStripeWebhookInput): Promise<void> {
-		const event = stripe.webhooks.constructEvent(
-			input.payload,
-			input.signature,
-			env.STRIPE_WEBHOOK_SECRET,
-		);
+	async execute(input: HandlePaymentWebhookInput): Promise<void> {
+		const event = await this.paymentWebhookParser.parse(input);
+		if (!event) {
+			return;
+		}
 
 		switch (event.type) {
 			case "checkout.session.completed": {
-				const session = event.data.object as Stripe.Checkout.Session;
-				const userId = session.metadata?.userId;
-				const coins = Number(session.metadata?.coins ?? 0);
-				const currency = session.currency ?? "inr";
+				const userId = event.userId;
+				const coins = event.coins;
+				const currency = event.currency;
 
 				if (!userId || !Number.isFinite(coins) || coins <= 0) {
-					logger.warn({ sessionId: session.id }, "Invalid checkout metadata");
+					logger.warn(
+						{ sessionId: event.sessionId },
+						"Invalid checkout metadata",
+					);
 					return;
 				}
 
 				const existingUser =
 					await this.paymentTransactionRepository.findByProviderPaymentIdAndOwner(
-						session.id,
+						event.sessionId,
 						"user",
 					);
 				const existingPlatform =
 					await this.paymentTransactionRepository.findByProviderPaymentIdAndOwner(
-						session.id,
+						event.sessionId,
 						"platform",
 					);
 
@@ -65,13 +67,13 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 					return;
 				}
 
-				const amountInMinor = session.amount_total ?? 0;
+				const amountInMinor = event.amountMinor;
 				if (!existingUser) {
 					const userTransaction = new PaymentTransaction(
 						this.idGenerator.generate(),
 						userId,
 						PaymentProvider.Stripe,
-						session.id,
+						event.sessionId,
 						amountInMinor,
 						currency,
 						PaymentStatus.Completed,
@@ -82,7 +84,7 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 					await this.paymentTransactionRepository.create(userTransaction);
 				} else if (existingUser.status !== PaymentStatus.Completed) {
 					await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-						session.id,
+						event.sessionId,
 						PaymentStatus.Completed,
 						"user",
 					);
@@ -93,7 +95,7 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 						this.idGenerator.generate(),
 						userId,
 						PaymentProvider.Stripe,
-						session.id,
+						event.sessionId,
 						amountInMinor,
 						currency,
 						PaymentStatus.Completed,
@@ -104,14 +106,14 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 					await this.paymentTransactionRepository.create(platformTransaction);
 				} else if (existingPlatform.status !== PaymentStatus.Completed) {
 					await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-						session.id,
+						event.sessionId,
 						PaymentStatus.Completed,
 						"platform",
 					);
 				}
 
 				await this.paymentTransactionRepository.updateStatusByProviderPaymentId(
-					session.id,
+					event.sessionId,
 					PaymentStatus.Completed,
 				);
 
@@ -120,25 +122,24 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 					coins,
 					CoinTransactionType.Purchase,
 					PaymentProvider.Stripe,
-					session.id,
+					event.sessionId,
 				);
 				return;
 			}
 			case "checkout.session.expired":
 			case "checkout.session.async_payment_failed": {
-				const session = event.data.object as Stripe.Checkout.Session;
 				await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-					session.id,
+					event.sessionId,
 					PaymentStatus.Failed,
 					"user",
 				);
 				await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-					session.id,
+					event.sessionId,
 					PaymentStatus.Failed,
 					"platform",
 				);
 				await this.paymentTransactionRepository.updateStatusByProviderPaymentId(
-					session.id,
+					event.sessionId,
 					PaymentStatus.Failed,
 				);
 				return;

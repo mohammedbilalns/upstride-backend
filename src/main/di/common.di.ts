@@ -6,6 +6,7 @@ import type {
 	IMailService,
 	IPasswordService,
 	IPaymentService,
+	IPaymentWebhookParser,
 	IPlatformSettingsCache,
 	IStorageService,
 	IWalletService,
@@ -49,6 +50,7 @@ import {
 	NodeEventBus,
 	S3StorageService,
 	StripePaymentService,
+	StripeWebhookParser,
 	UuidGenerator,
 	WalletService,
 } from "../../infrastructure/services";
@@ -83,6 +85,10 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<IPaymentService>(TYPES.Services.PaymentService)
 		.to(StripePaymentService)
+		.inSingletonScope();
+	container
+		.bind<IPaymentWebhookParser>(TYPES.Services.PaymentWebhookParser)
+		.to(StripeWebhookParser)
 		.inSingletonScope();
 	container
 		.bind<IIdGenerator>(TYPES.Services.IdGenerator)

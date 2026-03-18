@@ -12,6 +12,7 @@ export const TYPES = {
 		WalletService: Symbol.for("WalletService"),
 		EventBus: Symbol.for("EventBus"),
 		PaymentService: Symbol.for("PaymentService"),
+		PaymentWebhookParser: Symbol.for("PaymentWebhookParser"),
 		IdGenerator: Symbol.for("IdGenerator"),
 	},
 	Caches: {
@@ -127,7 +128,7 @@ export const TYPES = {
 		GetUserBookings: Symbol.for("GetUserBookingsUseCase"),
 		GetMentorBookings: Symbol.for("GetMentorBookingsUseCase"),
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
-		HandleStripeWebhook: Symbol.for("HandleStripeWebhookUseCase"),
+		HandlePaymentWebhook: Symbol.for("HandlePaymentWebhookUseCase"),
 		GetCoinBalance: Symbol.for("GetCoinBalanceUseCase"),
 		GetCoinTransactions: Symbol.for("GetCoinTransactionsUseCase"),
 		GetPaymentTransactions: Symbol.for("GetPaymentTransactionsUseCase"),

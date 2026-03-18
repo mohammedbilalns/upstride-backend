@@ -7,5 +7,6 @@ export * from "./otp-generator.service";
 export * from "./password.service";
 export * from "./s3-storage.service";
 export * from "./stripe-payment.service";
+export * from "./stripe-webhook.parser";
 export * from "./uuid-generator.service";
 export * from "./wallet.service";
