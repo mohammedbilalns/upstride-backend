@@ -45,20 +45,23 @@ export class GenerateSlotsUseCase implements IGenerateSlotsUseCase {
 			return { createdCount: 0 };
 		}
 
-		const start = new Date();
-		start.setHours(0, 0, 0, 0);
-		const end = new Date(start);
-		end.setDate(end.getDate() + 6);
-		end.setHours(23, 59, 59, 999);
+		const IST_OFFSET_MINUTES = 330;
+		const now = new Date();
+		const nowIst = new Date(now.getTime() + IST_OFFSET_MINUTES * 60000);
+		const startIst = new Date(nowIst);
+		startIst.setUTCHours(0, 0, 0, 0);
+		const start = new Date(startIst.getTime() - IST_OFFSET_MINUTES * 60000);
+		const end = new Date(start.getTime() + 6 * 24 * 60 * 60000 + 86399999);
 
 		const existing = await this._slotRepository.findByMentorIdAndRange(
 			mentor.id,
 			start,
 			end,
 		);
-		const existingStarts = new Set(
-			existing.map((slot) => slot.startTime.toISOString()),
-		);
+		const existingSlots = existing.map((slot) => ({
+			start: slot.startTime.getTime(),
+			end: slot.endTime.getTime(),
+		}));
 
 		let createdCount = 0;
 		const slotsToCreate: SessionSlot[] = [];
@@ -66,9 +69,10 @@ export class GenerateSlotsUseCase implements IGenerateSlotsUseCase {
 		for (
 			let date = new Date(start);
 			date <= end;
-			date.setDate(date.getDate() + 1)
+			date = new Date(date.getTime() + 24 * 60 * 60000)
 		) {
-			const weekDay = date.getDay();
+			const dateIst = new Date(date.getTime() + IST_OFFSET_MINUTES * 60000);
+			const weekDay = dateIst.getUTCDay();
 			const rules = availability.recurringRules.filter(
 				(rule) => rule.isActive !== false && rule.weekDay === weekDay,
 			);
@@ -80,14 +84,25 @@ export class GenerateSlotsUseCase implements IGenerateSlotsUseCase {
 					minutes += rule.slotDuration
 				) {
 					const slotStart = new Date(date);
-					slotStart.setHours(0, 0, 0, 0);
-					slotStart.setMinutes(minutes);
+					slotStart.setUTCHours(0, 0, 0, 0);
+					slotStart.setUTCMinutes(minutes - IST_OFFSET_MINUTES);
 
 					const slotEnd = new Date(slotStart);
 					slotEnd.setMinutes(slotEnd.getMinutes() + rule.slotDuration);
 
-					const startKey = slotStart.toISOString();
-					if (existingStarts.has(startKey)) {
+					const startMs = slotStart.getTime();
+					const endMs = slotEnd.getTime();
+					const overlapsExisting = existingSlots.some(
+						(existingSlot) =>
+							startMs < existingSlot.end && endMs > existingSlot.start,
+					);
+					const overlapsPending = slotsToCreate.some(
+						(existingSlot) =>
+							startMs < existingSlot.endTime.getTime() &&
+							endMs > existingSlot.startTime.getTime(),
+					);
+
+					if (overlapsExisting || overlapsPending) {
 						continue;
 					}
 
