@@ -1,5 +1,3 @@
-import type { UserRole } from "../../../domain/entities/user.entity";
-
 export interface GetAdminsInput {
 	page: number;
 	limit: number;
@@ -12,9 +10,7 @@ export interface AdminListDTO {
 	id: string;
 	name: string;
 	email: string;
-	role: UserRole;
-	coinBalance: number;
-	joinedAt: Date;
+	addedAt: Date;
 	status: "active" | "blocked";
 }
 
