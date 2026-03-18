@@ -27,6 +27,8 @@ export class SessionBookingDtoMapper {
 			attendanceStatus,
 			meetingId: entity.meeting?.roomId ?? entity.meeting?.joinUrl ?? entity.id,
 			meetingUrl: entity.meeting?.joinUrl ?? entity.id,
+			cancellationReason: entity.cancellationReason ?? null,
+			cancelledBy: entity.cancelledBy ?? null,
 			createdAt: entity.createdAt,
 			updatedAt: entity.updatedAt,
 		};

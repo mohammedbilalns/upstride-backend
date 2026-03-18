@@ -4,6 +4,12 @@ export const bookingIdParamSchema = z.object({
 	bookingId: z.string().min(1, "Booking id is required"),
 });
 
+export const cancelBookingBodySchema = z.object({
+	reason: z
+		.string()
+		.min(5, "Cancellation reason must be at least 5 characters"),
+});
+
 export const bookSessionBodySchema = z.object({
 	slotId: z.string().min(1, "Slot id is required"),
 });

@@ -39,6 +39,7 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 	async execute({
 		userId,
 		bookingId,
+		reason,
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
 		const booking = await this._bookingRepository.findById(bookingId);
 		if (!booking || booking.userId !== userId) {
@@ -58,6 +59,8 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 
 		await this._bookingRepository.updateById(bookingId, {
 			status: "cancelled",
+			cancellationReason: reason,
+			cancelledBy: "user",
 			updatedAt: new Date(),
 		});
 

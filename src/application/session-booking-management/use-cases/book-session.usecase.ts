@@ -83,6 +83,8 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 				transactionId: debitTransactionId,
 			},
 			{},
+			null,
+			null,
 			new Date(),
 			new Date(),
 		);

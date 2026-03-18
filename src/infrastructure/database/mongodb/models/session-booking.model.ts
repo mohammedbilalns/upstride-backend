@@ -17,6 +17,8 @@ export interface SessionBookingDocument {
 		roomId?: string;
 		joinUrl?: string;
 	};
+	cancellationReason?: string | null;
+	cancelledBy?: "user" | "mentor" | null;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -46,6 +48,8 @@ const sessionBookingSchema = new Schema<SessionBookingDocument>(
 			roomId: { type: String },
 			joinUrl: { type: String },
 		},
+		cancellationReason: { type: String },
+		cancelledBy: { type: String, enum: ["user", "mentor"] },
 	},
 	{ timestamps: true },
 );

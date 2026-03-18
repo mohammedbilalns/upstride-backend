@@ -17,6 +17,8 @@ export interface BookingMeeting {
 	joinUrl?: string;
 }
 
+export type BookingCancellationSource = "user" | "mentor";
+
 export class SessionBooking {
 	constructor(
 		public readonly id: string,
@@ -29,6 +31,8 @@ export class SessionBooking {
 		public readonly status: BookingStatus,
 		public readonly payment: BookingPayment,
 		public readonly meeting: BookingMeeting,
+		public readonly cancellationReason: string | null,
+		public readonly cancelledBy: BookingCancellationSource | null,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
 	) {

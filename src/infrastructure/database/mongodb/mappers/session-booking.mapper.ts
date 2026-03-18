@@ -21,6 +21,8 @@ export class SessionBookingMapper {
 				roomId: doc.meeting?.roomId,
 				joinUrl: doc.meeting?.joinUrl,
 			},
+			doc.cancellationReason ?? null,
+			doc.cancelledBy ?? null,
 			doc.createdAt,
 			doc.updatedAt,
 		);
@@ -43,6 +45,8 @@ export class SessionBookingMapper {
 				roomId: entity.meeting?.roomId,
 				joinUrl: entity.meeting?.joinUrl,
 			},
+			cancellationReason: entity.cancellationReason ?? null,
+			cancelledBy: entity.cancelledBy ?? null,
 		};
 	}
 }

@@ -10,6 +10,7 @@ export interface BookSessionResponse {
 export interface CancelBookingInput {
 	userId: string;
 	bookingId: string;
+	reason: string;
 }
 
 export interface CancelBookingResponse {

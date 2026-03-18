@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import type { GetBookingsInput } from "../../../application/session-booking-management/dtos/get-bookings.dto";
 import type {
 	BookSessionInput,
+	CancelBookingInput,
 	HandleRescheduleInput,
 } from "../../../application/session-booking-management/dtos/session-booking.dto";
 import type {
@@ -51,9 +52,11 @@ export class SessionBookingController {
 
 	cancelBooking = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
+		const body = req.validated?.body as Pick<CancelBookingInput, "reason">;
 		const data = await this._cancelBookingUseCase.execute({
 			userId,
 			bookingId: req.params.bookingId as string,
+			reason: body.reason,
 		});
 		return sendSuccess(res, HttpStatus.OK, {
 			message: "Booking cancelled successfully",
@@ -63,9 +66,11 @@ export class SessionBookingController {
 
 	cancelBookingByMentor = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
+		const body = req.validated?.body as Pick<CancelBookingInput, "reason">;
 		const data = await this._cancelBookingByMentorUseCase.execute({
 			userId,
 			bookingId: req.params.bookingId as string,
+			reason: body.reason,
 		});
 		return sendSuccess(res, HttpStatus.OK, {
 			message: "Booking cancelled successfully",

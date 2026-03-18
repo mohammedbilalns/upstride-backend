@@ -8,6 +8,7 @@ import {
 	bookingIdParamSchema,
 	bookingListQuerySchema,
 	bookSessionBodySchema,
+	cancelBookingBodySchema,
 	handleRescheduleBodySchema,
 } from "../validators/session-booking.validator";
 
@@ -28,7 +29,7 @@ sessionBookingRouter.patch(
 	ROUTES.SESSION_BOOKINGS.CANCEL(":bookingId"),
 	verifySession,
 	authorizeRoles(["USER", "MENTOR"]),
-	validate({ params: bookingIdParamSchema }),
+	validate({ params: bookingIdParamSchema, body: cancelBookingBodySchema }),
 	sessionBookingController.cancelBooking,
 );
 
@@ -36,7 +37,7 @@ sessionBookingRouter.patch(
 	ROUTES.SESSION_BOOKINGS.MENTOR_CANCEL(":bookingId"),
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate({ params: bookingIdParamSchema }),
+	validate({ params: bookingIdParamSchema, body: cancelBookingBodySchema }),
 	sessionBookingController.cancelBookingByMentor,
 );
 

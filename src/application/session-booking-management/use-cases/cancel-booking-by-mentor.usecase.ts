@@ -44,6 +44,7 @@ export class CancelBookingByMentorUseCase
 	async execute({
 		userId,
 		bookingId,
+		reason,
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
 		const mentor = await this._mentorRepository.findByUserId(userId);
 		if (!mentor) {
@@ -65,6 +66,8 @@ export class CancelBookingByMentorUseCase
 
 		await this._bookingRepository.updateById(bookingId, {
 			status: "cancelled",
+			cancellationReason: reason,
+			cancelledBy: "mentor",
 			updatedAt: new Date(),
 		});
 

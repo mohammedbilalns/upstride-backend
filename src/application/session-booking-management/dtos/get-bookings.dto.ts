@@ -20,6 +20,8 @@ export interface BookingListItemDto {
 	attendanceStatus: "attended" | "not_attended" | null;
 	meetingId: string | null;
 	meetingUrl: string | null;
+	cancellationReason: string | null;
+	cancelledBy: "user" | "mentor" | null;
 	createdAt: Date;
 	updatedAt: Date;
 }
