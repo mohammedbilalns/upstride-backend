@@ -5,6 +5,8 @@ import type { ISessionAvailabilityRepository } from "../../../domain/repositorie
 import { TYPES } from "../../../shared/types/types";
 import { MentorNotFoundError } from "../../mentor-lists/errors";
 import type { IIdGenerator } from "../../services/id-generator.service.interface";
+import type { IGenerateSlotsUseCase } from "../../session-slot-management/use-cases/generate-slots.usecase.interface";
+import { ValidationError } from "../../shared/errors/validation-error";
 import type {
 	AddRecurringRuleInput,
 	AddRecurringRuleResponse,
@@ -20,6 +22,8 @@ export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 		private readonly _availabilityRepository: ISessionAvailabilityRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
+		@inject(TYPES.UseCases.GenerateSlots)
+		private readonly _generateSlotsUseCase: IGenerateSlotsUseCase,
 	) {}
 
 	async execute({
@@ -44,6 +48,21 @@ export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 			isActive: true,
 		};
 
+		const hasOverlap =
+			availability?.recurringRules.some(
+				(existing) =>
+					(existing.isActive ?? true) &&
+					existing.weekDay === newRule.weekDay &&
+					newRule.startTime < existing.endTime &&
+					newRule.endTime > existing.startTime,
+			) ?? false;
+
+		if (hasOverlap) {
+			throw new ValidationError(
+				"Recurring rule overlaps with an existing rule",
+			);
+		}
+
 		if (!availability) {
 			const created = new Availability(
 				this._idGenerator.generate(),
@@ -64,6 +83,8 @@ export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 				recurringRules: updatedRules,
 			});
 		}
+
+		await this._generateSlotsUseCase.execute({ mentorId: mentor.id });
 
 		return { rule: newRule };
 	}

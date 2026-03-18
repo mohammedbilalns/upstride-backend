@@ -4,6 +4,8 @@ import type { IMentorRepository } from "../../../domain/repositories/mentor.repo
 import type { ISessionAvailabilityRepository } from "../../../domain/repositories/session-availability.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import { MentorNotFoundError } from "../../mentor-lists/errors";
+import type { IGenerateSlotsUseCase } from "../../session-slot-management/use-cases/generate-slots.usecase.interface";
+import { ValidationError } from "../../shared/errors/validation-error";
 import type {
 	UpdateRecurringRuleInput,
 	UpdateRecurringRuleResponse,
@@ -21,6 +23,8 @@ export class UpdateRecurringRuleUseCase implements IUpdateRecurringRuleUseCase {
 		private readonly _mentorRepository: IMentorRepository,
 		@inject(TYPES.Repositories.SessionAvailabilityRepository)
 		private readonly _availabilityRepository: ISessionAvailabilityRepository,
+		@inject(TYPES.UseCases.GenerateSlots)
+		private readonly _generateSlotsUseCase: IGenerateSlotsUseCase,
 	) {}
 
 	async execute({
@@ -58,11 +62,30 @@ export class UpdateRecurringRuleUseCase implements IUpdateRecurringRuleUseCase {
 			throw new RecurringRuleNotFoundError();
 		}
 
+		if (updatedRule.isActive ?? true) {
+			const hasOverlap = rules.some(
+				(existing) =>
+					existing.ruleId !== updatedRule.ruleId &&
+					(existing.isActive ?? true) &&
+					existing.weekDay === updatedRule.weekDay &&
+					updatedRule.startTime < existing.endTime &&
+					updatedRule.endTime > existing.startTime,
+			);
+
+			if (hasOverlap) {
+				throw new ValidationError(
+					"Recurring rule overlaps with an existing rule",
+				);
+			}
+		}
+
 		new Availability(availability.id, rules, mentor.id, availability.createdAt);
 
 		await this._availabilityRepository.updateById(availability.id, {
 			recurringRules: rules,
 		});
+
+		await this._generateSlotsUseCase.execute({ mentorId: mentor.id });
 
 		return { rule: updatedRule };
 	}

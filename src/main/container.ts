@@ -13,6 +13,7 @@ import {
 	registerPresentationBindings,
 	registerProfileBindings,
 	registerRecurringRuleBindings,
+	registerSessionBookingBindings,
 	registerSessionSlotBindings,
 	registerStorageBindings,
 	registerUserManagementBindings,
@@ -29,6 +30,7 @@ registerMentorBindings(container);
 registerMentorDiscoveryBindings(container);
 registerMentorListsBindings(container);
 registerRecurringRuleBindings(container);
+registerSessionBookingBindings(container);
 registerSessionSlotBindings(container);
 registerPaymentsBindings(container);
 registerPlatformSettingsBindings(container);

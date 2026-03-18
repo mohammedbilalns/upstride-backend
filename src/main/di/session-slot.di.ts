@@ -6,12 +6,14 @@ import {
 	EnableSlotUseCase,
 	GenerateSlotsUseCase,
 	GetMentorSlotsUseCase,
+	GetPublicMentorAvailableSlotsUseCase,
 	type ICancelSlotUseCase,
 	type ICreateCustomSlotUseCase,
 	type IDeleteSlotUseCase,
 	type IEnableSlotUseCase,
 	type IGenerateSlotsUseCase,
 	type IGetMentorSlotsUseCase,
+	type IGetPublicMentorAvailableSlotsUseCase,
 } from "../../application/session-slot-management/use-cases";
 import { TYPES } from "../../shared/types/types";
 
@@ -34,4 +36,9 @@ export const registerSessionSlotBindings = (container: Container): void => {
 	container
 		.bind<IGetMentorSlotsUseCase>(TYPES.UseCases.GetMentorSlots)
 		.to(GetMentorSlotsUseCase);
+	container
+		.bind<IGetPublicMentorAvailableSlotsUseCase>(
+			TYPES.UseCases.GetPublicMentorAvailableSlots,
+		)
+		.to(GetPublicMentorAvailableSlotsUseCase);
 };

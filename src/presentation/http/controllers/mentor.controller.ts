@@ -4,10 +4,13 @@ import type { IGetMentorsUseCase } from "../../../application/mentor-discovery/u
 import type {
 	IApproveMentorUseCase,
 	IGetMentorApplicationsUseCase,
+	IGetMentorProfileUseCase,
 	IGetMentorRegistrationInfoUseCase,
+	IGetPublicMentorProfileUseCase,
 	IRegisterMentorUseCase,
 	IRejectMentorUseCase,
 	IResubmitMentorUseCase,
+	IUpdateMentorProfileUseCase,
 } from "../../../application/mentor-management/use-cases";
 import type {
 	MentorApplicationsQuery,
@@ -25,6 +28,12 @@ export class MentorController {
 	constructor(
 		@inject(TYPES.UseCases.GetMentorRegistrationInfo)
 		private readonly _getMentorRegistrationInfoUseCase: IGetMentorRegistrationInfoUseCase,
+		@inject(TYPES.UseCases.GetMentorProfile)
+		private readonly _getMentorProfileUseCase: IGetMentorProfileUseCase,
+		@inject(TYPES.UseCases.GetPublicMentorProfile)
+		private readonly _getPublicMentorProfileUseCase: IGetPublicMentorProfileUseCase,
+		@inject(TYPES.UseCases.UpdateMentorProfile)
+		private readonly _updateMentorProfileUseCase: IUpdateMentorProfileUseCase,
 		@inject(TYPES.UseCases.RegisterMentor)
 		private readonly _registerMentorUseCase: IRegisterMentorUseCase,
 		@inject(TYPES.UseCases.ResubmitMentor)
@@ -100,6 +109,46 @@ export class MentorController {
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.FETCH_REGISTRATION_INFO_SUCCESS,
 			data: result,
+		});
+	});
+
+	getProfile = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const data = await this._getMentorProfileUseCase.execute({ userId });
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: "Mentor profile fetched successfully",
+			data,
+		});
+	});
+
+	getPublicProfile = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const mentorId = req.params.id as string;
+		const data = await this._getPublicMentorProfileUseCase.execute({
+			mentorId,
+			requesterUserId: userId,
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: "Public mentor profile fetched successfully",
+			data,
+		});
+	});
+
+	updateProfile = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const data = await this._updateMentorProfileUseCase.execute({
+			userId,
+			...(req.validated?.body as Omit<
+				Parameters<IUpdateMentorProfileUseCase["execute"]>[0],
+				"userId"
+			>),
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: "Mentor profile updated successfully",
+			data,
 		});
 	});
 

@@ -3,6 +3,7 @@ import type { IMentorRepository } from "../../../domain/repositories/mentor.repo
 import type { ISessionAvailabilityRepository } from "../../../domain/repositories/session-availability.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import { MentorNotFoundError } from "../../mentor-lists/errors";
+import { ValidationError } from "../../shared/errors/validation-error";
 import type {
 	ToggleRecurringRuleInput,
 	ToggleRecurringRuleResponse,
@@ -45,6 +46,21 @@ export class EnableRecurringRuleUseCase implements IEnableRecurringRuleUseCase {
 		const updatedRule = rules.find((rule) => rule.ruleId === ruleId);
 		if (!updatedRule) {
 			throw new RecurringRuleNotFoundError();
+		}
+
+		const hasOverlap = rules.some(
+			(existing) =>
+				existing.ruleId !== updatedRule.ruleId &&
+				(existing.isActive ?? true) &&
+				existing.weekDay === updatedRule.weekDay &&
+				updatedRule.startTime < existing.endTime &&
+				updatedRule.endTime > existing.startTime,
+		);
+
+		if (hasOverlap) {
+			throw new ValidationError(
+				"Recurring rule overlaps with an existing rule",
+			);
 		}
 
 		await this._availabilityRepository.updateById(availability.id, {

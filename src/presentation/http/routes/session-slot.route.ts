@@ -5,9 +5,11 @@ import { ROUTES } from "../constants";
 import type { SessionSlotController } from "../controllers/session-slot.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
+	availableSlotsQuerySchema,
 	createCustomSlotBodySchema,
 	generateSlotsBodySchema,
 	getMentorSlotsQuerySchema,
+	mentorIdParamSchema,
 	slotIdParamSchema,
 } from "../validators/session-slot.validator";
 
@@ -22,6 +24,14 @@ sessionSlotRouter.get(
 	authorizeRoles(["MENTOR"]),
 	validate({ query: getMentorSlotsQuerySchema }),
 	sessionSlotController.getSlots,
+);
+
+sessionSlotRouter.get(
+	ROUTES.SESSION_SLOTS.PUBLIC_AVAILABLE(":mentorId"),
+	verifySession,
+	authorizeRoles(["USER", "MENTOR"]),
+	validate({ params: mentorIdParamSchema, query: availableSlotsQuerySchema }),
+	sessionSlotController.getPublicAvailableSlots,
 );
 
 sessionSlotRouter.post(

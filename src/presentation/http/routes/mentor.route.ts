@@ -11,6 +11,7 @@ import {
 	registerMentorSchema,
 	rejectMentorBodySchema,
 	resubmitMentorSchema,
+	updateMentorProfileBodySchema,
 } from "../validators/mentor.validator";
 
 const mentorRouter = Router();
@@ -23,6 +24,29 @@ mentorRouter.get(
 	verifySession,
 	authorizeRoles(["USER", "MENTOR"]),
 	mentorController.getRegistrationInfo,
+);
+
+mentorRouter.get(
+	ROUTES.MENTOR.PROFILE,
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	mentorController.getProfile,
+);
+
+mentorRouter.get(
+	ROUTES.MENTOR.PUBLIC_PROFILE(":id"),
+	verifySession,
+	authorizeRoles(["USER", "MENTOR"]),
+	validate({ params: MentorIdParamSchema }),
+	mentorController.getPublicProfile,
+);
+
+mentorRouter.patch(
+	ROUTES.MENTOR.PROFILE,
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	validate({ body: updateMentorProfileBodySchema }),
+	mentorController.updateProfile,
 );
 
 mentorRouter.post(

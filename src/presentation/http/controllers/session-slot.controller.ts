@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import type { GetPublicMentorAvailableSlotsInput } from "../../../application/session-slot-management/dtos/public-mentor-slots.dto";
 import type {
 	CreateCustomSlotInput,
 	GenerateSlotsInput,
@@ -11,6 +12,7 @@ import type {
 	IEnableSlotUseCase,
 	IGenerateSlotsUseCase,
 	IGetMentorSlotsUseCase,
+	IGetPublicMentorAvailableSlotsUseCase,
 } from "../../../application/session-slot-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
@@ -32,6 +34,8 @@ export class SessionSlotController {
 		private readonly _generateSlotsUseCase: IGenerateSlotsUseCase,
 		@inject(TYPES.UseCases.GetMentorSlots)
 		private readonly _getMentorSlotsUseCase: IGetMentorSlotsUseCase,
+		@inject(TYPES.UseCases.GetPublicMentorAvailableSlots)
+		private readonly _getPublicMentorAvailableSlotsUseCase: IGetPublicMentorAvailableSlotsUseCase,
 	) {}
 
 	getSlots = asyncHandler(async (req, res) => {
@@ -43,6 +47,24 @@ export class SessionSlotController {
 		});
 		return sendSuccess(res, HttpStatus.OK, {
 			message: "Slots fetched successfully",
+			data,
+		});
+	});
+
+	getPublicAvailableSlots = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const query = req.validated?.query as Omit<
+			GetPublicMentorAvailableSlotsInput,
+			"mentorId" | "requesterUserId"
+		>;
+		const data = await this._getPublicMentorAvailableSlotsUseCase.execute({
+			mentorId: req.params.mentorId as string,
+			requesterUserId: userId,
+			...query,
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: "Available slots fetched successfully",
 			data,
 		});
 	});
