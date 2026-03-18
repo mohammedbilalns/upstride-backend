@@ -25,6 +25,7 @@ export const TYPES = {
 		CoinTransactionRepository: Symbol.for("CoinTransactionRepository"),
 		OtpRepository: Symbol.for("OtpRepository"),
 		PaymentTransactionRepository: Symbol.for("PaymentTransactionRepository"),
+		PlatformWalletRepository: Symbol.for("PlatformWalletRepository"),
 		SessionRepository: Symbol.for("SessionRepository"),
 		TokenRevocationRepository: Symbol.for("TokenRevocationRepository"),
 		PlatformSettingsRepository: Symbol.for("PlatformSettingsRepository"),
@@ -129,6 +130,13 @@ export const TYPES = {
 		GetCoinBalance: Symbol.for("GetCoinBalanceUseCase"),
 		GetCoinTransactions: Symbol.for("GetCoinTransactionsUseCase"),
 		GetPaymentTransactions: Symbol.for("GetPaymentTransactionsUseCase"),
+		GetPlatformWallet: Symbol.for("GetPlatformWalletUseCase"),
+		GetPlatformCoinTransactions: Symbol.for(
+			"GetPlatformCoinTransactionsUseCase",
+		),
+		GetPlatformPaymentTransactions: Symbol.for(
+			"GetPlatformPaymentTransactionsUseCase",
+		),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),

@@ -1,20 +1,19 @@
 import { inject, injectable } from "inversify";
-import { PaymentStatus } from "../../../domain/entities/payment-transactions.entity";
 import type {
 	IPaymentTransactionRepository,
 	PaymentTransactionQuery,
 } from "../../../domain/repositories/payment-transactions.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import type {
-	GetPaymentTransactionsInput,
-	GetPaymentTransactionsOutput,
-} from "../dtos/get-payment-transactions.dto";
+	GetPlatformPaymentTransactionsInput,
+	GetPlatformPaymentTransactionsOutput,
+} from "../dtos/get-platform-payment-transactions.dto";
 import { PaymentTransactionDtoMapper } from "../mappers/payment-transaction.mapper";
-import type { IGetPaymentTransactionsUseCase } from "./get-payment-transactions.usecase.interface";
+import type { IGetPlatformPaymentTransactionsUseCase } from "./get-platform-payment-transactions.usecase.interface";
 
 @injectable()
-export class GetPaymentTransactionsUseCase
-	implements IGetPaymentTransactionsUseCase
+export class GetPlatformPaymentTransactionsUseCase
+	implements IGetPlatformPaymentTransactionsUseCase
 {
 	constructor(
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
@@ -22,12 +21,11 @@ export class GetPaymentTransactionsUseCase
 	) {}
 
 	async execute(
-		input: GetPaymentTransactionsInput,
-	): Promise<GetPaymentTransactionsOutput> {
+		input: GetPlatformPaymentTransactionsInput,
+	): Promise<GetPlatformPaymentTransactionsOutput> {
 		const query: PaymentTransactionQuery = {
-			userId: input.userId,
-			status: PaymentStatus.Completed,
-			transactionOwner: "user",
+			status: input.status,
+			transactionOwner: "platform",
 		};
 
 		const sort: Record<string, 1 | -1> =

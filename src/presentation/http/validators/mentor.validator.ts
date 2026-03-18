@@ -5,6 +5,7 @@ import {
 	MAX_MENTOR_EXPERIENCE_ITEMS,
 } from "../../../domain/entities/mentor.entity";
 import { SkillLevelValues } from "../../../domain/entities/user.entity";
+import { objectIdSchema } from "../../../shared/validators";
 
 export const registerMentorSchema = z.object({
 	bio: z.string().min(10, "Bio must be at least 10 characters long"),
@@ -222,7 +223,7 @@ export const MentorDiscoveryQuerySchema = z
 export type MentorDiscoveryQuery = z.infer<typeof MentorDiscoveryQuerySchema>;
 
 export const MentorIdParamSchema = z.object({
-	id: z.string().min(1, "Invalid mentor ID"),
+	id: objectIdSchema,
 });
 
 export type MentorIdParam = z.infer<typeof MentorIdParamSchema>;

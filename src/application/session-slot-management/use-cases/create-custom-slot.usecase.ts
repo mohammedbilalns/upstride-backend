@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { SessionSlot } from "../../../domain/entities/session-slot.entity";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import type { ISessionSlotRepository } from "../../../domain/repositories/session-slot.repository.interface";
+import { SessionSlotLimits } from "../../../shared/constants/app.constants";
 import { TYPES } from "../../../shared/types/types";
 import { MentorNotFoundError } from "../../mentor-lists/errors";
 import type { IIdGenerator } from "../../services/id-generator.service.interface";
@@ -72,6 +73,21 @@ export class CreateCustomSlotUseCase implements ICreateCustomSlotUseCase {
 		);
 		if (overlapping.length > 0) {
 			throw new ValidationError("Slot overlaps with an existing slot");
+		}
+
+		const dayStart = new Date(start);
+		dayStart.setHours(0, 0, 0, 0);
+		const dayEnd = new Date(start);
+		dayEnd.setHours(23, 59, 59, 999);
+		const slotsForDay = await this._slotRepository.findByMentorIdAndRange(
+			mentor.id,
+			dayStart,
+			dayEnd,
+		);
+		if (slotsForDay.length >= SessionSlotLimits.MAX_SLOTS_PER_DAY) {
+			throw new ValidationError(
+				`Maximum of ${SessionSlotLimits.MAX_SLOTS_PER_DAY} slots per day allowed`,
+			);
 		}
 
 		const price =

@@ -25,10 +25,10 @@ export class WalletService implements IWalletService {
 		type: CoinTransactionType,
 		referenceType?: string,
 		referenceId?: string,
-	): Promise<void> {
+	): Promise<string> {
 		await this.userRepository.incrementBalance(userId, amount);
 
-		await this.transactionRepository.create(
+		const transaction = await this.transactionRepository.create(
 			new CoinTransaction(
 				this.idGenerator.generate(),
 				userId,
@@ -36,8 +36,11 @@ export class WalletService implements IWalletService {
 				type,
 				referenceType,
 				referenceId,
+				undefined,
+				"user",
 			),
 		);
+		return transaction.id;
 	}
 
 	async debit(
@@ -46,7 +49,7 @@ export class WalletService implements IWalletService {
 		type: CoinTransactionType,
 		referenceType?: string,
 		referenceId?: string,
-	): Promise<void> {
+	): Promise<string> {
 		const user = await this.userRepository.findById(userId);
 
 		if (!user) {
@@ -59,7 +62,7 @@ export class WalletService implements IWalletService {
 
 		await this.userRepository.incrementBalance(userId, -amount);
 
-		await this.transactionRepository.create(
+		const transaction = await this.transactionRepository.create(
 			new CoinTransaction(
 				this.idGenerator.generate(),
 				userId,
@@ -67,7 +70,10 @@ export class WalletService implements IWalletService {
 				type,
 				referenceType,
 				referenceId,
+				undefined,
+				"user",
 			),
 		);
+		return transaction.id;
 	}
 }

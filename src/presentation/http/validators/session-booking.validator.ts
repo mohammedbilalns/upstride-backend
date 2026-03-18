@@ -6,8 +6,6 @@ export const bookingIdParamSchema = z.object({
 
 export const bookSessionBodySchema = z.object({
 	slotId: z.string().min(1, "Slot id is required"),
-	coinsDebited: z.number().int().min(1, "Coins debited must be at least 1"),
-	transactionId: z.string().min(1, "Transaction id is required"),
 });
 
 export const handleRescheduleBodySchema = z.object({

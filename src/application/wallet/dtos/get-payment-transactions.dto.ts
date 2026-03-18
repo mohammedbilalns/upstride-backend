@@ -18,6 +18,7 @@ export interface PaymentTransactionDto {
 	amount: number;
 	currency: string;
 	coinsGranted: number;
+	direction: "credit" | "debit";
 	createdAt: Date;
 }
 

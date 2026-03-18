@@ -14,6 +14,7 @@ import {
 	AvailabilityNotFoundError,
 	RecurringRuleNotFoundError,
 } from "../errors";
+import { hasRecurringRuleOverlap } from "../utils/recurring-rule-overlap";
 import type { IUpdateRecurringRuleUseCase } from "./update-recurring-rule.usecase.interface";
 
 @injectable()
@@ -63,13 +64,10 @@ export class UpdateRecurringRuleUseCase implements IUpdateRecurringRuleUseCase {
 		}
 
 		if (updatedRule.isActive ?? true) {
-			const hasOverlap = rules.some(
-				(existing) =>
-					existing.ruleId !== updatedRule.ruleId &&
-					(existing.isActive ?? true) &&
-					existing.weekDay === updatedRule.weekDay &&
-					updatedRule.startTime < existing.endTime &&
-					updatedRule.endTime > existing.startTime,
+			const hasOverlap = hasRecurringRuleOverlap(
+				rules,
+				updatedRule,
+				updatedRule.ruleId,
 			);
 
 			if (hasOverlap) {

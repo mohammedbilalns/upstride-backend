@@ -5,26 +5,27 @@ import type {
 } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
 import type {
-	GetCoinTransactionsInput,
-	GetCoinTransactionsOutput,
-} from "../dtos/get-coin-transactions.dto";
+	GetPlatformCoinTransactionsInput,
+	GetPlatformCoinTransactionsOutput,
+} from "../dtos/get-platform-coin-transactions.dto";
 import { CoinTransactionDtoMapper } from "../mappers/coin-transaction.mapper";
-import type { IGetCoinTransactionsUseCase } from "./get-coin-transactions.usecase.interface";
+import type { IGetPlatformCoinTransactionsUseCase } from "./get-platform-coin-transactions.usecase.interface";
 
 @injectable()
-export class GetCoinTransactionsUseCase implements IGetCoinTransactionsUseCase {
+export class GetPlatformCoinTransactionsUseCase
+	implements IGetPlatformCoinTransactionsUseCase
+{
 	constructor(
 		@inject(TYPES.Repositories.CoinTransactionRepository)
 		private readonly coinTransactionRepository: ICoinTransactionRepository,
 	) {}
 
 	async execute(
-		input: GetCoinTransactionsInput,
-	): Promise<GetCoinTransactionsOutput> {
+		input: GetPlatformCoinTransactionsInput,
+	): Promise<GetPlatformCoinTransactionsOutput> {
 		const query: CoinTransactionQuery = {
-			userId: input.userId,
 			type: input.type,
-			transactionOwner: "user",
+			transactionOwner: "platform",
 		};
 
 		const sort: Record<string, 1 | -1> =

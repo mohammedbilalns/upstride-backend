@@ -11,6 +11,8 @@ export enum CoinTransactionType {
 	Refund = "refund",
 }
 
+export type TransactionOwner = "platform" | "user";
+
 export class CoinTransaction {
 	public readonly id: string;
 	public readonly userId: string;
@@ -18,6 +20,7 @@ export class CoinTransaction {
 	public readonly type: CoinTransactionType;
 	public readonly referenceType?: string;
 	public readonly referenceId?: string;
+	public readonly transactionOwner?: TransactionOwner;
 	public readonly createdAt: Date;
 
 	constructor(
@@ -28,6 +31,7 @@ export class CoinTransaction {
 		referenceType?: string,
 		referenceId?: string,
 		createdAt?: Date,
+		transactionOwner?: TransactionOwner,
 	) {
 		if (!userId || amount === 0)
 			throw new EntityValidationError("CoinTransaction", "invalid transaction");
@@ -38,6 +42,7 @@ export class CoinTransaction {
 		this.type = type;
 		this.referenceType = referenceType;
 		this.referenceId = referenceId;
+		this.transactionOwner = transactionOwner;
 		this.createdAt = createdAt ?? new Date();
 
 		Object.freeze(this);

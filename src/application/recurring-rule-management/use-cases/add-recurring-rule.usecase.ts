@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { Availability } from "../../../domain/entities/session-availability.entity";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../domain/repositories/session-availability.repository.interface";
+import { SessionSlotLimits } from "../../../shared/constants/app.constants";
 import { TYPES } from "../../../shared/types/types";
 import { MentorNotFoundError } from "../../mentor-lists/errors";
 import type { IIdGenerator } from "../../services/id-generator.service.interface";
@@ -11,6 +12,7 @@ import type {
 	AddRecurringRuleInput,
 	AddRecurringRuleResponse,
 } from "../dtos/recurring-rules.dto";
+import { hasRecurringRuleOverlap } from "../utils/recurring-rule-overlap";
 import type { IAddRecurringRuleUseCase } from "./add-recurring-rule.usecase.interface";
 
 @injectable()
@@ -48,18 +50,24 @@ export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 			isActive: true,
 		};
 
-		const hasOverlap =
-			availability?.recurringRules.some(
-				(existing) =>
-					(existing.isActive ?? true) &&
-					existing.weekDay === newRule.weekDay &&
-					newRule.startTime < existing.endTime &&
-					newRule.endTime > existing.startTime,
-			) ?? false;
+		const hasOverlap = hasRecurringRuleOverlap(
+			availability?.recurringRules ?? [],
+			newRule,
+		);
 
 		if (hasOverlap) {
 			throw new ValidationError(
 				"Recurring rule overlaps with an existing rule",
+			);
+		}
+
+		const existingRules = availability?.recurringRules ?? [];
+		const rulesForDay = existingRules.filter(
+			(existingRule) => existingRule.weekDay === newRule.weekDay,
+		);
+		if (rulesForDay.length >= SessionSlotLimits.MAX_RECURRING_RULE_PER_DAY) {
+			throw new ValidationError(
+				`Maximum of ${SessionSlotLimits.MAX_RECURRING_RULE_PER_DAY} recurring rules per day allowed`,
 			);
 		}
 

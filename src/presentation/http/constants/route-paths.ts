@@ -123,5 +123,8 @@ export const ROUTES = {
 		COIN_BALANCE: "/balance",
 		COIN_TRANSACTIONS: "/coin-transactions",
 		PAYMENT_TRANSACTIONS: "/payment-transactions",
+		PLATFORM_BALANCE: "/platform/balance",
+		PLATFORM_COIN_TRANSACTIONS: "/platform/coin-transactions",
+		PLATFORM_PAYMENT_TRANSACTIONS: "/platform/payment-transactions",
 	},
 };

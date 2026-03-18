@@ -1,12 +1,20 @@
 import { inject, injectable } from "inversify";
+import {
+	CoinTransaction,
+	CoinTransactionType,
+} from "../../../domain/entities/coin-transactions.entity";
 import { SessionBooking } from "../../../domain/entities/session-booking.entity";
+import type { ICoinTransactionRepository } from "../../../domain/repositories/coin-transactions.repository.interface";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
+import type { IPlatformWalletRepository } from "../../../domain/repositories/platform-wallet.repository.interface";
 import type { ISessionBookingRepository } from "../../../domain/repositories/session-booking.repository.interface";
 import type { ISessionSlotRepository } from "../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../shared/types/types";
 import { MentorNotFoundError } from "../../mentor-lists/errors";
 import type { IIdGenerator } from "../../services/id-generator.service.interface";
+import type { IWalletService } from "../../services/wallet.service.interface";
 import { SlotNotFoundError } from "../../session-slot-management/errors";
+import { ValidationError } from "../../shared/errors/validation-error";
 import type {
 	BookSessionInput,
 	BookSessionResponse,
@@ -23,6 +31,12 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 		private readonly _slotRepository: ISessionSlotRepository,
 		@inject(TYPES.Repositories.SessionBookingRepository)
 		private readonly _bookingRepository: ISessionBookingRepository,
+		@inject(TYPES.Repositories.CoinTransactionRepository)
+		private readonly _coinTransactionRepository: ICoinTransactionRepository,
+		@inject(TYPES.Repositories.PlatformWalletRepository)
+		private readonly _platformWalletRepository: IPlatformWalletRepository,
+		@inject(TYPES.Services.WalletService)
+		private readonly _walletService: IWalletService,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
 	) {}
@@ -30,8 +44,6 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 	async execute({
 		userId,
 		slotId,
-		coinsDebited,
-		transactionId,
 	}: BookSessionInput): Promise<BookSessionResponse> {
 		const slot = await this._slotRepository.findById(slotId);
 		if (!slot) {
@@ -45,6 +57,17 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 		if (!mentor) {
 			throw new MentorNotFoundError();
 		}
+		if (mentor.userId === userId) {
+			throw new ValidationError("You cannot book your own session.");
+		}
+
+		const debitTransactionId = await this._walletService.debit(
+			userId,
+			slot.price,
+			CoinTransactionType.SessionSpend,
+			"session_slot",
+			slot.id,
+		);
 
 		const booking = new SessionBooking(
 			this._idGenerator.generate(),
@@ -56,8 +79,8 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 			slot.price,
 			"confirmed",
 			{
-				coinsDebited,
-				transactionId,
+				coinsDebited: slot.price,
+				transactionId: debitTransactionId,
 			},
 			{},
 			new Date(),
@@ -69,6 +92,21 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 			status: "booked",
 			bookingId: created.id,
 		});
+
+		await this._coinTransactionRepository.create(
+			new CoinTransaction(
+				this._idGenerator.generate(),
+				userId,
+				slot.price,
+				CoinTransactionType.SessionEarning,
+				"session_booking",
+				created.id,
+				undefined,
+				"platform",
+			),
+		);
+
+		await this._platformWalletRepository.incrementBalance(slot.price);
 
 		return { bookingId: created.id };
 	}

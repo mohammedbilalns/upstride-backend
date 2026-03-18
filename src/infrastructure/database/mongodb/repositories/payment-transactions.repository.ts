@@ -55,6 +55,16 @@ export class MongoPaymentTransactionRepository
 		return doc ? this.toDomain(doc as PaymentTransactionDocument) : null;
 	}
 
+	async findByProviderPaymentIdAndOwner(
+		providerPaymentId: string,
+		transactionOwner: "platform" | "user" | "mentor",
+	): Promise<PaymentTransaction | null> {
+		const doc = await this.model
+			.findOne({ providerPaymentId, transactionOwner })
+			.lean();
+		return doc ? this.toDomain(doc as PaymentTransactionDocument) : null;
+	}
+
 	async findAllByUserId(userId: string): Promise<PaymentTransaction[]> {
 		const docs = await this.model
 			.find({ userId })
@@ -71,6 +81,22 @@ export class MongoPaymentTransactionRepository
 		const doc = await this.model
 			.findOneAndUpdate(
 				{ providerPaymentId },
+				{ $set: { status } },
+				{ new: true },
+			)
+			.lean();
+
+		return doc ? this.toDomain(doc as PaymentTransactionDocument) : null;
+	}
+
+	async updateStatusByProviderPaymentIdAndOwner(
+		providerPaymentId: string,
+		status: PaymentStatus,
+		transactionOwner: "platform" | "user" | "mentor",
+	): Promise<PaymentTransaction | null> {
+		const doc = await this.model
+			.findOneAndUpdate(
+				{ providerPaymentId, transactionOwner },
 				{ $set: { status } },
 				{ new: true },
 			)
@@ -101,6 +127,19 @@ export class MongoPaymentTransactionRepository
 
 		if (query?.providerPaymentId) {
 			filter.providerPaymentId = query.providerPaymentId;
+		}
+
+		if (query?.transactionOwner === "platform") {
+			filter.transactionOwner = "platform";
+		} else if (query?.transactionOwner === "mentor") {
+			filter.transactionOwner = "mentor";
+		} else if (query?.transactionOwner === "user") {
+			filter.$or = [
+				{ transactionOwner: "user" },
+				{ transactionOwner: { $exists: false } },
+				{ transactionOwner: null },
+				{ transactionOwner: "" },
+			];
 		}
 
 		const docs = await this.model
@@ -137,6 +176,19 @@ export class MongoPaymentTransactionRepository
 
 		if (query?.providerPaymentId) {
 			filter.providerPaymentId = query.providerPaymentId;
+		}
+
+		if (query?.transactionOwner === "platform") {
+			filter.transactionOwner = "platform";
+		} else if (query?.transactionOwner === "mentor") {
+			filter.transactionOwner = "mentor";
+		} else if (query?.transactionOwner === "user") {
+			filter.$or = [
+				{ transactionOwner: "user" },
+				{ transactionOwner: { $exists: false } },
+				{ transactionOwner: null },
+				{ transactionOwner: "" },
+			];
 		}
 
 		const skip = (page - 1) * limit;

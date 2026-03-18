@@ -5,6 +5,7 @@ export * from "./mentor.repository";
 export * from "./mentor-list.repository";
 export * from "./payment-transactions.repository";
 export * from "./platform-settings.repository";
+export * from "./platform-wallet.repository";
 export * from "./saved-mentor.repository";
 export * from "./session.repository";
 export * from "./session-availability.repository";

@@ -47,18 +47,27 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 					return;
 				}
 
-				const existing =
-					await this.paymentTransactionRepository.findByProviderPaymentId(
+				const existingUser =
+					await this.paymentTransactionRepository.findByProviderPaymentIdAndOwner(
 						session.id,
+						"user",
+					);
+				const existingPlatform =
+					await this.paymentTransactionRepository.findByProviderPaymentIdAndOwner(
+						session.id,
+						"platform",
 					);
 
-				if (existing?.status === PaymentStatus.Completed) {
+				if (
+					existingUser?.status === PaymentStatus.Completed &&
+					existingPlatform?.status === PaymentStatus.Completed
+				) {
 					return;
 				}
 
-				if (!existing) {
-					const amountInMinor = session.amount_total ?? 0;
-					const transaction = new PaymentTransaction(
+				const amountInMinor = session.amount_total ?? 0;
+				if (!existingUser) {
+					const userTransaction = new PaymentTransaction(
 						this.idGenerator.generate(),
 						userId,
 						PaymentProvider.Stripe,
@@ -67,14 +76,44 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 						currency,
 						PaymentStatus.Completed,
 						coins,
+						undefined,
+						"user",
 					);
-					await this.paymentTransactionRepository.create(transaction);
-				} else {
-					await this.paymentTransactionRepository.updateStatusByProviderPaymentId(
+					await this.paymentTransactionRepository.create(userTransaction);
+				} else if (existingUser.status !== PaymentStatus.Completed) {
+					await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
 						session.id,
 						PaymentStatus.Completed,
+						"user",
 					);
 				}
+
+				if (!existingPlatform) {
+					const platformTransaction = new PaymentTransaction(
+						this.idGenerator.generate(),
+						userId,
+						PaymentProvider.Stripe,
+						session.id,
+						amountInMinor,
+						currency,
+						PaymentStatus.Completed,
+						coins,
+						undefined,
+						"platform",
+					);
+					await this.paymentTransactionRepository.create(platformTransaction);
+				} else if (existingPlatform.status !== PaymentStatus.Completed) {
+					await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
+						session.id,
+						PaymentStatus.Completed,
+						"platform",
+					);
+				}
+
+				await this.paymentTransactionRepository.updateStatusByProviderPaymentId(
+					session.id,
+					PaymentStatus.Completed,
+				);
 
 				await this.walletService.credit(
 					userId,
@@ -88,6 +127,16 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
 			case "checkout.session.expired":
 			case "checkout.session.async_payment_failed": {
 				const session = event.data.object as Stripe.Checkout.Session;
+				await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
+					session.id,
+					PaymentStatus.Failed,
+					"user",
+				);
+				await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
+					session.id,
+					PaymentStatus.Failed,
+					"platform",
+				);
 				await this.paymentTransactionRepository.updateStatusByProviderPaymentId(
 					session.id,
 					PaymentStatus.Failed,

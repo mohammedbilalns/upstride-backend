@@ -26,6 +26,7 @@ import {
 	MongoMentorRepository,
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
+	MongoPlatformWalletRepository,
 	MongoSavedMentorRepository,
 	MongoSessionAvailabilityRepository,
 	MongoSessionBookingRepository,
@@ -108,6 +109,10 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind(TYPES.Repositories.PaymentTransactionRepository)
 		.to(MongoPaymentTransactionRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.PlatformWalletRepository)
+		.to(MongoPlatformWalletRepository)
 		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.SessionRepository)

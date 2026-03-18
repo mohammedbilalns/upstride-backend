@@ -10,3 +10,8 @@ export const UserPreferencesLimits = {
 	MIN_SKILLS_PER_INTEREST: 2,
 	MAX_SKILLS_PER_INTEREST: 10,
 } as const;
+
+export const SessionSlotLimits = {
+	MAX_RECURRING_RULE_PER_DAY: 6,
+	MAX_SLOTS_PER_DAY: 6,
+} as const;

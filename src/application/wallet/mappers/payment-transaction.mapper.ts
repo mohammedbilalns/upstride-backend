@@ -3,6 +3,9 @@ import type { PaymentTransactionDto } from "../dtos/get-payment-transactions.dto
 
 export class PaymentTransactionDtoMapper {
 	static toDTO(entity: PaymentTransaction): PaymentTransactionDto {
+		const owner = entity.transactionOwner ?? "user";
+		const direction = owner === "user" ? "debit" : "credit";
+
 		return {
 			id: entity.id,
 			paymentId: entity.id,
@@ -10,6 +13,7 @@ export class PaymentTransactionDtoMapper {
 			amount: entity.amount / 100,
 			currency: entity.currency,
 			coinsGranted: entity.coinsGranted,
+			direction,
 			createdAt: entity.createdAt,
 		};
 	}

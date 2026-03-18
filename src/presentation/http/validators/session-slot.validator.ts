@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { objectIdSchema } from "../../../shared/validators";
 
 const durationSchema = z.union([z.literal(30), z.literal(60)]);
 
@@ -7,7 +8,7 @@ export const slotIdParamSchema = z.object({
 });
 
 export const mentorIdParamSchema = z.object({
-	mentorId: z.string().min(1, "Mentor id is required"),
+	mentorId: objectIdSchema,
 });
 
 const availableSlotsDateSchema = z.string().transform((value, ctx) => {

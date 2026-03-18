@@ -62,9 +62,8 @@ export class CreateCheckoutSessionUseCase
 			},
 		});
 
-		const transactionId = this.idGenerator.generate();
-		const transaction = new PaymentTransaction(
-			transactionId,
+		const userTransaction = new PaymentTransaction(
+			this.idGenerator.generate(),
 			input.userId,
 			PaymentProvider.Stripe,
 			session.id,
@@ -72,12 +71,28 @@ export class CreateCheckoutSessionUseCase
 			"inr",
 			PaymentStatus.Pending,
 			input.coins,
+			undefined,
+			"user",
 		);
 
-		await this.paymentTransactionRepository.create(transaction);
+		const platformTransaction = new PaymentTransaction(
+			this.idGenerator.generate(),
+			input.userId,
+			PaymentProvider.Stripe,
+			session.id,
+			amountInMinor,
+			"inr",
+			PaymentStatus.Pending,
+			input.coins,
+			undefined,
+			"platform",
+		);
+
+		await this.paymentTransactionRepository.create(userTransaction);
+		await this.paymentTransactionRepository.create(platformTransaction);
 
 		return {
-			paymentId: transactionId,
+			paymentId: userTransaction.id,
 			url: session.url ?? null,
 			amount: amountInCurrency,
 			currency: "inr",

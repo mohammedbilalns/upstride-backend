@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import type { ISessionSlotRepository } from "../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../shared/types/types";
+import type { PlatformSettingsService } from "../../services/platform-settings.service";
 import { NotFoundError } from "../../shared/errors/not-found-error";
 import type {
 	GetMentorSlotsInput,
@@ -16,6 +17,8 @@ export class GetMentorSlotsUseCase implements IGetMentorSlotsUseCase {
 		private readonly _mentorRepository: IMentorRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)
 		private readonly _slotRepository: ISessionSlotRepository,
+		@inject(TYPES.Services.PlatformSettings)
+		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute({
@@ -26,6 +29,14 @@ export class GetMentorSlotsUseCase implements IGetMentorSlotsUseCase {
 		const mentor = await this._mentorRepository.findByUserId(userId);
 		if (!mentor) {
 			throw new NotFoundError("Mentor profile not found");
+		}
+		if (mentor.tierName === null || mentor.tierMax30minPayment === null) {
+			const starterTier = this._platformSettingsService.mentors.starter;
+			await this._mentorRepository.updateById(mentor.id, {
+				tierName: starterTier.name,
+				tierMax30minPayment: starterTier.maxPricePer30Min,
+				currentPricePer30Min: starterTier.maxPricePer30Min,
+			});
 		}
 
 		let slots: Awaited<ReturnType<ISessionSlotRepository["findByMentorId"]>>;

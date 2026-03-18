@@ -8,6 +8,7 @@ export interface CoinTransactionDocument {
 	type: CoinTransactionType;
 	referenceType?: string;
 	referenceId?: string;
+	transactionOwner?: "platform" | "user";
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -23,6 +24,7 @@ export const coinTransactionSchema = new Schema<CoinTransactionDocument>(
 		},
 		referenceType: { type: String },
 		referenceId: { type: String },
+		transactionOwner: { type: String, enum: ["platform", "user"] },
 	},
 	{ timestamps: true },
 );

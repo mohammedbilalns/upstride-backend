@@ -9,6 +9,7 @@ import type {
 	GetPublicMentorAvailableSlotsInput,
 	GetPublicMentorAvailableSlotsResponse,
 } from "../dtos/public-mentor-slots.dto";
+import { PublicMentorAvailableSlotMapper } from "../mappers/public-mentor-available-slot.mapper";
 import type { IGetPublicMentorAvailableSlotsUseCase } from "./get-public-mentor-available-slots.usecase.interface";
 
 @injectable()
@@ -59,14 +60,7 @@ export class GetPublicMentorAvailableSlotsUseCase
 			);
 
 		return {
-			slots: slots.map((slot) => ({
-				id: slot.id,
-				startTime: slot.startTime,
-				endTime: slot.endTime,
-				durationMinutes: slot.durationMinutes,
-				price: slot.price,
-				currency: slot.currency,
-			})),
+			slots: PublicMentorAvailableSlotMapper.toDTOs(slots),
 		};
 	}
 }

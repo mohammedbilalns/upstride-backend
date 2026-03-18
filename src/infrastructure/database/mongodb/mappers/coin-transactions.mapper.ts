@@ -12,6 +12,7 @@ export class CoinTransactionMapper {
 			doc.referenceType,
 			doc.referenceId,
 			doc.createdAt,
+			doc.transactionOwner,
 		);
 	}
 
@@ -22,6 +23,7 @@ export class CoinTransactionMapper {
 			type: entity.type,
 			referenceType: entity.referenceType,
 			referenceId: entity.referenceId,
+			transactionOwner: entity.transactionOwner,
 			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};
 	}

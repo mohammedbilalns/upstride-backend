@@ -19,7 +19,7 @@ const sessionBookingController = container.get<SessionBookingController>(
 sessionBookingRouter.post(
 	ROUTES.SESSION_BOOKINGS.BOOK,
 	verifySession,
-	authorizeRoles(["USER"]),
+	authorizeRoles(["USER", "MENTOR"]),
 	validate({ body: bookSessionBodySchema }),
 	sessionBookingController.bookSession,
 );
@@ -27,7 +27,7 @@ sessionBookingRouter.post(
 sessionBookingRouter.patch(
 	ROUTES.SESSION_BOOKINGS.CANCEL(":bookingId"),
 	verifySession,
-	authorizeRoles(["USER"]),
+	authorizeRoles(["USER", "MENTOR"]),
 	validate({ params: bookingIdParamSchema }),
 	sessionBookingController.cancelBooking,
 );
@@ -35,7 +35,7 @@ sessionBookingRouter.patch(
 sessionBookingRouter.patch(
 	ROUTES.SESSION_BOOKINGS.REQUEST_RESCHEDULE(":bookingId"),
 	verifySession,
-	authorizeRoles(["USER"]),
+	authorizeRoles(["USER", "MENTOR"]),
 	validate({ params: bookingIdParamSchema }),
 	sessionBookingController.requestReschedule,
 );
@@ -51,7 +51,7 @@ sessionBookingRouter.patch(
 sessionBookingRouter.get(
 	ROUTES.SESSION_BOOKINGS.USER,
 	verifySession,
-	authorizeRoles(["USER"]),
+	authorizeRoles(["USER", "MENTOR"]),
 	validate({ query: bookingListQuerySchema }),
 	sessionBookingController.getUserBookings,
 );

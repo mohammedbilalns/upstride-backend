@@ -7,7 +7,7 @@ export interface IWalletService {
 		type: CoinTransactionType,
 		referenceType?: string,
 		referenceId?: string,
-	): Promise<void>;
+	): Promise<string>;
 
 	debit(
 		userId: string,
@@ -15,5 +15,5 @@ export interface IWalletService {
 		type: CoinTransactionType,
 		referenceType?: string,
 		referenceId?: string,
-	): Promise<void>;
+	): Promise<string>;
 }
