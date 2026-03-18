@@ -33,6 +33,14 @@ sessionBookingRouter.patch(
 );
 
 sessionBookingRouter.patch(
+	ROUTES.SESSION_BOOKINGS.MENTOR_CANCEL(":bookingId"),
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	validate({ params: bookingIdParamSchema }),
+	sessionBookingController.cancelBookingByMentor,
+);
+
+sessionBookingRouter.patch(
 	ROUTES.SESSION_BOOKINGS.REQUEST_RESCHEDULE(":bookingId"),
 	verifySession,
 	authorizeRoles(["USER", "MENTOR"]),

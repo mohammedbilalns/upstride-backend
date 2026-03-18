@@ -1,11 +1,13 @@
 import type { Container } from "inversify";
 import {
 	BookSessionUseCase,
+	CancelBookingByMentorUseCase,
 	CancelBookingUseCase,
 	GetMentorBookingsUseCase,
 	GetUserBookingsUseCase,
 	HandleRescheduleUseCase,
 	type IBookSessionUseCase,
+	type ICancelBookingByMentorUseCase,
 	type ICancelBookingUseCase,
 	type IGetMentorBookingsUseCase,
 	type IGetUserBookingsUseCase,
@@ -22,6 +24,9 @@ export const registerSessionBookingBindings = (container: Container): void => {
 	container
 		.bind<ICancelBookingUseCase>(TYPES.UseCases.CancelBooking)
 		.to(CancelBookingUseCase);
+	container
+		.bind<ICancelBookingByMentorUseCase>(TYPES.UseCases.CancelBookingByMentor)
+		.to(CancelBookingByMentorUseCase);
 	container
 		.bind<IRequestRescheduleUseCase>(TYPES.UseCases.RequestReschedule)
 		.to(RequestRescheduleUseCase);

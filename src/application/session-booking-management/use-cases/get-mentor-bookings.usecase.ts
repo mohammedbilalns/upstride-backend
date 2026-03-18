@@ -35,11 +35,20 @@ export class GetMentorBookingsUseCase implements IGetMentorBookingsUseCase {
 			filter,
 			page,
 			limit,
+			mentor.userId,
 		);
+
+		const mentorProfile = await this._mentorRepository.findProfileById(
+			mentor.id,
+		);
+		const mentorNames = new Map<string, string>();
+		if (mentorProfile) {
+			mentorNames.set(mentorProfile.id, mentorProfile.user.name);
+		}
 
 		return {
 			...result,
-			items: SessionBookingDtoMapper.toListItems(result.items),
+			items: SessionBookingDtoMapper.toListItems(result.items, mentorNames),
 		};
 	}
 }

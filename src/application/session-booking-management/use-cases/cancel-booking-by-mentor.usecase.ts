@@ -4,6 +4,7 @@ import {
 	CoinTransactionType,
 } from "../../../domain/entities/coin-transactions.entity";
 import type { ICoinTransactionRepository } from "../../../domain/repositories/coin-transactions.repository.interface";
+import type { IMentorRepository } from "../../../domain/repositories/mentor.repository.interface";
 import type { IPlatformWalletRepository } from "../../../domain/repositories/platform-wallet.repository.interface";
 import type { ISessionBookingRepository } from "../../../domain/repositories/session-booking.repository.interface";
 import type { ISessionSlotRepository } from "../../../domain/repositories/session-slot.repository.interface";
@@ -17,11 +18,15 @@ import type {
 	CancelBookingInput,
 	CancelBookingResponse,
 } from "../dtos/session-booking.dto";
-import type { ICancelBookingUseCase } from "./cancel-booking.usecase.interface";
+import type { ICancelBookingByMentorUseCase } from "./cancel-booking-by-mentor.usecase.interface";
 
 @injectable()
-export class CancelBookingUseCase implements ICancelBookingUseCase {
+export class CancelBookingByMentorUseCase
+	implements ICancelBookingByMentorUseCase
+{
 	constructor(
+		@inject(TYPES.Repositories.MentorRepository)
+		private readonly _mentorRepository: IMentorRepository,
 		@inject(TYPES.Repositories.SessionBookingRepository)
 		private readonly _bookingRepository: ISessionBookingRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)
@@ -40,21 +45,23 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 		userId,
 		bookingId,
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
+		const mentor = await this._mentorRepository.findByUserId(userId);
+		if (!mentor) {
+			throw new NotFoundError("Mentor profile not found");
+		}
+
 		const booking = await this._bookingRepository.findById(bookingId);
-		if (!booking || booking.userId !== userId) {
+		if (!booking || booking.mentorId !== mentor.id) {
 			throw new NotFoundError("Booking not found");
 		}
 
-		if (booking.status === "cancelled" || booking.status === "refunded") {
-			throw new ValidationError("Booking is already cancelled");
+		if (
+			booking.status === "cancelled" ||
+			booking.status === "refunded" ||
+			booking.status === "completed"
+		) {
+			throw new ValidationError("Booking cannot be cancelled");
 		}
-
-		const now = new Date();
-		const fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
-		const refundAmount =
-			new Date(booking.startTime).getTime() - now.getTime() >= fiveDaysMs
-				? booking.price
-				: Math.floor(booking.price * 0.5);
 
 		await this._bookingRepository.updateById(bookingId, {
 			status: "cancelled",
@@ -69,30 +76,30 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 			throw new SlotNotFoundError();
 		}
 
-		if (refundAmount > 0) {
-			await this._walletService.credit(
-				userId,
-				refundAmount,
+		const refundAmount = booking.price;
+
+		await this._walletService.credit(
+			booking.userId,
+			refundAmount,
+			CoinTransactionType.Refund,
+			"session_booking",
+			booking.id,
+		);
+
+		await this._coinTransactionRepository.create(
+			new CoinTransaction(
+				this._idGenerator.generate(),
+				booking.userId,
+				-refundAmount,
 				CoinTransactionType.Refund,
 				"session_booking",
 				booking.id,
-			);
+				undefined,
+				"platform",
+			),
+		);
 
-			await this._coinTransactionRepository.create(
-				new CoinTransaction(
-					this._idGenerator.generate(),
-					userId,
-					-refundAmount,
-					CoinTransactionType.Refund,
-					"session_booking",
-					booking.id,
-					undefined,
-					"platform",
-				),
-			);
-
-			await this._platformWalletRepository.incrementBalance(-refundAmount);
-		}
+		await this._platformWalletRepository.incrementBalance(-refundAmount);
 
 		return { bookingId, status: "cancelled" };
 	}

@@ -3,7 +3,6 @@ import type { IMentorRepository } from "../../../domain/repositories/mentor.repo
 import { TYPES } from "../../../shared/types/types";
 import { MentorNotFoundError } from "../../mentor-lists/errors";
 import type { PlatformSettingsService } from "../../services/platform-settings.service";
-import { NotFoundError } from "../../shared/errors/not-found-error";
 import { ValidationError } from "../../shared/errors/validation-error";
 import type {
 	UpdateMentorProfileInput,
@@ -98,7 +97,7 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 
 		const profile = await this._mentorRepository.findProfileByUserId(userId);
 		if (!profile) {
-			throw new NotFoundError("Mentor profile not found");
+			throw new MentorNotFoundError();
 		}
 
 		const sessionPercentage =

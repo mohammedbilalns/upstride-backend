@@ -6,6 +6,7 @@ import type {
 } from "../../../application/session-booking-management/dtos/session-booking.dto";
 import type {
 	IBookSessionUseCase,
+	ICancelBookingByMentorUseCase,
 	ICancelBookingUseCase,
 	IGetMentorBookingsUseCase,
 	IGetUserBookingsUseCase,
@@ -24,6 +25,8 @@ export class SessionBookingController {
 		private readonly _bookSessionUseCase: IBookSessionUseCase,
 		@inject(TYPES.UseCases.CancelBooking)
 		private readonly _cancelBookingUseCase: ICancelBookingUseCase,
+		@inject(TYPES.UseCases.CancelBookingByMentor)
+		private readonly _cancelBookingByMentorUseCase: ICancelBookingByMentorUseCase,
 		@inject(TYPES.UseCases.RequestReschedule)
 		private readonly _requestRescheduleUseCase: IRequestRescheduleUseCase,
 		@inject(TYPES.UseCases.HandleReschedule)
@@ -49,6 +52,18 @@ export class SessionBookingController {
 	cancelBooking = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
 		const data = await this._cancelBookingUseCase.execute({
+			userId,
+			bookingId: req.params.bookingId as string,
+		});
+		return sendSuccess(res, HttpStatus.OK, {
+			message: "Booking cancelled successfully",
+			data,
+		});
+	});
+
+	cancelBookingByMentor = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const data = await this._cancelBookingByMentorUseCase.execute({
 			userId,
 			bookingId: req.params.bookingId as string,
 		});

@@ -30,6 +30,7 @@ export interface ISessionBookingRepository
 		filter: SessionBookingFilter,
 		page: number,
 		limit: number,
+		excludeUserId?: string,
 	): Promise<{
 		items: SessionBooking[];
 		total: number;

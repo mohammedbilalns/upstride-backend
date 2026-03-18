@@ -84,10 +84,14 @@ export class MongoSessionBookingRepository
 		filter: "all" | "past" | "cancelled" | "upcoming",
 		page: number,
 		limit: number,
+		excludeUserId?: string,
 	) {
 		const { query, sort } = this.buildFilterQuery(filter);
 		const skip = (page - 1) * limit;
-		const fullQuery = { mentorId, ...query };
+		const fullQuery: Record<string, unknown> = { mentorId, ...query };
+		if (excludeUserId) {
+			fullQuery.userId = { $ne: excludeUserId };
+		}
 
 		const [docs, total] = await Promise.all([
 			this.model.find(fullQuery).sort(sort).skip(skip).limit(limit).lean(),

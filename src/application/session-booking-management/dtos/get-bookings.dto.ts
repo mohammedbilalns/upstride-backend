@@ -11,11 +11,15 @@ export interface BookingListItemDto {
 	id: string;
 	userId: string;
 	mentorId: string;
+	mentorName: string | null;
 	slotId: string;
 	startTime: Date;
 	endTime: Date;
 	price: number;
 	status: "pending" | "confirmed" | "cancelled" | "completed" | "refunded";
+	attendanceStatus: "attended" | "not_attended" | null;
+	meetingId: string | null;
+	meetingUrl: string | null;
 	createdAt: Date;
 	updatedAt: Date;
 }

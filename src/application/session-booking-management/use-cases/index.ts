@@ -2,6 +2,8 @@ export * from "./book-session.usecase";
 export * from "./book-session.usecase.interface";
 export * from "./cancel-booking.usecase";
 export * from "./cancel-booking.usecase.interface";
+export * from "./cancel-booking-by-mentor.usecase";
+export * from "./cancel-booking-by-mentor.usecase.interface";
 export * from "./get-mentor-bookings.usecase";
 export * from "./get-mentor-bookings.usecase.interface";
 export * from "./get-user-bookings.usecase";

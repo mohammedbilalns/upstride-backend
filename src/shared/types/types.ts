@@ -121,6 +121,7 @@ export const TYPES = {
 		),
 		BookSession: Symbol.for("BookSessionUseCase"),
 		CancelBooking: Symbol.for("CancelBookingUseCase"),
+		CancelBookingByMentor: Symbol.for("CancelBookingByMentorUseCase"),
 		RequestReschedule: Symbol.for("RequestRescheduleUseCase"),
 		HandleReschedule: Symbol.for("HandleRescheduleUseCase"),
 		GetUserBookings: Symbol.for("GetUserBookingsUseCase"),

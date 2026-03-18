@@ -99,6 +99,7 @@ export const ROUTES = {
 		BASE: "/session-bookings",
 		BOOK: "/book",
 		CANCEL: (bookingId: string) => `/${bookingId}/cancel`,
+		MENTOR_CANCEL: (bookingId: string) => `/${bookingId}/mentor-cancel`,
 		REQUEST_RESCHEDULE: (bookingId: string) =>
 			`/${bookingId}/request-reschedule`,
 		HANDLE_RESCHEDULE: (bookingId: string) => `/${bookingId}/handle-reschedule`,
