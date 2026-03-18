@@ -6,6 +6,8 @@ export * from "./get-mentor-profile.usecase";
 export * from "./get-mentor-profile.usecase.interface";
 export * from "./get-mentor-registration-info.usecase";
 export * from "./get-mentor-registration-info.usecase.interface";
+export * from "./get-public-mentor-profile.usecase";
+export * from "./get-public-mentor-profile.usecase.interface";
 export * from "./register-mentor.usecase";
 export * from "./register-mentor.usecase.interface";
 export * from "./reject-mentor.usecase";
