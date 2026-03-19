@@ -62,6 +62,8 @@ export const ROUTES = {
 	MENTOR: {
 		BASE: "/mentor",
 		REGISTRATION_INFO: "/registration-info",
+		PROFILE: "/profile",
+		PUBLIC_PROFILE: (id: string) => `/public/${id}`,
 		REGISTER: "/register",
 		RESUBMIT: "/resubmit",
 		DISCOVERY: "/discover",
@@ -75,6 +77,34 @@ export const ROUTES = {
 		BY_ID: "/:listId",
 		ADD_MENTOR: "/:listId/mentors",
 		REMOVE_MENTOR: "/:listId/mentors/:mentorId",
+	},
+	RECURRING_RULES: {
+		BASE: "/recurring-rules",
+		ROOT: "/",
+		BY_ID: "/:ruleId",
+		ENABLE: (ruleId: string) => `/${ruleId}/enable`,
+		DISABLE: (ruleId: string) => `/${ruleId}/disable`,
+	},
+	SESSION_SLOTS: {
+		BASE: "/session-slots",
+		ROOT: "/",
+		CUSTOM: "/custom",
+		GENERATE: "/generate",
+		BY_ID: (slotId: string) => `/${slotId}`,
+		CANCEL: (slotId: string) => `/${slotId}/cancel`,
+		ENABLE: (slotId: string) => `/${slotId}/enable`,
+		PUBLIC_AVAILABLE: (mentorId: string) => `/public/${mentorId}/available`,
+	},
+	SESSION_BOOKINGS: {
+		BASE: "/session-bookings",
+		BOOK: "/book",
+		CANCEL: (bookingId: string) => `/${bookingId}/cancel`,
+		MENTOR_CANCEL: (bookingId: string) => `/${bookingId}/mentor-cancel`,
+		REQUEST_RESCHEDULE: (bookingId: string) =>
+			`/${bookingId}/request-reschedule`,
+		HANDLE_RESCHEDULE: (bookingId: string) => `/${bookingId}/handle-reschedule`,
+		USER: "/user",
+		MENTOR: "/mentor",
 	},
 	PLATFORM_SETTINGS: {
 		BASE: "/platform-settings",
@@ -94,5 +124,8 @@ export const ROUTES = {
 		COIN_BALANCE: "/balance",
 		COIN_TRANSACTIONS: "/coin-transactions",
 		PAYMENT_TRANSACTIONS: "/payment-transactions",
+		PLATFORM_BALANCE: "/platform/balance",
+		PLATFORM_COIN_TRANSACTIONS: "/platform/coin-transactions",
+		PLATFORM_PAYMENT_TRANSACTIONS: "/platform/payment-transactions",
 	},
 };

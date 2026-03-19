@@ -14,6 +14,7 @@ export class PaymentTransactionMapper {
 			doc.status,
 			doc.coinsGranted,
 			doc.createdAt,
+			doc.transactionOwner,
 		);
 	}
 
@@ -29,6 +30,7 @@ export class PaymentTransactionMapper {
 			currency: entity.currency,
 			status: entity.status,
 			coinsGranted: entity.coinsGranted,
+			transactionOwner: entity.transactionOwner,
 			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};
 	}

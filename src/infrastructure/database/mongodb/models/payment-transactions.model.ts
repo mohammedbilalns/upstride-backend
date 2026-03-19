@@ -14,6 +14,7 @@ export interface PaymentTransactionDocument {
 	currency: string;
 	status: PaymentStatus;
 	coinsGranted: number;
+	transactionOwner?: "platform" | "user" | "mentor";
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -21,13 +22,13 @@ export interface PaymentTransactionDocument {
 export const paymentTransactionSchema = new Schema<PaymentTransactionDocument>(
 	{
 		userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-		paymentId: { type: String, required: true, unique: true },
+		paymentId: { type: String, required: true },
 		provider: {
 			type: String,
 			enum: Object.values(PaymentProvider),
 			required: true,
 		},
-		providerPaymentId: { type: String, required: true, unique: true },
+		providerPaymentId: { type: String, required: true },
 		amount: { type: Number, required: true },
 		currency: { type: String, required: true },
 		status: {
@@ -36,8 +37,18 @@ export const paymentTransactionSchema = new Schema<PaymentTransactionDocument>(
 			required: true,
 		},
 		coinsGranted: { type: Number, required: true },
+		transactionOwner: { type: String, enum: ["platform", "user", "mentor"] },
 	},
 	{ timestamps: true },
+);
+
+paymentTransactionSchema.index(
+	{ providerPaymentId: 1, transactionOwner: 1 },
+	{ unique: true, sparse: true },
+);
+paymentTransactionSchema.index(
+	{ paymentId: 1, transactionOwner: 1 },
+	{ unique: true, sparse: true },
 );
 
 paymentTransactionSchema.index({ userId: 1, createdAt: -1 });

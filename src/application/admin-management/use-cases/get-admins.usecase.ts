@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import type { IUserRepository, UserQuery } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
-import { UserListMapper } from "../../user-management/mappers/user-list.mapper";
 import type { GetAdminsInput, GetAdminsResponse } from "../dtos/get-admins.dto";
+import { AdminListMapper } from "../mappers/admin-list.mapper";
 import type { IGetAdminsUseCase } from "./get-admins.usecase.interface";
 
 @injectable()
@@ -35,7 +35,7 @@ export class GetAdminsUseCase implements IGetAdminsUseCase {
 		});
 
 		return {
-			admins: UserListMapper.toDTOs(result.items),
+			admins: AdminListMapper.toDTOs(result.items),
 			total: result.total,
 			page: result.page,
 			limit: result.limit,

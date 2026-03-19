@@ -47,6 +47,7 @@ export class ProfileMapper {
 			phone: user.phone,
 			coinBalance: user.coinBalance,
 			role: user.role,
+			authType: user.authType,
 			profilePictureUrl,
 			preferences: user.preferences
 				? {

@@ -6,6 +6,7 @@ import type {
 	IMailService,
 	IPasswordService,
 	IPaymentService,
+	IPaymentWebhookParser,
 	IPlatformSettingsCache,
 	IStorageService,
 	IWalletService,
@@ -18,7 +19,6 @@ import type {
 	IProfessionRepository,
 	ISavedMentorRepository,
 } from "../../domain/repositories";
-import { RedisPlatformSettingsCache } from "../../infrastructure/cache/redis-platform-settings.cache";
 import {
 	MongoCoinTransactionRepository,
 	MongoInterestRepository,
@@ -26,13 +26,18 @@ import {
 	MongoMentorRepository,
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
+	MongoPlatformWalletRepository,
 	MongoSavedMentorRepository,
+	MongoSessionAvailabilityRepository,
+	MongoSessionBookingRepository,
 	MongoSessionRepository,
+	MongoSessionSlotRepository,
 	MongoSkillRepository,
 	MongoUserRepository,
 } from "../../infrastructure/database/mongodb/repositories";
 import { MongoProfessionRepository } from "../../infrastructure/database/mongodb/repositories/profession.repository";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
+import { RedisPlatformSettingsCache } from "../../infrastructure/database/redis/redis-platform-settings.cache";
 import { RedisOtpRepository } from "../../infrastructure/database/redis/repositories/otp.repository";
 import { RedisTokenRevocationRepository } from "../../infrastructure/database/redis/repositories/token-revokation.repository";
 import {
@@ -45,6 +50,7 @@ import {
 	NodeEventBus,
 	S3StorageService,
 	StripePaymentService,
+	StripeWebhookParser,
 	UuidGenerator,
 	WalletService,
 } from "../../infrastructure/services";
@@ -81,6 +87,10 @@ export const registerCommonBindings = (container: Container): void => {
 		.to(StripePaymentService)
 		.inSingletonScope();
 	container
+		.bind<IPaymentWebhookParser>(TYPES.Services.PaymentWebhookParser)
+		.to(StripeWebhookParser)
+		.inSingletonScope();
+	container
 		.bind<IIdGenerator>(TYPES.Services.IdGenerator)
 		.to(UuidGenerator)
 		.inSingletonScope();
@@ -105,6 +115,10 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind(TYPES.Repositories.PaymentTransactionRepository)
 		.to(MongoPaymentTransactionRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.PlatformWalletRepository)
+		.to(MongoPlatformWalletRepository)
 		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.SessionRepository)
@@ -143,6 +157,18 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<ISavedMentorRepository>(TYPES.Repositories.SavedMentorRepository)
 		.to(MongoSavedMentorRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.SessionAvailabilityRepository)
+		.to(MongoSessionAvailabilityRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.SessionSlotRepository)
+		.to(MongoSessionSlotRepository)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Repositories.SessionBookingRepository)
+		.to(MongoSessionBookingRepository)
 		.inSingletonScope();
 
 	container.bind(TYPES.Databases.Redis).toConstantValue(redisClient);

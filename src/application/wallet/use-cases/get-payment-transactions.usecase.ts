@@ -27,6 +27,7 @@ export class GetPaymentTransactionsUseCase
 		const query: PaymentTransactionQuery = {
 			userId: input.userId,
 			status: PaymentStatus.Completed,
+			transactionOwner: "user",
 		};
 
 		const sort: Record<string, 1 | -1> =

@@ -2,7 +2,7 @@ import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	ICreateCheckoutSessionUseCase,
-	IHandleStripeWebhookUseCase,
+	IHandlePaymentWebhookUseCase,
 } from "../../../application/payments/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
@@ -19,8 +19,8 @@ export class PaymentController {
 	constructor(
 		@inject(TYPES.UseCases.CreateCheckoutSession)
 		private readonly createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
-		@inject(TYPES.UseCases.HandleStripeWebhook)
-		private readonly handleStripeWebhookUseCase: IHandleStripeWebhookUseCase,
+		@inject(TYPES.UseCases.HandlePaymentWebhook)
+		private readonly handleStripeWebhookUseCase: IHandlePaymentWebhookUseCase,
 	) {}
 
 	createCheckoutSession = asyncHandler(

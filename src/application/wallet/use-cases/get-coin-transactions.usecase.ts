@@ -24,6 +24,7 @@ export class GetCoinTransactionsUseCase implements IGetCoinTransactionsUseCase {
 		const query: CoinTransactionQuery = {
 			userId: input.userId,
 			type: input.type,
+			transactionOwner: "user",
 		};
 
 		const sort: Record<string, 1 | -1> =

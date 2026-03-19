@@ -14,3 +14,7 @@ export const positiveIntSchema = z
 	.number()
 	.int()
 	.positive("Value must be greater than 0");
+
+export const objectIdSchema = z
+	.string()
+	.regex(/^[0-9a-fA-F]{24}$/, "Invalid object id");

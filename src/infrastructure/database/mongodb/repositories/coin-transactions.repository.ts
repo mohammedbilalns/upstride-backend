@@ -75,6 +75,17 @@ export class MongoCoinTransactionRepository
 			filter.referenceId = query.referenceId;
 		}
 
+		if (query?.transactionOwner === "platform") {
+			filter.transactionOwner = "platform";
+		} else if (query?.transactionOwner === "user") {
+			filter.$or = [
+				{ transactionOwner: "user" },
+				{ transactionOwner: { $exists: false } },
+				{ transactionOwner: null },
+				{ transactionOwner: "" },
+			];
+		}
+
 		const docs = await this.model
 			.find(filter)
 			.sort(sort ?? { createdAt: -1 })
@@ -109,6 +120,17 @@ export class MongoCoinTransactionRepository
 
 		if (query?.referenceId) {
 			filter.referenceId = query.referenceId;
+		}
+
+		if (query?.transactionOwner === "platform") {
+			filter.transactionOwner = "platform";
+		} else if (query?.transactionOwner === "user") {
+			filter.$or = [
+				{ transactionOwner: "user" },
+				{ transactionOwner: { $exists: false } },
+				{ transactionOwner: null },
+				{ transactionOwner: "" },
+			];
 		}
 
 		const skip = (page - 1) * limit;

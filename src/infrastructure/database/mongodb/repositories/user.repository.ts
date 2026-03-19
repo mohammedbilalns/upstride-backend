@@ -123,6 +123,7 @@ export class MongoUserRepository
 			phone: doc.phone || "",
 			coinBalance: doc.coinBalance ?? 0,
 			role: doc.role,
+			authType: doc.authType,
 			profilePictureId: doc.profilePictureId,
 			preferences: doc.preferences,
 		};

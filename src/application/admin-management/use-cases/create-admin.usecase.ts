@@ -6,6 +6,7 @@ import {
 } from "../../../domain/entities/user.entity";
 import type { IUserRepository } from "../../../domain/repositories";
 import { TYPES } from "../../../shared/types/types";
+import { parseNameFromEmail } from "../../../shared/utilities/parse-name-from-email.util";
 import { UserAlreadyExistsError } from "../../authentication/errors/user-already-exists.error";
 import type { IPasswordService } from "../../services/password.service.interface";
 import type { CreateAdminInput } from "../dtos/create-admin.dto";
@@ -33,10 +34,8 @@ export class CreateAdminUseCase implements ICreateAdminUseCase {
 			input.password,
 		);
 
-		const nameFromEmail = input.email.split("@")[0]?.trim() || "Admin";
-
 		const newUser = {
-			name: nameFromEmail,
+			name: parseNameFromEmail(input.email),
 			email: input.email,
 			phone: "",
 			coinBalance: 0,

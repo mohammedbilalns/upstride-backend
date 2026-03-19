@@ -9,6 +9,8 @@ export enum PaymentProvider {
 	Stripe = "stripe",
 }
 
+export type PaymentTransactionOwner = "platform" | "user" | "mentor";
+
 export class PaymentTransaction {
 	public readonly id: string;
 	public readonly userId: string;
@@ -18,6 +20,7 @@ export class PaymentTransaction {
 	public readonly currency: string;
 	public readonly status: PaymentStatus;
 	public readonly coinsGranted: number;
+	public readonly transactionOwner?: PaymentTransactionOwner;
 	public readonly createdAt: Date;
 
 	constructor(
@@ -30,6 +33,7 @@ export class PaymentTransaction {
 		status: PaymentStatus,
 		coinsGranted: number,
 		createdAt?: Date,
+		transactionOwner?: PaymentTransactionOwner,
 	) {
 		if (!providerPaymentId)
 			throw new EntityValidationError(
@@ -45,6 +49,7 @@ export class PaymentTransaction {
 		this.currency = currency;
 		this.status = status;
 		this.coinsGranted = coinsGranted;
+		this.transactionOwner = transactionOwner;
 		this.createdAt = createdAt ?? new Date();
 
 		Object.freeze(this);

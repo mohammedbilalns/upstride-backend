@@ -30,6 +30,10 @@ export class RequestPasswordResetUseCase
 		const user = await this._userRepository.findByEmail(email);
 
 		if (user) {
+			if (user.authType !== "LOCAL") {
+				return;
+			}
+
 			assertUserCanAuthenticate(user);
 
 			const policy = new ResetPasswordOtpPolicy();

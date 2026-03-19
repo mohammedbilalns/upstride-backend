@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from "node:events";
 import type { EventBus } from "../../application/events/event-bus.interface";
 import type { DomainEvent } from "../../domain/events/domain-event";
 

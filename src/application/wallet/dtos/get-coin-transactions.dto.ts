@@ -12,6 +12,8 @@ export interface CoinTransactionDto {
 	id: string;
 	amount: number;
 	type: CoinTransactionType;
+	transactionOwner: "platform" | "user";
+	direction: "credit" | "debit";
 	createdAt: Date;
 }
 

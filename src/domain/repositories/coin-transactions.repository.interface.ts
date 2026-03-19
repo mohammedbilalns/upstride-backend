@@ -14,6 +14,7 @@ export interface CoinTransactionQuery {
 	type?: CoinTransactionType | CoinTransactionType[];
 	referenceType?: string;
 	referenceId?: string;
+	transactionOwner?: "platform" | "user";
 }
 
 export interface ICoinTransactionRepository
