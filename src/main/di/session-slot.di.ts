@@ -14,7 +14,7 @@ import {
 	type IGenerateSlotsUseCase,
 	type IGetMentorSlotsUseCase,
 	type IGetPublicMentorAvailableSlotsUseCase,
-} from "../../application/session-slot-management/use-cases";
+} from "../../application/modules/session-slot-management/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerSessionSlotBindings = (container: Container): void => {

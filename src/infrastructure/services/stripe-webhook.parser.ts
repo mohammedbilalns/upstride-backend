@@ -11,6 +11,7 @@ import env from "../../shared/config/env";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
+//FIX: violates OCP , Define a IPaymentEventHandler interface and register handlers per event type. New payment events get new handler classes without touching existing code.
 @injectable()
 export class StripeWebhookParser implements IPaymentWebhookParser {
 	async parse(

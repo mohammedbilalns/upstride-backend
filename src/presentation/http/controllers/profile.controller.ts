@@ -3,13 +3,13 @@ import { inject, injectable } from "inversify";
 import type {
 	IGetMeUseCase,
 	IVerifyOtpUseCase,
-} from "../../../application/authentication/use-cases";
+} from "../../../application/modules/authentication/use-cases";
 import type {
 	IChangePasswordUseCase,
 	IGetProfileUseCase,
 	IRequestChangePasswordUseCase,
 	IUpdateProfileUseCase,
-} from "../../../application/profile-management/use-cases";
+} from "../../../application/modules/profile-management/use-cases";
 import type { IUserRepository } from "../../../domain/repositories";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";

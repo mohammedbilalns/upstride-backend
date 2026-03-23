@@ -1,9 +1,9 @@
 import { injectable } from "inversify";
-import type { SocialIdentityDto } from "../../application/authentication/dtos";
+import type { SocialIdentityDto } from "../../application/modules/authentication/dtos";
 import {
 	AuthenticationError,
 	OAuthProviderError,
-} from "../../application/authentication/errors";
+} from "../../application/modules/authentication/errors";
 import type { IOAuthIdentityProvider } from "../../application/services";
 import env from "../../shared/config/env";
 import { fetchWithDiagnostics } from "../../shared/utilities/outbound-fetch.util";

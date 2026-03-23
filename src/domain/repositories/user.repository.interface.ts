@@ -1,4 +1,4 @@
-import type { UserWithPopulatedPreferences } from "../../application/profile-management/dtos/get-profile.dto";
+import type { UserWithPopulatedPreferences } from "../../application/modules/profile-management/dtos/get-profile.dto";
 import type { User, UserRole } from "../entities/user.entity";
 import type { CreatableRepository } from "./capabilities/creatable.repository.interface";
 import type { FindByIdRepository } from "./capabilities/find-by-id.repository.interface";

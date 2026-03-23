@@ -1,4 +1,3 @@
-export * from "../config/platform-settings.defaults";
 export * from "./platform-settings/coin-settings";
 export * from "./platform-settings/content-settings";
 export * from "./platform-settings/mentor-settings";

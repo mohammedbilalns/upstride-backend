@@ -47,6 +47,7 @@ export class PlatformSettingsMapper {
 		};
 	}
 
+	//FIX: violates ocp
 	private static toSettingsData(
 		type: PlatformSettingsType,
 		data: unknown,

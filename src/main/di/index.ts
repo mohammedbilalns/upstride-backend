@@ -2,6 +2,7 @@ export * from "./admin-management.di";
 export * from "./authentication.di";
 export * from "./catalog.di";
 export * from "./common.di";
+export * from "./events.di";
 export * from "./mentor.di";
 export * from "./mentor-discovery.di";
 export * from "./mentor-lists.di";

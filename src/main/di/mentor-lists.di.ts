@@ -12,7 +12,7 @@ import {
 	type IGetMentorListUseCase,
 	type IRemoveMentorFromListUseCase,
 	RemoveMentorFromListUseCase,
-} from "../../application/mentor-lists/use-cases";
+} from "../../application/modules/mentor-lists/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerMentorListsBindings = (container: Container): void => {

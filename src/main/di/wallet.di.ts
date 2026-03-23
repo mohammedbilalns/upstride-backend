@@ -12,7 +12,7 @@ import {
 	type IGetPlatformCoinTransactionsUseCase,
 	type IGetPlatformPaymentTransactionsUseCase,
 	type IGetPlatformWalletUseCase,
-} from "../../application/wallet/use-cases";
+} from "../../application/modules/wallet/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerWalletBindings = (container: Container): void => {

@@ -6,7 +6,7 @@ import {
 	type IHandlePaymentWebhookUseCase,
 	type IProcessPaymentEventUseCase,
 	ProcessPaymentEventUseCase,
-} from "../../application/payments/use-cases";
+} from "../../application/modules/payments/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerPaymentsBindings = (container: Container): void => {

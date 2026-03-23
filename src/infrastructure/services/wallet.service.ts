@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { UserNotFoundError } from "../../application/authentication/errors";
+import { UserNotFoundError } from "../../application/modules/authentication/errors";
 import type { IIdGenerator, IWalletService } from "../../application/services";
 import {
 	CoinTransaction,

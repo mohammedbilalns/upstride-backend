@@ -2,11 +2,11 @@ import { inject, injectable } from "inversify";
 import type {
 	IResendOtpUseCase,
 	IVerifyOtpUseCase,
-} from "../../../application/authentication/use-cases";
+} from "../../../application/modules/authentication/use-cases";
 import type {
 	IRequestPasswordResetUseCase,
 	IUpdatePasswordUseCase,
-} from "../../../application/authentication/use-cases/password-reset";
+} from "../../../application/modules/authentication/use-cases/password-reset";
 import { OtpPurpose } from "../../../domain/policies/otp-purposes";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";

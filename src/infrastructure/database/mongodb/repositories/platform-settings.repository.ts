@@ -1,12 +1,14 @@
 import { injectable } from "inversify";
 import type {
-	DefaultPlatformSettingsMap,
 	PlatformSetting,
-	PlatformSettingsDataMap,
 	PlatformSettingsType,
 } from "../../../../domain/entities/platform-settings.entity";
 import { PlatformSetting as PlatformSettingEntity } from "../../../../domain/entities/platform-settings.entity";
 import type { IPlatformSettingsRepository } from "../../../../domain/repositories/platform-settings.repository.interface";
+import type {
+	DefaultPlatformSettingsMap,
+	PlatformSettingsDataMap,
+} from "../../../../shared/config/platform-settings.defaults";
 import { PlatformSettingsMapper } from "../mappers/platform-settings.mapper";
 import {
 	type PlatformSettingDocument,

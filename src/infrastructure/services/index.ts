@@ -5,6 +5,7 @@ export * from "./linkedin-oauth.service";
 export * from "./mail.service";
 export * from "./otp-generator.service";
 export * from "./password.service";
+export * from "./platform-settings.service";
 export * from "./s3-storage.service";
 export * from "./stripe-payment.service";
 export * from "./stripe-webhook.parser";

@@ -7,7 +7,7 @@ import type {
 	GetMentorListInput,
 	GetMentorListsInput,
 	RemoveMentorFromListInput,
-} from "../../../application/mentor-lists/dtos/mentor-list.dto";
+} from "../../../application/modules/mentor-lists/dtos/mentor-list.dto";
 import type {
 	IAddMentorToListUseCase,
 	ICreateMentorListUseCase,
@@ -15,7 +15,7 @@ import type {
 	IGetMentorListsUseCase,
 	IGetMentorListUseCase,
 	IRemoveMentorFromListUseCase,
-} from "../../../application/mentor-lists/use-cases";
+} from "../../../application/modules/mentor-lists/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

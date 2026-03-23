@@ -4,7 +4,7 @@ import type {
 	PopulatedInterest,
 	PopulatedSkill,
 	UserWithPopulatedPreferences,
-} from "../../../../application/profile-management/dtos/get-profile.dto";
+} from "../../../../application/modules/profile-management/dtos/get-profile.dto";
 import type { User } from "../../../../domain/entities/user.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type {

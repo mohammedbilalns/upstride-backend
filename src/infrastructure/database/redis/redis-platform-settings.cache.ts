@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { Redis } from "ioredis";
 import type { IPlatformSettingsCache } from "../../../application/services";
-import type { PlatformSettingsDataMap } from "../../../domain/config/platform-settings.defaults";
+import type { PlatformSettingsDataMap } from "../../../shared/config/platform-settings.defaults";
 import { TYPES } from "../../../shared/types/types";
 
 const PLATFORM_SETTINGS_CACHE_KEY = "platform_settings:all";

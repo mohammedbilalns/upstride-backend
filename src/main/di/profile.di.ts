@@ -8,7 +8,7 @@ import {
 	type IUpdateProfileUseCase,
 	RequestChangePasswordUseCase,
 	UpdateProfileUseCase,
-} from "../../application/profile-management/use-cases";
+} from "../../application/modules/profile-management/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerProfileBindings = (container: Container): void => {

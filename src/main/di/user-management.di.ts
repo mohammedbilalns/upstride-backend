@@ -3,7 +3,7 @@ import {
 	BlockUserUseCase,
 	GetUsersUseCase,
 	UnblockUserUseCase,
-} from "../../application/user-management/use-cases";
+} from "../../application/modules/user-management/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerUserManagementBindings = (container: Container): void => {

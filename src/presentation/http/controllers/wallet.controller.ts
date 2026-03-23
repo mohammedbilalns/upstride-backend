@@ -1,9 +1,9 @@
 import type { Response } from "express";
 import { inject, injectable } from "inversify";
-import type { GetCoinTransactionsInput } from "../../../application/wallet/dtos/get-coin-transactions.dto";
-import type { GetPaymentTransactionsInput } from "../../../application/wallet/dtos/get-payment-transactions.dto";
-import type { GetPlatformCoinTransactionsInput } from "../../../application/wallet/dtos/get-platform-coin-transactions.dto";
-import type { GetPlatformPaymentTransactionsInput } from "../../../application/wallet/dtos/get-platform-payment-transactions.dto";
+import type { GetCoinTransactionsInput } from "../../../application/modules/wallet/dtos/get-coin-transactions.dto";
+import type { GetPaymentTransactionsInput } from "../../../application/modules/wallet/dtos/get-payment-transactions.dto";
+import type { GetPlatformCoinTransactionsInput } from "../../../application/modules/wallet/dtos/get-platform-coin-transactions.dto";
+import type { GetPlatformPaymentTransactionsInput } from "../../../application/modules/wallet/dtos/get-platform-payment-transactions.dto";
 import type {
 	IGetCoinBalanceUseCase,
 	IGetCoinTransactionsUseCase,
@@ -11,7 +11,7 @@ import type {
 	IGetPlatformCoinTransactionsUseCase,
 	IGetPlatformPaymentTransactionsUseCase,
 	IGetPlatformWalletUseCase,
-} from "../../../application/wallet/use-cases";
+} from "../../../application/modules/wallet/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

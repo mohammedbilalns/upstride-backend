@@ -1,6 +1,7 @@
 import { MailRenderer } from "../../infrastructure/mail/mail-renderer";
 import type { IMailTemplate } from "./mail.template";
 
+//FIX: Template depending on infra logic
 export class RegisterOtpMailTemplate implements IMailTemplate {
 	readonly purpose = "REGISTER";
 	readonly subject = "Verify your account";

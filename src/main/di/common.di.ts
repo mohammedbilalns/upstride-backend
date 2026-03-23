@@ -10,8 +10,8 @@ import type {
 	IPlatformSettingsCache,
 	IStorageService,
 	IWalletService,
+	PlatformSettingsService,
 } from "../../application/services";
-import { PlatformSettingsService } from "../../application/services";
 import type {
 	IMentorListRepository,
 	IMentorRepository,
@@ -44,6 +44,7 @@ import { RedisOtpRepository } from "../../infrastructure/database/redis/reposito
 import { RedisTokenRevocationRepository } from "../../infrastructure/database/redis/repositories/token-revokation.repository";
 import {
 	Argon2PasswordService,
+	CachedPlatformSettingsService,
 	CryptoOtpGenerator,
 	GoogleOAuthService,
 	JwtTokenService,
@@ -60,6 +61,7 @@ import { TYPES } from "../../shared/types/types";
 
 export const mailQueue = new Queue("mailQueue", { connection: redisClient });
 
+//FIX: common.di.ts` is doing too much.** It registers all repositories, all infrastructure services, Redis, queues — it's become a dumping ground. Split into `repositories.di.ts`, `infrastructure-services.di.ts`, `queues.di.ts`.
 export const registerCommonBindings = (container: Container): void => {
 	container.bind<Queue>(TYPES.Queues.MailQueue).toConstantValue(mailQueue);
 
@@ -78,7 +80,7 @@ export const registerCommonBindings = (container: Container): void => {
 		.inSingletonScope();
 	container
 		.bind<PlatformSettingsService>(TYPES.Services.PlatformSettings)
-		.to(PlatformSettingsService)
+		.to(CachedPlatformSettingsService)
 		.inSingletonScope();
 	container
 		.bind<IWalletService>(TYPES.Services.WalletService)

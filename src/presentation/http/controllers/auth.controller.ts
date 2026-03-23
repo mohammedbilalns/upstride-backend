@@ -1,6 +1,5 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { inject, injectable } from "inversify";
-import { UAParser } from "ua-parser-js";
 import type {
 	ILoginWithEmailUseCase,
 	IRefreshSessionUseCase,
@@ -9,11 +8,12 @@ import type {
 	ISaveUserInterestsUseCase,
 	ISocialLoginUseCase,
 	IVerifyOtpUseCase,
-} from "../../../application/authentication/use-cases";
+} from "../../../application/modules/authentication/use-cases";
 import { OtpPurpose } from "../../../domain/policies/otp-purposes";
 import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
+import { extractDeviceInfo } from "../../../shared/utilities/extract-device-info.util";
 import { AuthResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
@@ -79,7 +79,7 @@ export class AuthController {
 	});
 
 	login = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 
 		const { refreshToken, ...data } = await this._loginWithEmailUseCase.execute(
 			{
@@ -96,7 +96,7 @@ export class AuthController {
 	});
 
 	loginWithGoogle = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 		const data = await this._socialLoginUseCase.execute({
 			provider: "GOOGLE",
 			credential: (req.validated?.body as GoogleLoginBody).code,
@@ -116,7 +116,7 @@ export class AuthController {
 	});
 
 	loginWithLinkedIn = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 		const body = req.validated?.body as LinkedInLoginBody;
 
 		const data = await this._socialLoginUseCase.execute({
@@ -138,7 +138,7 @@ export class AuthController {
 	});
 
 	saveInterests = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 
 		const { refreshToken, ...data } =
 			await this._saveUserInterestsUseCase.execute({
@@ -173,30 +173,5 @@ export class AuthController {
 			sameSite: "strict",
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		});
-	}
-
-	private _extractDeviceInfo(req: Request) {
-		const userAgent = req.headers["user-agent"] || ("unknown" as string);
-		const ua = new UAParser(userAgent);
-		const deviceType = ua.getDevice().type || "unknown";
-		const deviceVendor = ua.getDevice().vendor || "unknown";
-		const deviceModel = ua.getDevice().model || "unknown";
-		const deviceOsName = ua.getOS().name || "unknown";
-		const deviceOsVersion = ua.getOS().version;
-		const deviceOs = deviceOsVersion
-			? `${deviceOsName} ${deviceOsVersion}`
-			: deviceOsName;
-		const browser = ua.getBrowser().name || "unknown";
-		const ipAddress = req.ip || req.socket?.remoteAddress || "unknown";
-
-		return {
-			deviceType,
-			deviceVendor,
-			deviceModel,
-			deviceOs,
-			browser,
-			ipAddress,
-			userAgent,
-		};
 	}
 }

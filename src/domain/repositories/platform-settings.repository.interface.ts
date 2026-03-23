@@ -1,7 +1,9 @@
 import type {
 	DefaultPlatformSettingsMap,
-	PlatformSetting,
 	PlatformSettingsDataMap,
+} from "../../shared/config/platform-settings.defaults";
+import type {
+	PlatformSetting,
 	PlatformSettingsType,
 } from "../entities/platform-settings.entity";
 

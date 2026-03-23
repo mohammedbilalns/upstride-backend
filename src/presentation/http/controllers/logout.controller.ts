@@ -4,7 +4,7 @@ import type {
 	ILogoutUseCase,
 	IRevokeAllOtherSessionsUseCase,
 	IRevokeSessionUseCase,
-} from "../../../application/authentication/use-cases";
+} from "../../../application/modules/authentication/use-cases";
 import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";

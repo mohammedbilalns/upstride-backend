@@ -1,5 +1,5 @@
 import type { Container } from "inversify";
-import { AuthSessionService } from "../../application/authentication/services";
+import { AuthSessionService } from "../../application/modules/authentication/services";
 import {
 	GetActiveSessionsUseCase,
 	GetMeUseCase,
@@ -15,7 +15,7 @@ import {
 	SocialLoginUseCase,
 	UpdatePasswordUseCase,
 	VerifyOtpUseCase,
-} from "../../application/authentication/use-cases";
+} from "../../application/modules/authentication/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerAuthenticationBindings = (container: Container): void => {

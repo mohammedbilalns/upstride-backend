@@ -1,4 +1,4 @@
-import type { PlatformSettingsDataMap } from "../../domain/entities/platform-settings.entity";
+import type { PlatformSettingsDataMap } from "../../shared/config/platform-settings.defaults";
 
 export interface IPlatformSettingsCache {
 	get(): Promise<PlatformSettingsDataMap | null>;

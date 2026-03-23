@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
-import type { CreateAdminInput } from "../../../application/admin-management/dtos/create-admin.dto";
-import type { GetAdminsInput } from "../../../application/admin-management/dtos/get-admins.dto";
+import type { CreateAdminInput } from "../../../application/modules/admin-management/dtos/create-admin.dto";
+import type { GetAdminsInput } from "../../../application/modules/admin-management/dtos/get-admins.dto";
 import type {
 	IBlockAdminUseCase,
 	ICreateAdminUseCase,
 	IGetAdminsUseCase,
 	IUnblockAdminUseCase,
-} from "../../../application/admin-management/use-cases";
+} from "../../../application/modules/admin-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { AdminManagementResponseMessages } from "../constants";

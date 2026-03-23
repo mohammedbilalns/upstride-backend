@@ -14,7 +14,7 @@ import {
 	type IHandleRescheduleUseCase,
 	type IRequestRescheduleUseCase,
 	RequestRescheduleUseCase,
-} from "../../application/session-booking-management/use-cases";
+} from "../../application/modules/session-booking-management/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerSessionBookingBindings = (container: Container): void => {

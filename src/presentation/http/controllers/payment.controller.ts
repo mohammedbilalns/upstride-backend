@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import type {
 	ICreateCheckoutSessionUseCase,
 	IHandlePaymentWebhookUseCase,
-} from "../../../application/payments/use-cases";
+} from "../../../application/modules/payments/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
