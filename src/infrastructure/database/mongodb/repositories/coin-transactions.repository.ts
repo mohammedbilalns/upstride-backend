@@ -55,7 +55,7 @@ export class MongoCoinTransactionRepository
 		query,
 		sort,
 	}: QueryParams<CoinTransactionQuery>): Promise<CoinTransaction[]> {
-		const filter = this.buildFilter(query);
+		const filter = this._buildFilter(query);
 
 		const docs = await this.model
 			.find(filter)
@@ -73,7 +73,7 @@ export class MongoCoinTransactionRepository
 	}: PaginateParams<CoinTransactionQuery>): Promise<
 		PaginatedResult<CoinTransaction>
 	> {
-		const filter = this.buildFilter(query);
+		const filter = this._buildFilter(query);
 
 		const skip = (page - 1) * limit;
 
@@ -94,7 +94,7 @@ export class MongoCoinTransactionRepository
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
 
-	private buildFilter(
+	private _buildFilter(
 		query?: CoinTransactionQuery,
 	): QueryFilter<CoinTransactionDocument> {
 		const filter: QueryFilter<CoinTransactionDocument> = {};

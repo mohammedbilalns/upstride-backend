@@ -19,9 +19,9 @@ interface CreateCheckoutSessionBody {
 export class PaymentController {
 	constructor(
 		@inject(TYPES.UseCases.CreateCheckoutSession)
-		private readonly createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
+		private readonly _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
 		@inject(TYPES.UseCases.HandlePaymentWebhook)
-		private readonly handleStripeWebhookUseCase: IHandlePaymentWebhookUseCase,
+		private readonly _handleStripeWebhookUseCase: IHandlePaymentWebhookUseCase,
 	) {}
 
 	createCheckoutSession = asyncHandler(
@@ -30,7 +30,7 @@ export class PaymentController {
 				req.body) as CreateCheckoutSessionBody;
 			const userId = req.user.id;
 
-			const session = await this.createCheckoutSessionUseCase.execute({
+			const session = await this._createCheckoutSessionUseCase.execute({
 				userId,
 				coins,
 				successUrl: env.STRIPE_SUCCESS_URL,
@@ -62,7 +62,7 @@ export class PaymentController {
 			return;
 		}
 
-		await this.handleStripeWebhookUseCase.execute({
+		await this._handleStripeWebhookUseCase.execute({
 			signature,
 			payload: req.body,
 		});

@@ -17,7 +17,7 @@ export class GetPlatformCoinTransactionsUseCase
 {
 	constructor(
 		@inject(TYPES.Repositories.CoinTransactionRepository)
-		private readonly coinTransactionRepository: ICoinTransactionRepository,
+		private readonly _coinTransactionRepository: ICoinTransactionRepository,
 	) {}
 
 	async execute(
@@ -31,7 +31,7 @@ export class GetPlatformCoinTransactionsUseCase
 		const sort: Record<string, 1 | -1> =
 			input.sort === "old" ? { createdAt: 1 } : { createdAt: -1 };
 
-		const result = await this.coinTransactionRepository.paginate({
+		const result = await this._coinTransactionRepository.paginate({
 			page: input.page,
 			limit: input.limit,
 			query,

@@ -5,16 +5,18 @@ import type { PaymentWebhookEvent } from "../../../services/payment-webhook.pars
 
 @injectable()
 export abstract class CheckoutFailureHandler {
-	constructor(protected readonly _repo: IPaymentTransactionRepository) {}
+	constructor(
+		protected readonly _paymentTransactionRepository: IPaymentTransactionRepository,
+	) {}
 
 	async handle(event: PaymentWebhookEvent): Promise<void> {
 		await Promise.all([
-			this._repo.updateStatusByProviderPaymentIdAndOwner(
+			this._paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
 				event.sessionId,
 				PaymentStatus.Failed,
 				"user",
 			),
-			this._repo.updateStatusByProviderPaymentIdAndOwner(
+			this._paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
 				event.sessionId,
 				PaymentStatus.Failed,
 				"platform",

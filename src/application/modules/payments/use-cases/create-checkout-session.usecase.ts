@@ -15,16 +15,16 @@ export class CreateCheckoutSessionUseCase
 {
 	constructor(
 		@inject(TYPES.Services.PlatformSettings)
-		private readonly platformSettingsService: PlatformSettingsService,
+		private readonly _platformSettingsService: PlatformSettingsService,
 		@inject(TYPES.Services.PaymentService)
-		private readonly paymentService: IPaymentService,
+		private readonly _paymentService: IPaymentService,
 	) {}
 
 	async execute(
 		input: CreateCheckoutSessionInput,
 	): Promise<CreateCheckoutSessionOutput> {
-		await this.platformSettingsService.load();
-		const coinValue = this.platformSettingsService.economy.coinValue;
+		await this._platformSettingsService.load();
+		const coinValue = this._platformSettingsService.economy.coinValue;
 
 		const amountInCurrency = input.coins / coinValue;
 		const amountInMinor = Math.round(amountInCurrency * 100);
@@ -36,7 +36,7 @@ export class CreateCheckoutSessionUseCase
 		const successUrl = input.successUrl;
 		const cancelUrl = input.cancelUrl;
 
-		const session = await this.paymentService.createCheckoutSession({
+		const session = await this._paymentService.createCheckoutSession({
 			userId: input.userId,
 			coins: input.coins,
 			amount: amountInMinor,

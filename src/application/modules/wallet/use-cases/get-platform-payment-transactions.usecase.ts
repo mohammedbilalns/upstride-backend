@@ -17,7 +17,7 @@ export class GetPlatformPaymentTransactionsUseCase
 {
 	constructor(
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
-		private readonly paymentTransactionRepository: IPaymentTransactionRepository,
+		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
 	) {}
 
 	async execute(
@@ -31,7 +31,7 @@ export class GetPlatformPaymentTransactionsUseCase
 		const sort: Record<string, 1 | -1> =
 			input.sort === "old" ? { createdAt: 1 } : { createdAt: -1 };
 
-		const result = await this.paymentTransactionRepository.paginate({
+		const result = await this._paymentTransactionRepository.paginate({
 			page: input.page,
 			limit: input.limit,
 			query,

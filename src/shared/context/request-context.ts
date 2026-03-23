@@ -5,7 +5,7 @@ export interface RequestContextData {
 }
 
 export class RequestContext {
-	private static storage = new AsyncLocalStorage<RequestContextData>();
+	private static _storage = new AsyncLocalStorage<RequestContextData>();
 
 	/**
 	 * Run a function within a new request context.
@@ -14,14 +14,14 @@ export class RequestContext {
 		data: RequestContextData,
 		next: () => void | Promise<void>,
 	) {
-		return RequestContext.storage.run(data, next);
+		return RequestContext._storage.run(data, next);
 	}
 
 	/**
 	 * Retrieve the current request context data.
 	 */
 	public static get(): RequestContextData | undefined {
-		return RequestContext.storage.getStore();
+		return RequestContext._storage.getStore();
 	}
 
 	/**

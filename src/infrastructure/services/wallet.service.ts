@@ -13,11 +13,11 @@ import { TYPES } from "../../shared/types/types";
 export class WalletService implements IWalletService {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
-		private readonly userRepository: IUserRepository,
+		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.CoinTransactionRepository)
-		private readonly transactionRepository: ICoinTransactionRepository,
+		private readonly _transactionRepository: ICoinTransactionRepository,
 		@inject(TYPES.Services.IdGenerator)
-		private readonly idGenerator: IIdGenerator,
+		private readonly _idGenerator: IIdGenerator,
 	) {}
 
 	async credit(
@@ -27,11 +27,11 @@ export class WalletService implements IWalletService {
 		referenceType?: string,
 		referenceId?: string,
 	): Promise<string> {
-		await this.userRepository.incrementBalance(userId, amount);
+		await this._userRepository.incrementBalance(userId, amount);
 
-		const transaction = await this.transactionRepository.create(
+		const transaction = await this._transactionRepository.create(
 			new CoinTransaction(
-				this.idGenerator.generate(),
+				this._idGenerator.generate(),
 				userId,
 				amount,
 				type,
@@ -51,7 +51,7 @@ export class WalletService implements IWalletService {
 		referenceType?: string,
 		referenceId?: string,
 	): Promise<string> {
-		const user = await this.userRepository.findById(userId);
+		const user = await this._userRepository.findById(userId);
 
 		if (!user) {
 			throw new UserNotFoundError();
@@ -61,11 +61,11 @@ export class WalletService implements IWalletService {
 			throw new Error("Insufficient balance");
 		}
 
-		await this.userRepository.incrementBalance(userId, -amount);
+		await this._userRepository.incrementBalance(userId, -amount);
 
-		const transaction = await this.transactionRepository.create(
+		const transaction = await this._transactionRepository.create(
 			new CoinTransaction(
-				this.idGenerator.generate(),
+				this._idGenerator.generate(),
 				userId,
 				-amount,
 				type,

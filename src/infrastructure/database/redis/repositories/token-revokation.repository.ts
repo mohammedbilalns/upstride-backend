@@ -7,15 +7,15 @@ import { TYPES } from "../../../../shared/types/types";
 export class RedisTokenRevocationRepository
 	implements ITokenRevocationRepository
 {
-	constructor(@inject(TYPES.Databases.Redis) private redis: Redis) {}
+	constructor(@inject(TYPES.Databases.Redis) private _redis: Redis) {}
 
 	async revokeSession(sessionId: string, ttl: number) {
-		await this.redis.set(`revoked_session:${sessionId}`, "1", "EX", ttl);
+		await this._redis.set(`revoked_session:${sessionId}`, "1", "EX", ttl);
 	}
 
 	async revokeMultiple(sessions: { sessionId: string; ttl: number }[]) {
 		if (sessions.length === 0) return;
-		const pipeline = this.redis.pipeline();
+		const pipeline = this._redis.pipeline();
 		for (const session of sessions) {
 			pipeline.set(
 				`revoked_session:${session.sessionId}`,
@@ -28,6 +28,6 @@ export class RedisTokenRevocationRepository
 	}
 
 	async isSessionRevoked(sessionId: string) {
-		return Boolean(await this.redis.exists(`revoked_session:${sessionId}`));
+		return Boolean(await this._redis.exists(`revoked_session:${sessionId}`));
 	}
 }

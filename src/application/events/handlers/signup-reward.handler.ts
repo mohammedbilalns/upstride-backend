@@ -5,14 +5,14 @@ import type { IWalletService } from "../../services/wallet.service.interface";
 
 export class SignupRewardHandler {
 	constructor(
-		private walletService: IWalletService,
-		private platformSettings: PlatformSettingsService,
+		private _walletService: IWalletService,
+		private _platformSettings: PlatformSettingsService,
 	) {}
 
 	async handle(event: UserRegisteredEvent) {
-		const rewardAmount = this.platformSettings.economy.userJoinRewardCoinCount;
+		const rewardAmount = this._platformSettings.economy.userJoinRewardCoinCount;
 
-		await this.walletService.credit(
+		await this._walletService.credit(
 			event.userId,
 			rewardAmount,
 			CoinTransactionType.SignupBonus,

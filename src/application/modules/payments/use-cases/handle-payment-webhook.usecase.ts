@@ -11,17 +11,17 @@ export class HandlePaymentWebhookUseCase
 {
 	constructor(
 		@inject(TYPES.Services.PaymentWebhookParser)
-		private readonly paymentWebhookParser: IPaymentWebhookParser,
+		private readonly _paymentWebhookParser: IPaymentWebhookParser,
 		@inject(TYPES.UseCases.ProcessPaymentEvent)
-		private readonly processPaymentEventUseCase: IProcessPaymentEventUseCase,
+		private readonly _processPaymentEventUseCase: IProcessPaymentEventUseCase,
 	) {}
 
 	async execute(input: HandlePaymentWebhookInput): Promise<void> {
-		const event = await this.paymentWebhookParser.parse(input);
+		const event = await this._paymentWebhookParser.parse(input);
 		if (!event) {
 			return;
 		}
 
-		await this.processPaymentEventUseCase.execute(event);
+		await this._processPaymentEventUseCase.execute(event);
 	}
 }

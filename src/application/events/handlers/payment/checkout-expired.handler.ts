@@ -8,9 +8,9 @@ import { CheckoutFailureHandler } from "./checkout-failure.handler";
 export class CheckoutExpiredHandler extends CheckoutFailureHandler {
 	constructor(
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
-		repo: IPaymentTransactionRepository,
+		_paymentTransactionRepository: IPaymentTransactionRepository,
 	) {
-		super(repo);
+		super(_paymentTransactionRepository);
 	}
 
 	async handleEvent(event: CheckoutExpiredEvent): Promise<void> {

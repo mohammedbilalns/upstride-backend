@@ -13,23 +13,23 @@ import type { IGetCoinBalanceUseCase } from "./get-coin-balance.usecase.interfac
 export class GetCoinBalanceUseCase implements IGetCoinBalanceUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
-		private readonly userRepository: IUserRepository,
+		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.PlatformSettings)
-		private readonly platformSettingsService: PlatformSettingsService,
+		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute(input: GetCoinBalanceInput): Promise<GetCoinBalanceOutput> {
-		const user = await this.userRepository.findById(input.userId);
+		const user = await this._userRepository.findById(input.userId);
 
 		if (!user) {
 			throw new UserNotFoundError();
 		}
 
-		await this.platformSettingsService.load();
+		await this._platformSettingsService.load();
 
 		return {
 			coinBalance: user.coinBalance,
-			coinValue: this.platformSettingsService.economy.coinValue,
+			coinValue: this._platformSettingsService.economy.coinValue,
 		};
 	}
 }

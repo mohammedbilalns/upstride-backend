@@ -55,7 +55,7 @@ export class MongoNotificationRepository
 		query,
 		sort,
 	}: QueryParams<NotificationQuery>): Promise<Notification[]> {
-		const filter = this.buildFilter(query);
+		const filter = this._buildFilter(query);
 
 		const docs = await this.model
 			.find(filter)
@@ -73,7 +73,7 @@ export class MongoNotificationRepository
 	}: PaginateParams<NotificationQuery>): Promise<
 		PaginatedResult<Notification>
 	> {
-		const filter = this.buildFilter(query);
+		const filter = this._buildFilter(query);
 
 		const skip = (page - 1) * limit;
 
@@ -92,7 +92,7 @@ export class MongoNotificationRepository
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
 
-	private buildFilter(
+	private _buildFilter(
 		query?: NotificationQuery,
 	): QueryFilter<NotificationDocument> {
 		const filter: QueryFilter<NotificationDocument> = {};

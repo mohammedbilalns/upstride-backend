@@ -8,7 +8,7 @@ import { TYPES } from "../../shared/types/types";
 // Enqueues outgoing mail jobs.
 export class MailService implements IMailService {
 	constructor(
-		@inject(TYPES.Queues.MailQueue) private readonly mailQueue: Queue,
+		@inject(TYPES.Queues.MailQueue) private readonly _mailQueue: Queue,
 	) {}
 
 	async send(
@@ -18,7 +18,7 @@ export class MailService implements IMailService {
 	): Promise<void> {
 		const { html, text } = template.render(data);
 
-		await this.mailQueue.add("send_mail", {
+		await this._mailQueue.add("send_mail", {
 			to,
 			subject: template.subject,
 			html,

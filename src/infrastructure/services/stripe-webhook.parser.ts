@@ -32,10 +32,10 @@ export class StripeWebhookParser implements IPaymentWebhookParser {
 		}
 
 		const session = event.data.object as Stripe.Checkout.Session;
-		return this.mapSessionEvent(event.type, session);
+		return this._mapSessionEvent(event.type, session);
 	}
 
-	private mapSessionEvent(
+	private _mapSessionEvent(
 		type: PaymentWebhookEventType,
 		session: Stripe.Checkout.Session,
 	): PaymentWebhookEvent {

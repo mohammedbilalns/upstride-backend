@@ -19,15 +19,15 @@ import { TYPES } from "../../shared/types/types";
 // Stores files in S3 and issues signed access/upload URLs.
 @injectable()
 export class S3StorageService implements IStorageService {
-	private s3: S3Client;
-	private bucket: string;
+	private _s3: S3Client;
+	private _bucket: string;
 
 	constructor(
 		@inject(TYPES.Services.IdGenerator)
-		private readonly idGenerator: IIdGenerator,
+		private readonly _idGenerator: IIdGenerator,
 	) {
-		this.bucket = env.AWS_BUCKET_NAME;
-		this.s3 = new S3Client({
+		this._bucket = env.AWS_BUCKET_NAME;
+		this._s3 = new S3Client({
 			region: env.AWS_REGION,
 			credentials: {
 				accessKeyId: env.AWS_ACCESS_KEY_ID,
@@ -39,37 +39,37 @@ export class S3StorageService implements IStorageService {
 	async upload(file: File, folder?: string): Promise<string> {
 		const fileExtension = file.originalname.split(".").pop();
 		const key = folder
-			? `${folder}/${this.idGenerator.generate()}.${fileExtension}`
-			: `${this.idGenerator.generate()}.${fileExtension}`;
+			? `${folder}/${this._idGenerator.generate()}.${fileExtension}`
+			: `${this._idGenerator.generate()}.${fileExtension}`;
 
 		const command = new PutObjectCommand({
-			Bucket: this.bucket,
+			Bucket: this._bucket,
 			Key: key,
 			Body: file.buffer,
 			ContentType: file.mimetype,
 		});
 
-		await this.s3.send(command);
+		await this._s3.send(command);
 
 		return key;
 	}
 
 	async delete(objectKey: string): Promise<void> {
 		const command = new DeleteObjectCommand({
-			Bucket: this.bucket,
+			Bucket: this._bucket,
 			Key: objectKey,
 		});
 
-		await this.s3.send(command);
+		await this._s3.send(command);
 	}
 
 	async getSignedUrl(objectKey: string, expiresIn = 3600): Promise<string> {
 		const command = new GetObjectCommand({
-			Bucket: this.bucket,
+			Bucket: this._bucket,
 			Key: objectKey,
 		});
 
-		return getSignedUrl(this.s3, command, { expiresIn });
+		return getSignedUrl(this._s3, command, { expiresIn });
 	}
 
 	async getSignedUploadUrl(
@@ -78,12 +78,12 @@ export class S3StorageService implements IStorageService {
 		expiresIn = 300,
 	): Promise<string> {
 		const command = new PutObjectCommand({
-			Bucket: this.bucket,
+			Bucket: this._bucket,
 			Key: objectKey,
 			ContentType: mimetype,
 		});
 
-		return getSignedUrl(this.s3, command, { expiresIn });
+		return getSignedUrl(this._s3, command, { expiresIn });
 	}
 
 	async getPresignedPost(
@@ -93,9 +93,9 @@ export class S3StorageService implements IStorageService {
 		expiresIn = 300,
 	): Promise<PresignedPostResponse> {
 		const { url, fields } = await createPresignedPost(
-			this.s3 as unknown as Parameters<typeof createPresignedPost>[0],
+			this._s3 as unknown as Parameters<typeof createPresignedPost>[0],
 			{
-				Bucket: this.bucket,
+				Bucket: this._bucket,
 				Key: objectKey,
 				Conditions: [
 					["content-length-range", 0, maxSizeBytes],
