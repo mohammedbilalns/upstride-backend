@@ -35,6 +35,7 @@ export const TYPES = {
 		MentorRepository: Symbol.for("MentorRepository"),
 		ProfessionRepository: Symbol.for("ProfessionRepository"),
 		MentorListRepository: Symbol.for("MentorListRepository"),
+		NotificationRepository: Symbol.for("NotificationRepository"),
 		SavedMentorRepository: Symbol.for("SavedMentorRepository"),
 		SessionAvailabilityRepository: Symbol.for("SessionAvailabilityRepository"),
 		SessionSlotRepository: Symbol.for("SessionSlotRepository"),

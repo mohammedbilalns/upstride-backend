@@ -15,6 +15,7 @@ import { PlatformSettingsService } from "../../application/services";
 import type {
 	IMentorListRepository,
 	IMentorRepository,
+	INotificationRepository,
 	IPlatformSettingsRepository,
 	IProfessionRepository,
 	ISavedMentorRepository,
@@ -24,6 +25,7 @@ import {
 	MongoInterestRepository,
 	MongoMentorListRepository,
 	MongoMentorRepository,
+	MongoNotificationRepository,
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
 	MongoPlatformWalletRepository,
@@ -153,6 +155,10 @@ export const registerCommonBindings = (container: Container): void => {
 	container
 		.bind<IMentorListRepository>(TYPES.Repositories.MentorListRepository)
 		.to(MongoMentorListRepository)
+		.inSingletonScope();
+	container
+		.bind<INotificationRepository>(TYPES.Repositories.NotificationRepository)
+		.to(MongoNotificationRepository)
 		.inSingletonScope();
 	container
 		.bind<ISavedMentorRepository>(TYPES.Repositories.SavedMentorRepository)

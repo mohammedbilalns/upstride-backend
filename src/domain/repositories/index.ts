@@ -7,6 +7,7 @@ export * from "./coin-transactions.repository.interface";
 export * from "./interest.repository.interface";
 export * from "./mentor.repository.interface";
 export * from "./mentor-list.repository.interface";
+export * from "./notification.repository.interface";
 export * from "./otp.repository.interface";
 export * from "./payment-transactions.repository.interface";
 export * from "./platform-settings.repository.interface";

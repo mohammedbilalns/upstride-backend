@@ -3,6 +3,7 @@ export * from "./coin-transactions.repository";
 export * from "./interest.repository";
 export * from "./mentor.repository";
 export * from "./mentor-list.repository";
+export * from "./notification.repository";
 export * from "./payment-transactions.repository";
 export * from "./platform-settings.repository";
 export * from "./platform-wallet.repository";
