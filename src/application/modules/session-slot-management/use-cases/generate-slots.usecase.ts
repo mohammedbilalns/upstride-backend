@@ -3,6 +3,7 @@ import { SessionSlot } from "../../../../domain/entities/session-slot.entity";
 import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../../domain/repositories/session-availability.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
+import { IST_OFFSET_MINUTES } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
@@ -46,8 +47,6 @@ export class GenerateSlotsUseCase implements IGenerateSlotsUseCase {
 			return { createdCount: 0 };
 		}
 
-		//FIX: move to domain
-		const IST_OFFSET_MINUTES = 330;
 		const now = new Date();
 		const nowIst = new Date(now.getTime() + IST_OFFSET_MINUTES * 60000);
 		const startIst = new Date(nowIst);

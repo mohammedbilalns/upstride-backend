@@ -15,3 +15,5 @@ export const SessionSlotLimits = {
 	MAX_RECURRING_RULE_PER_DAY: 6,
 	MAX_SLOTS_PER_DAY: 6,
 } as const;
+
+export const IST_OFFSET_MINUTES = 330;
