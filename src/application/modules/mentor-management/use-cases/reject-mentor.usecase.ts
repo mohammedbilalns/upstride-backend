@@ -18,6 +18,10 @@ export class RejectMentorUseCase implements IRejectMentorUseCase {
 			throw new MentorApplicationNotFoundError();
 		}
 
-		await this._mentorRepository.reject(input.mentorId, input.reason);
+		await this._mentorRepository.updateById(input.mentorId, {
+			isApproved: false,
+			isRejected: true,
+			rejectionReason: input.reason,
+		});
 	}
 }

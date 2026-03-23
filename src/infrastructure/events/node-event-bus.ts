@@ -9,7 +9,7 @@ export class NodeEventBus implements EventBus {
 		this.emitter.emit(event.eventName, event);
 	}
 
-	subscribe<T>(
+	registerHandler<T>(
 		eventName: string,
 		handler: (event: T) => Promise<void> | void,
 	): void {

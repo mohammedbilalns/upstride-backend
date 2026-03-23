@@ -1,5 +1,4 @@
 import type { Container } from "inversify";
-import type { EventBus } from "../../application/events/event-bus.interface";
 import type {
 	IIdGenerator,
 	IMailService,
@@ -21,7 +20,6 @@ import {
 	JwtTokenService,
 	LinkedInOAuthService,
 	MailService,
-	NodeEventBus,
 	S3StorageService,
 	StripePaymentService,
 	StripeWebhookParser,
@@ -65,11 +63,6 @@ export const registerInfrastructureServiceBindings = (
 	container
 		.bind<IIdGenerator>(TYPES.Services.IdGenerator)
 		.to(UuidGenerator)
-		.inSingletonScope();
-
-	container
-		.bind<EventBus>(TYPES.Services.EventBus)
-		.to(NodeEventBus)
 		.inSingletonScope();
 
 	container.bind(TYPES.Databases.Redis).toConstantValue(redisClient);

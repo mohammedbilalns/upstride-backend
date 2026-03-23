@@ -1,6 +1,8 @@
 export interface CreateCheckoutSessionInput {
 	userId: string;
 	coins: number;
+	successUrl: string;
+	cancelUrl: string;
 }
 
 export interface CreateCheckoutSessionOutput {

@@ -282,47 +282,6 @@ export class MongoMentorRepository
 		);
 	}
 
-	async approve(
-		id: string,
-		tier?: {
-			name: string | null;
-			max30minPayment: number | null;
-			score?: number;
-			currentPricePer30Min?: number | null;
-		},
-	): Promise<Mentor | null> {
-		const update: Partial<MentorDocument> = {
-			isApproved: true,
-			isRejected: false,
-			rejectionReason: null,
-		};
-		if (tier) {
-			update.tierName = tier.name ?? null;
-			update.tierMax30minPayment = tier.max30minPayment ?? null;
-			update.currentPricePer30Min =
-				tier.currentPricePer30Min ?? tier.max30minPayment ?? null;
-			if (tier.score !== undefined) {
-				update.score = tier.score;
-			}
-		}
-
-		const doc = await this.model
-			.findByIdAndUpdate(id, update, { returnDocument: "after" })
-			.lean();
-		return doc ? this.toDomain(doc as MentorDocument) : null;
-	}
-
-	async reject(id: string, reason: string): Promise<Mentor | null> {
-		const doc = await this.model
-			.findByIdAndUpdate(
-				id,
-				{ isApproved: false, isRejected: true, rejectionReason: reason },
-				{ returnDocument: "after" },
-			)
-			.lean();
-		return doc ? this.toDomain(doc as MentorDocument) : null;
-	}
-
 	async paginateDiscoverable({
 		page,
 		limit,

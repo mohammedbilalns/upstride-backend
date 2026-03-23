@@ -1,141 +1,37 @@
 import { inject, injectable } from "inversify";
-import { CoinTransactionType } from "../../../../domain/entities/coin-transactions.entity";
-import {
-	PaymentStatus,
-	PaymentTransaction,
-} from "../../../../domain/entities/payment-transactions.entity";
-import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
+import { CheckoutCompletedEvent } from "../../../../domain/events/checkout-completed.event";
+import { CheckoutExpiredEvent } from "../../../../domain/events/checkout-expired.event";
+import { CheckoutFailedEvent } from "../../../../domain/events/checkout-failed.event";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
-import type { IIdGenerator } from "../../../services/id-generator.service.interface";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type { PaymentWebhookEvent } from "../../../services/payment-webhook.parser.interface";
-import type { IWalletService } from "../../../services/wallet.service.interface";
 import type { IProcessPaymentEventUseCase } from "./process-payment-event.usecase.interface";
 
 @injectable()
 export class ProcessPaymentEventUseCase implements IProcessPaymentEventUseCase {
 	constructor(
-		@inject(TYPES.Repositories.PaymentTransactionRepository)
-		private readonly paymentTransactionRepository: IPaymentTransactionRepository,
-		@inject(TYPES.Services.WalletService)
-		private readonly walletService: IWalletService,
-		@inject(TYPES.Services.IdGenerator)
-		private readonly idGenerator: IIdGenerator,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(event: PaymentWebhookEvent): Promise<void> {
 		switch (event.type) {
-			case "checkout.session.completed": {
-				const userId = event.userId;
-				const coins = event.coins;
-				const currency = event.currency;
-
-				if (!userId || !Number.isFinite(coins) || coins <= 0) {
-					logger.warn(
-						{ sessionId: event.sessionId },
-						"Invalid checkout metadata",
-					);
-					return;
-				}
-
-				const existingUser =
-					await this.paymentTransactionRepository.findByProviderPaymentIdAndOwner(
-						event.sessionId,
-						"user",
-					);
-				const existingPlatform =
-					await this.paymentTransactionRepository.findByProviderPaymentIdAndOwner(
-						event.sessionId,
-						"platform",
-					);
-
-				if (
-					existingUser?.status === PaymentStatus.Completed &&
-					existingPlatform?.status === PaymentStatus.Completed
-				) {
-					return;
-				}
-
-				const amountInMinor = event.amountMinor;
-				const provider = event.provider;
-				if (!existingUser) {
-					const userTransaction = new PaymentTransaction(
-						this.idGenerator.generate(),
-						userId,
-						provider,
-						event.sessionId,
-						amountInMinor,
-						currency,
-						PaymentStatus.Completed,
-						coins,
-						undefined,
-						"user",
-					);
-					await this.paymentTransactionRepository.create(userTransaction);
-				} else if (existingUser.status !== PaymentStatus.Completed) {
-					await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-						event.sessionId,
-						PaymentStatus.Completed,
-						"user",
-					);
-				}
-
-				if (!existingPlatform) {
-					const platformTransaction = new PaymentTransaction(
-						this.idGenerator.generate(),
-						userId,
-						provider,
-						event.sessionId,
-						amountInMinor,
-						currency,
-						PaymentStatus.Completed,
-						coins,
-						undefined,
-						"platform",
-					);
-					await this.paymentTransactionRepository.create(platformTransaction);
-				} else if (existingPlatform.status !== PaymentStatus.Completed) {
-					await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-						event.sessionId,
-						PaymentStatus.Completed,
-						"platform",
-					);
-				}
-
-				await this.paymentTransactionRepository.updateStatusByProviderPaymentId(
-					event.sessionId,
-					PaymentStatus.Completed,
-				);
-
-				await this.walletService.credit(
-					userId,
-					coins,
-					CoinTransactionType.Purchase,
-					provider,
-					event.sessionId,
-				);
-				return;
-			}
+			case "checkout.session.completed":
+				await this._eventBus.publish(new CheckoutCompletedEvent(event));
+				break;
 			case "checkout.session.expired":
-			case "checkout.session.async_payment_failed": {
-				await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-					event.sessionId,
-					PaymentStatus.Failed,
-					"user",
-				);
-				await this.paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
-					event.sessionId,
-					PaymentStatus.Failed,
-					"platform",
-				);
-				await this.paymentTransactionRepository.updateStatusByProviderPaymentId(
-					event.sessionId,
-					PaymentStatus.Failed,
-				);
-				return;
-			}
+				await this._eventBus.publish(new CheckoutExpiredEvent(event));
+				break;
+			case "checkout.session.async_payment_failed":
+				await this._eventBus.publish(new CheckoutFailedEvent(event));
+				break;
 			default:
-				return;
+				logger.warn(
+					{ type: event.type },
+					"Unhandled payment webhook event type",
+				);
+				break;
 		}
 	}
 }

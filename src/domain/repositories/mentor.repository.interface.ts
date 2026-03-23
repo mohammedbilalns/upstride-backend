@@ -96,16 +96,7 @@ export interface IMentorRepository
 		isApproved: boolean,
 		rejectionReason?: string | null,
 	): Promise<Mentor | null>;
-	approve(
-		id: string,
-		tier?: {
-			name: string | null;
-			max30minPayment: number | null;
-			score?: number;
-			currentPricePer30Min?: number | null;
-		},
-	): Promise<Mentor | null>;
-	reject(id: string, reason: string): Promise<Mentor | null>;
+
 	paginate(
 		params: PaginateParams<MentorQuery>,
 	): Promise<PaginatedResult<MentorApplicationDetails>>;

@@ -14,12 +14,14 @@ export const TYPES = {
 		PaymentService: Symbol.for("PaymentService"),
 		PaymentWebhookParser: Symbol.for("PaymentWebhookParser"),
 		IdGenerator: Symbol.for("IdGenerator"),
+		RefundService: Symbol.for("RefundService"),
 	},
 	Caches: {
 		PlatformSettings: Symbol.for("PlatformSettingsCache"),
 	},
 	Queues: {
 		MailQueue: Symbol.for("MailQueue"),
+		DomainEvents: Symbol.for("DomainEventsQueue"),
 	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),
@@ -162,5 +164,10 @@ export const TYPES = {
 		SessionBooking: Symbol.for("SessionBookingController"),
 		Payment: Symbol.for("PaymentController"),
 		Wallet: Symbol.for("WalletController"),
+	},
+	PaymentHandlers: {
+		CheckoutCompleted: Symbol.for("CheckoutCompletedHandler"),
+		CheckoutExpired: Symbol.for("CheckoutExpiredHandler"),
+		CheckoutFailed: Symbol.for("CheckoutFailedHandler"),
 	},
 };

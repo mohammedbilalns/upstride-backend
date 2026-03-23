@@ -33,9 +33,12 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		}
 
 		const starterTier = this._platformSettingsService.mentors.starter;
-		await this._mentorRepository.approve(mentorId, {
-			name: starterTier.name,
-			max30minPayment: starterTier.maxPricePer30Min,
+		await this._mentorRepository.updateById(mentorId, {
+			isApproved: true,
+			isRejected: false,
+			rejectionReason: null,
+			tierName: starterTier.name,
+			tierMax30minPayment: starterTier.maxPricePer30Min,
 			currentPricePer30Min: starterTier.maxPricePer30Min,
 			score: starterTier.minScore,
 		});

@@ -4,6 +4,7 @@ import type {
 	ICreateCheckoutSessionUseCase,
 	IHandlePaymentWebhookUseCase,
 } from "../../../application/modules/payments/use-cases";
+import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
@@ -32,6 +33,8 @@ export class PaymentController {
 			const session = await this.createCheckoutSessionUseCase.execute({
 				userId,
 				coins,
+				successUrl: env.STRIPE_SUCCESS_URL,
+				cancelUrl: env.STRIPE_CANCEL_URL,
 			});
 
 			return sendSuccess(res, HttpStatus.OK, {

@@ -1,13 +1,5 @@
 import { inject, injectable } from "inversify";
-import {
-	PaymentProvider,
-	PaymentStatus,
-	PaymentTransaction,
-} from "../../../../domain/entities/payment-transactions.entity";
-import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
-import env from "../../../../shared/config/env";
 import { TYPES } from "../../../../shared/types/types";
-import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { IPaymentService } from "../../../services/payment.service.interface";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type {
@@ -17,7 +9,6 @@ import type {
 import { InvalidAmountError } from "../errors/invalid-amount.error";
 import type { ICreateCheckoutSessionUseCase } from "./create-checkout-session.usecase.interface";
 
-//FIX: directly uses env
 @injectable()
 export class CreateCheckoutSessionUseCase
 	implements ICreateCheckoutSessionUseCase
@@ -27,10 +18,6 @@ export class CreateCheckoutSessionUseCase
 		private readonly platformSettingsService: PlatformSettingsService,
 		@inject(TYPES.Services.PaymentService)
 		private readonly paymentService: IPaymentService,
-		@inject(TYPES.Services.IdGenerator)
-		private readonly idGenerator: IIdGenerator,
-		@inject(TYPES.Repositories.PaymentTransactionRepository)
-		private readonly paymentTransactionRepository: IPaymentTransactionRepository,
 	) {}
 
 	async execute(
@@ -46,8 +33,8 @@ export class CreateCheckoutSessionUseCase
 			throw new InvalidAmountError();
 		}
 
-		const successUrl = env.STRIPE_SUCCESS_URL;
-		const cancelUrl = env.STRIPE_CANCEL_URL;
+		const successUrl = input.successUrl;
+		const cancelUrl = input.cancelUrl;
 
 		const session = await this.paymentService.createCheckoutSession({
 			userId: input.userId,
@@ -63,37 +50,8 @@ export class CreateCheckoutSessionUseCase
 			},
 		});
 
-		const userTransaction = new PaymentTransaction(
-			this.idGenerator.generate(),
-			input.userId,
-			PaymentProvider.Stripe,
-			session.id,
-			amountInMinor,
-			"inr",
-			PaymentStatus.Pending,
-			input.coins,
-			undefined,
-			"user",
-		);
-
-		const platformTransaction = new PaymentTransaction(
-			this.idGenerator.generate(),
-			input.userId,
-			PaymentProvider.Stripe,
-			session.id,
-			amountInMinor,
-			"inr",
-			PaymentStatus.Pending,
-			input.coins,
-			undefined,
-			"platform",
-		);
-
-		await this.paymentTransactionRepository.create(userTransaction);
-		await this.paymentTransactionRepository.create(platformTransaction);
-
 		return {
-			paymentId: userTransaction.id,
+			paymentId: session.id,
 			url: session.url ?? null,
 			amount: amountInCurrency,
 			currency: "inr",
