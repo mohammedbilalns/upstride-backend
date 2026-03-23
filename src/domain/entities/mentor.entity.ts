@@ -4,6 +4,8 @@ export const MAX_MENTOR_APPLICATION_ATTEMPTS = 3;
 export const MAX_MENTOR_EXPERIENCE_ITEMS = 7;
 export const MAX_MENTOR_AREAS_OF_EXPERTISE = 2;
 export const MAX_MENTOR_EDUCATION_ITEMS = 5;
+export const MAX_MENTORS_PER_LIST = 150;
+export const MAX_LISTS_PER_USER = 20;
 
 export interface MentorExperience {
 	company: string;

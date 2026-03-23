@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { MAX_MENTORS_PER_LIST } from "../../../../domain/entities/mentor.entity";
 import { SavedMentor } from "../../../../domain/entities/saved-mentor.entity";
 import type { IMentorListRepository } from "../../../../domain/repositories/mentor-list.repository.interface";
 import type { ISavedMentorRepository } from "../../../../domain/repositories/saved-mentor.repository.interface";
@@ -11,9 +12,6 @@ import {
 	MentorListNotFoundError,
 } from "../errors";
 import type { IAddMentorToListUseCase } from "./add-mentor-to-list.usecase.interface";
-
-//FIX: move to domain
-const MAX_MENTORS_PER_LIST = 150;
 
 @injectable()
 export class AddMentorToListUseCase implements IAddMentorToListUseCase {

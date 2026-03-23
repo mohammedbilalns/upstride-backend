@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { MAX_LISTS_PER_USER } from "../../../../domain/entities/mentor.entity";
 import { MentorList } from "../../../../domain/entities/mentor-list.entity";
 import type { IMentorListRepository } from "../../../../domain/repositories/mentor-list.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
@@ -10,9 +11,6 @@ import type {
 import { MaxListPerUserError } from "../errors";
 import { MentorListMapper } from "../mappers/mentor-list.mapper";
 import type { ICreateMentorListUseCase } from "./create-mentor-list.usecase.interface";
-
-//FIX: Move to domain
-const MAX_LISTS_PER_USER = 20;
 
 @injectable()
 export class CreateMentorListUseCase implements ICreateMentorListUseCase {
