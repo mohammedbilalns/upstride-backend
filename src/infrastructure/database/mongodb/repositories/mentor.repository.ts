@@ -18,6 +18,7 @@ import { UserModel } from "../models/user.model";
 import { AbstractMongoRepository } from "./abstract.repository";
 
 //FIX: approve and reject are status transitions that embed business semantics in a repository. They belong in the domain or application layer. The MentorApplicationDetails, MentorDiscoveryDetails, and MentorProfileDetails return types are three different read models — consider splitting into IMentorWriteRepository and IMentorReadRepository .
+
 @injectable()
 export class MongoMentorRepository
 	extends AbstractMongoRepository<Mentor, MentorDocument>

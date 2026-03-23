@@ -2,7 +2,7 @@ import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	IGetMeUseCase,
-	IVerifyOtpUseCase,
+	IVerifyChangePasswordOtpUseCase,
 } from "../../../application/modules/authentication/use-cases";
 import type {
 	IChangePasswordUseCase,
@@ -30,8 +30,8 @@ export class ProfileController {
 		private readonly _getMeUseCase: IGetMeUseCase,
 		@inject(TYPES.UseCases.RequestChangePassword)
 		private readonly _requestChangePasswordUseCase: IRequestChangePasswordUseCase,
-		@inject(TYPES.UseCases.VerifyOtp)
-		private readonly _verifyOtpUseCase: IVerifyOtpUseCase,
+		@inject(TYPES.UseCases.VerifyChangePasswordOtp)
+		private readonly _verifyChangePasswordOtpUseCase: IVerifyChangePasswordOtpUseCase,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
 	) {}
@@ -98,10 +98,9 @@ export class ProfileController {
 				throw new Error("User not found");
 			}
 
-			const result = await this._verifyOtpUseCase.execute({
+			const result = await this._verifyChangePasswordOtpUseCase.execute({
 				email: user.email,
 				otp,
-				type: "CHANGE_PASSWORD",
 			});
 
 			return sendSuccess(res, HttpStatus.OK, {

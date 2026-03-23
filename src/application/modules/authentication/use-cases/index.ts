@@ -5,8 +5,4 @@ export * from "./logout";
 export * from "./password-reset";
 export * from "./refresh-session";
 export * from "./registration";
-export * from "./resend-otp.usecase";
-export * from "./resend-otp.usecase.interface";
 export * from "./save-user-interests";
-export * from "./verify-otp.usecase";
-export * from "./verify-otp.usecase.interface";

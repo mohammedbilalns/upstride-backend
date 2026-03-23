@@ -4,12 +4,11 @@ import type {
 	ILoginWithEmailUseCase,
 	IRefreshSessionUseCase,
 	IRegisterWithEmailUseCase,
-	IResendOtpUseCase,
+	IResendRegistrationOtpUseCase,
 	ISaveUserInterestsUseCase,
 	ISocialLoginUseCase,
-	IVerifyOtpUseCase,
+	IVerifyRegistrationOtpUseCase,
 } from "../../../application/modules/authentication/use-cases";
-import { OtpPurpose } from "../../../domain/policies/otp-purposes";
 import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
@@ -35,10 +34,10 @@ export class AuthController {
 		private _socialLoginUseCase: ISocialLoginUseCase,
 		@inject(TYPES.UseCases.RegisterWithEmail)
 		private _registerWithEmailUseCase: IRegisterWithEmailUseCase,
-		@inject(TYPES.UseCases.VerifyOtp)
-		private _verifyOtpUseCase: IVerifyOtpUseCase,
-		@inject(TYPES.UseCases.ResendOtp)
-		private _resendOtpUseCase: IResendOtpUseCase,
+		@inject(TYPES.UseCases.VerifyRegistrationOtp)
+		private _verifyRegistrationOtpUseCase: IVerifyRegistrationOtpUseCase,
+		@inject(TYPES.UseCases.ResendRegistrationOtp)
+		private _resendRegistrationOtpUseCase: IResendRegistrationOtpUseCase,
 		@inject(TYPES.UseCases.RefreshSession)
 		private _refreshSessionUseCase: IRefreshSessionUseCase,
 		@inject(TYPES.UseCases.SaveUserInterests)
@@ -56,9 +55,8 @@ export class AuthController {
 	});
 
 	verifyRegisterOtp = asyncHandler(async (req, res) => {
-		const data = await this._verifyOtpUseCase.execute({
+		const data = await this._verifyRegistrationOtpUseCase.execute({
 			...(req.validated?.body as VerifyOtpBody),
-			type: OtpPurpose.REGISTER,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -68,9 +66,8 @@ export class AuthController {
 	});
 
 	resendRegisterOtp = asyncHandler(async (req, res) => {
-		await this._resendOtpUseCase.execute({
+		await this._resendRegistrationOtpUseCase.execute({
 			...(req.validated?.body as ResendOtpBody),
-			type: OtpPurpose.REGISTER,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
