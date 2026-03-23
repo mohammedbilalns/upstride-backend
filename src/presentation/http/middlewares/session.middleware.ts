@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { UnauthorizedError } from "../../../application/modules/authentication/errors";
 import type { ITokenService } from "../../../application/services";
-import type { ITokenRevocationRepository } from "../../../domain/repositories/token-revokation.repository.interface";
+import type { ITokenRevocationRepository } from "../../../domain/repositories/token-revocation.repository.interface";
 import { container } from "../../../main/container";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";

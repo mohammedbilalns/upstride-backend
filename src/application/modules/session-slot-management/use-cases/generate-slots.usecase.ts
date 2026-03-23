@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { SessionSlot } from "../../../../domain/entities/session-slot.entity";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../../domain/repositories/session-availability.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { IST_OFFSET_MINUTES } from "../../../../shared/constants";
@@ -18,8 +18,8 @@ import type { IGenerateSlotsUseCase } from "./generate-slots.usecase.interface";
 @injectable()
 export class GenerateSlotsUseCase implements IGenerateSlotsUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.SessionAvailabilityRepository)
 		private readonly _availabilityRepository: ISessionAvailabilityRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)

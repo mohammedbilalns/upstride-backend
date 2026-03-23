@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
@@ -13,8 +14,10 @@ import type { IGetMentorBookingsUseCase } from "./get-mentor-bookings.usecase.in
 @injectable()
 export class GetMentorBookingsUseCase implements IGetMentorBookingsUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Repositories.SessionBookingRepository)
 		private readonly _bookingRepository: ISessionBookingRepository,
 	) {}
@@ -38,9 +41,8 @@ export class GetMentorBookingsUseCase implements IGetMentorBookingsUseCase {
 			mentor.userId,
 		);
 
-		const mentorProfile = await this._mentorRepository.findProfileById(
-			mentor.id,
-		);
+		const mentorProfile =
+			await this._mentorProfileReadRepository.findProfileById(mentor.id);
 		const mentorNames = new Map<string, string>();
 		if (mentorProfile) {
 			mentorNames.set(mentorProfile.id, mentorProfile.user.name);

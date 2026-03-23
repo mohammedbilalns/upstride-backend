@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import type Redis from "ioredis";
-import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revokation.repository.interface";
+import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revocation.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 
 @injectable()

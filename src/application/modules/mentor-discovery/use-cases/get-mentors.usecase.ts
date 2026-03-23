@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import type {
-	IMentorRepository,
+	IMentorListReadRepository,
 	MentorDiscoveryQuery,
-} from "../../../../domain/repositories/mentor.repository.interface";
+} from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import type {
@@ -15,8 +15,8 @@ import type { IGetMentorsUseCase } from "./get-mentors.usecase.interface";
 @injectable()
 export class GetMentorsUseCase implements IGetMentorsUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorListReadRepository)
+		private readonly _mentorRepository: IMentorListReadRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}

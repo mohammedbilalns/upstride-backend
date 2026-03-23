@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
@@ -13,8 +13,8 @@ import type { IGetMentorSlotsUseCase } from "./get-mentor-slots.usecase.interfac
 @injectable()
 export class GetMentorSlotsUseCase implements IGetMentorSlotsUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)
 		private readonly _slotRepository: ISessionSlotRepository,
 		@inject(TYPES.Services.PlatformSettings)

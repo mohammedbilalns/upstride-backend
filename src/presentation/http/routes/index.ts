@@ -1,5 +1,4 @@
 export * from "./admin-management.route";
-export { default as adminManagementRouter } from "./admin-management.route";
 export * from "./auth.route";
 export * from "./catalog.route";
 export * from "./file.route";
@@ -12,6 +11,5 @@ export * from "./recurring-rule.route";
 export * from "./session-booking.route";
 export * from "./session-slot.route";
 export * from "./user-management.route";
-export { default as userManagementRouter } from "./user-management.route";
 export * from "./v1.route";
 export * from "./wallet.route";

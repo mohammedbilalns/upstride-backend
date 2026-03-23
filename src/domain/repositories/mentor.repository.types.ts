@@ -1,11 +1,4 @@
 import type { Mentor } from "../entities/mentor.entity";
-import type {
-	CreatableRepository,
-	FindByIdRepository,
-	PaginatedResult,
-	PaginateParams,
-	UpdatableByIdRepository,
-} from "./capabilities";
 
 export interface MentorQuery {
 	isApproved?: boolean;
@@ -84,25 +77,4 @@ export interface MentorProfileDetails extends Mentor {
 		};
 		level: string;
 	}[];
-}
-
-export interface IMentorRepository
-	extends FindByIdRepository<Mentor>,
-		CreatableRepository<Mentor>,
-		UpdatableByIdRepository<Mentor> {
-	findByUserId(userId: string): Promise<Mentor | null>;
-	updateStatus(
-		id: string,
-		isApproved: boolean,
-		rejectionReason?: string | null,
-	): Promise<Mentor | null>;
-
-	paginate(
-		params: PaginateParams<MentorQuery>,
-	): Promise<PaginatedResult<MentorApplicationDetails>>;
-	paginateDiscoverable(
-		params: PaginateParams<MentorDiscoveryQuery>,
-	): Promise<PaginatedResult<MentorDiscoveryDetails>>;
-	findProfileByUserId(userId: string): Promise<MentorProfileDetails | null>;
-	findProfileById(mentorId: string): Promise<MentorProfileDetails | null>;
 }

@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
@@ -17,8 +17,8 @@ export class GetPublicMentorProfileUseCase
 	implements IGetPublicMentorProfileUseCase
 {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)
 		private readonly _sessionSlotRepository: ISessionSlotRepository,
 		@inject(TYPES.Services.Storage)
@@ -29,7 +29,8 @@ export class GetPublicMentorProfileUseCase
 		mentorId,
 		requesterUserId,
 	}: GetPublicMentorProfileInput): Promise<GetPublicMentorProfileResponse> {
-		const profile = await this._mentorRepository.findProfileById(mentorId);
+		const profile =
+			await this._mentorProfileReadRepository.findProfileById(mentorId);
 		if (!profile || !profile.isApproved || profile.isRejected) {
 			throw new MentorNotFoundError();
 		}

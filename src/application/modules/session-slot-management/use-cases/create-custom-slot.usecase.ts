@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { SessionSlot } from "../../../../domain/entities/session-slot.entity";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { SessionSlotLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
@@ -16,8 +16,8 @@ import type { ICreateCustomSlotUseCase } from "./create-custom-slot.usecase.inte
 @injectable()
 export class CreateCustomSlotUseCase implements ICreateCustomSlotUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)
 		private readonly _slotRepository: ISessionSlotRepository,
 		@inject(TYPES.Services.IdGenerator)

@@ -5,24 +5,21 @@ import type { Mentor } from "../../../../domain/entities/mentor.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type { PaginatedResult } from "../../../../domain/repositories/capabilities/paginatable.repository.interface";
 import type {
-	IMentorRepository,
 	MentorApplicationDetails,
 	MentorDiscoveryDetails,
 	MentorDiscoveryQuery,
-	MentorProfileDetails,
 	MentorQuery,
-} from "../../../../domain/repositories/mentor.repository.interface";
+} from "../../../../domain/repositories/mentor.repository.types";
+import type { IMentorListReadRepository } from "../../../../domain/repositories/mentor-list-read.repository.interface";
 import { MentorMapper } from "../mappers/mentor.mapper";
 import { type MentorDocument, MentorModel } from "../models/mentor.model";
 import { UserModel } from "../models/user.model";
 import { AbstractMongoRepository } from "./abstract.repository";
 
-//FIX: approve and reject are status transitions that embed business semantics in a repository. They belong in the domain or application layer. The MentorApplicationDetails, MentorDiscoveryDetails, and MentorProfileDetails return types are three different read models — consider splitting into IMentorWriteRepository and IMentorReadRepository .
-
 @injectable()
-export class MongoMentorRepository
+export class MongoMentorListReadRepository
 	extends AbstractMongoRepository<Mentor, MentorDocument>
-	implements IMentorRepository
+	implements IMentorListReadRepository
 {
 	constructor() {
 		super(MentorModel);
@@ -34,169 +31,6 @@ export class MongoMentorRepository
 
 	protected toDocument(entity: Mentor): Partial<MentorDocument> {
 		return MentorMapper.toDocument(entity);
-	}
-
-	async create(mentor: Mentor): Promise<Mentor> {
-		return this.createDocument(mentor);
-	}
-
-	async findById(id: string): Promise<Mentor | null> {
-		return this.findByIdDocument(id);
-	}
-
-	async findByUserId(userId: string): Promise<Mentor | null> {
-		const doc = await this.model.findOne({ userId }).lean();
-		return doc ? this.toDomain(doc as MentorDocument) : null;
-	}
-
-	async findProfileByUserId(
-		userId: string,
-	): Promise<MentorProfileDetails | null> {
-		const doc = await this.model
-			.findOne({ userId })
-			.populate("userId", "name email profilePictureId")
-			.populate("currentRoleId", "name")
-			.populate("areasOfExpertise", "name")
-			.populate("toolsAndSkills.skillId", "name interestId")
-			.lean();
-
-		if (!doc) return null;
-
-		const mentor = this.toDomain(doc as MentorDocument);
-		return {
-			...mentor,
-			user: doc.userId as unknown as {
-				name: string;
-				email: string;
-				profilePictureId?: string;
-			},
-			currentRoleDetails: {
-				id:
-					(
-						doc.currentRoleId as { _id?: { toString?: () => string } }
-					)?._id?.toString?.() ?? "",
-				name: (doc.currentRoleId as { name?: string })?.name ?? "Unknown",
-			},
-			expertisesDetails: (doc.areasOfExpertise || []).map((item: unknown) => {
-				const category = item as {
-					_id?: { toString?: () => string };
-					name?: string;
-					toString?: () => string;
-				};
-				return {
-					id: category._id?.toString?.() || category.toString?.() || "",
-					name: category.name ?? "Unknown",
-				};
-			}),
-			skillsDetails: (doc.toolsAndSkills || []).map(
-				(item: { skillId?: unknown; level?: string }) => {
-					const skill = item.skillId as
-						| {
-								_id?: { toString?: () => string };
-								name?: string;
-								interestId?: { toString?: () => string };
-						  }
-						| undefined;
-					return {
-						skillId: {
-							id: skill?._id?.toString?.() || "",
-							name: skill?.name ?? "Unknown",
-							interestId: skill?.interestId?.toString?.() || "",
-						},
-						level: item.level ?? "",
-					};
-				},
-			),
-		};
-	}
-
-	async findProfileById(
-		mentorId: string,
-	): Promise<MentorProfileDetails | null> {
-		const doc = await this.model
-			.findById(mentorId)
-			.populate("userId", "name email profilePictureId")
-			.populate("currentRoleId", "name")
-			.populate("areasOfExpertise", "name")
-			.populate("toolsAndSkills.skillId", "name interestId")
-			.lean();
-
-		if (!doc) return null;
-
-		const mentor = this.toDomain(doc as MentorDocument);
-		return {
-			...mentor,
-			user: doc.userId as unknown as {
-				name: string;
-				email: string;
-				profilePictureId?: string;
-			},
-			currentRoleDetails: {
-				id:
-					(
-						doc.currentRoleId as { _id?: { toString?: () => string } }
-					)?._id?.toString?.() ?? "",
-				name: (doc.currentRoleId as { name?: string })?.name ?? "Unknown",
-			},
-			expertisesDetails: (doc.areasOfExpertise || []).map((item: unknown) => {
-				const category = item as {
-					_id?: { toString?: () => string };
-					name?: string;
-					toString?: () => string;
-				};
-				return {
-					id: category._id?.toString?.() || category.toString?.() || "",
-					name: category.name ?? "Unknown",
-				};
-			}),
-			skillsDetails: (doc.toolsAndSkills || []).map(
-				(item: { skillId?: unknown; level?: string }) => {
-					const skill = item.skillId as
-						| {
-								_id?: { toString?: () => string };
-								name?: string;
-								interestId?: { toString?: () => string };
-						  }
-						| undefined;
-					return {
-						skillId: {
-							id: skill?._id?.toString?.() || "",
-							name: skill?.name ?? "Unknown",
-							interestId: skill?.interestId?.toString?.() || "",
-						},
-						level: item.level ?? "",
-					};
-				},
-			),
-		};
-	}
-
-	async updateById(
-		id: string,
-		update: Partial<Mentor>,
-	): Promise<Mentor | null> {
-		const doc = await this.model
-			.findByIdAndUpdate(id, update, { returnDocument: "after" })
-			.lean();
-
-		return doc ? this.toDomain(doc as MentorDocument) : null;
-	}
-
-	async updateStatus(
-		id: string,
-		isApproved: boolean,
-		rejectionReason?: string | null,
-	): Promise<Mentor | null> {
-		const update: Record<string, unknown> = { isApproved };
-		if (rejectionReason !== undefined) {
-			update.rejectionReason = rejectionReason;
-		}
-
-		const doc = await this.model
-			.findByIdAndUpdate(id, update, { returnDocument: "after" })
-			.lean();
-
-		return doc ? this.toDomain(doc as MentorDocument) : null;
 	}
 
 	async paginate({

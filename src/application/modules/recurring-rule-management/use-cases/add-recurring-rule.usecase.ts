@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { Availability } from "../../../../domain/entities/session-availability.entity";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../../domain/repositories/session-availability.repository.interface";
 import { SessionSlotLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
@@ -18,8 +18,8 @@ import type { IAddRecurringRuleUseCase } from "./add-recurring-rule.usecase.inte
 @injectable()
 export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.SessionAvailabilityRepository)
 		private readonly _availabilityRepository: ISessionAvailabilityRepository,
 		@inject(TYPES.Services.IdGenerator)

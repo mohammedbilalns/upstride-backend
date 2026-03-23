@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { MAX_MENTOR_APPLICATION_ATTEMPTS } from "../../../../domain/entities/mentor.entity";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services";
 import type {
@@ -15,8 +15,8 @@ export class GetMentorRegistrationInfoUseCase
 	implements IGetMentorRegistrationInfoUseCase
 {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}

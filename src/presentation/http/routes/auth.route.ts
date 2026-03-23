@@ -18,7 +18,7 @@ import {
 	updatePasswordBodySchema,
 	verifyOtpBodySchema,
 } from "../validators/auth";
-import { revokeSessionBodySchema } from "../validators/auth/revokation.validator";
+import { revokeSessionBodySchema } from "../validators/auth/revocation.validator";
 
 const router = Router();
 const authController = container.get(AuthController);

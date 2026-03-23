@@ -3,7 +3,7 @@ import {
 	MAX_MENTOR_APPLICATION_ATTEMPTS,
 	Mentor,
 } from "../../../../domain/entities/mentor.entity";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { RegisterMentorInput } from "../dtos/register-mentor.dto";
@@ -13,8 +13,8 @@ import type { IRegisterMentorUseCase } from "./register-mentor.usecase.interface
 @injectable()
 export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
 	) {}

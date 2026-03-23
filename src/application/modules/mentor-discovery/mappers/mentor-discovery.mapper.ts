@@ -1,4 +1,4 @@
-import type { MentorDiscoveryDetails } from "../../../../domain/repositories/mentor.repository.interface";
+import type { MentorDiscoveryDetails } from "../../../../domain/repositories/mentor.repository.types";
 import type { MentorDiscoveryDto } from "../dtos/get-mentors.dto";
 
 export class MentorDiscoveryMapper {

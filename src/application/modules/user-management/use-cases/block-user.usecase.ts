@@ -4,7 +4,7 @@ import type {
 	ISessionRepository,
 	IUserRepository,
 } from "../../../../domain/repositories";
-import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revokation.repository.interface";
+import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revocation.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { REFRESH_TOKEN_EXPIRES_IN } from "../../../services";
 import { UserNotFoundError } from "../../authentication/errors";

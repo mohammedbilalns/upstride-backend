@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { MentorApprovalMailTemplate } from "../../../../domain/mail/mentor-approval-mail.template";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { IUserRepository } from "../../../../domain/repositories/user.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IMailService } from "../../../services/mail.service.interface";
@@ -11,8 +11,8 @@ import type { IApproveMentorUseCase } from "./approve-mentor.usecase.interface";
 @injectable()
 export class ApproveMentorUseCase implements IApproveMentorUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.MailService)

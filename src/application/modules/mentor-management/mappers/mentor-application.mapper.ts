@@ -1,4 +1,4 @@
-import type { MentorApplicationDetails } from "../../../../domain/repositories/mentor.repository.interface";
+import type { MentorApplicationDetails } from "../../../../domain/repositories/mentor.repository.types";
 import type { MentorApplicationDTO } from "../dtos/get-mentor-applications.dto";
 
 export class MentorApplicationMapper {

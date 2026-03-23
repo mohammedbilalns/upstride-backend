@@ -1,7 +1,9 @@
 import type { Container } from "inversify";
 import type {
+	IMentorListReadRepository,
 	IMentorListRepository,
-	IMentorRepository,
+	IMentorProfileReadRepository,
+	IMentorWriteRepository,
 	INotificationRepository,
 	IPlatformSettingsRepository,
 	IProfessionRepository,
@@ -10,8 +12,10 @@ import type {
 import {
 	MongoCoinTransactionRepository,
 	MongoInterestRepository,
+	MongoMentorListReadRepository,
 	MongoMentorListRepository,
-	MongoMentorRepository,
+	MongoMentorProfileReadRepository,
+	MongoMentorWriteRepository,
 	MongoNotificationRepository,
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
@@ -26,7 +30,7 @@ import {
 } from "../../infrastructure/database/mongodb/repositories";
 import { MongoProfessionRepository } from "../../infrastructure/database/mongodb/repositories/profession.repository";
 import { RedisOtpRepository } from "../../infrastructure/database/redis/repositories/otp.repository";
-import { RedisTokenRevocationRepository } from "../../infrastructure/database/redis/repositories/token-revokation.repository";
+import { RedisTokenRevocationRepository } from "../../infrastructure/database/redis/repositories/token-revocation.repository";
 import { TYPES } from "../../shared/types/types";
 
 export const registerRepositoryBindings = (container: Container): void => {
@@ -77,8 +81,20 @@ export const registerRepositoryBindings = (container: Container): void => {
 		.to(MongoProfessionRepository)
 		.inSingletonScope();
 	container
-		.bind<IMentorRepository>(TYPES.Repositories.MentorRepository)
-		.to(MongoMentorRepository)
+		.bind<IMentorWriteRepository>(TYPES.Repositories.MentorWriteRepository)
+		.to(MongoMentorWriteRepository)
+		.inSingletonScope();
+	container
+		.bind<IMentorProfileReadRepository>(
+			TYPES.Repositories.MentorProfileReadRepository,
+		)
+		.to(MongoMentorProfileReadRepository)
+		.inSingletonScope();
+	container
+		.bind<IMentorListReadRepository>(
+			TYPES.Repositories.MentorListReadRepository,
+		)
+		.to(MongoMentorListReadRepository)
 		.inSingletonScope();
 	container
 		.bind<IMentorListRepository>(TYPES.Repositories.MentorListRepository)

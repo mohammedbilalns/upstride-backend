@@ -1,4 +1,4 @@
-import type { MentorProfileDetails } from "../../../../domain/repositories/mentor.repository.interface";
+import type { MentorProfileDetails } from "../../../../domain/repositories/mentor.repository.types";
 import type { MentorProfileDto } from "../dtos/get-mentor-profile.dto";
 
 export class MentorProfileMapper {

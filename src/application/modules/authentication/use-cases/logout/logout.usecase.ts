@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import type { ISessionRepository } from "../../../../../domain/repositories";
-import type { ITokenRevocationRepository } from "../../../../../domain/repositories/token-revokation.repository.interface";
+import type { ITokenRevocationRepository } from "../../../../../domain/repositories/token-revocation.repository.interface";
 import { TYPES } from "../../../../../shared/types/types";
 import type { LogoutInput } from "../../dtos";
 import type { ILogoutUseCase } from ".";

@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
@@ -14,8 +15,10 @@ import type { IGetMentorProfileUseCase } from "./get-mentor-profile.usecase.inte
 @injectable()
 export class GetMentorProfileUseCase implements IGetMentorProfileUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorWriteRepository: IMentorWriteRepository,
 		@inject(TYPES.Services.PlatformSettings)
 		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
@@ -23,19 +26,21 @@ export class GetMentorProfileUseCase implements IGetMentorProfileUseCase {
 	async execute({
 		userId,
 	}: GetMentorProfileInput): Promise<GetMentorProfileResponse> {
-		let profile = await this._mentorRepository.findProfileByUserId(userId);
+		let profile =
+			await this._mentorProfileReadRepository.findProfileByUserId(userId);
 		if (!profile) {
 			throw new MentorNotFoundError();
 		}
 
 		if (profile.tierName === null || profile.tierMax30minPayment === null) {
 			const starterTier = this._platformSettingsService.mentors.starter;
-			await this._mentorRepository.updateById(profile.id, {
+			await this._mentorWriteRepository.updateById(profile.id, {
 				tierName: starterTier.name,
 				tierMax30minPayment: starterTier.maxPricePer30Min,
 				currentPricePer30Min: starterTier.maxPricePer30Min,
 			});
-			profile = await this._mentorRepository.findProfileByUserId(userId);
+			profile =
+				await this._mentorProfileReadRepository.findProfileByUserId(userId);
 			if (!profile) {
 				throw new MentorNotFoundError();
 			}

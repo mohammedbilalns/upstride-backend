@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { RejectMentorInput } from "../dtos/reject-mentor.dto";
 import { MentorApplicationNotFoundError } from "../errors/mentor-application-not-found.error";
@@ -8,8 +8,8 @@ import type { IRejectMentorUseCase } from "./reject-mentor.usecase.interface";
 @injectable()
 export class RejectMentorUseCase implements IRejectMentorUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 	) {}
 
 	async execute(input: RejectMentorInput): Promise<void> {

@@ -5,7 +5,7 @@ import {
 } from "../../../../domain/entities/coin-transactions.entity";
 import { SessionBooking } from "../../../../domain/entities/session-booking.entity";
 import type { ICoinTransactionRepository } from "../../../../domain/repositories/coin-transactions.repository.interface";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
@@ -26,8 +26,8 @@ import type { IBookSessionUseCase } from "./book-session.usecase.interface";
 @injectable()
 export class BookSessionUseCase implements IBookSessionUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)
 		private readonly _slotRepository: ISessionSlotRepository,
 		@inject(TYPES.Repositories.SessionBookingRepository)

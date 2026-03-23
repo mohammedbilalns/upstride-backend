@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type {
@@ -12,8 +12,8 @@ import type { IGetUserBookingsUseCase } from "./get-user-bookings.usecase.interf
 @injectable()
 export class GetUserBookingsUseCase implements IGetUserBookingsUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Repositories.SessionBookingRepository)
 		private readonly _bookingRepository: ISessionBookingRepository,
 	) {}
@@ -36,7 +36,7 @@ export class GetUserBookingsUseCase implements IGetUserBookingsUseCase {
 		);
 		const mentorProfiles = await Promise.all(
 			mentorIds.map((mentorId) =>
-				this._mentorRepository.findProfileById(mentorId),
+				this._mentorProfileReadRepository.findProfileById(mentorId),
 			),
 		);
 		const mentorNames = new Map<string, string>();

@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../../domain/repositories/session-availability.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
@@ -16,8 +16,8 @@ import type { IDeleteRecurringRuleUseCase } from "./delete-recurring-rule.usecas
 @injectable()
 export class DeleteRecurringRuleUseCase implements IDeleteRecurringRuleUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.SessionAvailabilityRepository)
 		private readonly _availabilityRepository: ISessionAvailabilityRepository,
 	) {}

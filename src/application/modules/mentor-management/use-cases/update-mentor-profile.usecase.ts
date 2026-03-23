@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
@@ -15,8 +16,10 @@ import type { IUpdateMentorProfileUseCase } from "./update-mentor-profile.usecas
 @injectable()
 export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorWriteRepository: IMentorWriteRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Services.PlatformSettings)
 		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
@@ -28,7 +31,7 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 		addSkills,
 		addEducationalQualifications,
 	}: UpdateMentorProfileInput): Promise<UpdateMentorProfileResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
+		const mentor = await this._mentorWriteRepository.findByUserId(userId);
 		if (!mentor) {
 			throw new MentorNotFoundError();
 		}
@@ -90,13 +93,14 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 		}
 
 		if (Object.keys(updates).length > 0) {
-			await this._mentorRepository.updateById(
+			await this._mentorWriteRepository.updateById(
 				mentor.id,
-				updates as Partial<Parameters<IMentorRepository["updateById"]>[1]>,
+				updates as Partial<Parameters<IMentorWriteRepository["updateById"]>[1]>,
 			);
 		}
 
-		const profile = await this._mentorRepository.findProfileByUserId(userId);
+		const profile =
+			await this._mentorProfileReadRepository.findProfileByUserId(userId);
 		if (!profile) {
 			throw new MentorNotFoundError();
 		}

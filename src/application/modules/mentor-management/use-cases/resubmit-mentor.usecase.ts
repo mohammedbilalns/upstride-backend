@@ -3,7 +3,7 @@ import {
 	MAX_MENTOR_APPLICATION_ATTEMPTS,
 	Mentor,
 } from "../../../../domain/entities/mentor.entity";
-import type { IMentorRepository } from "../../../../domain/repositories/mentor.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { ResubmitMentorInput } from "../dtos/resubmit-mentor.dto";
 import { MaxApplicationAttemptsExceededError } from "../errors/max-application-attempts-exceeded.error";
@@ -12,8 +12,8 @@ import type { IResubmitMentorUseCase } from "./resubmit-mentor.usecase.interface
 @injectable()
 export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 	constructor(
-		@inject(TYPES.Repositories.MentorRepository)
-		private readonly _mentorRepository: IMentorRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 	) {}
 
 	async execute(input: ResubmitMentorInput): Promise<void> {

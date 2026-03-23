@@ -7,51 +7,22 @@ import {
 import { SkillLevelValues } from "../../../domain/entities/user.entity";
 import { objectIdSchema } from "../../../shared/validators";
 
-export const registerMentorSchema = z.object({
-	bio: z.string().min(10, "Bio must be at least 10 characters long"),
-	currentRoleId: z.string().min(1, "Current role is required"),
-	organization: z.string().min(1, "Organization is required"),
-	yearsOfExperience: z
-		.number()
-		.min(0, "Years of experience must be at least 0"),
-	personalWebsite: z
-		.string()
-		.url("Invalid website URL")
-		.or(z.literal(""))
-		.nullish(),
-	resumeId: z.string().min(1, "Resume is required"),
-	educationalQualifications: z
-		.array(z.string().min(1))
-		.min(1, "At least one qualification is required")
-		.max(
-			MAX_MENTOR_EDUCATION_ITEMS,
-			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
-		),
-	areasOfExpertise: z
-		.array(z.string().min(1))
-		.min(1, "At least one area of expertise is required")
-		.max(
-			MAX_MENTOR_AREAS_OF_EXPERTISE,
-			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of expertise allowed`,
-		),
-	toolsAndSkills: z
-		.array(
-			z.object({
-				skillId: z.string().min(1),
-				level: z.enum(SkillLevelValues),
-			}),
-		)
-		.min(1, "At least one skill is required"),
-	experience: z
-		.array(
-			z.object({
-				company: z.string().min(1, "Company name is required"),
-				role: z.string().min(1, "Role is required"),
-				description: z.string().min(1, "Description is required"),
-				from: z.string().datetime({ message: "Invalid from date" }),
-				to: z.string().datetime({ message: "Invalid to date" }).nullable(),
-			}),
-		)
+const skillItemSchema = z.object({
+	skillId: z.string().min(1),
+	level: z.enum(SkillLevelValues),
+});
+
+const experienceItemSchema = z.object({
+	company: z.string().min(1, "Company name is required"),
+	role: z.string().min(1, "Role is required"),
+	description: z.string().min(1, "Description is required"),
+	from: z.string().datetime({ message: "Invalid from date" }),
+	to: z.string().datetime({ message: "Invalid to date" }).nullable(),
+});
+
+const buildExperienceSchema = () =>
+	z
+		.array(experienceItemSchema)
 		.min(1, "At least one experience item is required")
 		.max(
 			MAX_MENTOR_EXPERIENCE_ITEMS,
@@ -87,7 +58,39 @@ export const registerMentorSchema = z.object({
 					}
 				}
 			}
-		}),
+		});
+
+export const registerMentorSchema = z.object({
+	bio: z.string().min(10, "Bio must be at least 10 characters long"),
+	currentRoleId: z.string().min(1, "Current role is required"),
+	organization: z.string().min(1, "Organization is required"),
+	yearsOfExperience: z
+		.number()
+		.min(0, "Years of experience must be at least 0"),
+	personalWebsite: z
+		.string()
+		.url("Invalid website URL")
+		.or(z.literal(""))
+		.nullish(),
+	resumeId: z.string().min(1, "Resume is required"),
+	educationalQualifications: z
+		.array(z.string().min(1))
+		.min(1, "At least one qualification is required")
+		.max(
+			MAX_MENTOR_EDUCATION_ITEMS,
+			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
+		),
+	areasOfExpertise: z
+		.array(z.string().min(1))
+		.min(1, "At least one area of expertise is required")
+		.max(
+			MAX_MENTOR_AREAS_OF_EXPERTISE,
+			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of expertise allowed`,
+		),
+	toolsAndSkills: z
+		.array(skillItemSchema)
+		.min(1, "At least one skill is required"),
+	experience: buildExperienceSchema(),
 });
 
 export type RegisterMentorBody = z.infer<typeof registerMentorSchema>;
@@ -123,61 +126,10 @@ export const resubmitMentorSchema = z.object({
 		)
 		.optional(),
 	toolsAndSkills: z
-		.array(
-			z.object({
-				skillId: z.string().min(1),
-				level: z.enum(SkillLevelValues),
-			}),
-		)
+		.array(skillItemSchema)
 		.min(1, "At least one skill is required")
 		.optional(),
-	experience: z
-		.array(
-			z.object({
-				company: z.string().min(1, "Company name is required"),
-				role: z.string().min(1, "Role is required"),
-				description: z.string().min(1, "Description is required"),
-				from: z.string().datetime({ message: "Invalid from date" }),
-				to: z.string().datetime({ message: "Invalid to date" }).nullable(),
-			}),
-		)
-		.min(1, "At least one experience item is required")
-		.max(
-			MAX_MENTOR_EXPERIENCE_ITEMS,
-			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
-		)
-		.superRefine((experience, ctx) => {
-			const now = new Date();
-			for (let i = 0; i < experience.length; i++) {
-				const exp = experience[i];
-				const fromDate = new Date(exp.from);
-				if (fromDate > now) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: "From date cannot be in the future",
-						path: [i, "from"],
-					});
-				}
-				if (exp.to) {
-					const toDate = new Date(exp.to);
-					if (toDate > now) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
-							message: "To date cannot be in the future",
-							path: [i, "to"],
-						});
-					}
-					if (fromDate > toDate) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
-							message: "From date cannot be after To date",
-							path: [i, "from"],
-						});
-					}
-				}
-			}
-		})
-		.optional(),
+	experience: buildExperienceSchema().optional(),
 });
 
 export type ResubmitMentorBody = z.infer<typeof resubmitMentorSchema>;
@@ -237,13 +189,6 @@ export type RejectMentorBody = z.infer<typeof rejectMentorBodySchema>;
 export const updateMentorProfileBodySchema = z.object({
 	currentPricePer30Min: z.number().int().min(100).max(10000).optional(),
 	bio: z.string().min(10).optional(),
-	addSkills: z
-		.array(
-			z.object({
-				skillId: z.string().min(1),
-				level: z.enum(SkillLevelValues),
-			}),
-		)
-		.optional(),
+	addSkills: z.array(skillItemSchema).optional(),
 	addEducationalQualifications: z.array(z.string().min(1)).optional(),
 });

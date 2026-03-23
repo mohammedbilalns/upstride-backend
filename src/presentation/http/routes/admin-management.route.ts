@@ -41,4 +41,4 @@ router.patch(
 	controller.unblockAdmin.bind(controller),
 );
 
-export default router;
+export { router as adminManagementRouter };

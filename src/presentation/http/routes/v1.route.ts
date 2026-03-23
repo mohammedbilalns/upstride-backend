@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ROUTES } from "../constants";
-import adminManagementRouter from "./admin-management.route";
+import { adminManagementRouter } from "./admin-management.route";
 import { authRouter } from "./auth.route";
 import { catalogRouter } from "./catalog.route";
 import { fileRouter } from "./file.route";
@@ -12,7 +12,7 @@ import { profileRouter } from "./profile.route";
 import { recurringRuleRouter } from "./recurring-rule.route";
 import { sessionBookingRouter } from "./session-booking.route";
 import { sessionSlotRouter } from "./session-slot.route";
-import userManagementRouter from "./user-management.route";
+import { userManagementRouter } from "./user-management.route";
 import { walletRouter } from "./wallet.route";
 
 export const router = Router();

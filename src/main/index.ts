@@ -8,19 +8,19 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import { createDomainEventWorker } from "../infrastructure/events/domain-event.worker.js";
-import { createMailWorker } from "../infrastructure/queue/workers/mail.worker.js";
-import env from "../shared/config/env.js";
-import logger from "../shared/logging/logger.js";
-import { TYPES } from "../shared/types/types.js";
-import App from "./app.js";
-import { container } from "./container.js";
+import { createDomainEventWorker } from "../infrastructure/events/domain-event.worker";
+import { createMailWorker } from "../infrastructure/queue/workers/mail.worker";
+import env from "../shared/config/env";
+import logger from "../shared/logging/logger";
+import { TYPES } from "../shared/types/types";
+import App from "./app";
+import { container } from "./container";
 import {
 	bootstrapEventHandlers,
 	bullMQEventBus,
 	domainEventsQueue,
 	mailQueue,
-} from "./di/index.js";
+} from "./di";
 
 let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;

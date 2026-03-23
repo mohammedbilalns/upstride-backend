@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import type { SavedMentor } from "../../../../domain/entities/saved-mentor.entity";
-import type { MentorDiscoveryDetails } from "../../../../domain/repositories/mentor.repository.interface";
+import type { MentorDiscoveryDetails } from "../../../../domain/repositories/mentor.repository.types";
 import type { ISavedMentorRepository } from "../../../../domain/repositories/saved-mentor.repository.interface";
 import { MentorMapper } from "../mappers/mentor.mapper";
 import { SavedMentorMapper } from "../mappers/saved-mentor.mapper";
