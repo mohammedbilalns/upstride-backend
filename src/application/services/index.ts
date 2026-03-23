@@ -1,4 +1,3 @@
-export * from "../../domain/config/password.config";
 export * from "./id-generator.service.interface";
 export * from "./mail.service.interface";
 export * from "./oauth-identity-provider.service.interface";

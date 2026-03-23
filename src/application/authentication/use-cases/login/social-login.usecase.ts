@@ -4,11 +4,7 @@ import { UserRegisteredEvent } from "../../../../domain/events/user-registered.e
 import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { EventBus } from "../../../events/event-bus.interface";
-import type {
-	IOAuthIdentityProvider,
-	IPasswordService,
-	ITokenService,
-} from "../../../services";
+import type { IOAuthIdentityProvider, ITokenService } from "../../../services";
 import type {
 	OAuthProvider,
 	SocialLoginInput,
@@ -29,8 +25,6 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 		googleOAuthProvider: IOAuthIdentityProvider,
 		@inject(TYPES.Services.LinkedInOAuth)
 		linkedInOAuthProvider: IOAuthIdentityProvider,
-		@inject(TYPES.Services.Password)
-		private readonly _passwordService: IPasswordService,
 		@inject(TYPES.Services.TokenService)
 		private readonly _tokenService: ITokenService,
 		@inject(TYPES.Services.AuthSession)
@@ -116,7 +110,6 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 				input.provider === "LINKEDIN" ? identity.providerUserId : null,
 			phone: "",
 			coinBalance: 0,
-			passwordHash: await this._passwordService.hashPlaceholderPassword(),
 			authType: input.provider,
 			profilePictureId: null,
 			role: "USER",
