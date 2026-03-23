@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { PlatformSettingsService } from "../../application/services/platform-settings.service";
+import type { PlatformSettingsService } from "../../application/services/platform-settings.service";
 import type { IPlatformSettingsCache } from "../../application/services/platform-settings-cache.interface";
 import type {
 	PlatformSetting,
@@ -39,7 +39,7 @@ const buildSettingsCacheMap = (
 });
 
 @injectable()
-export class CachedPlatformSettingsService extends PlatformSettingsService {
+export class CachedPlatformSettingsService implements PlatformSettingsService {
 	private _config: PlatformSettingsDataMap | null = null;
 
 	constructor(
@@ -47,9 +47,7 @@ export class CachedPlatformSettingsService extends PlatformSettingsService {
 		private readonly _repository: IPlatformSettingsRepository,
 		@inject(TYPES.Caches.PlatformSettings)
 		private readonly _cache: IPlatformSettingsCache,
-	) {
-		super();
-	}
+	) {}
 
 	async load(forceRefresh = false): Promise<void> {
 		if (this._config && !forceRefresh) {

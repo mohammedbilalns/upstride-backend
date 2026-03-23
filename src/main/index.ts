@@ -13,8 +13,8 @@ import env from "../shared/config/env.js";
 import logger from "../shared/logging/logger.js";
 import { TYPES } from "../shared/types/types.js";
 import App from "./app.js";
-import { container, mailQueue } from "./container.js";
-import { bootstrapEventHandlers } from "./di";
+import { container } from "./container.js";
+import { bootstrapEventHandlers, mailQueue } from "./di";
 
 let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;

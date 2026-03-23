@@ -1,10 +1,9 @@
 import { Container } from "inversify";
 import {
-	mailQueue,
 	registerAdminManagementBindings,
 	registerAuthenticationBindings,
 	registerCatalogBindings,
-	registerCommonBindings,
+	registerInfrastructureServiceBindings,
 	registerMentorBindings,
 	registerMentorDiscoveryBindings,
 	registerMentorListsBindings,
@@ -12,7 +11,9 @@ import {
 	registerPlatformSettingsBindings,
 	registerPresentationBindings,
 	registerProfileBindings,
+	registerQueueBindings,
 	registerRecurringRuleBindings,
+	registerRepositoryBindings,
 	registerSessionBookingBindings,
 	registerSessionSlotBindings,
 	registerStorageBindings,
@@ -22,7 +23,9 @@ import {
 
 const container = new Container();
 
-registerCommonBindings(container);
+registerInfrastructureServiceBindings(container);
+registerRepositoryBindings(container);
+registerQueueBindings(container);
 registerAuthenticationBindings(container);
 registerAdminManagementBindings(container);
 registerCatalogBindings(container);
@@ -40,4 +43,4 @@ registerUserManagementBindings(container);
 registerWalletBindings(container);
 registerPresentationBindings(container);
 
-export { container, mailQueue };
+export { container };
