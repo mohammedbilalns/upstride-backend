@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { UserNotFoundError } from "../../application/authentication/errors";
 import type { IIdGenerator, IWalletService } from "../../application/services";
 import {
 	CoinTransaction,
@@ -53,7 +54,7 @@ export class WalletService implements IWalletService {
 		const user = await this.userRepository.findById(userId);
 
 		if (!user) {
-			throw new Error("User not found");
+			throw new UserNotFoundError();
 		}
 
 		if (user.coinBalance < amount) {
