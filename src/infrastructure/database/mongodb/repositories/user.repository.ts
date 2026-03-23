@@ -1,11 +1,11 @@
 import { injectable } from "inversify";
 import type { QueryFilter } from "mongoose";
+import type { User } from "../../../../domain/entities/user.entity";
 import type {
 	PopulatedInterest,
 	PopulatedSkill,
 	UserWithPopulatedPreferences,
-} from "../../../../application/modules/profile-management/dtos/get-profile.dto";
-import type { User } from "../../../../domain/entities/user.entity";
+} from "../../../../domain/entities/user-preferences.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type {
 	IUserRepository,

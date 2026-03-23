@@ -2,9 +2,9 @@ import type { SkillLevel } from "../../../../domain/entities/user.entity";
 import type {
 	PopulatedInterest,
 	PopulatedSkill,
-	UserProfileDTO,
 	UserWithPopulatedPreferences,
-} from "../dtos/get-profile.dto";
+} from "../../../../domain/entities/user-preferences.entity";
+import type { UserProfileDTO } from "../dtos/get-profile.dto";
 
 export class ProfileMapper {
 	static toDTO(
