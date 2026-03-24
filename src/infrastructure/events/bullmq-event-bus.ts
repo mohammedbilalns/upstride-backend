@@ -26,7 +26,8 @@ export class BullMQEventBus implements EventBus {
 	 * The event is serialized and queued as a job with retry support.
 	 */
 	async publish(event: AppEvent): Promise<void> {
-		const jobId = `${event.eventName}:${randomUUID()}`;
+		const safeEventName = event.eventName.replace(/[^a-zA-Z0-9_-]/g, "-");
+		const jobId = `${safeEventName}-${randomUUID()}`;
 
 		await this._queue.add(
 			event.eventName,
