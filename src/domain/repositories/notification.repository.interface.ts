@@ -24,4 +24,7 @@ export interface INotificationRepository
 		FindByIdRepository<Notification>,
 		QueryableRepository<Notification, NotificationQuery>,
 		PaginatableRepository<Notification, NotificationQuery>,
-		UpdatableByIdRepository<Notification> {}
+		UpdatableByIdRepository<Notification> {
+	markAllAsRead(userId: string): Promise<number>;
+	countUnread(userId: string): Promise<number>;
+}

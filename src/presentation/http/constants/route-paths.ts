@@ -27,6 +27,13 @@ export const ROUTES = {
 		REQUEST_CHANGE_PASSWORD: "/change-password/request",
 		VERIFY_OTP: "/change-password/verify",
 	},
+	NOTIFICATIONS: {
+		BASE: "/notifications",
+		ROOT: "/",
+		UNREAD_COUNT: "/unread-count",
+		READ_ALL: "/read-all",
+		MARK_READ: "/:notificationId/read",
+	},
 	CATALOG: {
 		BASE: "/catalog",
 		ONBOARDING: "/onboarding",

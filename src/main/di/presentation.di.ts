@@ -7,6 +7,7 @@ import {
 	LogoutController,
 	MentorController,
 	MentorListController,
+	NotificationController,
 	PasswordResetController,
 	PaymentController,
 	PlatformSettingsController,
@@ -36,6 +37,8 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(TYPES.Controllers.Mentor).to(MentorController);
 	container.bind(MentorListController).to(MentorListController);
 	container.bind(TYPES.Controllers.MentorList).to(MentorListController);
+	container.bind(NotificationController).to(NotificationController);
+	container.bind(TYPES.Controllers.Notification).to(NotificationController);
 	container.bind(RecurringRuleController).to(RecurringRuleController);
 	container.bind(TYPES.Controllers.RecurringRule).to(RecurringRuleController);
 	container.bind(SessionBookingController).to(SessionBookingController);

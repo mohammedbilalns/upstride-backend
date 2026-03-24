@@ -7,6 +7,7 @@ import {
 	registerMentorBindings,
 	registerMentorDiscoveryBindings,
 	registerMentorListsBindings,
+	registerNotificationBindings,
 	registerPaymentsBindings,
 	registerPlatformSettingsBindings,
 	registerPresentationBindings,
@@ -32,6 +33,7 @@ registerCatalogBindings(container);
 registerMentorBindings(container);
 registerMentorDiscoveryBindings(container);
 registerMentorListsBindings(container);
+registerNotificationBindings(container);
 registerRecurringRuleBindings(container);
 registerSessionBookingBindings(container);
 registerSessionSlotBindings(container);

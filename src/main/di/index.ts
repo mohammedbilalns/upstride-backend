@@ -6,6 +6,7 @@ export * from "./infrastructure-services.di";
 export * from "./mentor.di";
 export * from "./mentor-discovery.di";
 export * from "./mentor-lists.di";
+export * from "./notifications.di";
 export * from "./payments.di";
 export * from "./platform-settings.di";
 export * from "./presentation.di";

@@ -4,6 +4,7 @@ export * from "./catalog.route";
 export * from "./file.route";
 export * from "./mentor.route";
 export * from "./mentor-list.route";
+export * from "./notification.route";
 export * from "./payment.route";
 export * from "./platform-settings.route";
 export * from "./profile.route";

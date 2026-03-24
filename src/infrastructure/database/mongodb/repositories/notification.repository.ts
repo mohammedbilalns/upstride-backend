@@ -92,6 +92,19 @@ export class MongoNotificationRepository
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
 
+	async markAllAsRead(userId: string): Promise<number> {
+		const result = await this.model.updateMany(
+			{ userId, isRead: false },
+			{ isRead: true, readAt: new Date() },
+		);
+
+		return result.modifiedCount ?? 0;
+	}
+
+	async countUnread(userId: string): Promise<number> {
+		return this.model.countDocuments({ userId, isRead: false });
+	}
+
 	private _buildFilter(
 		query?: NotificationQuery,
 	): QueryFilter<NotificationDocument> {
