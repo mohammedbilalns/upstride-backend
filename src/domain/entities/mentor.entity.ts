@@ -1,10 +1,11 @@
-import { ValidationError } from "../../application/shared/errors/validation-error";
+import { EntityValidationError } from "../errors";
 import type { SkillLevel } from "./user.entity";
-
 export const MAX_MENTOR_APPLICATION_ATTEMPTS = 3;
 export const MAX_MENTOR_EXPERIENCE_ITEMS = 7;
 export const MAX_MENTOR_AREAS_OF_EXPERTISE = 2;
 export const MAX_MENTOR_EDUCATION_ITEMS = 5;
+export const MAX_MENTORS_PER_LIST = 150;
+export const MAX_LISTS_PER_USER = 20;
 
 export interface MentorExperience {
 	company: string;
@@ -46,13 +47,17 @@ export class Mentor {
 		public readonly avgRating: number = 0,
 	) {
 		if (this.score < 0 || this.score > 100) {
-			throw new ValidationError("Score must be between 0 and 100.");
+			throw new EntityValidationError(
+				"score",
+				"Score must be between 0 and 100.",
+			);
 		}
 		if (
 			(this.tierName === null && this.tierMax30minPayment !== null) ||
 			(this.tierName !== null && this.tierMax30minPayment === null)
 		) {
-			throw new ValidationError(
+			throw new EntityValidationError(
+				"score",
 				"Tier name and tier max 30 min payment must be set together.",
 			);
 		}
@@ -60,21 +65,32 @@ export class Mentor {
 			this.currentPricePer30Min !== null &&
 			(this.currentPricePer30Min < 100 || this.currentPricePer30Min > 10000)
 		) {
-			throw new ValidationError(
+			throw new EntityValidationError(
+				"score",
 				"Current price per 30 min must be between 100 and 10000.",
 			);
 		}
 		if (this.experience.length > 7) {
-			throw new ValidationError("Maximum of 7 experience items allowed.");
+			throw new EntityValidationError(
+				"socre",
+				"Maximum of 7 experience items allowed.",
+			);
 		}
 		if (this.applicationAttempts > 3) {
-			throw new ValidationError("Maximum of 3 application attempts allowed.");
+			throw new EntityValidationError(
+				"score",
+				"Maximum of 3 application attempts allowed.",
+			);
 		}
 		if (this.areasOfExpertise.length > 2) {
-			throw new ValidationError("Maximum of 2 areas of expertise allowed.");
+			throw new EntityValidationError(
+				"score",
+				"Maximum of 2 areas of expertise allowed.",
+			);
 		}
 		if (this.educationalQualifications.length > MAX_MENTOR_EDUCATION_ITEMS) {
-			throw new ValidationError(
+			throw new EntityValidationError(
+				"score",
 				`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed.`,
 			);
 		}

@@ -4,14 +4,14 @@ import type {
 	UpdateEconomySettingsInput,
 	UpdateMentorSettingsInput,
 	UpdateSessionSettingsInput,
-} from "../../../application/platform-settings/dtos";
+} from "../../../application/modules/platform-settings/dtos";
 import type {
 	IFetchPlatformSettingsUseCase,
 	IUpdateContentSettingsUseCase,
 	IUpdateEconomySettingsUseCase,
 	IUpdateMentorSettingsUseCase,
 	IUpdateSessionSettingsUseCase,
-} from "../../../application/platform-settings/use-cases";
+} from "../../../application/modules/platform-settings/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { PlatformSettingsResponseMessages } from "../constants";

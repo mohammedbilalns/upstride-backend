@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import type { GetPublicMentorAvailableSlotsInput } from "../../../application/session-slot-management/dtos/public-mentor-slots.dto";
+import type { GetPublicMentorAvailableSlotsInput } from "../../../application/modules/session-slot-management/dtos/public-mentor-slots.dto";
 import type {
 	CreateCustomSlotInput,
 	GenerateSlotsInput,
 	GetMentorSlotsInput,
-} from "../../../application/session-slot-management/dtos/session-slots.dto";
+} from "../../../application/modules/session-slot-management/dtos/session-slots.dto";
 import type {
 	ICancelSlotUseCase,
 	ICreateCustomSlotUseCase,
@@ -13,7 +13,7 @@ import type {
 	IGenerateSlotsUseCase,
 	IGetMentorSlotsUseCase,
 	IGetPublicMentorAvailableSlotsUseCase,
-} from "../../../application/session-slot-management/use-cases";
+} from "../../../application/modules/session-slot-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

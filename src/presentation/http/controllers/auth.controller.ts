@@ -1,21 +1,21 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { inject, injectable } from "inversify";
-import { UAParser } from "ua-parser-js";
 import type {
 	ILoginWithEmailUseCase,
 	IRefreshSessionUseCase,
 	IRegisterWithEmailUseCase,
-	IResendOtpUseCase,
+	IResendRegistrationOtpUseCase,
 	ISaveUserInterestsUseCase,
 	ISocialLoginUseCase,
-	IVerifyOtpUseCase,
-} from "../../../application/authentication/use-cases";
-import { OtpPurpose } from "../../../domain/policies/otp-purposes";
+	IVerifyRegistrationOtpUseCase,
+} from "../../../application/modules/authentication/use-cases";
 import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
+import { extractDeviceInfo } from "../../../shared/utilities/extract-device-info.util";
 import { AuthResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import { generateCsrfToken } from "../middlewares";
 import type {
 	GoogleLoginBody,
 	LinkedInLoginBody,
@@ -35,10 +35,10 @@ export class AuthController {
 		private _socialLoginUseCase: ISocialLoginUseCase,
 		@inject(TYPES.UseCases.RegisterWithEmail)
 		private _registerWithEmailUseCase: IRegisterWithEmailUseCase,
-		@inject(TYPES.UseCases.VerifyOtp)
-		private _verifyOtpUseCase: IVerifyOtpUseCase,
-		@inject(TYPES.UseCases.ResendOtp)
-		private _resendOtpUseCase: IResendOtpUseCase,
+		@inject(TYPES.UseCases.VerifyRegistrationOtp)
+		private _verifyRegistrationOtpUseCase: IVerifyRegistrationOtpUseCase,
+		@inject(TYPES.UseCases.ResendRegistrationOtp)
+		private _resendRegistrationOtpUseCase: IResendRegistrationOtpUseCase,
 		@inject(TYPES.UseCases.RefreshSession)
 		private _refreshSessionUseCase: IRefreshSessionUseCase,
 		@inject(TYPES.UseCases.SaveUserInterests)
@@ -56,9 +56,8 @@ export class AuthController {
 	});
 
 	verifyRegisterOtp = asyncHandler(async (req, res) => {
-		const data = await this._verifyOtpUseCase.execute({
+		const data = await this._verifyRegistrationOtpUseCase.execute({
 			...(req.validated?.body as VerifyOtpBody),
-			type: OtpPurpose.REGISTER,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -68,9 +67,8 @@ export class AuthController {
 	});
 
 	resendRegisterOtp = asyncHandler(async (req, res) => {
-		await this._resendOtpUseCase.execute({
+		await this._resendRegistrationOtpUseCase.execute({
 			...(req.validated?.body as ResendOtpBody),
-			type: OtpPurpose.REGISTER,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -79,7 +77,7 @@ export class AuthController {
 	});
 
 	login = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 
 		const { refreshToken, ...data } = await this._loginWithEmailUseCase.execute(
 			{
@@ -89,34 +87,39 @@ export class AuthController {
 		);
 
 		this._setRefreshTokenCookie(res, refreshToken);
+		req.cookies.refreshToken = refreshToken;
+		const csrfToken = generateCsrfToken(req, res);
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
-			data,
+			data: { ...data, csrfToken },
 		});
 	});
 
 	loginWithGoogle = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 		const data = await this._socialLoginUseCase.execute({
 			provider: "GOOGLE",
 			credential: (req.validated?.body as GoogleLoginBody).code,
 			...deviceInfo,
 		});
 
+		let csrfToken: string | undefined;
 		if ("refreshToken" in data) {
 			this._setRefreshTokenCookie(res, data.refreshToken);
+			req.cookies.refreshToken = data.refreshToken;
+			csrfToken = generateCsrfToken(req, res);
 		}
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
 			data:
 				"refreshToken" in data
-					? (({ refreshToken, ...rest }) => rest)(data)
+					? { ...(({ refreshToken, ...rest }) => rest)(data), csrfToken }
 					: data,
 		});
 	});
 
 	loginWithLinkedIn = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 		const body = req.validated?.body as LinkedInLoginBody;
 
 		const data = await this._socialLoginUseCase.execute({
@@ -125,20 +128,23 @@ export class AuthController {
 			...deviceInfo,
 		});
 
+		let csrfToken: string | undefined;
 		if ("refreshToken" in data) {
 			this._setRefreshTokenCookie(res, data.refreshToken);
+			req.cookies.refreshToken = data.refreshToken;
+			csrfToken = generateCsrfToken(req, res);
 		}
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
 			data:
 				"refreshToken" in data
-					? (({ refreshToken, ...rest }) => rest)(data)
+					? { ...(({ refreshToken, ...rest }) => rest)(data), csrfToken }
 					: data,
 		});
 	});
 
 	saveInterests = asyncHandler(async (req, res) => {
-		const deviceInfo = this._extractDeviceInfo(req);
+		const deviceInfo = extractDeviceInfo(req);
 
 		const { refreshToken, ...data } =
 			await this._saveUserInterestsUseCase.execute({
@@ -147,9 +153,11 @@ export class AuthController {
 			});
 
 		this._setRefreshTokenCookie(res, refreshToken);
+		req.cookies.refreshToken = refreshToken;
+		const csrfToken = generateCsrfToken(req, res);
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
-			data,
+			data: { ...data, csrfToken },
 		});
 	});
 
@@ -159,10 +167,18 @@ export class AuthController {
 			await this._refreshSessionUseCase.execute({ refreshToken });
 
 		this._setRefreshTokenCookie(res, newRefreshToken);
+		req.cookies.refreshToken = newRefreshToken;
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.REFRESH_SESSION_SUCCESS,
 			data,
+		});
+	});
+
+	getCsrfToken = asyncHandler(async (req, res) => {
+		const csrfToken = generateCsrfToken(req, res);
+		sendSuccess(res, HttpStatus.OK, {
+			data: { csrfToken },
 		});
 	});
 
@@ -173,30 +189,5 @@ export class AuthController {
 			sameSite: "strict",
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		});
-	}
-
-	private _extractDeviceInfo(req: Request) {
-		const userAgent = req.headers["user-agent"] || ("unknown" as string);
-		const ua = new UAParser(userAgent);
-		const deviceType = ua.getDevice().type || "unknown";
-		const deviceVendor = ua.getDevice().vendor || "unknown";
-		const deviceModel = ua.getDevice().model || "unknown";
-		const deviceOsName = ua.getOS().name || "unknown";
-		const deviceOsVersion = ua.getOS().version;
-		const deviceOs = deviceOsVersion
-			? `${deviceOsName} ${deviceOsVersion}`
-			: deviceOsName;
-		const browser = ua.getBrowser().name || "unknown";
-		const ipAddress = req.ip || req.socket?.remoteAddress || "unknown";
-
-		return {
-			deviceType,
-			deviceVendor,
-			deviceModel,
-			deviceOs,
-			browser,
-			ipAddress,
-			userAgent,
-		};
 	}
 }

@@ -1,0 +1,42 @@
+import type {
+	AuthType,
+	SkillLevel,
+	UserRole,
+} from "../../../../domain/entities/user.entity";
+import type {
+	PopulatedInterest,
+	PopulatedSkill,
+	UserWithPopulatedPreferences,
+} from "../../../../domain/entities/user-preferences.entity";
+
+export interface GetProfileInput {
+	userId: string;
+}
+
+export type { PopulatedInterest, PopulatedSkill, UserWithPopulatedPreferences };
+
+export interface UserProfileDTO {
+	id: string;
+	name: string;
+	email: string;
+	phone: string;
+	coinBalance: number;
+	role: UserRole;
+	authType: AuthType;
+	profilePictureUrl: string | null;
+	preferences?: {
+		interests: {
+			id: string;
+			name: string;
+			skills: {
+				skillId: string;
+				name: string;
+				level: SkillLevel;
+			}[];
+		}[];
+	};
+}
+
+export interface GetProfileOutput {
+	profile: UserProfileDTO;
+}

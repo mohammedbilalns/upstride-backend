@@ -1,13 +1,12 @@
 import { inject, injectable } from "inversify";
 import type {
-	IResendOtpUseCase,
-	IVerifyOtpUseCase,
-} from "../../../application/authentication/use-cases";
+	IResendResetPasswordOtpUseCase,
+	IVerifyResetPasswordOtpUseCase,
+} from "../../../application/modules/authentication/use-cases";
 import type {
 	IRequestPasswordResetUseCase,
 	IUpdatePasswordUseCase,
-} from "../../../application/authentication/use-cases/password-reset";
-import { OtpPurpose } from "../../../domain/policies/otp-purposes";
+} from "../../../application/modules/authentication/use-cases/password-reset";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages } from "../constants";
@@ -18,10 +17,10 @@ export class PasswordResetController {
 	constructor(
 		@inject(TYPES.UseCases.RequestPasswordReset)
 		private _requestPasswordResetUseCase: IRequestPasswordResetUseCase,
-		@inject(TYPES.UseCases.VerifyOtp)
-		private _verifyOtpUseCase: IVerifyOtpUseCase,
-		@inject(TYPES.UseCases.ResendOtp)
-		private _resendOtpUseCase: IResendOtpUseCase,
+		@inject(TYPES.UseCases.VerifyResetPasswordOtp)
+		private _verifyResetPasswordOtpUseCase: IVerifyResetPasswordOtpUseCase,
+		@inject(TYPES.UseCases.ResendResetPasswordOtp)
+		private _resendResetPasswordOtpUseCase: IResendResetPasswordOtpUseCase,
 		@inject(TYPES.UseCases.UpdatePassword)
 		private _updatePasswordUseCase: IUpdatePasswordUseCase,
 	) {}
@@ -35,9 +34,8 @@ export class PasswordResetController {
 	});
 
 	verifyResetPasswordOtp = asyncHandler(async (req, res) => {
-		const data = await this._verifyOtpUseCase.execute({
+		const data = await this._verifyResetPasswordOtpUseCase.execute({
 			...req.body,
-			type: OtpPurpose.RESET_PASSWORD,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -47,9 +45,8 @@ export class PasswordResetController {
 	});
 
 	resendResetPasswordOtp = asyncHandler(async (req, res) => {
-		await this._resendOtpUseCase.execute({
+		await this._resendResetPasswordOtpUseCase.execute({
 			...req.body,
-			type: OtpPurpose.RESET_PASSWORD,
 		});
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.OTP_RESENT,

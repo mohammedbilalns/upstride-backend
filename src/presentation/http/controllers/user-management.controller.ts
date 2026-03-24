@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import type { GetUsersInput } from "../../../application/user-management/dtos/get-users.dto";
+import type { GetUsersInput } from "../../../application/modules/user-management/dtos/get-users.dto";
 import type {
 	IBlockUserUseCase,
 	IGetUsersUseCase,
 	IUnblockUserUseCase,
-} from "../../../application/user-management/use-cases";
+} from "../../../application/modules/user-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { UserManagementResponseMessages } from "../constants";

@@ -33,4 +33,4 @@ router.patch(
 	controller.unblockUser.bind(controller),
 );
 
-export default router;
+export { router as userManagementRouter };

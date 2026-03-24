@@ -18,6 +18,58 @@ import {
 } from "../models/payment-transactions.model";
 import { AbstractMongoRepository } from "./abstract.repository";
 
+const applyTransactionOwnerFilter = (
+	filter: QueryFilter<PaymentTransactionDocument>,
+	transactionOwner?: PaymentTransactionQuery["transactionOwner"],
+) => {
+	if (transactionOwner === "platform") {
+		filter.transactionOwner = "platform";
+		return;
+	}
+
+	if (transactionOwner === "mentor") {
+		filter.transactionOwner = "mentor";
+		return;
+	}
+
+	if (transactionOwner === "user") {
+		filter.$or = [
+			{ transactionOwner: "user" },
+			{ transactionOwner: { $exists: false } },
+			{ transactionOwner: null },
+			{ transactionOwner: "" },
+		];
+	}
+};
+
+const buildPaymentTransactionFilter = (
+	query?: PaymentTransactionQuery,
+): QueryFilter<PaymentTransactionDocument> => {
+	const filter: QueryFilter<PaymentTransactionDocument> = {};
+
+	if (query?.userId) {
+		filter.userId = query.userId;
+	}
+
+	if (query?.provider) {
+		filter.provider = query.provider;
+	}
+
+	if (query?.status) {
+		filter.status = Array.isArray(query.status)
+			? { $in: query.status }
+			: query.status;
+	}
+
+	if (query?.providerPaymentId) {
+		filter.providerPaymentId = query.providerPaymentId;
+	}
+
+	applyTransactionOwnerFilter(filter, query?.transactionOwner);
+
+	return filter;
+};
+
 @injectable()
 export class MongoPaymentTransactionRepository
 	extends AbstractMongoRepository<
@@ -109,38 +161,7 @@ export class MongoPaymentTransactionRepository
 		query,
 		sort,
 	}: QueryParams<PaymentTransactionQuery>): Promise<PaymentTransaction[]> {
-		const filter: QueryFilter<PaymentTransactionDocument> = {};
-
-		if (query?.userId) {
-			filter.userId = query.userId;
-		}
-
-		if (query?.provider) {
-			filter.provider = query.provider;
-		}
-
-		if (query?.status) {
-			filter.status = Array.isArray(query.status)
-				? { $in: query.status }
-				: query.status;
-		}
-
-		if (query?.providerPaymentId) {
-			filter.providerPaymentId = query.providerPaymentId;
-		}
-
-		if (query?.transactionOwner === "platform") {
-			filter.transactionOwner = "platform";
-		} else if (query?.transactionOwner === "mentor") {
-			filter.transactionOwner = "mentor";
-		} else if (query?.transactionOwner === "user") {
-			filter.$or = [
-				{ transactionOwner: "user" },
-				{ transactionOwner: { $exists: false } },
-				{ transactionOwner: null },
-				{ transactionOwner: "" },
-			];
-		}
+		const filter = buildPaymentTransactionFilter(query);
 
 		const docs = await this.model
 			.find(filter)
@@ -158,38 +179,7 @@ export class MongoPaymentTransactionRepository
 	}: PaginateParams<PaymentTransactionQuery>): Promise<
 		PaginatedResult<PaymentTransaction>
 	> {
-		const filter: QueryFilter<PaymentTransactionDocument> = {};
-
-		if (query?.userId) {
-			filter.userId = query.userId;
-		}
-
-		if (query?.provider) {
-			filter.provider = query.provider;
-		}
-
-		if (query?.status) {
-			filter.status = Array.isArray(query.status)
-				? { $in: query.status }
-				: query.status;
-		}
-
-		if (query?.providerPaymentId) {
-			filter.providerPaymentId = query.providerPaymentId;
-		}
-
-		if (query?.transactionOwner === "platform") {
-			filter.transactionOwner = "platform";
-		} else if (query?.transactionOwner === "mentor") {
-			filter.transactionOwner = "mentor";
-		} else if (query?.transactionOwner === "user") {
-			filter.$or = [
-				{ transactionOwner: "user" },
-				{ transactionOwner: { $exists: false } },
-				{ transactionOwner: null },
-				{ transactionOwner: "" },
-			];
-		}
+		const filter = buildPaymentTransactionFilter(query);
 
 		const skip = (page - 1) * limit;
 

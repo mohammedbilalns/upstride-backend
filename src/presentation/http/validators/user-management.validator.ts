@@ -1,14 +1,13 @@
 import { z } from "zod";
+import {
+	limitSchema,
+	pageSchema,
+	useridSchema,
+} from "../../../shared/validators";
 
 export const UsersQuerySchema = z.object({
-	page: z.coerce.number().int().positive().default(1),
-	limit: z.coerce
-		.number()
-		.int()
-		.refine((val: number) => [10, 20, 50].includes(val), {
-			message: "Limit must be 10, 20, or 50",
-		})
-		.default(10),
+	page: pageSchema,
+	limit: limitSchema,
 	search: z.string().optional(),
 	role: z.enum(["USER", "MENTOR"]).optional(),
 	status: z.enum(["active", "blocked"]).optional(),
@@ -16,5 +15,5 @@ export const UsersQuerySchema = z.object({
 });
 
 export const UserIdParamSchema = z.object({
-	id: z.string().min(1, "User ID is required"),
+	id: useridSchema,
 });

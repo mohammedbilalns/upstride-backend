@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import type {
 	AddRecurringRuleInput,
 	UpdateRecurringRuleInput,
-} from "../../../application/recurring-rule-management/dtos/recurring-rules.dto";
+} from "../../../application/modules/recurring-rule-management/dtos/recurring-rules.dto";
 import type {
 	IAddRecurringRuleUseCase,
 	IDeleteRecurringRuleUseCase,
@@ -10,7 +10,7 @@ import type {
 	IEnableRecurringRuleUseCase,
 	IGetRecurringRulesUseCase,
 	IUpdateRecurringRuleUseCase,
-} from "../../../application/recurring-rule-management/use-cases";
+} from "../../../application/modules/recurring-rule-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

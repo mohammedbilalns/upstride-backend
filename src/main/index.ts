@@ -8,17 +8,24 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import { bootstrapEvents } from "../infrastructure/events/bootstrap";
-import { createMailWorker } from "../infrastructure/queue/workers/mail.worker.js";
-import env from "../shared/config/env.js";
-import logger from "../shared/logging/logger.js";
-import { TYPES } from "../shared/types/types.js";
-import App from "./app.js";
-import { container, mailQueue } from "./container.js";
+import { createAppEventWorker } from "../infrastructure/events/domain-event.worker";
+import { createMailWorker } from "../infrastructure/queue/workers/mail.worker";
+import env from "../shared/config/env";
+import logger from "../shared/logging/logger";
+import { TYPES } from "../shared/types/types";
+import App from "./app";
+import { container } from "./container";
+import {
+	bootstrapEventHandlers,
+	bullMQEventBus,
+	domainEventsQueue,
+	mailQueue,
+} from "./di";
 
 let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;
 let mailWorker: Worker;
+let appEventWorker: Worker;
 
 async function start() {
 	logger.info("Starting...");
@@ -31,10 +38,11 @@ async function start() {
 	await platformSettingsService.load();
 
 	// Initialize event handlers
-	bootstrapEvents();
+	bootstrapEventHandlers(container);
 
-	//worker for mail processing
+	//workers for background jobs
 	mailWorker = createMailWorker(redisClient);
+	appEventWorker = createAppEventWorker(redisClient, bullMQEventBus);
 
 	// initialize http server
 	appInstance = new App();
@@ -57,7 +65,9 @@ async function shutdown(signal: string) {
 		await Promise.allSettled([
 			disconnectFromMongo(),
 			mailWorker?.close(),
+			appEventWorker?.close(),
 			mailQueue.close(),
+			domainEventsQueue.close(),
 			disconnectRedis(),
 		]);
 		clearTimeout(forceExitTimeout);

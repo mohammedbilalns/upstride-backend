@@ -12,7 +12,7 @@ import type {
 	IFetchCatalogUseCase,
 	IGetOnboardingCatalogUseCase,
 	IGetProfessionsUseCase,
-} from "../../../application/catalog-management/use-cases";
+} from "../../../application/modules/catalog-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { CatalogResponseMessages } from "../constants";

@@ -13,6 +13,7 @@ export const ROUTES = {
 		RESEND_RESET_PASSWORD_OTP: "/resend-reset-password-otp",
 		UPDATE_PASSWORD: "/update-password",
 		REFRESH: "/refresh",
+		CSRF: "/csrf",
 		LOGOUT: "/logout",
 		REVOKE_SESSION: "/revoke-session",
 		REVOKE_ALL_OTHER_SESSIONS: "/revoke-all-other-sessions",
@@ -25,6 +26,13 @@ export const ROUTES = {
 		CHANGE_PASSWORD: "/change-password",
 		REQUEST_CHANGE_PASSWORD: "/change-password/request",
 		VERIFY_OTP: "/change-password/verify",
+	},
+	NOTIFICATIONS: {
+		BASE: "/notifications",
+		ROOT: "/",
+		UNREAD_COUNT: "/unread-count",
+		READ_ALL: "/read-all",
+		MARK_READ: "/:notificationId/read",
 	},
 	CATALOG: {
 		BASE: "/catalog",

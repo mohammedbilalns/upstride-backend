@@ -1,9 +1,9 @@
 import type { Response } from "express";
 import { inject, injectable } from "inversify";
-import type { GetCoinTransactionsInput } from "../../../application/wallet/dtos/get-coin-transactions.dto";
-import type { GetPaymentTransactionsInput } from "../../../application/wallet/dtos/get-payment-transactions.dto";
-import type { GetPlatformCoinTransactionsInput } from "../../../application/wallet/dtos/get-platform-coin-transactions.dto";
-import type { GetPlatformPaymentTransactionsInput } from "../../../application/wallet/dtos/get-platform-payment-transactions.dto";
+import type { GetCoinTransactionsInput } from "../../../application/modules/wallet/dtos/get-coin-transactions.dto";
+import type { GetPaymentTransactionsInput } from "../../../application/modules/wallet/dtos/get-payment-transactions.dto";
+import type { GetPlatformCoinTransactionsInput } from "../../../application/modules/wallet/dtos/get-platform-coin-transactions.dto";
+import type { GetPlatformPaymentTransactionsInput } from "../../../application/modules/wallet/dtos/get-platform-payment-transactions.dto";
 import type {
 	IGetCoinBalanceUseCase,
 	IGetCoinTransactionsUseCase,
@@ -11,7 +11,7 @@ import type {
 	IGetPlatformCoinTransactionsUseCase,
 	IGetPlatformPaymentTransactionsUseCase,
 	IGetPlatformWalletUseCase,
-} from "../../../application/wallet/use-cases";
+} from "../../../application/modules/wallet/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
@@ -22,22 +22,22 @@ import { asyncHandler, sendSuccess } from "../helpers";
 export class WalletController {
 	constructor(
 		@inject(TYPES.UseCases.GetCoinBalance)
-		private readonly getCoinBalanceUseCase: IGetCoinBalanceUseCase,
+		private readonly _getCoinBalanceUseCase: IGetCoinBalanceUseCase,
 		@inject(TYPES.UseCases.GetCoinTransactions)
-		private readonly getCoinTransactionsUseCase: IGetCoinTransactionsUseCase,
+		private readonly _getCoinTransactionsUseCase: IGetCoinTransactionsUseCase,
 		@inject(TYPES.UseCases.GetPaymentTransactions)
-		private readonly getPaymentTransactionsUseCase: IGetPaymentTransactionsUseCase,
+		private readonly _getPaymentTransactionsUseCase: IGetPaymentTransactionsUseCase,
 		@inject(TYPES.UseCases.GetPlatformWallet)
-		private readonly getPlatformWalletUseCase: IGetPlatformWalletUseCase,
+		private readonly _getPlatformWalletUseCase: IGetPlatformWalletUseCase,
 		@inject(TYPES.UseCases.GetPlatformCoinTransactions)
-		private readonly getPlatformCoinTransactionsUseCase: IGetPlatformCoinTransactionsUseCase,
+		private readonly _getPlatformCoinTransactionsUseCase: IGetPlatformCoinTransactionsUseCase,
 		@inject(TYPES.UseCases.GetPlatformPaymentTransactions)
-		private readonly getPlatformPaymentTransactionsUseCase: IGetPlatformPaymentTransactionsUseCase,
+		private readonly _getPlatformPaymentTransactionsUseCase: IGetPlatformPaymentTransactionsUseCase,
 	) {}
 
 	getCoinBalance = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const data = await this.getCoinBalanceUseCase.execute({
+			const data = await this._getCoinBalanceUseCase.execute({
 				userId: req.user.id,
 			});
 
@@ -52,7 +52,7 @@ export class WalletController {
 		async (req: AuthenticatedRequest, res: Response) => {
 			const query = req.validated?.query as GetCoinTransactionsInput;
 
-			const data = await this.getCoinTransactionsUseCase.execute({
+			const data = await this._getCoinTransactionsUseCase.execute({
 				userId: req.user.id,
 				page: query.page,
 				limit: query.limit,
@@ -71,7 +71,7 @@ export class WalletController {
 		async (req: AuthenticatedRequest, res: Response) => {
 			const query = req.validated?.query as GetPaymentTransactionsInput;
 
-			const data = await this.getPaymentTransactionsUseCase.execute({
+			const data = await this._getPaymentTransactionsUseCase.execute({
 				userId: req.user.id,
 				page: query.page,
 				limit: query.limit,
@@ -87,7 +87,7 @@ export class WalletController {
 	);
 
 	getPlatformWallet = asyncHandler(async (_req, res) => {
-		const data = await this.getPlatformWalletUseCase.execute();
+		const data = await this._getPlatformWalletUseCase.execute();
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: "Platform wallet fetched successfully",
@@ -99,7 +99,7 @@ export class WalletController {
 		async (req: AuthenticatedRequest, res: Response) => {
 			const query = req.validated?.query as GetPlatformCoinTransactionsInput;
 
-			const data = await this.getPlatformCoinTransactionsUseCase.execute({
+			const data = await this._getPlatformCoinTransactionsUseCase.execute({
 				page: query.page,
 				limit: query.limit,
 				sort: query.sort,
@@ -117,7 +117,7 @@ export class WalletController {
 		async (req: AuthenticatedRequest, res: Response) => {
 			const query = req.validated?.query as GetPlatformPaymentTransactionsInput;
 
-			const data = await this.getPlatformPaymentTransactionsUseCase.execute({
+			const data = await this._getPlatformPaymentTransactionsUseCase.execute({
 				page: query.page,
 				limit: query.limit,
 				sort: query.sort,

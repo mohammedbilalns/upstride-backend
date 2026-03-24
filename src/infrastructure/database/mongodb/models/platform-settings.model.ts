@@ -1,9 +1,9 @@
 import { model, Schema, type Types } from "mongoose";
 import {
-	type PlatformSettingsDataMap,
 	type PlatformSettingsType,
 	PlatformSettingsTypeValues,
 } from "../../../../domain/entities/platform-settings.entity";
+import type { PlatformSettingsDataMap } from "../../../../shared/config/platform-settings.defaults";
 
 export interface PlatformSettingDocument<
 	TType extends PlatformSettingsType = PlatformSettingsType,

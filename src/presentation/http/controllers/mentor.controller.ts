@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
-import type { GetMentorsInput } from "../../../application/mentor-discovery/dtos/get-mentors.dto";
-import type { IGetMentorsUseCase } from "../../../application/mentor-discovery/use-cases";
+import type { GetMentorsInput } from "../../../application/modules/mentor-discovery/dtos/get-mentors.dto";
+import type { IGetMentorsUseCase } from "../../../application/modules/mentor-discovery/use-cases";
 import type {
 	IApproveMentorUseCase,
 	IGetMentorApplicationsUseCase,
@@ -11,10 +11,11 @@ import type {
 	IRejectMentorUseCase,
 	IResubmitMentorUseCase,
 	IUpdateMentorProfileUseCase,
-} from "../../../application/mentor-management/use-cases";
+} from "../../../application/modules/mentor-management/use-cases";
 import type {
 	MentorApplicationsQuery,
 	MentorDiscoveryQuery,
+	MentorIdParam,
 	RejectMentorBody,
 } from "../../../presentation/http/validators/mentor.validator";
 import { HttpStatus } from "../../../shared/constants";
@@ -49,7 +50,7 @@ export class MentorController {
 	) {}
 
 	getApplications = asyncHandler(async (req, res) => {
-		const query = req.query as unknown as MentorApplicationsQuery;
+		const query = req.validated?.query as MentorApplicationsQuery;
 
 		const result = await this._getMentorApplicationsUseCase.execute(query);
 
@@ -124,7 +125,7 @@ export class MentorController {
 
 	getPublicProfile = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
-		const mentorId = req.params.id as string;
+		const { id: mentorId } = req.validated?.params as MentorIdParam;
 		const data = await this._getPublicMentorProfileUseCase.execute({
 			mentorId,
 			requesterUserId: userId,

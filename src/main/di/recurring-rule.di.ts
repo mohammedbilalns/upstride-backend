@@ -12,7 +12,7 @@ import {
 	type IGetRecurringRulesUseCase,
 	type IUpdateRecurringRuleUseCase,
 	UpdateRecurringRuleUseCase,
-} from "../../application/recurring-rule-management/use-cases";
+} from "../../application/modules/recurring-rule-management/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerRecurringRuleBindings = (container: Container): void => {

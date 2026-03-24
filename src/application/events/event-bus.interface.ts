@@ -1,8 +1,8 @@
-import type { DomainEvent } from "../../domain/events/domain-event";
+import type { AppEvent } from "../../domain/events/domain-event";
 
 export interface EventBus {
-	publish(event: DomainEvent): Promise<void>;
-	subscribe<T>(
+	publish(event: AppEvent): Promise<void>;
+	registerHandler<T>(
 		eventName: string,
 		handler: (event: T) => Promise<void> | void,
 	): void;

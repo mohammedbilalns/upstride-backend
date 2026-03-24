@@ -55,36 +55,7 @@ export class MongoCoinTransactionRepository
 		query,
 		sort,
 	}: QueryParams<CoinTransactionQuery>): Promise<CoinTransaction[]> {
-		const filter: QueryFilter<CoinTransactionDocument> = {};
-
-		if (query?.userId) {
-			filter.userId = query.userId;
-		}
-
-		if (query?.type) {
-			filter.type = Array.isArray(query.type)
-				? { $in: query.type }
-				: query.type;
-		}
-
-		if (query?.referenceType) {
-			filter.referenceType = query.referenceType;
-		}
-
-		if (query?.referenceId) {
-			filter.referenceId = query.referenceId;
-		}
-
-		if (query?.transactionOwner === "platform") {
-			filter.transactionOwner = "platform";
-		} else if (query?.transactionOwner === "user") {
-			filter.$or = [
-				{ transactionOwner: "user" },
-				{ transactionOwner: { $exists: false } },
-				{ transactionOwner: null },
-				{ transactionOwner: "" },
-			];
-		}
+		const filter = this._buildFilter(query);
 
 		const docs = await this.model
 			.find(filter)
@@ -102,36 +73,7 @@ export class MongoCoinTransactionRepository
 	}: PaginateParams<CoinTransactionQuery>): Promise<
 		PaginatedResult<CoinTransaction>
 	> {
-		const filter: QueryFilter<CoinTransactionDocument> = {};
-
-		if (query?.userId) {
-			filter.userId = query.userId;
-		}
-
-		if (query?.type) {
-			filter.type = Array.isArray(query.type)
-				? { $in: query.type }
-				: query.type;
-		}
-
-		if (query?.referenceType) {
-			filter.referenceType = query.referenceType;
-		}
-
-		if (query?.referenceId) {
-			filter.referenceId = query.referenceId;
-		}
-
-		if (query?.transactionOwner === "platform") {
-			filter.transactionOwner = "platform";
-		} else if (query?.transactionOwner === "user") {
-			filter.$or = [
-				{ transactionOwner: "user" },
-				{ transactionOwner: { $exists: false } },
-				{ transactionOwner: null },
-				{ transactionOwner: "" },
-			];
-		}
+		const filter = this._buildFilter(query);
 
 		const skip = (page - 1) * limit;
 
@@ -150,5 +92,38 @@ export class MongoCoinTransactionRepository
 		);
 
 		return this.buildPaginatedResult(items, total, page, limit);
+	}
+
+	private _buildFilter(
+		query?: CoinTransactionQuery,
+	): QueryFilter<CoinTransactionDocument> {
+		const filter: QueryFilter<CoinTransactionDocument> = {};
+
+		if (!query) return filter;
+
+		Object.assign(filter, {
+			...(query.userId && { userId: query.userId }),
+			...(query.referenceType && { referenceType: query.referenceType }),
+			...(query.referenceId && { referenceId: query.referenceId }),
+		});
+
+		if (query.type) {
+			filter.type = Array.isArray(query.type)
+				? { $in: query.type }
+				: query.type;
+		}
+
+		if (query.transactionOwner === "platform") {
+			filter.transactionOwner = "platform";
+		} else if (query.transactionOwner === "user") {
+			filter.$or = [
+				{ transactionOwner: "user" },
+				{ transactionOwner: { $exists: false } },
+				{ transactionOwner: null },
+				{ transactionOwner: "" },
+			];
+		}
+
+		return filter;
 	}
 }

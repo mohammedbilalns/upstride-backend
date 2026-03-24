@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import type { GetBookingsInput } from "../../../application/session-booking-management/dtos/get-bookings.dto";
+import type { GetBookingsInput } from "../../../application/modules/session-booking-management/dtos/get-bookings.dto";
 import type {
 	BookSessionInput,
 	CancelBookingInput,
 	HandleRescheduleInput,
-} from "../../../application/session-booking-management/dtos/session-booking.dto";
+} from "../../../application/modules/session-booking-management/dtos/session-booking.dto";
 import type {
 	IBookSessionUseCase,
 	ICancelBookingByMentorUseCase,
@@ -13,7 +13,7 @@ import type {
 	IGetUserBookingsUseCase,
 	IHandleRescheduleUseCase,
 	IRequestRescheduleUseCase,
-} from "../../../application/session-booking-management/use-cases";
+} from "../../../application/modules/session-booking-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

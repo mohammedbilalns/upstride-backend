@@ -5,7 +5,67 @@ import {
 	MAX_MENTOR_EXPERIENCE_ITEMS,
 } from "../../../domain/entities/mentor.entity";
 import { SkillLevelValues } from "../../../domain/entities/user.entity";
-import { objectIdSchema } from "../../../shared/validators";
+import {
+	limitSchema,
+	objectIdSchema,
+	pageSchema,
+} from "../../../shared/validators";
+
+const skillItemSchema = z.object({
+	skillId: z.string().min(1),
+	level: z.enum(SkillLevelValues),
+});
+
+const experienceItemSchema = z.object({
+	company: z.string().min(1, "Company name is required"),
+	role: z.string().min(1, "Role is required"),
+	description: z.string().min(1, "Description is required"),
+	from: z.coerce.date({ message: "Invalid from date" }),
+	to: z.coerce.date({ message: "Invalid to date" }).nullable(),
+});
+
+const buildExperienceSchema = () =>
+	z
+		.array(experienceItemSchema)
+		.min(1, "At least one experience item is required")
+		.max(
+			MAX_MENTOR_EXPERIENCE_ITEMS,
+			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
+		)
+		.superRefine((experience, ctx) => {
+			const now = new Date();
+			for (let i = 0; i < experience.length; i++) {
+				const exp = experience[i];
+				const fromDate = new Date(exp.from);
+				if (fromDate > now) {
+					ctx.issues.push({
+						code: "custom",
+						message: "From date cannot be in the future",
+						path: [i, "from"],
+						input: exp.from,
+					});
+				}
+				if (exp.to) {
+					const toDate = new Date(exp.to);
+					if (toDate > now) {
+						ctx.issues.push({
+							code: "custom",
+							message: "To date cannot be in the future",
+							path: [i, "to"],
+							input: exp.to,
+						});
+					}
+					if (fromDate > toDate) {
+						ctx.issues.push({
+							code: "custom",
+							message: "From date cannot be after To date",
+							path: [i, "from"],
+							input: exp.from,
+						});
+					}
+				}
+			}
+		});
 
 export const registerMentorSchema = z.object({
 	bio: z.string().min(10, "Bio must be at least 10 characters long"),
@@ -35,59 +95,9 @@ export const registerMentorSchema = z.object({
 			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of expertise allowed`,
 		),
 	toolsAndSkills: z
-		.array(
-			z.object({
-				skillId: z.string().min(1),
-				level: z.enum(SkillLevelValues),
-			}),
-		)
+		.array(skillItemSchema)
 		.min(1, "At least one skill is required"),
-	experience: z
-		.array(
-			z.object({
-				company: z.string().min(1, "Company name is required"),
-				role: z.string().min(1, "Role is required"),
-				description: z.string().min(1, "Description is required"),
-				from: z.string().datetime({ message: "Invalid from date" }),
-				to: z.string().datetime({ message: "Invalid to date" }).nullable(),
-			}),
-		)
-		.min(1, "At least one experience item is required")
-		.max(
-			MAX_MENTOR_EXPERIENCE_ITEMS,
-			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
-		)
-		.superRefine((experience, ctx) => {
-			const now = new Date();
-			for (let i = 0; i < experience.length; i++) {
-				const exp = experience[i];
-				const fromDate = new Date(exp.from);
-				if (fromDate > now) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: "From date cannot be in the future",
-						path: [i, "from"],
-					});
-				}
-				if (exp.to) {
-					const toDate = new Date(exp.to);
-					if (toDate > now) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
-							message: "To date cannot be in the future",
-							path: [i, "to"],
-						});
-					}
-					if (fromDate > toDate) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
-							message: "From date cannot be after To date",
-							path: [i, "from"],
-						});
-					}
-				}
-			}
-		}),
+	experience: buildExperienceSchema(),
 });
 
 export type RegisterMentorBody = z.infer<typeof registerMentorSchema>;
@@ -123,74 +133,17 @@ export const resubmitMentorSchema = z.object({
 		)
 		.optional(),
 	toolsAndSkills: z
-		.array(
-			z.object({
-				skillId: z.string().min(1),
-				level: z.enum(SkillLevelValues),
-			}),
-		)
+		.array(skillItemSchema)
 		.min(1, "At least one skill is required")
 		.optional(),
-	experience: z
-		.array(
-			z.object({
-				company: z.string().min(1, "Company name is required"),
-				role: z.string().min(1, "Role is required"),
-				description: z.string().min(1, "Description is required"),
-				from: z.string().datetime({ message: "Invalid from date" }),
-				to: z.string().datetime({ message: "Invalid to date" }).nullable(),
-			}),
-		)
-		.min(1, "At least one experience item is required")
-		.max(
-			MAX_MENTOR_EXPERIENCE_ITEMS,
-			`Maximum of ${MAX_MENTOR_EXPERIENCE_ITEMS} experience items allowed`,
-		)
-		.superRefine((experience, ctx) => {
-			const now = new Date();
-			for (let i = 0; i < experience.length; i++) {
-				const exp = experience[i];
-				const fromDate = new Date(exp.from);
-				if (fromDate > now) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: "From date cannot be in the future",
-						path: [i, "from"],
-					});
-				}
-				if (exp.to) {
-					const toDate = new Date(exp.to);
-					if (toDate > now) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
-							message: "To date cannot be in the future",
-							path: [i, "to"],
-						});
-					}
-					if (fromDate > toDate) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
-							message: "From date cannot be after To date",
-							path: [i, "from"],
-						});
-					}
-				}
-			}
-		})
-		.optional(),
+	experience: buildExperienceSchema().optional(),
 });
 
 export type ResubmitMentorBody = z.infer<typeof resubmitMentorSchema>;
 
 export const MentorApplicationsQuerySchema = z.object({
 	page: z.coerce.number().int().positive().default(1),
-	limit: z.coerce
-		.number()
-		.int()
-		.refine((val: number) => [10, 12, 20, 24, 48, 50].includes(val), {
-			message: "Limit must be 10, 12, 20, 24, 48 or 50",
-		})
-		.default(10),
+	limit: limitSchema,
 	status: z.enum(["approved", "rejected", "pending"]).optional(),
 	sort: z.enum(["recent", "old", "status"]).optional().default("recent"),
 });
@@ -201,7 +154,7 @@ export type MentorApplicationsQuery = z.infer<
 
 export const MentorDiscoveryQuerySchema = z
 	.object({
-		page: z.coerce.number().int().positive().default(1),
+		page: pageSchema,
 		search: z.string().trim().min(1).optional(),
 		categoryId: z.string().min(1).optional(),
 		tierName: z.string().min(1).optional(),
@@ -237,13 +190,6 @@ export type RejectMentorBody = z.infer<typeof rejectMentorBodySchema>;
 export const updateMentorProfileBodySchema = z.object({
 	currentPricePer30Min: z.number().int().min(100).max(10000).optional(),
 	bio: z.string().min(10).optional(),
-	addSkills: z
-		.array(
-			z.object({
-				skillId: z.string().min(1),
-				level: z.enum(SkillLevelValues),
-			}),
-		)
-		.optional(),
+	addSkills: z.array(skillItemSchema).optional(),
 	addEducationalQualifications: z.array(z.string().min(1)).optional(),
 });

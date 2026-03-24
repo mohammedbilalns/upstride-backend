@@ -8,7 +8,7 @@ import {
 	type IGetAdminsUseCase,
 	type IUnblockAdminUseCase,
 	UnblockAdminUseCase,
-} from "../../application/admin-management/use-cases";
+} from "../../application/modules/admin-management/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerAdminManagementBindings = (container: Container): void => {

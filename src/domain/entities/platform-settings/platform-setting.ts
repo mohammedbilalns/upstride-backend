@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import {
 	DEFAULT_PLATFORM_SETTINGS,
 	type PlatformSettingsDataMap,
-} from "../../config/platform-settings.defaults";
+} from "../../../shared/config/platform-settings.defaults";
 import type { PlatformSettingsType } from "./shared";
 
 export class PlatformSetting<

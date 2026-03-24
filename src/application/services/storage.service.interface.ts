@@ -9,6 +9,7 @@ export interface PresignedPostResponse {
 	fields: Record<string, string>;
 }
 
+//FIX: violates ISP ??
 export interface IStorageService {
 	upload(file: File, folder?: string): Promise<string>;
 	delete(objectKey: string): Promise<void>;

@@ -1,6 +1,6 @@
-import { DomainEvent } from "./domain-event";
+import { AppEvent } from "./domain-event";
 
-export class UserRegisteredEvent extends DomainEvent {
+export class UserRegisteredEvent extends AppEvent {
 	constructor(
 		public readonly userId: string,
 		public readonly email: string,

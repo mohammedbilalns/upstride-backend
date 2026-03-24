@@ -3,7 +3,8 @@ import { inject, injectable } from "inversify";
 import type {
 	ICreateCheckoutSessionUseCase,
 	IHandlePaymentWebhookUseCase,
-} from "../../../application/payments/use-cases";
+} from "../../../application/modules/payments/use-cases";
+import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
@@ -18,9 +19,9 @@ interface CreateCheckoutSessionBody {
 export class PaymentController {
 	constructor(
 		@inject(TYPES.UseCases.CreateCheckoutSession)
-		private readonly createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
+		private readonly _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
 		@inject(TYPES.UseCases.HandlePaymentWebhook)
-		private readonly handleStripeWebhookUseCase: IHandlePaymentWebhookUseCase,
+		private readonly _handleStripeWebhookUseCase: IHandlePaymentWebhookUseCase,
 	) {}
 
 	createCheckoutSession = asyncHandler(
@@ -29,9 +30,11 @@ export class PaymentController {
 				req.body) as CreateCheckoutSessionBody;
 			const userId = req.user.id;
 
-			const session = await this.createCheckoutSessionUseCase.execute({
+			const session = await this._createCheckoutSessionUseCase.execute({
 				userId,
 				coins,
+				successUrl: env.STRIPE_SUCCESS_URL,
+				cancelUrl: env.STRIPE_CANCEL_URL,
 			});
 
 			return sendSuccess(res, HttpStatus.OK, {
@@ -59,7 +62,7 @@ export class PaymentController {
 			return;
 		}
 
-		await this.handleStripeWebhookUseCase.execute({
+		await this._handleStripeWebhookUseCase.execute({
 			signature,
 			payload: req.body,
 		});

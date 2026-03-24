@@ -1,4 +1,7 @@
-import type { OAuthProvider, SocialIdentityDto } from "../authentication/dtos";
+import type {
+	OAuthProvider,
+	SocialIdentityDto,
+} from "../modules/authentication/dtos";
 
 export interface IOAuthIdentityProvider {
 	readonly provider: OAuthProvider;

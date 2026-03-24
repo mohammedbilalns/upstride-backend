@@ -27,7 +27,7 @@ export class PlatformSettingsMapper {
 		return new PlatformSettingEntity(
 			doc._id.toString(),
 			doc.type,
-			PlatformSettingsMapper.toSettingsData(doc.type, doc.data),
+			PlatformSettingsMapper._toSettingsData(doc.type, doc.data),
 			doc.version,
 			doc.createdAt,
 			doc.updatedAt,
@@ -42,28 +42,29 @@ export class PlatformSettingsMapper {
 	): Partial<PlatformSettingDocument> {
 		return {
 			type: entity.type,
-			data: PlatformSettingsMapper.toPlainData(entity.type, entity.data),
+			data: PlatformSettingsMapper._toPlainData(entity.type, entity.data),
 			version: entity.version,
 		};
 	}
 
-	private static toSettingsData(
+	//FIX: violates ocp
+	private static _toSettingsData(
 		type: PlatformSettingsType,
 		data: unknown,
 	): EconomySettings | MentorSettings | ContentSettings | SessionSettings {
 		switch (type) {
 			case "economy":
-				return PlatformSettingsMapper.toEconomySettings(data);
+				return PlatformSettingsMapper._toEconomySettings(data);
 			case "mentors":
-				return PlatformSettingsMapper.toMentorSettings(data);
+				return PlatformSettingsMapper._toMentorSettings(data);
 			case "content":
-				return PlatformSettingsMapper.toContentSettings(data);
+				return PlatformSettingsMapper._toContentSettings(data);
 			case "sessions":
-				return PlatformSettingsMapper.toSessionSettings(data);
+				return PlatformSettingsMapper._toSessionSettings(data);
 		}
 	}
 
-	private static toEconomySettings(data: unknown): EconomySettings {
+	private static _toEconomySettings(data: unknown): EconomySettings {
 		const economy = data as {
 			coinValue: number;
 			platformCommissions: {
@@ -98,7 +99,7 @@ export class PlatformSettingsMapper {
 		);
 	}
 
-	private static toMentorSettings(data: unknown): MentorSettings {
+	private static _toMentorSettings(data: unknown): MentorSettings {
 		const mentors = data as {
 			starter: {
 				level: number;
@@ -148,7 +149,7 @@ export class PlatformSettingsMapper {
 		);
 	}
 
-	private static toContentSettings(data: unknown): ContentSettings {
+	private static _toContentSettings(data: unknown): ContentSettings {
 		const content = data as {
 			premiumArticleRequirement: {
 				minFreeArticlesNewUserShouldHave: number;
@@ -176,7 +177,7 @@ export class PlatformSettingsMapper {
 		);
 	}
 
-	private static toSessionSettings(data: unknown): SessionSettings {
+	private static _toSessionSettings(data: unknown): SessionSettings {
 		const session = data as {
 			cancellationWindowHours: number;
 			rescheduleWindowHours: number;
@@ -190,7 +191,7 @@ export class PlatformSettingsMapper {
 		);
 	}
 
-	private static toPlainData(
+	private static _toPlainData(
 		type: PlatformSettingsType,
 		data: CreatePlatformSetting["data"],
 	): PlatformSettingDocument["data"] {

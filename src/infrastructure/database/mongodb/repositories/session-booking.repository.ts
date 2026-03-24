@@ -62,7 +62,7 @@ export class MongoSessionBookingRepository
 		page: number,
 		limit: number,
 	) {
-		const { query, sort } = this.buildFilterQuery(filter);
+		const { query, sort } = this._buildFilterQuery(filter);
 		const skip = (page - 1) * limit;
 		const fullQuery = { userId, ...query };
 
@@ -86,7 +86,7 @@ export class MongoSessionBookingRepository
 		limit: number,
 		excludeUserId?: string,
 	) {
-		const { query, sort } = this.buildFilterQuery(filter);
+		const { query, sort } = this._buildFilterQuery(filter);
 		const skip = (page - 1) * limit;
 		const fullQuery: Record<string, unknown> = { mentorId, ...query };
 		if (excludeUserId) {
@@ -106,7 +106,9 @@ export class MongoSessionBookingRepository
 		);
 	}
 
-	private buildFilterQuery(filter: "all" | "past" | "cancelled" | "upcoming"): {
+	private _buildFilterQuery(
+		filter: "all" | "past" | "cancelled" | "upcoming",
+	): {
 		query: Record<string, unknown>;
 		sort: Record<string, SortOrder>;
 	} {

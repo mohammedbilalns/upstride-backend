@@ -2,7 +2,7 @@ export * from "./login.validator";
 export * from "./password-reset.validator";
 export * from "./register.validator";
 export * from "./resend-otp.validator";
-export * from "./revokation.validator";
+export * from "./revocation.validator";
 export * from "./save-interests.validator";
 export * from "./social-login.validator";
 export * from "./update-password.validator";

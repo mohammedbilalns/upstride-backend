@@ -1,5 +1,5 @@
 import type { Container } from "inversify";
-import { AuthSessionService } from "../../application/authentication/services";
+import { AuthSessionService } from "../../application/modules/authentication/services";
 import {
 	GetActiveSessionsUseCase,
 	GetMeUseCase,
@@ -8,14 +8,17 @@ import {
 	RefreshSessionUseCase,
 	RegisterWithEmailUseCase,
 	RequestPasswordResetUseCase,
-	ResendOtpUseCase,
+	ResendRegistrationOtpUseCase,
+	ResendResetPasswordOtpUseCase,
 	RevokeAllOtherSessionsUseCase,
 	RevokeSessionUseCase,
 	SaveUserInterestsUseCase,
 	SocialLoginUseCase,
 	UpdatePasswordUseCase,
-	VerifyOtpUseCase,
-} from "../../application/authentication/use-cases";
+	VerifyChangePasswordOtpUseCase,
+	VerifyRegistrationOtpUseCase,
+	VerifyResetPasswordOtpUseCase,
+} from "../../application/modules/authentication/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerAuthenticationBindings = (container: Container): void => {
@@ -30,8 +33,21 @@ export const registerAuthenticationBindings = (container: Container): void => {
 		.bind(TYPES.UseCases.RequestPasswordReset)
 		.to(RequestPasswordResetUseCase);
 	container.bind(TYPES.UseCases.UpdatePassword).to(UpdatePasswordUseCase);
-	container.bind(TYPES.UseCases.VerifyOtp).to(VerifyOtpUseCase);
-	container.bind(TYPES.UseCases.ResendOtp).to(ResendOtpUseCase);
+	container
+		.bind(TYPES.UseCases.VerifyRegistrationOtp)
+		.to(VerifyRegistrationOtpUseCase);
+	container
+		.bind(TYPES.UseCases.VerifyResetPasswordOtp)
+		.to(VerifyResetPasswordOtpUseCase);
+	container
+		.bind(TYPES.UseCases.VerifyChangePasswordOtp)
+		.to(VerifyChangePasswordOtpUseCase);
+	container
+		.bind(TYPES.UseCases.ResendRegistrationOtp)
+		.to(ResendRegistrationOtpUseCase);
+	container
+		.bind(TYPES.UseCases.ResendResetPasswordOtp)
+		.to(ResendResetPasswordOtpUseCase);
 	container.bind(TYPES.UseCases.RefreshSession).to(RefreshSessionUseCase);
 	container.bind(TYPES.UseCases.Logout).to(LogoutUseCase);
 	container.bind(TYPES.UseCases.RevokeSession).to(RevokeSessionUseCase);

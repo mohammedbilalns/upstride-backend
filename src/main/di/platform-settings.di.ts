@@ -10,7 +10,7 @@ import {
 	UpdateEconomySettingsUseCase,
 	UpdateMentorSettingsUseCase,
 	UpdateSessionSettingsUseCase,
-} from "../../application/platform-settings/use-cases";
+} from "../../application/modules/platform-settings/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerPlatformSettingsBindings = (
