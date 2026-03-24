@@ -39,6 +39,8 @@ export const TYPES = {
 		MentorListReadRepository: Symbol.for("MentorListReadRepository"),
 		ProfessionRepository: Symbol.for("ProfessionRepository"),
 		MentorListRepository: Symbol.for("MentorListRepository"),
+		ChatRepository: Symbol.for("ChatRepository"),
+		ChatMessageRepository: Symbol.for("ChatMessageRepository"),
 		NotificationRepository: Symbol.for("NotificationRepository"),
 		SavedMentorRepository: Symbol.for("SavedMentorRepository"),
 		SessionAvailabilityRepository: Symbol.for("SessionAvailabilityRepository"),

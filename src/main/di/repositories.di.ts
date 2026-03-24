@@ -1,5 +1,7 @@
 import type { Container } from "inversify";
 import type {
+	IChatMessageRepository,
+	IChatRepository,
 	IMentorListReadRepository,
 	IMentorListRepository,
 	IMentorProfileReadRepository,
@@ -10,6 +12,8 @@ import type {
 	ISavedMentorRepository,
 } from "../../domain/repositories";
 import {
+	MongoChatMessageRepository,
+	MongoChatRepository,
 	MongoCoinTransactionRepository,
 	MongoInterestRepository,
 	MongoMentorListReadRepository,
@@ -99,6 +103,14 @@ export const registerRepositoryBindings = (container: Container): void => {
 	container
 		.bind<IMentorListRepository>(TYPES.Repositories.MentorListRepository)
 		.to(MongoMentorListRepository)
+		.inSingletonScope();
+	container
+		.bind<IChatRepository>(TYPES.Repositories.ChatRepository)
+		.to(MongoChatRepository)
+		.inSingletonScope();
+	container
+		.bind<IChatMessageRepository>(TYPES.Repositories.ChatMessageRepository)
+		.to(MongoChatMessageRepository)
 		.inSingletonScope();
 	container
 		.bind<INotificationRepository>(TYPES.Repositories.NotificationRepository)

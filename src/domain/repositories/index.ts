@@ -3,6 +3,8 @@ export * from "./capabilities/find-by-id.repository.interface";
 export * from "./capabilities/find-by-owner.repository.interface";
 export * from "./capabilities/paginatable.repository.interface";
 export * from "./capabilities/updatable-by-id.repository.interface";
+export * from "./chat.repository.interface";
+export * from "./chat-message.repository.interface";
 export * from "./coin-transactions.repository.interface";
 export * from "./interest.repository.interface";
 export * from "./mentor.repository.types";
