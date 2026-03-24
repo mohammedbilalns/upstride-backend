@@ -24,8 +24,8 @@ const csrfSessionCookieOptions = {
 const { generateCsrfToken, doubleCsrfProtection } = doubleCsrf({
 	getSecret: () => env.CSRF_SECRET,
 	getSessionIdentifier: (req: Request) =>
-		req.cookies.refreshToken ??
 		req.cookies[csrfSessionCookieName] ??
+		req.cookies.refreshToken ??
 		"anonymous",
 	cookieName: csrfCookieName,
 	cookieOptions: csrfCookieOptions,

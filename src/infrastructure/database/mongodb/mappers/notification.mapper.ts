@@ -23,6 +23,7 @@ export class NotificationMapper {
 					}
 				: undefined,
 			doc.actorId?.toString(),
+			doc.relatedEntityId?.toString(),
 			doc.updatedAt,
 		);
 	}
@@ -45,6 +46,9 @@ export class NotificationMapper {
 					}
 				: undefined,
 			actorId: entity.actorId ? new Types.ObjectId(entity.actorId) : undefined,
+			relatedEntityId: entity.relatedEntityId
+				? new Types.ObjectId(entity.relatedEntityId)
+				: undefined,
 			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};
 	}

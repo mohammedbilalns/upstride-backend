@@ -32,18 +32,21 @@ const logoutController = container.get(LogoutController);
 
 router.post(
 	ROUTES.AUTH.LOGIN,
+	ensureCsrfSessionId,
 	validate({ body: loginBodySchema }),
 	authController.login,
 );
 
 router.post(
 	ROUTES.AUTH.GOOGLE,
+	ensureCsrfSessionId,
 	validate({ body: googleLoginBodySchema }),
 	authController.loginWithGoogle,
 );
 
 router.post(
 	ROUTES.AUTH.LINKEDIN,
+	ensureCsrfSessionId,
 	validate({ body: linkedinLoginBodySchema }),
 	authController.loginWithLinkedIn,
 );
@@ -72,6 +75,7 @@ router.post(ROUTES.AUTH.REFRESH, csrfProtection, authController.refreshSession);
 
 router.post(
 	ROUTES.AUTH.SAVE_INTERESTS,
+	ensureCsrfSessionId,
 	validate({ body: saveInterestsBodySchema }),
 	authController.saveInterests,
 );

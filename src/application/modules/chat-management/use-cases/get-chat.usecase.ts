@@ -3,10 +3,15 @@ import { Chat } from "../../../../domain/entities/chat.entity";
 import type {
 	IChatMessageRepository,
 	IChatRepository,
+	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
-import type { GetChatInput, GetChatOutput } from "../dtos/chat.dto";
+import type {
+	ChatUserDto,
+	GetChatInput,
+	GetChatOutput,
+} from "../dtos/chat.dto";
 import { ChatMapper } from "../mappers/chat.mapper";
 import { ChatMessageMapper } from "../mappers/chat-message.mapper";
 import type { IGetChatUseCase } from "./get-chat.usecase.interface";
@@ -20,6 +25,8 @@ export class GetChatUseCase implements IGetChatUseCase {
 		private readonly _chatRepository: IChatRepository,
 		@inject(TYPES.Repositories.ChatMessageRepository)
 		private readonly _chatMessageRepository: IChatMessageRepository,
+		@inject(TYPES.Repositories.UserRepository)
+		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}
@@ -32,11 +39,39 @@ export class GetChatUseCase implements IGetChatUseCase {
 			);
 
 		const usersByIdRaw = new Map(users.map((user) => [user.id, user]));
-		const usersById = new Map<
-			string,
-			{ id: string; name: string; profilePictureUrl: string | null }
-		>();
+		const usersById = new Map<string, ChatUserDto>();
 
+		// Always ensure we have receiver info, even if chat doesn't exist yet
+		let receiverDto: ChatUserDto | null = null;
+		const receiverUser = usersByIdRaw.get(input.otherUserId);
+
+		if (receiverUser) {
+			const profilePictureUrl = receiverUser.profilePictureId
+				? await this._storageService.getSignedUrl(receiverUser.profilePictureId)
+				: null;
+			receiverDto = {
+				id: receiverUser.id,
+				name: receiverUser.name,
+				profilePictureUrl,
+			};
+			usersById.set(receiverUser.id, receiverDto);
+		} else {
+			// Fetch receiver independently if not returned by repo
+			const user = await this._userRepository.findById(input.otherUserId);
+			if (user) {
+				const profilePictureUrl = user.profilePictureId
+					? await this._storageService.getSignedUrl(user.profilePictureId)
+					: null;
+				receiverDto = {
+					id: user.id,
+					name: user.name,
+					profilePictureUrl,
+				};
+				usersById.set(user.id, receiverDto);
+			}
+		}
+
+		// Ensure sender info is also in usersById for mapping
 		const senderUser = usersByIdRaw.get(input.userId);
 		if (senderUser) {
 			usersById.set(senderUser.id, {
@@ -44,23 +79,21 @@ export class GetChatUseCase implements IGetChatUseCase {
 				name: senderUser.name,
 				profilePictureUrl: null,
 			});
-		}
-
-		const receiverUser = usersByIdRaw.get(input.otherUserId);
-		if (receiverUser) {
-			const profilePictureUrl = receiverUser.profilePictureId
-				? await this._storageService.getSignedUrl(receiverUser.profilePictureId)
-				: null;
-			usersById.set(receiverUser.id, {
-				id: receiverUser.id,
-				name: receiverUser.name,
-				profilePictureUrl,
-			});
+		} else {
+			const user = await this._userRepository.findById(input.userId);
+			if (user) {
+				usersById.set(user.id, {
+					id: user.id,
+					name: user.name,
+					profilePictureUrl: null,
+				});
+			}
 		}
 
 		if (!existing) {
 			return {
 				chat: null,
+				receiver: receiverDto,
 				messages: [],
 				total: 0,
 				page: 1,
@@ -110,6 +143,7 @@ export class GetChatUseCase implements IGetChatUseCase {
 
 		return {
 			chat: ChatMapper.toDtoForUser(chatForResponse, input.userId, usersById),
+			receiver: receiverDto,
 			messages: result.items.map((item) =>
 				ChatMessageMapper.toDto(
 					item,

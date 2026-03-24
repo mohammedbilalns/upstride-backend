@@ -8,8 +8,11 @@ import { corsOptions } from "../presentation/http/config";
 import { errorHandler, requestLogger } from "../presentation/http/middlewares";
 import { router as v1Router } from "../presentation/http/routes";
 import { stripeWebhookRouter } from "../presentation/http/routes/stripe-webhook.route";
+import type { WebSocketServer } from "../presentation/websocket/socket-server";
 import { HttpStatus } from "../shared/constants";
 import logger from "../shared/logging/logger";
+import { TYPES } from "../shared/types/types";
+import { container } from "./container";
 
 /**
  * Core application bootstrapper.
@@ -29,7 +32,15 @@ class App {
 		this._setupWebhookRoutes();
 		this._setupMiddlewares();
 		this._setupRoutes();
+		this._setupWebSocket();
 		this._setupErrorHandlers();
+	}
+
+	private _setupWebSocket() {
+		const wsServer = container.get<WebSocketServer>(
+			TYPES.Services.WebSocketServer,
+		);
+		wsServer.initialize(this._server);
 	}
 
 	/**

@@ -1,10 +1,12 @@
 import { inject, injectable } from "inversify";
 import { Chatmessage } from "../../../../domain/entities/chat-message.entity";
+import { MessageSentEvent } from "../../../../domain/events/message-sent.event";
 import type {
 	IChatMessageRepository,
 	IChatRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { SendMessageInput, SendMessageOutput } from "../dtos/chat.dto";
 import {
@@ -27,6 +29,8 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.UseCases.CreateChat)
 		private readonly _createChatUseCase: ICreateChatUseCase,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: SendMessageInput): Promise<SendMessageOutput> {
@@ -90,7 +94,26 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 			unreadCount,
 		});
 
-		// TODO: Publish a "chat.message.sent" domain event for websocket sync.
-		return { message: ChatMessageMapper.toDto(created) };
+		const messageDto = ChatMessageMapper.toDto(created);
+		const { users } = await this._chatRepository.findByParticipantsWithUsers(
+			input.senderId,
+			receiverId,
+		);
+		const usersById = new Map(users.map((user) => [user.id, user]));
+		const senderName = usersById.get(input.senderId)?.name ?? "someone";
+		const receiverName = usersById.get(receiverId)?.name ?? "someone";
+
+		// Publish event
+		await this._eventBus.publish(
+			new MessageSentEvent(
+				chat.id,
+				receiverId,
+				messageDto,
+				senderName,
+				receiverName,
+			),
+		);
+
+		return { message: messageDto };
 	}
 }

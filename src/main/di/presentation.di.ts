@@ -19,9 +19,14 @@ import {
 	UserManagementController,
 	WalletController,
 } from "../../presentation/http/controllers";
+import { WebSocketServer } from "../../presentation/websocket/socket-server";
 import { TYPES } from "../../shared/types/types";
 
 export const registerPresentationBindings = (container: Container): void => {
+	container
+		.bind<WebSocketServer>(TYPES.Services.WebSocketServer)
+		.to(WebSocketServer)
+		.inSingletonScope();
 	container.bind(AuthController).to(AuthController);
 	container.bind(PasswordResetController).to(PasswordResetController);
 	container.bind(LogoutController).to(LogoutController);

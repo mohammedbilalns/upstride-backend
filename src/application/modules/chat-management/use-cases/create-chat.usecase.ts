@@ -95,7 +95,8 @@ export class CreateChatUseCase implements ICreateChatUseCase {
 		);
 
 		const created = await this._chatRepository.create(chat);
+		const chatDto = ChatMapper.toDtoForUser(created, input.userId, usersById);
 
-		return { chat: ChatMapper.toDtoForUser(created, input.userId, usersById) };
+		return { chat: chatDto };
 	}
 }

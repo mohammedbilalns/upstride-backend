@@ -1,7 +1,9 @@
 import { inject, injectable } from "inversify";
 import { Notification } from "../../../../domain/entities/notification.entity";
+import { NotificationCreatedEvent } from "../../../../domain/events/notification-created.event";
 import type { INotificationRepository } from "../../../../domain/repositories/notification.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type {
 	CreateNotificationInput,
@@ -17,6 +19,8 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 		private readonly _notificationRepository: INotificationRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(
@@ -35,12 +39,19 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 			input.metadata,
 			input.deliveryStatus,
 			input.actorId,
+			input.relatedEntityId,
 		);
 
 		const created = await this._notificationRepository.create(notification);
+		const notificationDto = NotificationMapper.toDto(created);
+
+		// Publish  event for background processing
+		await this._eventBus.publish(
+			new NotificationCreatedEvent(input.userId, notificationDto),
+		);
 
 		return {
-			notification: NotificationMapper.toDto(created),
+			notification: notificationDto,
 		};
 	}
 }

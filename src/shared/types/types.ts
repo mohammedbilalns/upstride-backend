@@ -15,6 +15,7 @@ export const TYPES = {
 		PaymentWebhookParser: Symbol.for("PaymentWebhookParser"),
 		IdGenerator: Symbol.for("IdGenerator"),
 		RefundService: Symbol.for("RefundService"),
+		WebSocketServer: Symbol.for("WebSocketServer"),
 	},
 	Caches: {
 		PlatformSettings: Symbol.for("PlatformSettingsCache"),

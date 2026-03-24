@@ -19,6 +19,7 @@ export interface NotificationDto {
 		email?: boolean;
 	};
 	actorId?: string;
+	relatedEntityId?: string;
 	createdAt: Date;
 	updatedAt?: Date;
 }
@@ -36,6 +37,7 @@ export interface CreateNotificationInput {
 		email?: boolean;
 	};
 	actorId?: string;
+	relatedEntityId?: string;
 }
 
 export interface CreateNotificationOutput {

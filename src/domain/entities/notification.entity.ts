@@ -37,6 +37,7 @@ export class Notification {
 		},
 
 		public readonly actorId?: string,
+		public readonly relatedEntityId?: string,
 		public updatedAt?: Date,
 	) {}
 

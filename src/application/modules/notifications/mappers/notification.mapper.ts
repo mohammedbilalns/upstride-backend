@@ -21,6 +21,7 @@ export class NotificationMapper {
 					}
 				: undefined,
 			actorId: entity.actorId,
+			relatedEntityId: entity.relatedEntityId,
 			createdAt: entity.createdAt,
 			updatedAt: entity.updatedAt,
 		};
