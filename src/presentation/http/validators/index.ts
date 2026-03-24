@@ -1,5 +1,6 @@
 export * from "./auth";
 export * from "./change-password.validator";
+export * from "./chat.validator";
 export * from "./mentor-list.validator";
 export * from "./notification.validator";
 export * from "./payment";

@@ -3,6 +3,7 @@ import { ROUTES } from "../constants";
 import { adminManagementRouter } from "./admin-management.route";
 import { authRouter } from "./auth.route";
 import { catalogRouter } from "./catalog.route";
+import { chatRouter } from "./chat.route";
 import { fileRouter } from "./file.route";
 import { mentorRouter } from "./mentor.route";
 import { mentorListRouter } from "./mentor-list.route";
@@ -25,6 +26,7 @@ router.use("/test", async (_req, res) => {
 router.use(ROUTES.AUTH.BASE, authRouter);
 router.use(ROUTES.PROFILE.BASE, profileRouter);
 router.use(ROUTES.CATALOG.BASE, catalogRouter);
+router.use(ROUTES.CHATS.BASE, chatRouter);
 router.use(ROUTES.USER_MANAGEMENT.BASE, userManagementRouter);
 router.use(ROUTES.ADMIN_MANAGEMENT.BASE, adminManagementRouter);
 router.use(ROUTES.STORAGE.BASE, fileRouter);

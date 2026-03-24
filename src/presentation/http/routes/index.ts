@@ -1,6 +1,7 @@
 export * from "./admin-management.route";
 export * from "./auth.route";
 export * from "./catalog.route";
+export * from "./chat.route";
 export * from "./file.route";
 export * from "./mentor.route";
 export * from "./mentor-list.route";

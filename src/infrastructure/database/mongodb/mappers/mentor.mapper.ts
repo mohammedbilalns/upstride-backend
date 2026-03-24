@@ -1,14 +1,15 @@
 import { Types } from "mongoose";
 import { Mentor } from "../../../../domain/entities/mentor.entity";
 import type { MentorDocument } from "../models/mentor.model";
+import { toIdString } from "../utils/id.util";
 
 export class MentorMapper {
 	static toDomain(doc: MentorDocument): Mentor {
 		return new Mentor(
-			doc._id.toString(),
-			doc.userId.toString(),
+			toIdString(doc._id),
+			toIdString(doc.userId),
 			doc.bio,
-			doc.currentRoleId.toString(),
+			toIdString(doc.currentRoleId),
 			doc.organization,
 			doc.yearsOfExperience,
 			doc.score ?? 0,
@@ -18,14 +19,14 @@ export class MentorMapper {
 			doc.personalWebsite || null,
 			doc.resumeId,
 			doc.educationalQualifications,
-			doc.areasOfExpertise.map((id) => id.toString()),
+			doc.areasOfExpertise.map((id) => toIdString(id)),
 			doc.toolsAndSkills.map((ts) => ({
-				skillId: ts.skillId.toString(),
+				skillId: toIdString(ts.skillId),
 				level: ts.level,
 			})),
 			doc.experience.map((exp) => ({
 				company: exp.company,
-				role: exp.role.toString(),
+				role: toIdString(exp.role),
 				description: exp.description,
 				from: exp.from,
 				to: exp.to || null,

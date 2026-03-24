@@ -1,6 +1,7 @@
 export * from "./admin-management.di";
 export * from "./authentication.di";
 export * from "./catalog.di";
+export * from "./chat.di";
 export * from "./events.di";
 export * from "./infrastructure-services.di";
 export * from "./mentor.di";
