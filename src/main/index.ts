@@ -8,7 +8,7 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import { createDomainEventWorker } from "../infrastructure/events/domain-event.worker";
+import { createAppEventWorker } from "../infrastructure/events/domain-event.worker";
 import { createMailWorker } from "../infrastructure/queue/workers/mail.worker";
 import env from "../shared/config/env";
 import logger from "../shared/logging/logger";
@@ -25,7 +25,7 @@ import {
 let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;
 let mailWorker: Worker;
-let domainEventWorker: Worker;
+let appEventWorker: Worker;
 
 async function start() {
 	logger.info("Starting...");
@@ -42,7 +42,7 @@ async function start() {
 
 	//worker for mail processing
 	mailWorker = createMailWorker(redisClient);
-	domainEventWorker = createDomainEventWorker(redisClient, bullMQEventBus);
+	appEventWorker = createAppEventWorker(redisClient, bullMQEventBus);
 
 	// initialize http server
 	appInstance = new App();
@@ -65,7 +65,7 @@ async function shutdown(signal: string) {
 		await Promise.allSettled([
 			disconnectFromMongo(),
 			mailWorker?.close(),
-			domainEventWorker?.close(),
+			appEventWorker?.close(),
 			mailQueue.close(),
 			domainEventsQueue.close(),
 			disconnectRedis(),

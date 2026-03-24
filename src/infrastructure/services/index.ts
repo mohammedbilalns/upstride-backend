@@ -1,4 +1,4 @@
-export * from "../events/node-event-bus";
+export * from "../events/bullmq-event-bus";
 export * from "./google-oauth.service";
 export * from "./jwt-token.service";
 export * from "./linkedin-oauth.service";

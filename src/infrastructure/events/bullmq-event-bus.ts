@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import type { Queue } from "bullmq";
 import type { EventBus } from "../../application/events/event-bus.interface";
-import type { DomainEvent } from "../../domain/events/domain-event";
+import type { AppEvent } from "../../domain/events/domain-event";
 
-export const DOMAIN_EVENTS_QUEUE = "domainEvents";
+export const APP_EVENTS_QUEUE = "domainEvents";
 
 export class BullMQEventBus implements EventBus {
 	private _queue: Queue;
@@ -16,7 +16,7 @@ export class BullMQEventBus implements EventBus {
 		this._queue = queue;
 	}
 
-	async publish(event: DomainEvent): Promise<void> {
+	async publish(event: AppEvent): Promise<void> {
 		const jobId = `${event.eventName}:${randomUUID()}`;
 
 		await this._queue.add(
@@ -40,12 +40,15 @@ export class BullMQEventBus implements EventBus {
 		eventName: string,
 		handler: (event: T) => Promise<void> | void,
 	): void {
-		if (!this._handlers.has(eventName)) {
-			this._handlers.set(eventName, []);
+		const handlers = this._handlers.get(eventName);
+		if (!handlers) {
+			this._handlers.set(eventName, [
+				handler as (event: unknown) => Promise<void> | void,
+			]);
+			return;
 		}
-		this._handlers
-			.get(eventName)!
-			.push(handler as (event: unknown) => Promise<void> | void);
+
+		handlers.push(handler as (event: unknown) => Promise<void> | void);
 	}
 
 	getHandlers(eventName: string) {

@@ -1,15 +1,14 @@
 import { Worker } from "bullmq";
 import type { Redis } from "ioredis";
 import logger from "../../shared/logging/logger";
-import type { BullMQEventBus } from "./bullmq-event-bus";
-import { DOMAIN_EVENTS_QUEUE } from "./bullmq-event-bus";
+import { APP_EVENTS_QUEUE, type BullMQEventBus } from "./bullmq-event-bus";
 
-export const createDomainEventWorker = (
+export const createAppEventWorker = (
 	connection: Redis,
 	eventBus: BullMQEventBus,
 ): Worker => {
 	const worker = new Worker(
-		DOMAIN_EVENTS_QUEUE,
+		APP_EVENTS_QUEUE,
 		async (job) => {
 			const { eventName, payload } = job.data;
 			const completedHandlers: string[] = job.data.completedHandlers ?? [];

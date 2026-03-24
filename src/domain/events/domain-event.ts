@@ -1,4 +1,4 @@
-export abstract class DomainEvent {
+export abstract class AppEvent {
 	public readonly occurredAt: Date = new Date();
 
 	get eventName(): string {

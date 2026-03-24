@@ -1,7 +1,7 @@
 import type { PaymentWebhookEvent } from "../../application/services/payment-webhook.parser.interface";
-import { DomainEvent } from "./domain-event";
+import { AppEvent } from "./domain-event";
 
-export class CheckoutCompletedEvent extends DomainEvent {
+export class CheckoutCompletedEvent extends AppEvent {
 	constructor(public readonly payload: PaymentWebhookEvent) {
 		super();
 	}

@@ -2,13 +2,13 @@ import { Queue } from "bullmq";
 import type { Container } from "inversify";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
 import {
+	APP_EVENTS_QUEUE,
 	BullMQEventBus,
-	DOMAIN_EVENTS_QUEUE,
 } from "../../infrastructure/events/bullmq-event-bus";
 import { TYPES } from "../../shared/types/types";
 
 export const mailQueue = new Queue("mailQueue", { connection: redisClient });
-export const domainEventsQueue = new Queue(DOMAIN_EVENTS_QUEUE, {
+export const domainEventsQueue = new Queue(APP_EVENTS_QUEUE, {
 	connection: redisClient,
 });
 

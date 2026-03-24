@@ -1,6 +1,6 @@
-import { DomainEvent } from "./domain-event";
+import { AppEvent } from "./domain-event";
 
-export class MentorRequestApprovedEvent extends DomainEvent {
+export class MentorRequestApprovedEvent extends AppEvent {
 	constructor(public readonly mentorId: string) {
 		super();
 	}
