@@ -5,6 +5,7 @@ import { ChatController } from "../controllers";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	chatIdParamSchema,
+	chatMessagesQuerySchema,
 	chatQuerySchema,
 	otherUserParamSchema,
 	sendMessageBodySchema,
@@ -24,7 +25,7 @@ router.get(
 
 router.get(
 	ROUTES.CHATS.BY_USER,
-	validate({ params: otherUserParamSchema }),
+	validate({ params: otherUserParamSchema, query: chatMessagesQuerySchema }),
 	chatController.getChat,
 );
 

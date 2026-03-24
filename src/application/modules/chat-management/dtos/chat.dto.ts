@@ -45,10 +45,16 @@ export interface GetChatsOutput {
 export interface GetChatInput {
 	userId: string;
 	otherUserId: string;
+	page?: number;
 }
 
 export interface GetChatOutput {
 	chat: ChatDto;
+	messages: ChatMessageDto[];
+	total: number;
+	page: number;
+	limit: number;
+	totalPages: number;
 }
 
 export interface CreateChatInput {

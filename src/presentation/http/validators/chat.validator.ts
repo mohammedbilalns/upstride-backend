@@ -6,6 +6,10 @@ export const chatQuerySchema = z.object({
 	filter: z.enum(["read", "unread", "all"]).default("all"),
 });
 
+export const chatMessagesQuerySchema = z.object({
+	page: pageSchema,
+});
+
 export const otherUserParamSchema = z.object({
 	otherUserId: objectIdSchema,
 });

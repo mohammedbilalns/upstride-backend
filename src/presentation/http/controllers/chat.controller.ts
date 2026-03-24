@@ -36,9 +36,11 @@ export class ChatController {
 
 	getChat = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
 		const { otherUserId } = req.validated?.params as { otherUserId: string };
+		const query = (req.validated?.query ?? {}) as Record<string, unknown>;
 		const result = await this._getChatUseCase.execute({
 			userId: req.user.id,
 			otherUserId,
+			...query,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, { data: result });
