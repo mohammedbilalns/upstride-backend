@@ -5,6 +5,11 @@ import type { AppEvent } from "../../domain/events/domain-event";
 
 export const APP_EVENTS_QUEUE = "domainEvents";
 
+/**
+ * BullMQ implementation of the EventBus.
+ * Publishes domain events as jobs to a BullMQ queue for async processing by workers.
+ * Supports retry logic, dead-letter handling, and in-memory handler registration.
+ */
 export class BullMQEventBus implements EventBus {
 	private _queue: Queue;
 	private _handlers = new Map<
@@ -16,6 +21,10 @@ export class BullMQEventBus implements EventBus {
 		this._queue = queue;
 	}
 
+	/**
+	 * Publishes a event to the BullMQ queue.
+	 * The event is serialized and queued as a job with retry support.
+	 */
 	async publish(event: AppEvent): Promise<void> {
 		const jobId = `${event.eventName}:${randomUUID()}`;
 
@@ -36,6 +45,10 @@ export class BullMQEventBus implements EventBus {
 		);
 	}
 
+	/**
+	 * Registers an event handler for a specific event type.
+	 * Handlers are stored in-memory and invoked by workers processing events.
+	 */
 	registerHandler<T>(
 		eventName: string,
 		handler: (event: T) => Promise<void> | void,
@@ -51,6 +64,7 @@ export class BullMQEventBus implements EventBus {
 		handlers.push(handler as (event: unknown) => Promise<void> | void);
 	}
 
+	/** Retrieves all registered handlers for a given event name. */
 	getHandlers(eventName: string) {
 		return this._handlers.get(eventName) ?? [];
 	}

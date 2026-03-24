@@ -40,7 +40,7 @@ async function start() {
 	// Initialize event handlers
 	bootstrapEventHandlers(container);
 
-	//worker for mail processing
+	//workers for background jobs
 	mailWorker = createMailWorker(redisClient);
 	appEventWorker = createAppEventWorker(redisClient, bullMQEventBus);
 

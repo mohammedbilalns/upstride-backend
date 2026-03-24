@@ -3,6 +3,10 @@ import type { Redis } from "ioredis";
 import logger from "../../shared/logging/logger";
 import { APP_EVENTS_QUEUE, type BullMQEventBus } from "./bullmq-event-bus";
 
+/**
+ * Creates a BullMQ worker that processes events from the APP_EVENTS_QUEUE.
+ * Handles event dispatching to registered handlers with retry logic and idempotency tracking.
+ */
 export const createAppEventWorker = (
 	connection: Redis,
 	eventBus: BullMQEventBus,
@@ -52,6 +56,7 @@ export const createAppEventWorker = (
 		},
 	);
 
+	/** Logs permanent failures after all retry attempts are exhausted. */
 	worker.on("failed", (job, err) => {
 		if (job && job.attemptsMade >= (job.opts.attempts ?? 1)) {
 			logger.error(
@@ -70,6 +75,7 @@ export const createAppEventWorker = (
 		}
 	});
 
+	/** Logs successful job completion. */
 	worker.on("completed", (job) => {
 		logger.info(`Domain event job ${job.id} (${job.name}) completed`);
 	});
