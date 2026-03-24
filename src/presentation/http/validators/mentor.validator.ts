@@ -5,7 +5,11 @@ import {
 	MAX_MENTOR_EXPERIENCE_ITEMS,
 } from "../../../domain/entities/mentor.entity";
 import { SkillLevelValues } from "../../../domain/entities/user.entity";
-import { objectIdSchema } from "../../../shared/validators";
+import {
+	limitSchema,
+	objectIdSchema,
+	pageSchema,
+} from "../../../shared/validators";
 
 const skillItemSchema = z.object({
 	skillId: z.string().min(1),
@@ -16,8 +20,8 @@ const experienceItemSchema = z.object({
 	company: z.string().min(1, "Company name is required"),
 	role: z.string().min(1, "Role is required"),
 	description: z.string().min(1, "Description is required"),
-	from: z.string().datetime({ message: "Invalid from date" }),
-	to: z.string().datetime({ message: "Invalid to date" }).nullable(),
+	from: z.coerce.date({ message: "Invalid from date" }),
+	to: z.coerce.date({ message: "Invalid to date" }).nullable(),
 });
 
 const buildExperienceSchema = () =>
@@ -34,26 +38,29 @@ const buildExperienceSchema = () =>
 				const exp = experience[i];
 				const fromDate = new Date(exp.from);
 				if (fromDate > now) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
+					ctx.issues.push({
+						code: "custom",
 						message: "From date cannot be in the future",
 						path: [i, "from"],
+						input: exp.from,
 					});
 				}
 				if (exp.to) {
 					const toDate = new Date(exp.to);
 					if (toDate > now) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
+						ctx.issues.push({
+							code: "custom",
 							message: "To date cannot be in the future",
 							path: [i, "to"],
+							input: exp.to,
 						});
 					}
 					if (fromDate > toDate) {
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
+						ctx.issues.push({
+							code: "custom",
 							message: "From date cannot be after To date",
 							path: [i, "from"],
+							input: exp.from,
 						});
 					}
 				}
@@ -136,13 +143,7 @@ export type ResubmitMentorBody = z.infer<typeof resubmitMentorSchema>;
 
 export const MentorApplicationsQuerySchema = z.object({
 	page: z.coerce.number().int().positive().default(1),
-	limit: z.coerce
-		.number()
-		.int()
-		.refine((val: number) => [10, 12, 20, 24, 48, 50].includes(val), {
-			message: "Limit must be 10, 12, 20, 24, 48 or 50",
-		})
-		.default(10),
+	limit: limitSchema,
 	status: z.enum(["approved", "rejected", "pending"]).optional(),
 	sort: z.enum(["recent", "old", "status"]).optional().default("recent"),
 });
@@ -153,7 +154,7 @@ export type MentorApplicationsQuery = z.infer<
 
 export const MentorDiscoveryQuerySchema = z
 	.object({
-		page: z.coerce.number().int().positive().default(1),
+		page: pageSchema,
 		search: z.string().trim().min(1).optional(),
 		categoryId: z.string().min(1).optional(),
 		tierName: z.string().min(1).optional(),

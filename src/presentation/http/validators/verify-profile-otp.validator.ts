@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { otpSchema } from "../../../shared/validators";
 
 export const verifyProfileOtpBodySchema = z.object({
-	otp: z.string().min(6, "OTP must be at least 6 characters"),
+	otp: otpSchema,
 });
 
 export type VerifyProfileOtpBody = z.infer<typeof verifyProfileOtpBodySchema>;

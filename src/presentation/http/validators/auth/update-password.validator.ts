@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { passwordSchema } from "../common";
+import { passwordSchema } from "../../../../shared/validators";
 
 export const updatePasswordBodySchema = z.object({
 	email: z.email().trim(),

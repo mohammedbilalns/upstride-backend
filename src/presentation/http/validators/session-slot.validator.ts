@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema } from "../../../shared/validators";
+import { dateSchema, objectIdSchema } from "../../../shared/validators";
 
 const durationSchema = z.union([z.literal(30), z.literal(60)]);
 
@@ -18,9 +18,10 @@ const availableSlotsDateSchema = z.string().transform((value, ctx) => {
 
 	const parsed = new Date(value);
 	if (Number.isNaN(parsed.getTime())) {
-		ctx.addIssue({
-			code: z.ZodIssueCode.custom,
+		ctx.issues.push({
+			code: "custom",
 			message: "Date must be in YYYY-MM-DD format",
+			input: value,
 		});
 		return z.NEVER;
 	}
@@ -37,8 +38,8 @@ export const availableSlotsQuerySchema = z.object({
 
 export const createCustomSlotBodySchema = z
 	.object({
-		startTime: z.string().datetime({ message: "Invalid start time" }),
-		endTime: z.string().datetime({ message: "Invalid end time" }),
+		startTime: dateSchema("Invalid Start time"),
+		endTime: dateSchema("Invalid End time"),
 		durationMinutes: durationSchema,
 	})
 	.refine((input) => new Date(input.endTime) > new Date(input.startTime), {
@@ -49,11 +50,8 @@ export const createCustomSlotBodySchema = z
 export const generateSlotsBodySchema = z
 	.object({
 		mentorId: z.string().min(1, "Mentor id is required"),
-		startDate: z
-			.string()
-			.datetime({ message: "Invalid start date" })
-			.optional(),
-		endDate: z.string().datetime({ message: "Invalid end date" }).optional(),
+		startDate: z.coerce.date({ message: "Invalid start date" }).optional(),
+		endDate: z.coerce.date({ message: "Invalid end date" }).optional(),
 	})
 	.refine(
 		(input) =>
@@ -77,8 +75,8 @@ export const generateSlotsBodySchema = z
 
 export const getMentorSlotsQuerySchema = z
 	.object({
-		startDate: z.string().datetime().optional(),
-		endDate: z.string().datetime().optional(),
+		startDate: z.coerce.date().optional(),
+		endDate: z.coerce.date().optional(),
 	})
 	.refine(
 		(input) =>

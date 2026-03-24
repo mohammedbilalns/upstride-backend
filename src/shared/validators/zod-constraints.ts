@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { z } from "zod";
 
 export const percentageSchema = z
@@ -17,4 +18,41 @@ export const positiveIntSchema = z
 
 export const objectIdSchema = z
 	.string()
-	.regex(/^[0-9a-fA-F]{24}$/, "Invalid object id");
+	.refine((val) => mongoose.Types.ObjectId.isValid(val), {
+		message: "Invalid Id",
+	});
+
+export const pageSchema = z.coerce.number().int().positive().default(1);
+export const limitSchema = z.coerce
+	.number()
+	.int()
+	.refine((val: number) => [10, 20, 50].includes(val), {
+		message: "Limit must be 10, 20, or 50",
+	})
+	.default(10);
+
+export const otpSchema = z.string().min(6, "OTP must be at least 6 characters");
+
+export const useridSchema = z.string().min(1, "User ID is required");
+
+export const dateSchema = (message: string = "Invalid date") =>
+	z.coerce.date(message);
+
+export const passwordSchema = z
+	.string()
+	.min(8, "Password must be at least 8 characters long")
+	.max(128, "Password must be at most 128 characters long")
+	.regex(/[a-z]/, "Password must contain at least one lowercase letter")
+	.regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+	.regex(/[0-9]/, "Password must contain at least one number")
+	.regex(
+		/[^a-zA-Z0-9]/,
+		"Password must contain at least one special character (e.g. @, !, #)",
+	);
+
+export const phoneSchema = z
+	.string()
+	.trim()
+	.regex(/^\+[1-9]\d{1,14}$/, {
+		message: "Phone number must be in valid E.164 format (e.g., +919876543210)",
+	});
