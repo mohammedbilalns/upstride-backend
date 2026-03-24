@@ -13,6 +13,7 @@ import {
 	InvalidMessageError,
 } from "../errors";
 import { ChatMessageMapper } from "../mappers/chat-message.mapper";
+import type { ICreateChatUseCase } from "./create-chat.usecase.interface";
 import type { ISendMessageUseCase } from "./send-message.usecase.interface";
 
 @injectable()
@@ -24,6 +25,8 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		private readonly _chatMessageRepository: IChatMessageRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
+		@inject(TYPES.UseCases.CreateChat)
+		private readonly _createChatUseCase: ICreateChatUseCase,
 	) {}
 
 	async execute(input: SendMessageInput): Promise<SendMessageOutput> {
@@ -31,9 +34,24 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 			throw new InvalidMessageError();
 		}
 
-		const chat = await this._chatRepository.findById(input.chatId);
+		let chat = await this._chatRepository.findById(input.chatId);
 		if (!chat) {
-			throw new ChatNotFoundError();
+			const existing = await this._chatRepository.findByParticipants(
+				input.senderId,
+				input.chatId,
+			);
+			if (existing) {
+				chat = existing;
+			} else {
+				const created = await this._createChatUseCase.execute({
+					userId: input.senderId,
+					otherUserId: input.chatId,
+				});
+				chat = await this._chatRepository.findById(created.chat.id);
+				if (!chat) {
+					throw new ChatNotFoundError();
+				}
+			}
 		}
 
 		const isParticipant =
@@ -46,11 +64,11 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		const receiverId =
 			chat.user1Id === input.senderId ? chat.user2Id : chat.user1Id;
 
-		const messageType = input.mediaId ? "FILE" : "TEXT";
+		const messageType = input.mediaId ? (input.messageType ?? "FILE") : "TEXT";
 
 		const message = new Chatmessage(
 			this._idGenerator.generate(),
-			input.chatId,
+			chat.id,
 			input.senderId,
 			messageType,
 			input.content ?? null,

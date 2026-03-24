@@ -22,6 +22,7 @@ export const sendMessageBodySchema = z
 	.object({
 		content: z.string().trim().min(1).optional(),
 		mediaId: z.string().trim().min(1).optional(),
+		messageType: z.enum(["TEXT", "IMAGE", "FILE"]).optional(),
 		repliedTo: objectIdSchema.optional(),
 	})
 	.refine((data) => data.content || data.mediaId, {

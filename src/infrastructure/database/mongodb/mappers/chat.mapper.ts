@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { Chat } from "../../../../domain/entities/chat.entity";
 import type { ChatDocument } from "../models/chat.model";
+import { toIdString } from "../utils/id.util";
 
 const toMap = (value: ChatDocument["unreadCount"]): Map<string, number> => {
 	if (value instanceof Map) return value;
@@ -11,10 +12,10 @@ const toMap = (value: ChatDocument["unreadCount"]): Map<string, number> => {
 export class ChatMapper {
 	static toDomain(doc: ChatDocument): Chat {
 		return new Chat(
-			doc._id.toString(),
-			doc.user1Id.toString(),
-			doc.user2Id.toString(),
-			doc.lastMessageId?.toString() ?? null,
+			toIdString(doc._id),
+			toIdString(doc.user1Id),
+			toIdString(doc.user2Id),
+			doc.lastMessageId ? toIdString(doc.lastMessageId) : null,
 			toMap(doc.unreadCount),
 			doc.createdAt,
 			doc.updatedAt,

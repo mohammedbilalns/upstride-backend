@@ -7,6 +7,7 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { CreateChatInput, CreateChatOutput } from "../dtos/chat.dto";
 import { ChatNotAllowedError, ChatSelfChatError } from "../errors";
@@ -24,6 +25,8 @@ export class CreateChatUseCase implements ICreateChatUseCase {
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: CreateChatInput): Promise<CreateChatOutput> {
@@ -50,13 +53,30 @@ export class CreateChatUseCase implements ICreateChatUseCase {
 			throw new ChatNotAllowedError("User-user chats are not allowed");
 		}
 
+		const usersById = new Map();
+		const receiverProfilePictureUrl = otherUser.profilePictureId
+			? await this._storageService.getSignedUrl(otherUser.profilePictureId)
+			: null;
+
+		usersById.set(user.id, {
+			id: user.id,
+			name: user.name,
+		});
+		usersById.set(otherUser.id, {
+			id: otherUser.id,
+			name: otherUser.name,
+			profilePictureUrl: receiverProfilePictureUrl,
+		});
+
 		const existing = await this._chatRepository.findByParticipants(
 			input.userId,
 			input.otherUserId,
 		);
 
 		if (existing) {
-			return { chat: ChatMapper.toDto(existing) };
+			return {
+				chat: ChatMapper.toDtoForUser(existing, input.userId, usersById),
+			};
 		}
 
 		const unreadCount = new Map<string, number>([
@@ -76,6 +96,6 @@ export class CreateChatUseCase implements ICreateChatUseCase {
 
 		const created = await this._chatRepository.create(chat);
 
-		return { chat: ChatMapper.toDto(created) };
+		return { chat: ChatMapper.toDtoForUser(created, input.userId, usersById) };
 	}
 }

@@ -2,7 +2,10 @@ import type { Chatmessage } from "../../../../domain/entities/chat-message.entit
 import type { ChatMessageDto } from "../dtos/chat.dto";
 
 export class ChatMessageMapper {
-	static toDto(entity: Chatmessage): ChatMessageDto {
+	static toDto(
+		entity: Chatmessage,
+		mediaUrl: string | null = null,
+	): ChatMessageDto {
 		return {
 			id: entity.id,
 			chatId: entity.chatId,
@@ -10,6 +13,7 @@ export class ChatMessageMapper {
 			messageType: entity.messageType,
 			content: entity.content,
 			attachementId: entity.attachementId,
+			mediaUrl,
 			repliedTo: entity.repliedTo,
 			status: entity.status,
 			createdAt: entity.createdAt,

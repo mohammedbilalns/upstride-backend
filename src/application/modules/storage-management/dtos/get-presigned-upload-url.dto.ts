@@ -1,7 +1,7 @@
 export interface GetPreSignedUploadUrlInput {
 	fileName: string;
 	mimetype: string;
-	category: "resume" | "profile-picture";
+	category: "resume" | "profile-picture" | "chat-media";
 }
 
 export interface GetPreSignedUploadUrlOutput {

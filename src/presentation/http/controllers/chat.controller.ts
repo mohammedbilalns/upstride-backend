@@ -56,6 +56,9 @@ export class ChatController {
 				senderId: req.user.id,
 				content: (body.content as string | undefined) ?? null,
 				mediaId: (body.mediaId as string | undefined) ?? null,
+				messageType:
+					(body.messageType as "TEXT" | "IMAGE" | "FILE" | undefined) ??
+					undefined,
 				repliedTo: (body.repliedTo as string | undefined) ?? null,
 			});
 

@@ -5,12 +5,30 @@ import type {
 
 export interface ChatDto {
 	id: string;
-	user1Id: string;
-	user2Id: string;
+	senderId: string;
+	receiverId: string;
+	sender: ChatUserDto;
+	receiver: ChatUserDto;
 	lastMessageId: string | null;
+	lastMessage: ChatLastMessageDto | null;
 	unreadCount: Record<string, number>;
 	createdAt: Date;
 	updatedAt: Date;
+}
+
+export interface ChatUserDto {
+	id: string;
+	name: string;
+	profilePictureUrl?: string | null;
+}
+
+export interface ChatLastMessageDto {
+	id: string;
+	senderId: string;
+	messageType: "TEXT" | "IMAGE" | "FILE";
+	content: string | null;
+	mediaId: string | null;
+	createdAt: Date;
 }
 
 export interface ChatMessageDto {
@@ -20,6 +38,7 @@ export interface ChatMessageDto {
 	messageType: MessageType;
 	content: string | null;
 	attachementId: string | null;
+	mediaUrl: string | null;
 	repliedTo: string | null;
 	status: MessageStatus;
 	createdAt: Date;
@@ -49,7 +68,7 @@ export interface GetChatInput {
 }
 
 export interface GetChatOutput {
-	chat: ChatDto;
+	chat: ChatDto | null;
 	messages: ChatMessageDto[];
 	total: number;
 	page: number;
@@ -71,6 +90,7 @@ export interface SendMessageInput {
 	senderId: string;
 	content?: string | null;
 	mediaId?: string | null;
+	messageType?: "TEXT" | "IMAGE" | "FILE";
 	repliedTo?: string | null;
 }
 
