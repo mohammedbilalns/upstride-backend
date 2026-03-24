@@ -17,9 +17,6 @@ export class WebSocketEventBridge {
 		private readonly _wsServer: WebSocketServer,
 	) {}
 
-	/**
-	 * Registers listeners on the in-memory bus.
-	 */
 	public register(inMemoryBus: InMemoryEventBus): void {
 		// Listen for Chat Messages
 		inMemoryBus.registerHandler<MessageSentEvent>(
