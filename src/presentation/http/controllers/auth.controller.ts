@@ -15,6 +15,7 @@ import { TYPES } from "../../../shared/types/types";
 import { extractDeviceInfo } from "../../../shared/utilities/extract-device-info.util";
 import { AuthResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import { generateCsrfToken } from "../middlewares";
 import type {
 	GoogleLoginBody,
 	LinkedInLoginBody,
@@ -86,9 +87,11 @@ export class AuthController {
 		);
 
 		this._setRefreshTokenCookie(res, refreshToken);
+		req.cookies.refreshToken = refreshToken;
+		const csrfToken = generateCsrfToken(req, res);
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
-			data,
+			data: { ...data, csrfToken },
 		});
 	});
 
@@ -100,14 +103,17 @@ export class AuthController {
 			...deviceInfo,
 		});
 
+		let csrfToken: string | undefined;
 		if ("refreshToken" in data) {
 			this._setRefreshTokenCookie(res, data.refreshToken);
+			req.cookies.refreshToken = data.refreshToken;
+			csrfToken = generateCsrfToken(req, res);
 		}
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
 			data:
 				"refreshToken" in data
-					? (({ refreshToken, ...rest }) => rest)(data)
+					? { ...(({ refreshToken, ...rest }) => rest)(data), csrfToken }
 					: data,
 		});
 	});
@@ -122,14 +128,17 @@ export class AuthController {
 			...deviceInfo,
 		});
 
+		let csrfToken: string | undefined;
 		if ("refreshToken" in data) {
 			this._setRefreshTokenCookie(res, data.refreshToken);
+			req.cookies.refreshToken = data.refreshToken;
+			csrfToken = generateCsrfToken(req, res);
 		}
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
 			data:
 				"refreshToken" in data
-					? (({ refreshToken, ...rest }) => rest)(data)
+					? { ...(({ refreshToken, ...rest }) => rest)(data), csrfToken }
 					: data,
 		});
 	});
@@ -144,9 +153,11 @@ export class AuthController {
 			});
 
 		this._setRefreshTokenCookie(res, refreshToken);
+		req.cookies.refreshToken = refreshToken;
+		const csrfToken = generateCsrfToken(req, res);
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.LOGIN_SUCCESS,
-			data,
+			data: { ...data, csrfToken },
 		});
 	});
 
@@ -156,10 +167,18 @@ export class AuthController {
 			await this._refreshSessionUseCase.execute({ refreshToken });
 
 		this._setRefreshTokenCookie(res, newRefreshToken);
+		req.cookies.refreshToken = newRefreshToken;
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AuthResponseMessages.REFRESH_SESSION_SUCCESS,
 			data,
+		});
+	});
+
+	getCsrfToken = asyncHandler(async (req, res) => {
+		const csrfToken = generateCsrfToken(req, res);
+		sendSuccess(res, HttpStatus.OK, {
+			data: { csrfToken },
 		});
 	});
 

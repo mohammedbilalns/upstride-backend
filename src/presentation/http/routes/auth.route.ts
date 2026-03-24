@@ -6,7 +6,12 @@ import {
 	LogoutController,
 	PasswordResetController,
 } from "../controllers";
-import { validate, verifySession } from "../middlewares";
+import {
+	csrfProtection,
+	ensureCsrfSessionId,
+	validate,
+	verifySession,
+} from "../middlewares";
 import {
 	googleLoginBodySchema,
 	linkedinLoginBodySchema,
@@ -61,7 +66,9 @@ router.post(
 	authController.resendRegisterOtp,
 );
 
-router.post(ROUTES.AUTH.REFRESH, authController.refreshSession);
+router.get(ROUTES.AUTH.CSRF, ensureCsrfSessionId, authController.getCsrfToken);
+
+router.post(ROUTES.AUTH.REFRESH, csrfProtection, authController.refreshSession);
 
 router.post(
 	ROUTES.AUTH.SAVE_INTERESTS,
