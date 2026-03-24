@@ -21,4 +21,6 @@ export interface IChatMessageRepository
 		FindByIdRepository<Chatmessage>,
 		QueryableRepository<Chatmessage, ChatMessageQuery>,
 		PaginatableRepository<Chatmessage, ChatMessageQuery>,
-		UpdatableByIdRepository<Chatmessage> {}
+		UpdatableByIdRepository<Chatmessage> {
+	markAsRead(chatId: string, readerId: string): Promise<number>;
+}

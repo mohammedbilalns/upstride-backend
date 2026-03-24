@@ -1,6 +1,7 @@
 export * from "./admin-management.controller";
 export * from "./auth.controller";
 export * from "./catalog.controller";
+export * from "./chat.controller";
 export * from "./file.controller";
 export * from "./logout.controller";
 export * from "./mentor.controller";

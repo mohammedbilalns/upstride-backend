@@ -104,4 +104,13 @@ export class MongoChatMessageRepository
 
 		return filter;
 	}
+
+	async markAsRead(chatId: string, readerId: string): Promise<number> {
+		const result = await this.model.updateMany(
+			{ chatId, senderId: { $ne: readerId }, status: "send" },
+			{ status: "read" },
+		);
+
+		return result.modifiedCount ?? 0;
+	}
 }

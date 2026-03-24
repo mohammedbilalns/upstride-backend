@@ -3,6 +3,7 @@ import {
 	AdminManagementController,
 	AuthController,
 	CatalogController,
+	ChatController,
 	FileController,
 	LogoutController,
 	MentorController,
@@ -25,6 +26,8 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(PasswordResetController).to(PasswordResetController);
 	container.bind(LogoutController).to(LogoutController);
 	container.bind(CatalogController).to(CatalogController);
+	container.bind(ChatController).to(ChatController);
+	container.bind(TYPES.Controllers.Chat).to(ChatController);
 	container.bind(UserManagementController).to(UserManagementController);
 	container.bind(TYPES.Controllers.UserManagement).to(UserManagementController);
 	container.bind(AdminManagementController).to(AdminManagementController);

@@ -3,6 +3,7 @@ import {
 	registerAdminManagementBindings,
 	registerAuthenticationBindings,
 	registerCatalogBindings,
+	registerChatBindings,
 	registerInfrastructureServiceBindings,
 	registerMentorBindings,
 	registerMentorDiscoveryBindings,
@@ -30,6 +31,7 @@ registerQueueBindings(container);
 registerAuthenticationBindings(container);
 registerAdminManagementBindings(container);
 registerCatalogBindings(container);
+registerChatBindings(container);
 registerMentorBindings(container);
 registerMentorDiscoveryBindings(container);
 registerMentorListsBindings(container);

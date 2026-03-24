@@ -28,7 +28,7 @@ export class ChatMapper {
 			lastMessageId: entity.lastMessageId
 				? new Types.ObjectId(entity.lastMessageId)
 				: null,
-			unreadCount: Object.fromEntries(entity.unreadCount),
+			unreadCount: new Map(entity.unreadCount),
 		};
 	}
 }
