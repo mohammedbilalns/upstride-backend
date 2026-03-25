@@ -18,6 +18,7 @@ import type {
 	IDeleteArticleUseCase,
 	IGetArticleCommentsUseCase,
 	IGetArticlesUseCase,
+	IGetArticleTopTagsUseCase,
 	IGetArticleUseCase,
 	IReactToArticleCommentUseCase,
 	IReactToArticleUseCase,
@@ -54,7 +55,16 @@ export class ArticleController {
 		private readonly _reactToArticleUseCase: IReactToArticleUseCase,
 		@inject(TYPES.UseCases.ReactToArticleComment)
 		private readonly _reactToArticleCommentUseCase: IReactToArticleCommentUseCase,
+		@inject(TYPES.UseCases.GetArticleTopTags)
+		private readonly _getTopTagsUseCase: IGetArticleTopTagsUseCase,
 	) {}
+
+	getTopTags = asyncHandler(
+		async (_req: AuthenticatedRequest, res: Response) => {
+			const data = await this._getTopTagsUseCase.execute();
+			return sendSuccess(res, HttpStatus.OK, { data });
+		},
+	);
 
 	getArticles = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {

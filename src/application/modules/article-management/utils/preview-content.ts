@@ -4,7 +4,9 @@ export const generatePreviewContent = (
 	content: string,
 	maxLength = DEFAULT_PREVIEW_LENGTH,
 ): string => {
-	const trimmed = content.trim().replace(/\s+/g, " ");
+	const stripped = content.replace(/<[^>]*>?/gm, " ");
+	const trimmed = stripped.trim().replace(/\s+/g, " ");
+
 	if (trimmed.length <= maxLength) {
 		return trimmed;
 	}

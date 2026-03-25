@@ -63,6 +63,21 @@ export class MongoArticleRepository
 		);
 	}
 
+	async getTopTags(limit: number): Promise<{ tag: string; count: number }[]> {
+		const result = await this.model
+			.aggregate<{ tag: string; count: number }>([
+				{ $match: { isActive: true, isArchived: false } },
+				{ $unwind: "$tags" },
+				{ $group: { _id: "$tags", count: { $sum: 1 } } },
+				{ $sort: { count: -1 } },
+				{ $limit: limit },
+				{ $project: { _id: 0, tag: "$_id", count: 1 } },
+			])
+			.exec();
+
+		return result;
+	}
+
 	async updateById(
 		id: string,
 		update: Partial<Article>,

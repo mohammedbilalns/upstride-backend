@@ -23,6 +23,12 @@ const controller = container.get<ArticleController>(TYPES.Controllers.Article);
 router.use(verifySession);
 
 router.get(
+	ROUTES.ARTICLES.TOP_TAGS,
+	authorizeRoles(["USER", "MENTOR"]),
+	controller.getTopTags.bind(controller),
+);
+
+router.get(
 	ROUTES.ARTICLES.ROOT,
 	authorizeRoles(["USER", "MENTOR"]),
 	validate({ query: ArticlesQuerySchema }),

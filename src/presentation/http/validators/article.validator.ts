@@ -15,15 +15,33 @@ export const CommentIdParamSchema = z.object({
 });
 
 export const CreateArticleBodySchema = z.object({
-	title: z.string().trim().min(1, "Title is required").max(200),
-	description: z.string().trim().min(1, "Description is required").max(5000),
+	title: z
+		.string()
+		.trim()
+		.min(20, "Title must be at least 20 characters")
+		.max(200),
+	description: z
+		.string()
+		.trim()
+		.min(200, "Content must be at least 200 characters")
+		.max(50000),
 	featuredImageUrl: z.string().trim().url("Invalid featured image URL"),
 	tags: z.array(z.string().trim().min(1)).max(6).optional(),
 });
 
 export const UpdateArticleBodySchema = z.object({
-	title: z.string().trim().min(1).max(200).optional(),
-	description: z.string().trim().min(1).max(5000).optional(),
+	title: z
+		.string()
+		.trim()
+		.min(20, "Title must be at least 20 characters")
+		.max(200)
+		.optional(),
+	description: z
+		.string()
+		.trim()
+		.min(200, "Content must be at least 200 characters")
+		.max(50000)
+		.optional(),
 	featuredImageUrl: z
 		.string()
 		.trim()

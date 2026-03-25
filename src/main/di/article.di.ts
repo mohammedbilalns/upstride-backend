@@ -6,6 +6,7 @@ import {
 	DeleteArticleUseCase,
 	GetArticleCommentsUseCase,
 	GetArticlesUseCase,
+	GetArticleTopTagsUseCase,
 	GetArticleUseCase,
 	type ICreateArticleCommentUseCase,
 	type ICreateArticleUseCase,
@@ -13,6 +14,7 @@ import {
 	type IDeleteArticleUseCase,
 	type IGetArticleCommentsUseCase,
 	type IGetArticlesUseCase,
+	type IGetArticleTopTagsUseCase,
 	type IGetArticleUseCase,
 	type IMarkArticleViewUseCase,
 	type IReactToArticleCommentUseCase,
@@ -31,6 +33,10 @@ export const registerArticleBindings = (container: Container): void => {
 	container
 		.bind<IGetArticlesUseCase>(TYPES.UseCases.GetArticles)
 		.to(GetArticlesUseCase)
+		.inSingletonScope();
+	container
+		.bind<IGetArticleTopTagsUseCase>(TYPES.UseCases.GetArticleTopTags)
+		.to(GetArticleTopTagsUseCase)
 		.inSingletonScope();
 	container
 		.bind<IGetArticleUseCase>(TYPES.UseCases.GetArticle)

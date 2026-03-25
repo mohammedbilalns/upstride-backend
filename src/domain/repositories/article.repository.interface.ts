@@ -27,4 +27,5 @@ export interface IArticleRepository
 		authorId: string,
 		snapshot: { name?: string; avatarUrl?: string },
 	): Promise<void>;
+	getTopTags(limit: number): Promise<{ tag: string; count: number }[]>;
 }

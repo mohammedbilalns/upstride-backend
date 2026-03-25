@@ -10,6 +10,8 @@ export * from "./get-article.usecase";
 export * from "./get-article.usecase.interface";
 export * from "./get-article-comments.usecase";
 export * from "./get-article-comments.usecase.interface";
+export * from "./get-article-top-tags.usecase";
+export * from "./get-article-top-tags.usecase.interface";
 export * from "./get-articles.usecase";
 export * from "./get-articles.usecase.interface";
 export * from "./mark-article-view.usecase";

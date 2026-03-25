@@ -96,6 +96,7 @@ export const ROUTES = {
 	ARTICLES: {
 		BASE: "/articles",
 		ROOT: "/",
+		TOP_TAGS: "/top-tags",
 		BY_SLUG: "/:slug",
 		BY_ID: "/:articleId",
 		COMMENTS: "/:articleId/comments",
