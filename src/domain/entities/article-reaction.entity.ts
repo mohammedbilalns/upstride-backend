@@ -7,6 +7,6 @@ export class ArticleReaction {
 		public readonly resourceId: string,
 		public readonly userId: string,
 		public readonly reactionType: ArticleReactionType,
-		public readonly createdAt: Date,
+		public readonly createdAt: Date | null,
 	) {}
 }

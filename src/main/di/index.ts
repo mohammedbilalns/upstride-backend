@@ -1,4 +1,5 @@
 export * from "./admin-management.di";
+export * from "./article.di";
 export * from "./authentication.di";
 export * from "./catalog.di";
 export * from "./chat.di";

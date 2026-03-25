@@ -13,6 +13,7 @@ export interface ArticleQuery {
 	isArchived?: boolean;
 	tags?: string | string[];
 	title?: string;
+	slug?: string;
 }
 
 export interface IArticleRepository
@@ -20,4 +21,6 @@ export interface IArticleRepository
 		FindByIdRepository<Article>,
 		UpdatableByIdRepository<Article>,
 		QueryableRepository<Article, ArticleQuery>,
-		PaginatableRepository<Article, ArticleQuery> {}
+		PaginatableRepository<Article, ArticleQuery> {
+	findBySlug(slug: string): Promise<Article | null>;
+}

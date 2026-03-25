@@ -8,7 +8,7 @@ export class ArticleComment {
 		public readonly repliesCount: number,
 		public readonly content: string,
 		public readonly isActive: boolean,
-		public readonly createdAt: Date,
-		public readonly updatedAt: Date,
+		public readonly createdAt: Date | null,
+		public readonly updatedAt: Date | null,
 	) {}
 }

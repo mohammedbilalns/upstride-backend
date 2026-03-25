@@ -40,6 +40,16 @@ export class MongoArticleReactionRepository
 		return this.findByIdDocument(id);
 	}
 
+	async updateById(
+		id: string,
+		update: Partial<ArticleReaction>,
+	): Promise<ArticleReaction | null> {
+		const doc = await this.model
+			.findByIdAndUpdate(id, update, { returnDocument: "after" })
+			.lean();
+		return doc ? this.toDomain(doc as ArticleReactionDocument) : null;
+	}
+
 	async query({
 		query,
 		sort,

@@ -7,6 +7,7 @@ export interface ArticleDocument {
 		name: string;
 		avatarUrl: string;
 	};
+	slug: string;
 	featuredImageUrl: string;
 	title: string;
 	description: string;
@@ -27,6 +28,7 @@ const articleSchema = new Schema<ArticleDocument>(
 			name: { type: String, required: true },
 			avatarUrl: { type: String, required: true },
 		},
+		slug: { type: String, required: true, unique: true },
 		featuredImageUrl: { type: String, required: true },
 		title: { type: String, required: true },
 		description: { type: String, required: true },

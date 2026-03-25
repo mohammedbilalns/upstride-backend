@@ -6,6 +6,7 @@ import type {
 	CreatableRepository,
 	FindByIdRepository,
 	QueryableRepository,
+	UpdatableByIdRepository,
 } from "./capabilities";
 
 export interface ArticleReactionQuery {
@@ -17,4 +18,5 @@ export interface ArticleReactionQuery {
 export interface IArticleReactionRepository
 	extends CreatableRepository<ArticleReaction>,
 		FindByIdRepository<ArticleReaction>,
-		QueryableRepository<ArticleReaction, ArticleReactionQuery> {}
+		QueryableRepository<ArticleReaction, ArticleReactionQuery>,
+		UpdatableByIdRepository<ArticleReaction> {}

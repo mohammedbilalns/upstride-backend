@@ -37,6 +37,11 @@ export class MongoArticleRepository
 		return this.findByIdDocument(id);
 	}
 
+	async findBySlug(slug: string): Promise<Article | null> {
+		const doc = await this.model.findOne({ slug }).lean();
+		return doc ? this.toDomain(doc as ArticleDocument) : null;
+	}
+
 	async updateById(
 		id: string,
 		update: Partial<Article>,
@@ -98,6 +103,9 @@ export class MongoArticleRepository
 
 		if (query.title) {
 			filter.title = { $regex: query.title, $options: "i" };
+		}
+		if (query.slug) {
+			filter.slug = query.slug;
 		}
 
 		return filter;
