@@ -175,10 +175,6 @@ export class MongoArticleRepository
 			filter.slug = query.slug;
 		}
 
-		console.log(
-			"[MongoArticleRepository] Built filter:",
-			JSON.stringify(filter, null, 2),
-		);
 		return filter;
 	}
 }

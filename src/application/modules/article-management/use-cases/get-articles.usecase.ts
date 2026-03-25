@@ -35,25 +35,15 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 		let authorIds: string[] | undefined;
 
 		const categoryName = input.category || input.interest;
-		console.log("[GetArticlesUseCase] categoryName:", categoryName);
 		if (categoryName) {
 			const interests = await this._interestRepository.query({
 				query: { name: categoryName },
 			});
-			console.log(
-				"[GetArticlesUseCase] found interests count:",
-				interests.length,
-			);
 			if (interests.length > 0) {
 				authorIds = await this._mentorRepository.findUserIdsByExpertise(
 					interests[0].id,
 				);
-				console.log(
-					"[GetArticlesUseCase] found authorIds count:",
-					authorIds.length,
-				);
 			} else {
-				console.log("[GetArticlesUseCase] Category not found, returning empty");
 				return {
 					items: [],
 					total: 0,
