@@ -43,6 +43,7 @@ export const TYPES = {
 		ChatRepository: Symbol.for("ChatRepository"),
 		ChatMessageRepository: Symbol.for("ChatMessageRepository"),
 		NotificationRepository: Symbol.for("NotificationRepository"),
+		ReportRepository: Symbol.for("ReportRepository"),
 		ArticleRepository: Symbol.for("ArticleRepository"),
 		ArticleCommentRepository: Symbol.for("ArticleCommentRepository"),
 		ArticleReactionRepository: Symbol.for("ArticleReactionRepository"),

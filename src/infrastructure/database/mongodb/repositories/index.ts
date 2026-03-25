@@ -15,6 +15,7 @@ export * from "./notification.repository";
 export * from "./payment-transactions.repository";
 export * from "./platform-settings.repository";
 export * from "./platform-wallet.repository";
+export * from "./report.repository";
 export * from "./saved-mentor.repository";
 export * from "./session.repository";
 export * from "./session-availability.repository";

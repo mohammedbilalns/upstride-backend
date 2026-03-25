@@ -13,6 +13,7 @@ import type {
 	INotificationRepository,
 	IPlatformSettingsRepository,
 	IProfessionRepository,
+	IReportRepository,
 	ISavedMentorRepository,
 } from "../../domain/repositories";
 import {
@@ -32,6 +33,7 @@ import {
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
 	MongoPlatformWalletRepository,
+	MongoReportRepository,
 	MongoSavedMentorRepository,
 	MongoSessionAvailabilityRepository,
 	MongoSessionBookingRepository,
@@ -123,6 +125,10 @@ export const registerRepositoryBindings = (container: Container): void => {
 	container
 		.bind<INotificationRepository>(TYPES.Repositories.NotificationRepository)
 		.to(MongoNotificationRepository)
+		.inSingletonScope();
+	container
+		.bind<IReportRepository>(TYPES.Repositories.ReportRepository)
+		.to(MongoReportRepository)
 		.inSingletonScope();
 	container
 		.bind<IArticleRepository>(TYPES.Repositories.ArticleRepository)

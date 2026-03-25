@@ -25,10 +25,7 @@ export const CreateArticleBodySchema = z.object({
 		.trim()
 		.min(200, "Content must be at least 200 characters")
 		.max(50000),
-	featuredImageUrl: z
-		.url("Invalid featured image URL")
-		.optional()
-		.or(z.literal("")),
+	featuredImageUrl: z.string().optional().or(z.literal("")),
 	tags: z.array(z.string().trim().min(1)).max(6).optional(),
 });
 
@@ -45,11 +42,7 @@ export const UpdateArticleBodySchema = z.object({
 		.min(200, "Content must be at least 200 characters")
 		.max(50000)
 		.optional(),
-	featuredImageUrl: z
-		.string()
-		.trim()
-		.url("Invalid featured image URL")
-		.optional(),
+	featuredImageUrl: z.string().trim().optional().or(z.literal("")),
 	tags: z.array(z.string().trim().min(1)).max(6).optional(),
 	isArchived: z.boolean().optional(),
 });

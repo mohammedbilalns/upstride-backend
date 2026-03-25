@@ -22,6 +22,7 @@ export * from "./payment-transactions.repository.interface";
 export * from "./platform-settings.repository.interface";
 export * from "./platform-wallet.repository.interface";
 export * from "./profession.repository.interface";
+export * from "./report.repository.interface";
 export * from "./saved-mentor.repository.interface";
 export * from "./session.repository.interface";
 export * from "./session-availability.repository.interface";
