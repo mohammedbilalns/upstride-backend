@@ -9,7 +9,7 @@ export class ArticleMapper {
 			doc.authorId.toString(),
 			{
 				name: doc.authorSnapshot.name,
-				avatarUrl: doc.authorSnapshot.avatarUrl,
+				avatarUrl: doc.authorSnapshot.avatarUrl || undefined,
 			},
 			doc.slug,
 			doc.featuredImageUrl,

@@ -40,7 +40,7 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 
 		const avatarUrl = user.profilePictureId
 			? await this._storageService.getSignedUrl(user.profilePictureId)
-			: "";
+			: undefined;
 
 		const previewContent = generatePreviewContent(input.description);
 		const slug = await createUniqueSlug(input.title, async (value) => {

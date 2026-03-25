@@ -49,6 +49,7 @@ export interface GetArticlesInput {
 	search?: string;
 	skill?: string;
 	interest?: string;
+	category?: string;
 }
 
 export interface GetArticlesOutput {

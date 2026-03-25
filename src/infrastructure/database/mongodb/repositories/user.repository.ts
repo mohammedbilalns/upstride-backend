@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import type { QueryFilter } from "mongoose";
+import { type QueryFilter, Types } from "mongoose";
 import type { User } from "../../../../domain/entities/user.entity";
 import type {
 	PopulatedInterest,
@@ -7,6 +7,7 @@ import type {
 	UserWithPopulatedPreferences,
 } from "../../../../domain/entities/user-preferences.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
+import type { QueryParams } from "../../../../domain/repositories/capabilities";
 import type {
 	IUserRepository,
 	UserQuery,
@@ -70,24 +71,17 @@ export class MongoUserRepository
 		return doc ? this.toDomain(doc as UserDocument) : null;
 	}
 
+	async query({ query, sort }: QueryParams<UserQuery>): Promise<User[]> {
+		const filter = this._buildFilter(query);
+		const docs = await this.model
+			.find(filter)
+			.sort(sort ?? { createdAt: -1 })
+			.lean();
+		return docs.map((doc) => this.toDomain(doc as UserDocument));
+	}
+
 	async paginate({ page, limit, query, sort }: PaginateParams<UserQuery>) {
-		const filter: QueryFilter<UserDocument> = {};
-
-		if (query?.role) {
-			filter.role = Array.isArray(query.role)
-				? { $in: query.role }
-				: query.role;
-		}
-
-		if (query?.isBlocked !== undefined) filter.isBlocked = query.isBlocked;
-
-		if (query?.search) {
-			filter.$or = [
-				{ name: { $regex: query.search, $options: "i" } },
-				{ email: { $regex: query.search, $options: "i" } },
-			];
-		}
-
+		const filter = this._buildFilter(query);
 		const skip = (page - 1) * limit;
 
 		const [docs, total] = await Promise.all([
@@ -103,6 +97,37 @@ export class MongoUserRepository
 		const items = docs.map((doc) => this.toDomain(doc as UserDocument));
 
 		return this.buildPaginatedResult(items, total, page, limit);
+	}
+
+	private _buildFilter(query?: UserQuery): QueryFilter<UserDocument> {
+		const filter: QueryFilter<UserDocument> = {};
+
+		if (!query) return filter;
+
+		if (query.role) {
+			filter.role = Array.isArray(query.role)
+				? { $in: query.role }
+				: query.role;
+		}
+
+		if (query.isBlocked !== undefined) {
+			filter.isBlocked = query.isBlocked;
+		}
+
+		if (query.interestIds && query.interestIds.length > 0) {
+			filter["preferences.interests"] = {
+				$in: query.interestIds.map((id) => new Types.ObjectId(id)),
+			};
+		}
+
+		if (query.search) {
+			filter.$or = [
+				{ name: { $regex: query.search, $options: "i" } },
+				{ email: { $regex: query.search, $options: "i" } },
+			];
+		}
+
+		return filter;
 	}
 
 	async findProfileById(

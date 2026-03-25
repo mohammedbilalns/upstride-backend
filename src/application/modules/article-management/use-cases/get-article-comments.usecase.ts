@@ -11,7 +11,7 @@ import type {
 import { ArticleCommentMapper } from "../mappers/article-comment.mapper";
 import type { IGetArticleCommentsUseCase } from "./get-article-comments.usecase.interface";
 
-const DEFAULT_PAGE_SIZE = 5;
+const DEFAULT_PAGE_SIZE = 6;
 
 @injectable()
 export class GetArticleCommentsUseCase implements IGetArticleCommentsUseCase {

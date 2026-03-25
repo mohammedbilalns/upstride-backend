@@ -5,7 +5,7 @@ export interface ArticleDocument {
 	authorId: Types.ObjectId;
 	authorSnapshot: {
 		name: string;
-		avatarUrl: string;
+		avatarUrl?: string;
 	};
 	slug: string;
 	featuredImageUrl: string;
@@ -26,7 +26,7 @@ const articleSchema = new Schema<ArticleDocument>(
 		authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
 		authorSnapshot: {
 			name: { type: String, required: true },
-			avatarUrl: { type: String, required: true },
+			avatarUrl: { type: String },
 		},
 		slug: { type: String, required: true, unique: true },
 		featuredImageUrl: { type: String, default: "" },

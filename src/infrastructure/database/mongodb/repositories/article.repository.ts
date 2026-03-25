@@ -126,10 +126,21 @@ export class MongoArticleRepository
 		if (!query) return filter;
 
 		Object.assign(filter, {
-			...(query.authorId && { authorId: query.authorId }),
+			...(query.authorId && {
+				authorId: Array.isArray(query.authorId)
+					? { $in: query.authorId.map((id) => new Types.ObjectId(id)) }
+					: new Types.ObjectId(query.authorId),
+			}),
 			...(query.isActive !== undefined && { isActive: query.isActive }),
 			...(query.isArchived !== undefined && { isArchived: query.isArchived }),
 		});
+
+		if (query.excludeAuthorId) {
+			filter.authorId = {
+				...filter.authorId,
+				$ne: new Types.ObjectId(query.excludeAuthorId),
+			};
+		}
 
 		if (query.tags) {
 			filter.tags = Array.isArray(query.tags)

@@ -1,6 +1,6 @@
 export interface ArticleAuthorSnapshotDto {
 	name: string;
-	avatarUrl: string;
+	avatarUrl?: string;
 }
 
 export interface ArticleDto {

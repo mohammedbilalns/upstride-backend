@@ -1,20 +1,25 @@
 import type { User, UserRole } from "../entities/user.entity";
 import type { UserWithPopulatedPreferences } from "../entities/user-preferences.entity";
-import type { CreatableRepository } from "./capabilities/creatable.repository.interface";
-import type { FindByIdRepository } from "./capabilities/find-by-id.repository.interface";
-import type { PaginatableRepository } from "./capabilities/paginatable.repository.interface";
-import type { UpdatableByIdRepository } from "./capabilities/updatable-by-id.repository.interface";
+import type {
+	CreatableRepository,
+	FindByIdRepository,
+	PaginatableRepository,
+	QueryableRepository,
+	UpdatableByIdRepository,
+} from "./capabilities";
 
 export interface UserQuery {
 	role?: UserRole | UserRole[];
 	isBlocked?: boolean;
 	search?: string;
+	interestIds?: string[];
 }
 
 export interface IUserRepository
 	extends FindByIdRepository<User>,
 		CreatableRepository<User>,
 		UpdatableByIdRepository<User>,
+		QueryableRepository<User, UserQuery>,
 		PaginatableRepository<User, UserQuery> {
 	findByEmail(email: string): Promise<User | null>;
 	findByGoogleId(googleId: string): Promise<User | null>;

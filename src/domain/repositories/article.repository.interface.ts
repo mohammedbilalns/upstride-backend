@@ -8,12 +8,13 @@ import type {
 } from "./capabilities";
 
 export interface ArticleQuery {
-	authorId?: string;
+	authorId?: string | string[];
 	isActive?: boolean;
 	isArchived?: boolean;
 	tags?: string | string[];
 	title?: string;
 	slug?: string;
+	excludeAuthorId?: string;
 }
 
 export interface IArticleRepository
