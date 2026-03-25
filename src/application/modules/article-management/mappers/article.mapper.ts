@@ -12,16 +12,14 @@ export class ArticleMapper {
 			},
 			slug: entity.slug,
 			featuredImageUrl: entity.featuredImageUrl,
+			featuredImageId: entity.featuredImageUrl,
 			title: entity.title,
 			description: entity.description,
 			previewContent: entity.previewContent,
 			tags: entity.tags,
-			isActive: entity.isActive,
 			views: entity.views,
 			commentsCount: entity.commentsCount,
-			isArchived: entity.isArchived,
 			createdAt: entity.createdAt as Date,
-			updatedAt: entity.updatedAt as Date,
 		};
 	}
 

@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IArticleRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import type {
 	GetArticleInput,
 	GetArticleOutput,
@@ -17,6 +18,8 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.UseCases.MarkArticleView)
 		private readonly _markArticleViewUseCase: IMarkArticleViewUseCase,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: GetArticleInput): Promise<GetArticleOutput> {
@@ -32,8 +35,19 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			});
 		}
 
+		const dto = ArticleMapper.toDto(article);
+		if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
+			try {
+				dto.featuredImageUrl = await this._storageService.getSignedUrl(
+					dto.featuredImageId,
+				);
+			} catch (err) {
+				console.error("Failed to sign article featured image URL:", err);
+			}
+		}
+
 		return {
-			article: ArticleMapper.toDto(article),
+			article: dto,
 			isAuthor: input.viewerUserId === article.authorId,
 		};
 	}

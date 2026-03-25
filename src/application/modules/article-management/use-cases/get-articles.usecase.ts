@@ -4,6 +4,7 @@ import type {
 	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import type {
 	GetArticlesInput,
 	GetArticlesOutput,
@@ -18,6 +19,8 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 	constructor(
 		@inject(TYPES.Repositories.ArticleRepository)
 		private readonly _articleRepository: IArticleRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: GetArticlesInput): Promise<GetArticlesOutput> {
@@ -39,8 +42,24 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 			query,
 		});
 
+		const items = await Promise.all(
+			result.items.map(async (item) => {
+				const dto = ArticleMapper.toDto(item);
+				if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
+					try {
+						dto.featuredImageUrl = await this._storageService.getSignedUrl(
+							dto.featuredImageId,
+						);
+					} catch (err) {
+						console.error("Failed to sign article featured image URL:", err);
+					}
+				}
+				return dto;
+			}),
+		);
+
 		return {
-			items: ArticleMapper.toDtos(result.items),
+			items,
 			total: result.total,
 			page: result.page,
 			limit: result.limit,

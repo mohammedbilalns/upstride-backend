@@ -4,6 +4,7 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import { UserNotFoundError } from "../../authentication/errors";
 import type {
@@ -22,6 +23,8 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: UpdateArticleInput): Promise<UpdateArticleOutput> {
@@ -43,15 +46,16 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 			throw new ValidationError("You can only update your own articles");
 		}
 
+		const featuredImageUrl =
+			input.featuredImageUrl ?? existing.featuredImageUrl;
+
 		const update: Partial<typeof existing> = {
 			...(input.title !== undefined && { title: input.title }),
 			...(input.description !== undefined && {
 				description: input.description,
 				previewContent: generatePreviewContent(input.description),
 			}),
-			...(input.featuredImageUrl !== undefined && {
-				featuredImageUrl: input.featuredImageUrl,
-			}),
+			...(input.featuredImageUrl !== undefined && { featuredImageUrl }),
 			...(input.tags !== undefined && { tags: input.tags }),
 			...(input.isArchived !== undefined && { isArchived: input.isArchived }),
 		};
@@ -65,6 +69,17 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 			throw new ArticleNotFoundError();
 		}
 
-		return { article: ArticleMapper.toDto(updated) };
+		const dto = ArticleMapper.toDto(updated);
+		if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
+			try {
+				dto.featuredImageUrl = await this._storageService.getSignedUrl(
+					dto.featuredImageId,
+				);
+			} catch (err) {
+				console.error("Failed to sign article featured image URL:", err);
+			}
+		}
+
+		return { article: dto };
 	}
 }

@@ -50,12 +50,14 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 			return existing.length === 0;
 		});
 
+		const featuredImageUrl = input.featuredImageUrl || "";
+
 		const article = new Article(
 			"",
 			user.id,
 			{ name: user.name, avatarUrl },
 			slug,
-			input.featuredImageUrl,
+			featuredImageUrl,
 			input.title,
 			input.description,
 			previewContent,
@@ -69,6 +71,24 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 		);
 
 		const created = await this._articleRepository.create(article);
-		return { article: ArticleMapper.toDto(created) };
+		const resultDto = ArticleMapper.toDto(created);
+
+		if (
+			resultDto.featuredImageUrl &&
+			!resultDto.featuredImageUrl.startsWith("http")
+		) {
+			try {
+				resultDto.featuredImageUrl = await this._storageService.getSignedUrl(
+					resultDto.featuredImageId,
+				);
+			} catch (err) {
+				console.error(
+					"Failed to sign created article featured image URL:",
+					err,
+				);
+			}
+		}
+
+		return { article: resultDto };
 	}
 }

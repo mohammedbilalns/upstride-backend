@@ -9,14 +9,12 @@ export interface ArticleDto {
 	authorSnapshot: ArticleAuthorSnapshotDto;
 	slug: string;
 	featuredImageUrl: string;
+	featuredImageId: string;
 	title: string;
 	description: string;
 	previewContent: string;
 	tags: string[];
-	isActive: boolean;
 	views: number;
 	commentsCount: number;
-	isArchived: boolean;
 	createdAt: Date;
-	updatedAt: Date;
 }
