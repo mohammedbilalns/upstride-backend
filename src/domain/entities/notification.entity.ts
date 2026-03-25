@@ -13,6 +13,9 @@ export const NotificationEventValues = [
 	"MESSAGE_RECEIVED",
 	"SESSION_BOOKED",
 	"ARTICLE_LIKED",
+	"ARTICLE_COMMENTED",
+	"ARTICLE_REACTED",
+	"COMMENT_REACTED",
 	"PAYMENT_SUCCESS",
 ] as const;
 

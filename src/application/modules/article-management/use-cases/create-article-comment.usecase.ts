@@ -1,10 +1,12 @@
 import { inject, injectable } from "inversify";
 import { ArticleComment } from "../../../../domain/entities/article-comment.entity";
+import { ArticleCommentCreatedEvent } from "../../../../domain/events/article-comment-created.event";
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type {
 	CreateArticleCommentInput,
 	CreateArticleCommentOutput,
@@ -22,6 +24,8 @@ export class CreateArticleCommentUseCase
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleCommentRepository)
 		private readonly _commentRepository: IArticleCommentRepository,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(
@@ -72,6 +76,16 @@ export class CreateArticleCommentUseCase
 				repliesCount: parentRepliesCount + 1,
 			});
 		}
+
+		await this._eventBus.publish(
+			new ArticleCommentCreatedEvent(
+				article.id,
+				article.slug,
+				article.authorId,
+				created.id,
+				input.userId,
+			),
+		);
 
 		return { comment: ArticleCommentMapper.toDto(created) };
 	}

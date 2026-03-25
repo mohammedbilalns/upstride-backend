@@ -1,4 +1,7 @@
 import type { Container } from "inversify";
+import { ArticleCommentCreatedHandler } from "../../application/events/handlers/article/article-comment-created.handler";
+import { ArticleCommentReactionCreatedHandler } from "../../application/events/handlers/article/article-comment-reaction-created.handler";
+import { ArticleReactionCreatedHandler } from "../../application/events/handlers/article/article-reaction-created.handler";
 import { MessageSentHandler } from "../../application/events/handlers/chat/message-sent.handler";
 import type { CheckoutCompletedHandler } from "../../application/events/handlers/payment/checkout-completed.handler";
 import type { CheckoutExpiredHandler } from "../../application/events/handlers/payment/checkout-expired.handler";
@@ -35,6 +38,22 @@ export const bootstrapEventHandlers = (container: Container): void => {
 			TYPES.UseCases.CreateNotification,
 		),
 	);
+	const articleCommentCreatedHandler = new ArticleCommentCreatedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
+	const articleReactionCreatedHandler = new ArticleReactionCreatedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
+	const articleCommentReactionCreatedHandler =
+		new ArticleCommentReactionCreatedHandler(
+			container.get<ICreateNotificationUseCase>(
+				TYPES.UseCases.CreateNotification,
+			),
+		);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -54,6 +73,20 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	bullMQEventBus.registerHandler(
 		"chat.message.sent",
 		messageSentHandler.handle.bind(messageSentHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"article.comment.created",
+		articleCommentCreatedHandler.handle.bind(articleCommentCreatedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"article.reaction.created",
+		articleReactionCreatedHandler.handle.bind(articleReactionCreatedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"article.comment.reaction.created",
+		articleCommentReactionCreatedHandler.handle.bind(
+			articleCommentReactionCreatedHandler,
+		),
 	);
 	bullMQEventBus.registerHandler(
 		"CheckoutCompletedEvent",

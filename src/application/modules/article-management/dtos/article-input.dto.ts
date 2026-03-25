@@ -41,6 +41,7 @@ export interface GetArticleInput {
 
 export interface GetArticleOutput {
 	article: ArticleDto;
+	isAuthor?: boolean;
 }
 
 export interface GetArticlesInput {

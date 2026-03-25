@@ -1,10 +1,12 @@
 import { inject, injectable } from "inversify";
 import { ArticleReaction } from "../../../../domain/entities/article-reaction.entity";
+import { ArticleReactionCreatedEvent } from "../../../../domain/events/article-reaction-created.event";
 import type {
 	IArticleReactionRepository,
 	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type {
 	ReactToArticleInput,
 	ReactToArticleOutput,
@@ -20,6 +22,8 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleReactionRepository)
 		private readonly _reactionRepository: IArticleReactionRepository,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: ReactToArticleInput): Promise<ReactToArticleOutput> {
@@ -43,6 +47,15 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			});
 
 			if (updated) {
+				await this._eventBus.publish(
+					new ArticleReactionCreatedEvent(
+						article.id,
+						article.slug,
+						article.authorId,
+						input.reactionType,
+						input.userId,
+					),
+				);
 				return { reaction: ArticleReactionMapper.toDto(updated) };
 			}
 		}
@@ -56,6 +69,15 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		);
 
 		const created = await this._reactionRepository.create(reaction);
+		await this._eventBus.publish(
+			new ArticleReactionCreatedEvent(
+				article.id,
+				article.slug,
+				article.authorId,
+				input.reactionType,
+				input.userId,
+			),
+		);
 		return { reaction: ArticleReactionMapper.toDto(created) };
 	}
 }

@@ -1,10 +1,13 @@
 import { inject, injectable } from "inversify";
 import { ArticleReaction } from "../../../../domain/entities/article-reaction.entity";
+import { ArticleCommentReactionCreatedEvent } from "../../../../domain/events/article-comment-reaction-created.event";
 import type {
 	IArticleCommentRepository,
 	IArticleReactionRepository,
+	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type {
 	ReactToArticleCommentInput,
 	ReactToArticleCommentOutput,
@@ -20,8 +23,12 @@ export class ReactToArticleCommentUseCase
 	constructor(
 		@inject(TYPES.Repositories.ArticleCommentRepository)
 		private readonly _commentRepository: IArticleCommentRepository,
+		@inject(TYPES.Repositories.ArticleRepository)
+		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleReactionRepository)
 		private readonly _reactionRepository: IArticleReactionRepository,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(
@@ -29,6 +36,11 @@ export class ReactToArticleCommentUseCase
 	): Promise<ReactToArticleCommentOutput> {
 		const comment = await this._commentRepository.findById(input.commentId);
 		if (!comment || !comment.isActive) {
+			throw new ArticleCommentNotFoundError();
+		}
+
+		const article = await this._articleRepository.findById(comment.articleId);
+		if (!article || !article.isActive) {
 			throw new ArticleCommentNotFoundError();
 		}
 
@@ -63,6 +75,16 @@ export class ReactToArticleCommentUseCase
 			}
 
 			if (updated) {
+				await this._eventBus.publish(
+					new ArticleCommentReactionCreatedEvent(
+						article.id,
+						article.slug,
+						article.authorId,
+						comment.id,
+						input.reactionType,
+						input.userId,
+					),
+				);
 				return { reaction: ArticleReactionMapper.toDto(updated) };
 			}
 		}
@@ -81,6 +103,16 @@ export class ReactToArticleCommentUseCase
 				likesCount: comment.likesCount + 1,
 			});
 		}
+		await this._eventBus.publish(
+			new ArticleCommentReactionCreatedEvent(
+				article.id,
+				article.slug,
+				article.authorId,
+				comment.id,
+				input.reactionType,
+				input.userId,
+			),
+		);
 		return { reaction: ArticleReactionMapper.toDto(created) };
 	}
 }

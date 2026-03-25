@@ -32,6 +32,9 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			});
 		}
 
-		return { article: ArticleMapper.toDto(article) };
+		return {
+			article: ArticleMapper.toDto(article),
+			isAuthor: input.viewerUserId === article.authorId,
+		};
 	}
 }
