@@ -16,6 +16,7 @@ import {
 	registerProfileBindings,
 	registerQueueBindings,
 	registerRecurringRuleBindings,
+	registerReportBindings,
 	registerRepositoryBindings,
 	registerSessionBookingBindings,
 	registerSessionSlotBindings,
@@ -39,6 +40,7 @@ registerMentorDiscoveryBindings(container);
 registerMentorListsBindings(container);
 registerNotificationBindings(container);
 registerRecurringRuleBindings(container);
+registerReportBindings(container);
 registerSessionBookingBindings(container);
 registerSessionSlotBindings(container);
 registerPaymentsBindings(container);

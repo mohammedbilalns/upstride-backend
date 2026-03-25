@@ -1,7 +1,12 @@
 export const ReportTargetTypeValues = ["USER", "ARTICLE"] as const;
 export type ReportTargetType = (typeof ReportTargetTypeValues)[number];
 
-export const ReportStatusValues = ["PENDING", "RESOLVED", "CLOSED"] as const;
+export const ReportStatusValues = [
+	"PENDING",
+	"RESOLVED",
+	"REJECTED",
+	"CLOSED",
+] as const;
 export type ReportStatus = (typeof ReportStatusValues)[number];
 
 export class Report {
@@ -14,7 +19,7 @@ export class Report {
 		public readonly description: string,
 		public readonly status: ReportStatus,
 		public readonly actionTaken: string,
-		public readonly createdAt: Date,
-		public readonly updatedAt: Date,
+		public readonly createdAt: Date | null,
+		public readonly updatedAt: Date | null,
 	) {}
 }
