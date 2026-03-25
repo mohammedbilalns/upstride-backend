@@ -1,3 +1,7 @@
+export * from "./article.repository.interface";
+export * from "./article-comment.repository.interface";
+export * from "./article-reaction.repository.interface";
+export * from "./article-view.repository.interface";
 export * from "./capabilities/creatable.repository.interface";
 export * from "./capabilities/find-by-id.repository.interface";
 export * from "./capabilities/find-by-owner.repository.interface";

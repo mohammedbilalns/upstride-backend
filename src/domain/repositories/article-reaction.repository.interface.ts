@@ -1,0 +1,20 @@
+import type {
+	ArticleReaction,
+	ArticleReactionType,
+} from "../entities/article-reaction.entity";
+import type {
+	CreatableRepository,
+	FindByIdRepository,
+	QueryableRepository,
+} from "./capabilities";
+
+export interface ArticleReactionQuery {
+	resourceId?: string;
+	userId?: string;
+	reactionType?: ArticleReactionType;
+}
+
+export interface IArticleReactionRepository
+	extends CreatableRepository<ArticleReaction>,
+		FindByIdRepository<ArticleReaction>,
+		QueryableRepository<ArticleReaction, ArticleReactionQuery> {}
