@@ -57,7 +57,7 @@ export interface GetReportsOutput {
 	totalPages: number;
 }
 
-export type ReportDecisionStatus = "RESOLVED" | "REJECTED";
+export type ReportDecisionStatus = "RESOLVED" | "REJECTED" | "CLOSED";
 
 export interface UpdateReportStatusInput {
 	adminId: string;

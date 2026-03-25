@@ -72,7 +72,7 @@ export const GetReportsQuerySchema = z.object({
 export type GetReportsQuery = z.infer<typeof GetReportsQuerySchema>;
 
 export const UpdateReportStatusBodySchema = z.object({
-	status: z.enum(["RESOLVED", "REJECTED"]),
+	status: z.enum(["RESOLVED", "REJECTED", "CLOSED"]),
 	actionTaken: z
 		.string()
 		.trim()
