@@ -37,9 +37,10 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 
 		let authorIds: string[] | undefined;
 
-		if (input.category) {
+		const categoryName = input.category || input.interest;
+		if (categoryName) {
 			const interests = await this._interestRepository.query({
-				query: { name: input.category },
+				query: { name: categoryName },
 			});
 			if (interests.length > 0) {
 				const mentors = await this._userRepository.query({
@@ -62,6 +63,7 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 			isArchived: false,
 			...(input.search && { title: input.search }),
 			...(authorIds && { authorId: authorIds }),
+			...(input.viewerUserId && { excludeAuthorId: input.viewerUserId }),
 			...(tags.length === 1 && { tags: tags[0] }),
 			...(tags.length > 1 && { tags }),
 		};

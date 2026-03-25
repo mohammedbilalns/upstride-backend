@@ -50,6 +50,7 @@ export interface GetArticlesInput {
 	skill?: string;
 	interest?: string;
 	category?: string;
+	viewerUserId?: string;
 }
 
 export interface GetArticlesOutput {

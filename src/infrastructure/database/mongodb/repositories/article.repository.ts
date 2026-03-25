@@ -136,10 +136,22 @@ export class MongoArticleRepository
 		});
 
 		if (query.excludeAuthorId) {
-			filter.authorId = {
-				...filter.authorId,
-				$ne: new Types.ObjectId(query.excludeAuthorId),
-			};
+			const excludeId = new Types.ObjectId(query.excludeAuthorId);
+			const currentAuthorFilter = filter.authorId;
+
+			if (currentAuthorFilter) {
+				if (
+					typeof currentAuthorFilter === "object" &&
+					currentAuthorFilter !== null &&
+					!(currentAuthorFilter instanceof Types.ObjectId)
+				) {
+					filter.authorId = { ...currentAuthorFilter, $ne: excludeId };
+				} else {
+					filter.authorId = { $eq: currentAuthorFilter, $ne: excludeId };
+				}
+			} else {
+				filter.authorId = { $ne: excludeId };
+			}
 		}
 
 		if (query.tags) {

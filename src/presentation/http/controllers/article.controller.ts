@@ -69,7 +69,10 @@ export class ArticleController {
 	getArticles = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const query = req.validated?.query as GetArticlesInput;
-			const data = await this._getArticlesUseCase.execute(query);
+			const data = await this._getArticlesUseCase.execute({
+				...query,
+				viewerUserId: req.user?.id,
+			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);
