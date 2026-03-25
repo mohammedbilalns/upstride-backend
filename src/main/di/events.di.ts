@@ -6,6 +6,7 @@ import { MessageSentHandler } from "../../application/events/handlers/chat/messa
 import type { CheckoutCompletedHandler } from "../../application/events/handlers/payment/checkout-completed.handler";
 import type { CheckoutExpiredHandler } from "../../application/events/handlers/payment/checkout-expired.handler";
 import type { CheckoutFailedHandler } from "../../application/events/handlers/payment/checkout-failed.handler";
+import { ProfileUpdatedHandler } from "../../application/events/handlers/profile/profile-updated.handler";
 import { SignupRewardHandler } from "../../application/events/handlers/signup-reward.handler";
 import type { ICreateNotificationUseCase } from "../../application/modules/notifications/use-cases/create-notification.usecase.interface";
 import type { PlatformSettingsService } from "../../application/services/platform-settings.service";
@@ -54,6 +55,9 @@ export const bootstrapEventHandlers = (container: Container): void => {
 				TYPES.UseCases.CreateNotification,
 			),
 		);
+	const profileUpdatedHandler = new ProfileUpdatedHandler(
+		container.get(TYPES.Repositories.ArticleRepository),
+	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -87,6 +91,10 @@ export const bootstrapEventHandlers = (container: Container): void => {
 		articleCommentReactionCreatedHandler.handle.bind(
 			articleCommentReactionCreatedHandler,
 		),
+	);
+	bullMQEventBus.registerHandler(
+		"profile.updated",
+		profileUpdatedHandler.handle.bind(profileUpdatedHandler),
 	);
 	bullMQEventBus.registerHandler(
 		"CheckoutCompletedEvent",

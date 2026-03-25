@@ -23,4 +23,8 @@ export interface IArticleRepository
 		QueryableRepository<Article, ArticleQuery>,
 		PaginatableRepository<Article, ArticleQuery> {
 	findBySlug(slug: string): Promise<Article | null>;
+	updateAuthorSnapshotByAuthorId(
+		authorId: string,
+		snapshot: { name?: string; avatarUrl?: string },
+	): Promise<void>;
 }

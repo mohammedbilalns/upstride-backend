@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import type { QueryFilter } from "mongoose";
+import { type QueryFilter, Types } from "mongoose";
 import type { Article } from "../../../../domain/entities/article.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type {
@@ -40,6 +40,27 @@ export class MongoArticleRepository
 	async findBySlug(slug: string): Promise<Article | null> {
 		const doc = await this.model.findOne({ slug }).lean();
 		return doc ? this.toDomain(doc as ArticleDocument) : null;
+	}
+
+	async updateAuthorSnapshotByAuthorId(
+		authorId: string,
+		snapshot: { name?: string; avatarUrl?: string },
+	): Promise<void> {
+		const update: Record<string, unknown> = {};
+		if (snapshot.name !== undefined) {
+			update["authorSnapshot.name"] = snapshot.name;
+		}
+		if (snapshot.avatarUrl !== undefined) {
+			update["authorSnapshot.avatarUrl"] = snapshot.avatarUrl;
+		}
+		if (Object.keys(update).length === 0) {
+			return;
+		}
+
+		await this.model.updateMany(
+			{ authorId: new Types.ObjectId(authorId) },
+			{ $set: update },
+		);
 	}
 
 	async updateById(
