@@ -93,6 +93,16 @@ export const ROUTES = {
 		ADD_MENTOR: "/:listId/mentors",
 		REMOVE_MENTOR: "/:listId/mentors/:mentorId",
 	},
+	ARTICLES: {
+		BASE: "/articles",
+		ROOT: "/",
+		BY_SLUG: "/:slug",
+		BY_ID: "/:articleId",
+		COMMENTS: "/:articleId/comments",
+		COMMENT_BY_ID: "/comments/:commentId",
+		ARTICLE_REACTIONS: "/:articleId/reactions",
+		COMMENT_REACTIONS: "/comments/:commentId/reactions",
+	},
 	RECURRING_RULES: {
 		BASE: "/recurring-rules",
 		ROOT: "/",

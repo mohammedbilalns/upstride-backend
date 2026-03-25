@@ -1,4 +1,5 @@
 export * from "./admin-management.route";
+export * from "./article.route";
 export * from "./auth.route";
 export * from "./catalog.route";
 export * from "./chat.route";

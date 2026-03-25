@@ -1,4 +1,5 @@
 export * from "./admin-management.controller";
+export * from "./article.controller";
 export * from "./auth.controller";
 export * from "./catalog.controller";
 export * from "./chat.controller";

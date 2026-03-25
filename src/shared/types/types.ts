@@ -182,6 +182,7 @@ export const TYPES = {
 		UserManagement: Symbol.for("UserManagementController"),
 		AdminManagement: Symbol.for("AdminManagementController"),
 		Authentication: Symbol.for("AuthenticationController"),
+		Article: Symbol.for("ArticleController"),
 		SkillManagement: Symbol.for("SkillManagementController"),
 		CatalogManagement: Symbol.for("CatalogManagementController"),
 		System: Symbol.for("SystemController"),

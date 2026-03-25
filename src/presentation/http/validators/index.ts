@@ -1,3 +1,4 @@
+export * from "./article.validator";
 export * from "./auth";
 export * from "./change-password.validator";
 export * from "./chat.validator";

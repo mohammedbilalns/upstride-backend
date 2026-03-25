@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ROUTES } from "../constants";
 import { adminManagementRouter } from "./admin-management.route";
+import { articleRouter } from "./article.route";
 import { authRouter } from "./auth.route";
 import { catalogRouter } from "./catalog.route";
 import { chatRouter } from "./chat.route";
@@ -24,6 +25,7 @@ router.use("/test", async (_req, res) => {
 });
 
 router.use(ROUTES.AUTH.BASE, authRouter);
+router.use(ROUTES.ARTICLES.BASE, articleRouter);
 router.use(ROUTES.PROFILE.BASE, profileRouter);
 router.use(ROUTES.CATALOG.BASE, catalogRouter);
 router.use(ROUTES.CHATS.BASE, chatRouter);
