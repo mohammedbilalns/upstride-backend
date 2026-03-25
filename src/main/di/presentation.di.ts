@@ -15,6 +15,7 @@ import {
 	PlatformSettingsController,
 	ProfileController,
 	RecurringRuleController,
+	ReportController,
 	SessionBookingController,
 	SessionSlotController,
 	UserManagementController,
@@ -66,6 +67,8 @@ export const registerPresentationBindings = (container: Container): void => {
 	container
 		.bind<ProfileController>(TYPES.Controllers.Profile)
 		.to(ProfileController);
+	container.bind(ReportController).to(ReportController);
+	container.bind(TYPES.Controllers.Report).to(ReportController);
 	container.bind(WalletController).to(WalletController);
 	container.bind(TYPES.Controllers.Wallet).to(WalletController);
 };

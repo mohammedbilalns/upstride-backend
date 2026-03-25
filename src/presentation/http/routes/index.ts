@@ -11,6 +11,7 @@ export * from "./payment.route";
 export * from "./platform-settings.route";
 export * from "./profile.route";
 export * from "./recurring-rule.route";
+export * from "./report.route";
 export * from "./session-booking.route";
 export * from "./session-slot.route";
 export * from "./user-management.route";

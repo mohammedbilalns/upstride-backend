@@ -154,4 +154,12 @@ export const ROUTES = {
 		PLATFORM_COIN_TRANSACTIONS: "/platform/coin-transactions",
 		PLATFORM_PAYMENT_TRANSACTIONS: "/platform/payment-transactions",
 	},
+	REPORTS: {
+		BASE: "/reports",
+		ROOT: "/",
+		REPORT_ARTICLE: (articleId: string) => `/articles/${articleId}`,
+		REPORT_USER: (userId: string) => `/users/${userId}`,
+		STATUS: (reportId: string) => `/${reportId}/status`,
+		BLOCK_ARTICLE: (articleId: string) => `/articles/${articleId}/block`,
+	},
 };

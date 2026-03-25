@@ -205,6 +205,7 @@ export const TYPES = {
 		SessionBooking: Symbol.for("SessionBookingController"),
 		Payment: Symbol.for("PaymentController"),
 		Wallet: Symbol.for("WalletController"),
+		Report: Symbol.for("ReportController"),
 	},
 	PaymentHandlers: {
 		CheckoutCompleted: Symbol.for("CheckoutCompletedHandler"),
