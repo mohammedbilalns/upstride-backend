@@ -13,9 +13,10 @@ export class GetArticleTopTagsUseCase implements IGetArticleTopTagsUseCase {
 		private readonly _articleRepository: IArticleRepository,
 	) {}
 
-	async execute(): Promise<GetArticleTopTagsOutput> {
+	async execute(viewerUserId?: string): Promise<GetArticleTopTagsOutput> {
 		const tags = await this._articleRepository.getTopTags(
 			DEFAULT_TOP_TAGS_LIMIT,
+			viewerUserId,
 		);
 		return { tags };
 	}

@@ -16,4 +16,5 @@ export interface IMentorListReadRepository {
 	paginateDiscoverable(
 		params: PaginateParams<MentorDiscoveryQuery>,
 	): Promise<PaginatedResult<MentorDiscoveryDetails>>;
+	findUserIdsByExpertise(interestId: string): Promise<string[]>;
 }

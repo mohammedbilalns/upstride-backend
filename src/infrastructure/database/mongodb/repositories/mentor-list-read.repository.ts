@@ -240,4 +240,13 @@ export class MongoMentorListReadRepository
 
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
+	async findUserIdsByExpertise(interestId: string): Promise<string[]> {
+		const result = await this.model
+			.find({ areasOfExpertise: new Types.ObjectId(interestId) })
+			.select("userId")
+			.lean()
+			.exec();
+
+		return result.map((doc) => doc.userId.toString());
+	}
 }

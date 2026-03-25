@@ -63,10 +63,18 @@ export class MongoArticleRepository
 		);
 	}
 
-	async getTopTags(limit: number): Promise<{ tag: string; count: number }[]> {
-		const result = await this.model
+	async getTopTags(
+		limit: number = 10,
+		excludeAuthorId?: string,
+	): Promise<{ tag: string; count: number }[]> {
+		const match: any = { isActive: true, isArchived: false };
+		if (excludeAuthorId) {
+			match.authorId = { $ne: new Types.ObjectId(excludeAuthorId) };
+		}
+
+		const results = await this.model
 			.aggregate<{ tag: string; count: number }>([
-				{ $match: { isActive: true, isArchived: false } },
+				{ $match: match },
 				{ $unwind: "$tags" },
 				{ $group: { _id: "$tags", count: { $sum: 1 } } },
 				{ $sort: { count: -1 } },
@@ -75,7 +83,7 @@ export class MongoArticleRepository
 			])
 			.exec();
 
-		return result;
+		return results;
 	}
 
 	async updateById(
@@ -167,6 +175,10 @@ export class MongoArticleRepository
 			filter.slug = query.slug;
 		}
 
+		console.log(
+			"[MongoArticleRepository] Built filter:",
+			JSON.stringify(filter, null, 2),
+		);
 		return filter;
 	}
 }

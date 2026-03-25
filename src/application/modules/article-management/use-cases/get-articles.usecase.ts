@@ -1,10 +1,9 @@
 import { inject, injectable } from "inversify";
-import type { User } from "../../../../domain/entities/user.entity";
 import type {
 	ArticleQuery,
 	IArticleRepository,
 	IInterestRepository,
-	IUserRepository,
+	IMentorListReadRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
@@ -22,32 +21,39 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 	constructor(
 		@inject(TYPES.Repositories.ArticleRepository)
 		private readonly _articleRepository: IArticleRepository,
-		@inject(TYPES.Repositories.UserRepository)
-		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.InterestRepository)
 		private readonly _interestRepository: IInterestRepository,
+		@inject(TYPES.Repositories.MentorListReadRepository)
+		private readonly _mentorRepository: IMentorListReadRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: GetArticlesInput): Promise<GetArticlesOutput> {
 		const tags: string[] = [];
-		if (input.skill) tags.push(input.skill);
-		if (input.interest) tags.push(input.interest);
 
 		let authorIds: string[] | undefined;
 
 		const categoryName = input.category || input.interest;
+		console.log("[GetArticlesUseCase] categoryName:", categoryName);
 		if (categoryName) {
 			const interests = await this._interestRepository.query({
 				query: { name: categoryName },
 			});
+			console.log(
+				"[GetArticlesUseCase] found interests count:",
+				interests.length,
+			);
 			if (interests.length > 0) {
-				const mentors = await this._userRepository.query({
-					query: { interestIds: [interests[0].id] },
-				});
-				authorIds = mentors.map((m: User) => m.id);
+				authorIds = await this._mentorRepository.findUserIdsByExpertise(
+					interests[0].id,
+				);
+				console.log(
+					"[GetArticlesUseCase] found authorIds count:",
+					authorIds.length,
+				);
 			} else {
+				console.log("[GetArticlesUseCase] Category not found, returning empty");
 				return {
 					items: [],
 					total: 0,

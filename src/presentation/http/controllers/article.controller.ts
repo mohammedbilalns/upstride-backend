@@ -60,8 +60,8 @@ export class ArticleController {
 	) {}
 
 	getTopTags = asyncHandler(
-		async (_req: AuthenticatedRequest, res: Response) => {
-			const data = await this._getTopTagsUseCase.execute();
+		async (req: AuthenticatedRequest, res: Response) => {
+			const data = await this._getTopTagsUseCase.execute(req.user?.id);
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);
