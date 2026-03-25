@@ -29,7 +29,7 @@ const articleSchema = new Schema<ArticleDocument>(
 			avatarUrl: { type: String, required: true },
 		},
 		slug: { type: String, required: true, unique: true },
-		featuredImageUrl: { type: String, required: true },
+		featuredImageUrl: { type: String, default: "" },
 		title: { type: String, required: true },
 		description: { type: String, required: true },
 		previewContent: { type: String, required: true },

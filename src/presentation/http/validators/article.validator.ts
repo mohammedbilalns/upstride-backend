@@ -25,7 +25,10 @@ export const CreateArticleBodySchema = z.object({
 		.trim()
 		.min(200, "Content must be at least 200 characters")
 		.max(50000),
-	featuredImageUrl: z.string().trim().url("Invalid featured image URL"),
+	featuredImageUrl: z
+		.url("Invalid featured image URL")
+		.optional()
+		.or(z.literal("")),
 	tags: z.array(z.string().trim().min(1)).max(6).optional(),
 });
 
