@@ -35,6 +35,10 @@ export class ReportUserUseCase implements IReportUserUseCase {
 			throw new UserNotFoundError("Reported user not found");
 		}
 
+		if (input.reporterId === input.targetUserId) {
+			throw new ValidationError("You cannot report yourself");
+		}
+
 		const report = new Report(
 			"",
 			input.reporterId,

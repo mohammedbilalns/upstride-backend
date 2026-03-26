@@ -103,6 +103,8 @@ export const ROUTES = {
 		COMMENT_BY_ID: "/comments/:commentId",
 		ARTICLE_REACTIONS: "/:articleId/reactions",
 		COMMENT_REACTIONS: "/comments/:commentId/reactions",
+		MENTOR: "/mentor",
+		EDIT: (articleId: string) => `/${articleId}/edit`,
 	},
 	RECURRING_RULES: {
 		BASE: "/recurring-rules",

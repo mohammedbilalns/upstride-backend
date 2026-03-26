@@ -1,5 +1,8 @@
 import { inject, injectable } from "inversify";
-import type { IArticleRepository } from "../../../../domain/repositories";
+import type {
+	IArticleReactionRepository,
+	IArticleRepository,
+} from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import type {
@@ -16,6 +19,8 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 	constructor(
 		@inject(TYPES.Repositories.ArticleRepository)
 		private readonly _articleRepository: IArticleRepository,
+		@inject(TYPES.Repositories.ArticleReactionRepository)
+		private readonly _reactionRepository: IArticleReactionRepository,
 		@inject(TYPES.UseCases.MarkArticleView)
 		private readonly _markArticleViewUseCase: IMarkArticleViewUseCase,
 		@inject(TYPES.Services.Storage)
@@ -28,11 +33,21 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			throw new ArticleNotFoundError();
 		}
 
+		let userReaction: any;
+
 		if (input.viewerUserId) {
-			await this._markArticleViewUseCase.execute({
-				articleId: article.id,
-				viewerUserId: input.viewerUserId,
-			});
+			const [reactions] = await Promise.all([
+				this._reactionRepository.query({
+					query: { resourceId: article.id, userId: input.viewerUserId },
+				}),
+				this._markArticleViewUseCase.execute({
+					articleId: article.id,
+					viewerUserId: input.viewerUserId,
+				}),
+			]);
+			if (reactions.length > 0) {
+				userReaction = reactions[0].reactionType;
+			}
 		}
 
 		const dto = ArticleMapper.toDto(article);
@@ -49,6 +64,7 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 		return {
 			article: dto,
 			isAuthor: input.viewerUserId === article.authorId,
+			userReaction,
 		};
 	}
 }

@@ -14,6 +14,8 @@ export class Article {
 		public readonly isActive: boolean,
 		public readonly views: number,
 		public readonly commentsCount: number,
+		public readonly likesCount: number,
+		public readonly dislikesCount: number,
 		public readonly isArchived: boolean,
 		public readonly createdAt: Date | null,
 		public readonly updatedAt: Date | null,

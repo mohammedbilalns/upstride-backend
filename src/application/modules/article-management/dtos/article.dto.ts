@@ -16,5 +16,7 @@ export interface ArticleDto {
 	tags: string[];
 	views: number;
 	commentsCount: number;
+	likesCount: number;
+	dislikesCount: number;
 	createdAt: Date;
 }

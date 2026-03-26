@@ -19,4 +19,6 @@ export interface IArticleReactionRepository
 	extends CreatableRepository<ArticleReaction>,
 		FindByIdRepository<ArticleReaction>,
 		QueryableRepository<ArticleReaction, ArticleReactionQuery>,
-		UpdatableByIdRepository<ArticleReaction> {}
+		UpdatableByIdRepository<ArticleReaction> {
+	deleteById(id: string): Promise<void>;
+}

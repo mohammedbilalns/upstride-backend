@@ -15,6 +15,7 @@ export interface ArticleQuery {
 	title?: string;
 	slug?: string;
 	excludeAuthorId?: string;
+	ids?: string[];
 }
 
 export interface IArticleRepository

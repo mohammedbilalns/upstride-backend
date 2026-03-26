@@ -36,15 +36,35 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			query: { resourceId: input.articleId, userId: input.userId },
 		});
 
+		let likeDelta = 0;
+		let dislikeDelta = 0;
+
 		if (existing.length > 0) {
 			const current = existing[0];
 			if (current.reactionType === input.reactionType) {
-				return { reaction: ArticleReactionMapper.toDto(current) };
+				// Toggle off
+				await this._reactionRepository.deleteById(current.id);
+				if (input.reactionType === "LIKE") likeDelta = -1;
+				else dislikeDelta = -1;
+
+				await this._updateArticleCounts(article, likeDelta, dislikeDelta);
+				return { reaction: null as any };
 			}
 
+			// Switch reaction
 			const updated = await this._reactionRepository.updateById(current.id, {
 				reactionType: input.reactionType,
 			});
+
+			if (input.reactionType === "LIKE") {
+				likeDelta = 1;
+				dislikeDelta = -1;
+			} else {
+				likeDelta = -1;
+				dislikeDelta = 1;
+			}
+
+			await this._updateArticleCounts(article, likeDelta, dislikeDelta);
 
 			if (updated) {
 				await this._eventBus.publish(
@@ -60,6 +80,7 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			}
 		}
 
+		// New reaction
 		const reaction = new ArticleReaction(
 			"",
 			input.articleId,
@@ -69,6 +90,11 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		);
 
 		const created = await this._reactionRepository.create(reaction);
+		if (input.reactionType === "LIKE") likeDelta = 1;
+		else dislikeDelta = 1;
+
+		await this._updateArticleCounts(article, likeDelta, dislikeDelta);
+
 		await this._eventBus.publish(
 			new ArticleReactionCreatedEvent(
 				article.id,
@@ -79,5 +105,21 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			),
 		);
 		return { reaction: ArticleReactionMapper.toDto(created) };
+	}
+
+	private async _updateArticleCounts(
+		article: any,
+		likeDelta: number,
+		dislikeDelta: number,
+	): Promise<void> {
+		if (likeDelta === 0 && dislikeDelta === 0) return;
+
+		const currentLikes = article.likesCount ?? 0;
+		const currentDislikes = article.dislikesCount ?? 0;
+
+		await this._articleRepository.updateById(article.id, {
+			likesCount: Math.max(0, currentLikes + likeDelta),
+			dislikesCount: Math.max(0, currentDislikes + dislikeDelta),
+		} as any);
 	}
 }

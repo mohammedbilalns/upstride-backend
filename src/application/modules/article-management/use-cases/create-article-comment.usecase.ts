@@ -4,9 +4,11 @@ import { ArticleCommentCreatedEvent } from "../../../../domain/events/article-co
 import type {
 	IArticleCommentRepository,
 	IArticleRepository,
+	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { EventBus } from "../../../events/event-bus.interface";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import type {
 	CreateArticleCommentInput,
 	CreateArticleCommentOutput,
@@ -24,6 +26,10 @@ export class CreateArticleCommentUseCase
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleCommentRepository)
 		private readonly _commentRepository: IArticleCommentRepository,
+		@inject(TYPES.Repositories.UserRepository)
+		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 		@inject(TYPES.Services.EventBus)
 		private readonly _eventBus: EventBus,
 	) {}
@@ -49,7 +55,7 @@ export class CreateArticleCommentUseCase
 				);
 			}
 			parentId = parent.id;
-			parentRepliesCount = parent.repliesCount;
+			parentRepliesCount = parent.repliesCount ?? 0;
 		}
 
 		const comment = new ArticleComment(
@@ -67,8 +73,9 @@ export class CreateArticleCommentUseCase
 
 		const created = await this._commentRepository.create(comment);
 
+		const currentComments = article.commentsCount ?? 0;
 		await this._articleRepository.updateById(input.articleId, {
-			commentsCount: article.commentsCount + 1,
+			commentsCount: currentComments + 1,
 		});
 
 		if (parentId) {
@@ -87,6 +94,16 @@ export class CreateArticleCommentUseCase
 			),
 		);
 
-		return { comment: ArticleCommentMapper.toDto(created) };
+		const user = await this._userRepository.findById(input.userId);
+		const avatarUrl = user?.profilePictureId
+			? await this._storageService.getSignedUrl(user.profilePictureId)
+			: undefined;
+
+		const authorSnapshot = {
+			name: user?.name || "Unknown User",
+			avatarUrl,
+		};
+
+		return { comment: ArticleCommentMapper.toDto(created, authorSnapshot) };
 	}
 }

@@ -54,6 +54,11 @@ export const ArticlesQuerySchema = z.object({
 	interest: z.string().trim().min(1).optional(),
 });
 
+export const MentorArticlesQuerySchema = z.object({
+	page: pageSchema,
+	search: z.string().trim().min(1).optional(),
+});
+
 export const CreateCommentBodySchema = z.object({
 	content: z.string().trim().min(1, "Content is required").max(2000),
 	parentId: objectIdSchema.optional().nullable(),

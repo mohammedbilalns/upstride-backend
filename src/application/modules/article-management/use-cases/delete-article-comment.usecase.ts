@@ -1,5 +1,8 @@
 import { inject, injectable } from "inversify";
-import type { IArticleCommentRepository } from "../../../../domain/repositories";
+import type {
+	IArticleCommentRepository,
+	IArticleRepository,
+} from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import type { DeleteArticleCommentInput } from "../dtos/article-input.dto";
@@ -11,6 +14,8 @@ export class DeleteArticleCommentUseCase
 	implements IDeleteArticleCommentUseCase
 {
 	constructor(
+		@inject(TYPES.Repositories.ArticleRepository)
+		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleCommentRepository)
 		private readonly _commentRepository: IArticleCommentRepository,
 	) {}
@@ -28,5 +33,14 @@ export class DeleteArticleCommentUseCase
 		await this._commentRepository.updateById(input.commentId, {
 			isActive: false,
 		});
+
+		// Sync comments count
+		const article = await this._articleRepository.findById(comment.articleId);
+		if (article) {
+			const currentComments = article.commentsCount ?? 0;
+			await this._articleRepository.updateById(article.id, {
+				commentsCount: Math.max(0, currentComments - 1),
+			});
+		}
 	}
 }

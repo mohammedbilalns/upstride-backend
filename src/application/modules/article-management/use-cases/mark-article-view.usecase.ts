@@ -44,7 +44,7 @@ export class MarkArticleViewUseCase implements IMarkArticleViewUseCase {
 		await this._articleViewRepository.create(view);
 
 		await this._articleRepository.updateById(input.articleId, {
-			views: article.views + 1,
+			views: (article.views ?? 0) + 1,
 		});
 	}
 }

@@ -12,6 +12,7 @@ export interface ReportDto {
 	reason: string;
 	description: string;
 	status: ReportStatus;
+	targetSlug?: string;
 	actionTaken: string;
 	createdAt: Date;
 	updatedAt: Date;

@@ -12,6 +12,7 @@ import {
 	CommentsQuerySchema,
 	CreateArticleBodySchema,
 	CreateCommentBodySchema,
+	MentorArticlesQuerySchema,
 	ReactBodySchema,
 	UpdateArticleBodySchema,
 	UpdateCommentBodySchema,
@@ -24,20 +25,27 @@ router.use(verifySession);
 
 router.get(
 	ROUTES.ARTICLES.TOP_TAGS,
-	authorizeRoles(["USER", "MENTOR"]),
+	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
 	controller.getTopTags.bind(controller),
 );
 
 router.get(
 	ROUTES.ARTICLES.ROOT,
-	authorizeRoles(["USER", "MENTOR"]),
+	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
 	validate({ query: ArticlesQuerySchema }),
 	controller.getArticles.bind(controller),
 );
 
 router.get(
+	ROUTES.ARTICLES.MENTOR,
+	authorizeRoles(["MENTOR"]),
+	validate({ query: MentorArticlesQuerySchema }),
+	controller.getMentorArticles.bind(controller),
+);
+
+router.get(
 	ROUTES.ARTICLES.BY_SLUG,
-	authorizeRoles(["USER", "MENTOR"]),
+	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
 	validate({ params: ArticleSlugParamSchema }),
 	controller.getArticle.bind(controller),
 );
@@ -65,7 +73,7 @@ router.delete(
 
 router.get(
 	ROUTES.ARTICLES.COMMENTS,
-	authorizeRoles(["USER", "MENTOR"]),
+	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
 	validate({ params: ArticleIdParamSchema, query: CommentsQuerySchema }),
 	controller.getComments.bind(controller),
 );

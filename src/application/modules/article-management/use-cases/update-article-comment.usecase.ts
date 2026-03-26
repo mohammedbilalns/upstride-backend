@@ -1,6 +1,10 @@
 import { inject, injectable } from "inversify";
-import type { IArticleCommentRepository } from "../../../../domain/repositories";
+import type {
+	IArticleCommentRepository,
+	IUserRepository,
+} from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	UpdateArticleCommentInput,
@@ -17,6 +21,10 @@ export class UpdateArticleCommentUseCase
 	constructor(
 		@inject(TYPES.Repositories.ArticleCommentRepository)
 		private readonly _commentRepository: IArticleCommentRepository,
+		@inject(TYPES.Repositories.UserRepository)
+		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(
@@ -39,6 +47,16 @@ export class UpdateArticleCommentUseCase
 			throw new ArticleCommentNotFoundError();
 		}
 
-		return { comment: ArticleCommentMapper.toDto(updated) };
+		const user = await this._userRepository.findById(input.userId);
+		const avatarUrl = user?.profilePictureId
+			? await this._storageService.getSignedUrl(user.profilePictureId)
+			: undefined;
+
+		const authorSnapshot = {
+			name: user?.name || "Unknown User",
+			avatarUrl,
+		};
+
+		return { comment: ArticleCommentMapper.toDto(updated, authorSnapshot) };
 	}
 }

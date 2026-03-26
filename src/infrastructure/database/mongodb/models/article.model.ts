@@ -16,6 +16,8 @@ export interface ArticleDocument {
 	isActive: boolean;
 	views: number;
 	commentsCount: number;
+	likesCount: number;
+	dislikesCount: number;
 	isArchived: boolean;
 	createdAt: Date;
 	updatedAt: Date;
@@ -37,6 +39,8 @@ const articleSchema = new Schema<ArticleDocument>(
 		isActive: { type: Boolean, required: true, default: true },
 		views: { type: Number, required: true, default: 0 },
 		commentsCount: { type: Number, required: true, default: 0 },
+		likesCount: { type: Number, required: true, default: 0 },
+		dislikesCount: { type: Number, required: true, default: 0 },
 		isArchived: { type: Boolean, required: true, default: false },
 	},
 	{ timestamps: true },

@@ -42,6 +42,10 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 			throw new ArticleNotFoundError();
 		}
 
+		if (article.authorId === input.reporterId) {
+			throw new ValidationError("You cannot report your own article");
+		}
+
 		const report = new Report(
 			"",
 			input.reporterId,

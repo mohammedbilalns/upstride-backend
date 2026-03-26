@@ -20,6 +20,8 @@ export class ArticleMapper {
 			doc.isActive,
 			doc.views,
 			doc.commentsCount,
+			doc.likesCount,
+			doc.dislikesCount,
 			doc.isArchived,
 			doc.createdAt,
 			doc.updatedAt,
@@ -42,6 +44,8 @@ export class ArticleMapper {
 			isActive: entity.isActive,
 			views: entity.views,
 			commentsCount: entity.commentsCount,
+			likesCount: entity.likesCount,
+			dislikesCount: entity.dislikesCount,
 			isArchived: entity.isArchived,
 			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};

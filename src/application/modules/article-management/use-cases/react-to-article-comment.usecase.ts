@@ -68,8 +68,9 @@ export class ReactToArticleCommentUseCase
 							: 0;
 
 				if (likesDelta !== 0) {
+					const currentLikes = comment.likesCount ?? 0;
 					await this._commentRepository.updateById(comment.id, {
-						likesCount: Math.max(0, comment.likesCount + likesDelta),
+						likesCount: Math.max(0, currentLikes + likesDelta),
 					});
 				}
 			}
@@ -99,8 +100,9 @@ export class ReactToArticleCommentUseCase
 
 		const created = await this._reactionRepository.create(reaction);
 		if (input.reactionType === "LIKE") {
+			const currentLikes = comment.likesCount ?? 0;
 			await this._commentRepository.updateById(comment.id, {
-				likesCount: comment.likesCount + 1,
+				likesCount: currentLikes + 1,
 			});
 		}
 		await this._eventBus.publish(

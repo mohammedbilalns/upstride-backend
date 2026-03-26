@@ -77,6 +77,18 @@ export class ArticleController {
 		},
 	);
 
+	getMentorArticles = asyncHandler(
+		async (req: AuthenticatedRequest, res: Response) => {
+			const query = req.validated?.query as GetArticlesInput;
+			const data = await this._getArticlesUseCase.execute({
+				...query,
+				authorId: req.user.id,
+				isMentorView: true,
+			});
+			return sendSuccess(res, HttpStatus.OK, { data });
+		},
+	);
+
 	getArticle = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const { slug } = req.validated?.params as { slug: string };
@@ -85,6 +97,25 @@ export class ArticleController {
 				viewerUserId: req.user.id,
 			} as GetArticleInput);
 			return sendSuccess(res, HttpStatus.OK, { data });
+		},
+	);
+
+	getArticleForEdit = asyncHandler(
+		async (req: AuthenticatedRequest, res: Response) => {
+			const { articleId } = req.validated?.params as { articleId: string };
+			const result = await this._getArticlesUseCase.execute({
+				page: 1,
+				isMentorView: true,
+				authorId: req.user.id,
+				ids: [articleId],
+			} as any);
+			const article = result.items[0];
+			if (!article) {
+				return sendSuccess(res, HttpStatus.NOT_FOUND, {
+					message: "Article not found or not owned by user",
+				});
+			}
+			return sendSuccess(res, HttpStatus.OK, { data: { article } });
 		},
 	);
 

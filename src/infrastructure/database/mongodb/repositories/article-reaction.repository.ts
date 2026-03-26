@@ -80,4 +80,7 @@ export class MongoArticleReactionRepository
 
 		return filter;
 	}
+	async deleteById(id: string): Promise<void> {
+		await this.model.findByIdAndDelete(id).exec();
+	}
 }

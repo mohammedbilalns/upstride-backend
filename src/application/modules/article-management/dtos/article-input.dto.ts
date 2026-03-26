@@ -42,6 +42,7 @@ export interface GetArticleInput {
 export interface GetArticleOutput {
 	article: ArticleDto;
 	isAuthor?: boolean;
+	userReaction?: ArticleReactionType;
 }
 
 export interface GetArticlesInput {
@@ -51,6 +52,9 @@ export interface GetArticlesInput {
 	interest?: string;
 	category?: string;
 	viewerUserId?: string;
+	authorId?: string;
+	isMentorView?: boolean;
+	ids?: string[];
 }
 
 export interface GetArticlesOutput {
