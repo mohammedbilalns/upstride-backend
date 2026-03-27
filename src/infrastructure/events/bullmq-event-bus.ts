@@ -3,7 +3,7 @@ import type { Queue } from "bullmq";
 import type { EventBus } from "../../application/events/event-bus.interface";
 import type { AppEvent } from "../../domain/events/domain-event";
 
-export const APP_EVENTS_QUEUE = "domainEvents";
+export const APP_EVENTS_QUEUE = "appEvents";
 
 /**
  * BullMQ implementation of the EventBus.

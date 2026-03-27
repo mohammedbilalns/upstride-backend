@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { corsOptions } from "../presentation/http/config";
 import { errorHandler, requestLogger } from "../presentation/http/middlewares";
 import { router as v1Router } from "../presentation/http/routes";
+import { healthRouter } from "../presentation/http/routes/health.route";
 import { stripeWebhookRouter } from "../presentation/http/routes/stripe-webhook.route";
 import type { WebSocketServer } from "../presentation/websocket/socket-server";
 import { HttpStatus } from "../shared/constants";
@@ -25,6 +26,7 @@ import { container } from "./container";
 class App {
 	private _app: Application;
 	private _server: ReturnType<typeof createServer>;
+	private _wsServer: WebSocketServer | null = null;
 
 	constructor() {
 		this._app = express();
@@ -37,10 +39,10 @@ class App {
 	}
 
 	private _setupWebSocket() {
-		const wsServer = container.get<WebSocketServer>(
+		this._wsServer = container.get<WebSocketServer>(
 			TYPES.Services.WebSocketServer,
 		);
-		wsServer.initialize(this._server);
+		this._wsServer.initialize(this._server);
 	}
 
 	/**
@@ -66,6 +68,7 @@ class App {
 		this._app.use("/api/webhooks/stripe", stripeWebhookRouter);
 	}
 	private _setupRoutes() {
+		this._app.use(healthRouter);
 		this._app.use("/api/v1", v1Router);
 
 		this._app.use((req, res) => {
@@ -91,6 +94,7 @@ class App {
 	}
 
 	public async close() {
+		if (this._wsServer) await this._wsServer.close();
 		return new Promise((resolve, reject) => {
 			this._server.close((err) => {
 				if (err) reject(err);

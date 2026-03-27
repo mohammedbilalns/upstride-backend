@@ -33,7 +33,7 @@ export const appEventBus = new AppEventBus([bullMQEventBus, inMemoryEventBus]);
 export const registerQueueBindings = (container: Container): void => {
 	container.bind<Queue>(TYPES.Queues.MailQueue).toConstantValue(mailQueue);
 	container
-		.bind<Queue>(TYPES.Queues.DomainEvents)
+		.bind<Queue>(TYPES.Queues.AppEvents)
 		.toConstantValue(domainEventsQueue);
 	container.bind(TYPES.Services.EventBus).toConstantValue(appEventBus);
 };

@@ -19,7 +19,6 @@ export const requestLogger = (
 		const { statusCode } = res;
 
 		const message = `${method} ${originalUrl} ${statusCode} - ${duration}ms`;
-
 		if (statusCode >= 500) {
 			logger.error(`[ERROR] ${message}`);
 		} else if (statusCode >= 400) {

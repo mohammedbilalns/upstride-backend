@@ -22,7 +22,7 @@ export const TYPES = {
 	},
 	Queues: {
 		MailQueue: Symbol.for("MailQueue"),
-		DomainEvents: Symbol.for("DomainEventsQueue"),
+		AppEvents: Symbol.for("AppEventsQueue"),
 	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),

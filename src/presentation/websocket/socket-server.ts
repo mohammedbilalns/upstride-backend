@@ -1,78 +1,72 @@
 import type { Server as HTTPServer } from "node:http";
-import { inject, injectable } from "inversify";
+import { createShardedAdapter } from "@socket.io/redis-adapter";
+import { injectable } from "inversify";
+import type { Redis } from "ioredis";
 import { Server as SocketIOServer } from "socket.io";
-import type { ITokenService } from "../../application/services";
-import type { ITokenRevocationRepository } from "../../domain/repositories/token-revocation.repository.interface";
+import { redisClient } from "../../infrastructure/database/redis/redis.connection";
 import logger from "../../shared/logging/logger";
-import { TYPES } from "../../shared/types/types";
+import { socketIOCorsOptions } from "./config/cors.config";
+import {
+	type AuthedSocket,
+	socketAuthMiddleware,
+} from "./middlewares/socket-auth.middleware";
 
 @injectable()
 export class WebSocketServer {
 	private _io: SocketIOServer | null = null;
-
-	constructor(
-		@inject(TYPES.Services.TokenService)
-		private readonly _tokenService: ITokenService,
-		@inject(TYPES.Repositories.TokenRevocationRepository)
-		private readonly _tokenRevocationRepository: ITokenRevocationRepository,
-	) {}
+	private _redisSubClient: Redis | null = null;
 
 	/**
 	 * Initializes the Socket.io server and attaches it to the HTTP server.
+	 * Sets up Redis adapter for multi-instance communication and applies auth middleware.
 	 */
 	public initialize(httpServer: HTTPServer): void {
 		this._io = new SocketIOServer(httpServer, {
-			cors: {
-				origin: "*",
-				methods: ["GET", "POST"],
-			},
+			cors: socketIOCorsOptions,
 		});
 
-		// JWT Authentication Middleware
-		this._io.use(async (socket, next) => {
-			try {
-				const token =
-					socket.handshake.auth.token ||
-					socket.handshake.headers.authorization?.split(" ")[1];
+		// a duplicate Redis client for subscribing to messages
+		this._redisSubClient = redisClient.duplicate();
 
-				if (!token) {
-					return next(new Error("Authentication error: Token missing"));
-				}
+		this._redisSubClient.on("error", (err) =>
+			logger.error(`WebSocket Redis subscriber error: ${err}`),
+		);
 
-				const payload = this._tokenService.verifyAccessToken(token);
-				const isRevoked =
-					await this._tokenRevocationRepository.isSessionRevoked(payload.sid);
+		// Enable WebSocket messages to be distributed across multiple server instances
+		this._io.adapter(createShardedAdapter(redisClient, this._redisSubClient));
 
-				if (isRevoked) {
-					return next(new Error("Authentication error: Session revoked"));
-				}
-
-				// Attach user info to socket
-				(socket as any).user = {
-					id: payload.sub,
-					role: payload.role,
-					sid: payload.sid,
-				};
-
-				next();
-			} catch (error) {
-				logger.error(`WebSocket Auth Error: ${error}`);
-				next(new Error("Authentication error: Invalid token"));
-			}
-		});
+		this._io.use(socketAuthMiddleware);
 
 		this._setupHandlers();
+
+		// Logs successful initialization for monitoring and debugging purposes
 		logger.info("WebSocket Server initialized");
 	}
 
+	/**
+	 * Sets up connection handlers for authenticated sockets.
+	 * Logs incoming/outgoing events and manages user rooms.
+	 */
 	private _setupHandlers(): void {
 		if (!this._io) return;
 
 		this._io.on("connection", (socket) => {
-			const user = (socket as any).user;
-			const userId = user.id;
+			const authedSocket = socket as AuthedSocket;
+			const userId = authedSocket.data.user.id;
 
 			logger.info(`User connected: ${userId} (${socket.id})`);
+
+			socket.onAny((event, ...args: unknown[]) => {
+				logger.info(
+					`[WS IN] ${event} user=${userId} socket=${socket.id} args=${summarizeArgs(args)}`,
+				);
+			});
+
+			socket.onAnyOutgoing((event, ...args: unknown[]) => {
+				logger.info(
+					`[WS OUT] ${event} user=${userId} socket=${socket.id} args=${summarizeArgs(args)}`,
+				);
+			});
 
 			socket.join(userId);
 
@@ -85,7 +79,7 @@ export class WebSocketServer {
 	/**
 	 * Broadcasts an event to a specific user's room.
 	 */
-	public emitToUser(userId: string, event: string, payload: any): void {
+	public emitToUser(userId: string, event: string, payload: unknown): void {
 		if (!this._io) {
 			logger.warn("Attempted to emit to user but IO is not initialized");
 			return;
@@ -96,4 +90,43 @@ export class WebSocketServer {
 	public get io(): SocketIOServer | null {
 		return this._io;
 	}
+
+	/**
+	 * Gracefully closes the Redis subscriber connection.
+	 */
+	public async close(): Promise<void> {
+		if (this._redisSubClient) {
+			try {
+				await this._redisSubClient.quit();
+			} catch (error) {
+				logger.error(`WebSocket Redis subscriber close error: ${error}`);
+				this._redisSubClient.disconnect();
+			} finally {
+				this._redisSubClient = null;
+			}
+		}
+	}
 }
+
+const summarizeArgs = (args: unknown[]): string => {
+	const summarize = (value: unknown): string => {
+		if (value === null) return "null";
+		if (typeof value === "string") return `string(len=${value.length})`;
+		if (
+			typeof value === "number" ||
+			typeof value === "boolean" ||
+			typeof value === "bigint"
+		) {
+			return String(value);
+		}
+		if (Array.isArray(value)) return `array(len=${value.length})`;
+		if (typeof value === "object") {
+			return `object(keys=${Object.keys(value).length})`;
+		}
+		if (typeof value === "function") return "function";
+		if (typeof value === "undefined") return "undefined";
+		return typeof value;
+	};
+
+	return `[${args.map(summarize).join(", ")}]`;
+};

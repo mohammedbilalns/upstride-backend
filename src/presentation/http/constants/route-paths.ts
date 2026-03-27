@@ -1,4 +1,5 @@
 export const ROUTES = {
+	HEALTH_CHECK: "/health",
 	AUTH: {
 		BASE: "/auth",
 		LOGIN: "/login",
