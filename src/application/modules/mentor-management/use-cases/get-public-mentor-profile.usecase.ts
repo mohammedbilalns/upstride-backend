@@ -49,7 +49,7 @@ export class GetPublicMentorProfileUseCase
 			);
 
 		const avatar = profile.user.profilePictureId
-			? await this._storageService.getSignedUrl(profile.user.profilePictureId)
+			? this._storageService.getPublicUrl(profile.user.profilePictureId)
 			: undefined;
 
 		return {

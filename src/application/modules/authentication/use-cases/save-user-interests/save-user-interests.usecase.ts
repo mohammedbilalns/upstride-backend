@@ -117,7 +117,7 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 
 		let profilePictureUrl: string | null = null;
 		if (finalUser.profilePictureId) {
-			profilePictureUrl = await this._storageService.getSignedUrl(
+			profilePictureUrl = this._storageService.getPublicUrl(
 				finalUser.profilePictureId,
 			);
 		}

@@ -49,7 +49,7 @@ export class UpdateArticleCommentUseCase
 
 		const user = await this._userRepository.findById(input.userId);
 		const avatarUrl = user?.profilePictureId
-			? await this._storageService.getSignedUrl(user.profilePictureId)
+			? this._storageService.getPublicUrl(user.profilePictureId)
 			: undefined;
 
 		const authorSnapshot = {

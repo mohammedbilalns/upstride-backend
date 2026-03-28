@@ -79,7 +79,7 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 				? (input.profilePictureId as string | null)
 				: user.profilePictureId;
 			const avatarUrl = profilePictureId
-				? await this._storageService.getSignedUrl(profilePictureId)
+				? this._storageService.getPublicUrl(profilePictureId)
 				: "";
 
 			await this._eventBus.publish(

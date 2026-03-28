@@ -13,6 +13,7 @@ export interface IStorageService {
 	upload(file: File, folder?: string): Promise<string>;
 	delete(objectKey: string): Promise<void>;
 	getSignedUrl(objectKey: string, expiresIn?: number): Promise<string>;
+	getPublicUrl(objectKey: string): string;
 	getSignedUploadUrl(
 		objectKey: string,
 		mimetype: string,

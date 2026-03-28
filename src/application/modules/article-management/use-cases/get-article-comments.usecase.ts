@@ -48,7 +48,7 @@ export class GetArticleCommentsUseCase implements IGetArticleCommentsUseCase {
 			result.items.map(async (comment) => {
 				const user = await this._userRepository.findById(comment.userId);
 				const avatarUrl = user?.profilePictureId
-					? await this._storageService.getSignedUrl(user.profilePictureId)
+					? this._storageService.getPublicUrl(user.profilePictureId)
 					: undefined;
 
 				const authorSnapshot = {

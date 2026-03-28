@@ -28,7 +28,7 @@ export class GetProfileUseCase implements IGetProfileUseCase {
 
 		let profilePictureUrl: string | null = null;
 		if (user.profilePictureId) {
-			profilePictureUrl = await this._storageService.getSignedUrl(
+			profilePictureUrl = this._storageService.getPublicUrl(
 				user.profilePictureId,
 			);
 		}

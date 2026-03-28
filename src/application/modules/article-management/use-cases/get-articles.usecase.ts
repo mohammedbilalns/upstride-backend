@@ -79,7 +79,7 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 				const dto = ArticleMapper.toDto(item);
 				if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
 					try {
-						dto.featuredImageUrl = await this._storageService.getSignedUrl(
+						dto.featuredImageUrl = this._storageService.getPublicUrl(
 							dto.featuredImageId,
 						);
 					} catch (err) {

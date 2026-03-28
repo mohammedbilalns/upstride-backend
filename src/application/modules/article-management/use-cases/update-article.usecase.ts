@@ -72,7 +72,7 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 		const dto = ArticleMapper.toDto(updated);
 		if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
 			try {
-				dto.featuredImageUrl = await this._storageService.getSignedUrl(
+				dto.featuredImageUrl = this._storageService.getPublicUrl(
 					dto.featuredImageId,
 				);
 			} catch (err) {

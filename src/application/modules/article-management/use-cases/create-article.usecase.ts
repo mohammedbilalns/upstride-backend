@@ -39,7 +39,7 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 		}
 
 		const avatarUrl = user.profilePictureId
-			? await this._storageService.getSignedUrl(user.profilePictureId)
+			? this._storageService.getPublicUrl(user.profilePictureId)
 			: undefined;
 
 		const previewContent = generatePreviewContent(input.description);
@@ -79,7 +79,7 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 			!resultDto.featuredImageUrl.startsWith("http")
 		) {
 			try {
-				resultDto.featuredImageUrl = await this._storageService.getSignedUrl(
+				resultDto.featuredImageUrl = this._storageService.getPublicUrl(
 					resultDto.featuredImageId,
 				);
 			} catch (err) {
