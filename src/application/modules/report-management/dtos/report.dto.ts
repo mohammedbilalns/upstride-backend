@@ -12,6 +12,14 @@ export interface ReportDto {
 	reason: string;
 	description: string;
 	status: ReportStatus;
+	reporter?: { id: string; name: string; email: string };
+	target?: {
+		id: string;
+		name?: string;
+		email?: string;
+		title?: string;
+		slug?: string;
+	};
 	targetSlug?: string;
 	actionTaken: string;
 	createdAt: Date;

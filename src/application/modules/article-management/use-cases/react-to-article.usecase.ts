@@ -36,90 +36,40 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			query: { resourceId: input.articleId, userId: input.userId },
 		});
 
-		let likeDelta = 0;
-		let dislikeDelta = 0;
-
 		if (existing.length > 0) {
+			// Already liked – toggle off
 			const current = existing[0];
-			if (current.reactionType === input.reactionType) {
-				// Toggle off
-				await this._reactionRepository.deleteById(current.id);
-				if (input.reactionType === "LIKE") likeDelta = -1;
-				else dislikeDelta = -1;
-
-				await this._updateArticleCounts(article, likeDelta, dislikeDelta);
-				return { reaction: null as any };
-			}
-
-			// Switch reaction
-			const updated = await this._reactionRepository.updateById(current.id, {
-				reactionType: input.reactionType,
-			});
-
-			if (input.reactionType === "LIKE") {
-				likeDelta = 1;
-				dislikeDelta = -1;
-			} else {
-				likeDelta = -1;
-				dislikeDelta = 1;
-			}
-
-			await this._updateArticleCounts(article, likeDelta, dislikeDelta);
-
-			if (updated) {
-				await this._eventBus.publish(
-					new ArticleReactionCreatedEvent(
-						article.id,
-						article.slug,
-						article.authorId,
-						input.reactionType,
-						input.userId,
-					),
-				);
-				return { reaction: ArticleReactionMapper.toDto(updated) };
-			}
+			await this._reactionRepository.deleteById(current.id);
+			await this._articleRepository.updateById(article.id, {
+				likesCount: Math.max(0, (article.likesCount ?? 0) - 1),
+			} as any);
+			return { reaction: null as any };
 		}
 
-		// New reaction
+		// New like
 		const reaction = new ArticleReaction(
 			"",
 			input.articleId,
 			input.userId,
-			input.reactionType,
+			"LIKE",
 			null,
 		);
 
 		const created = await this._reactionRepository.create(reaction);
-		if (input.reactionType === "LIKE") likeDelta = 1;
-		else dislikeDelta = 1;
-
-		await this._updateArticleCounts(article, likeDelta, dislikeDelta);
+		await this._articleRepository.updateById(article.id, {
+			likesCount: (article.likesCount ?? 0) + 1,
+		});
 
 		await this._eventBus.publish(
 			new ArticleReactionCreatedEvent(
 				article.id,
 				article.slug,
 				article.authorId,
-				input.reactionType,
+				"LIKE",
 				input.userId,
 			),
 		);
+
 		return { reaction: ArticleReactionMapper.toDto(created) };
-	}
-
-	private async _updateArticleCounts(
-		article: any,
-		likeDelta: number,
-		dislikeDelta: number,
-	): Promise<void> {
-		if (likeDelta === 0 && dislikeDelta === 0) return;
-
-		const currentLikes = article.likesCount ?? 0;
-		const currentDislikes = article.dislikesCount ?? 0;
-
-		await this._articleRepository.updateById(article.id, {
-			likesCount: Math.max(0, currentLikes + likeDelta),
-			dislikesCount: Math.max(0, currentDislikes + dislikeDelta),
-		} as any);
 	}
 }

@@ -74,5 +74,5 @@ export const CommentsQuerySchema = z.object({
 });
 
 export const ReactBodySchema = z.object({
-	reactionType: z.enum(ArticleReactionTypeValues),
+	reactionType: z.enum(ArticleReactionTypeValues).optional().default("LIKE"),
 });

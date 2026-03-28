@@ -17,7 +17,6 @@ export interface ArticleDocument {
 	views: number;
 	commentsCount: number;
 	likesCount: number;
-	dislikesCount: number;
 	isArchived: boolean;
 	createdAt: Date;
 	updatedAt: Date;
@@ -40,7 +39,6 @@ const articleSchema = new Schema<ArticleDocument>(
 		views: { type: Number, required: true, default: 0 },
 		commentsCount: { type: Number, required: true, default: 0 },
 		likesCount: { type: Number, required: true, default: 0 },
-		dislikesCount: { type: Number, required: true, default: 0 },
 		isArchived: { type: Boolean, required: true, default: false },
 	},
 	{ timestamps: true },

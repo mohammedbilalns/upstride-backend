@@ -21,5 +21,13 @@ export class Report {
 		public readonly actionTaken: string,
 		public readonly createdAt: Date | null,
 		public readonly updatedAt: Date | null,
+		public readonly reporter?: { id: string; name: string; email: string },
+		public readonly target?: {
+			id: string;
+			name?: string;
+			email?: string;
+			title?: string;
+			slug?: string;
+		},
 	) {}
 }

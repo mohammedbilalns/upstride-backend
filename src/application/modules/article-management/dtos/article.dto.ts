@@ -17,6 +17,5 @@ export interface ArticleDto {
 	views: number;
 	commentsCount: number;
 	likesCount: number;
-	dislikesCount: number;
 	createdAt: Date;
 }

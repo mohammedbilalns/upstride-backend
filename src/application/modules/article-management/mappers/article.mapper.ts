@@ -20,7 +20,6 @@ export class ArticleMapper {
 			views: entity.views,
 			commentsCount: entity.commentsCount ?? 0,
 			likesCount: entity.likesCount ?? 0,
-			dislikesCount: entity.dislikesCount ?? 0,
 			createdAt: entity.createdAt as Date,
 		};
 	}

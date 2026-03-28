@@ -49,69 +49,40 @@ export class ReactToArticleCommentUseCase
 		});
 
 		if (existing.length > 0) {
+			// Already liked - toggle off
 			const current = existing[0];
-			if (current.reactionType === input.reactionType) {
-				return { reaction: ArticleReactionMapper.toDto(current) };
-			}
+			await this._reactionRepository.deleteById(current.id);
 
-			const updated = await this._reactionRepository.updateById(current.id, {
-				reactionType: input.reactionType,
+			const currentLikes = comment.likesCount ?? 0;
+			await this._commentRepository.updateById(comment.id, {
+				likesCount: Math.max(0, currentLikes - 1),
 			});
 
-			if (current.reactionType !== input.reactionType) {
-				const likesDelta =
-					current.reactionType === "LIKE" && input.reactionType === "DISLIKE"
-						? -1
-						: current.reactionType === "DISLIKE" &&
-								input.reactionType === "LIKE"
-							? 1
-							: 0;
-
-				if (likesDelta !== 0) {
-					const currentLikes = comment.likesCount ?? 0;
-					await this._commentRepository.updateById(comment.id, {
-						likesCount: Math.max(0, currentLikes + likesDelta),
-					});
-				}
-			}
-
-			if (updated) {
-				await this._eventBus.publish(
-					new ArticleCommentReactionCreatedEvent(
-						article.id,
-						article.slug,
-						article.authorId,
-						comment.id,
-						input.reactionType,
-						input.userId,
-					),
-				);
-				return { reaction: ArticleReactionMapper.toDto(updated) };
-			}
+			return { reaction: null as any };
 		}
 
+		// New like
 		const reaction = new ArticleReaction(
 			"",
 			input.commentId,
 			input.userId,
-			input.reactionType,
+			"LIKE",
 			null,
 		);
 
 		const created = await this._reactionRepository.create(reaction);
-		if (input.reactionType === "LIKE") {
-			const currentLikes = comment.likesCount ?? 0;
-			await this._commentRepository.updateById(comment.id, {
-				likesCount: currentLikes + 1,
-			});
-		}
+		const currentLikes = comment.likesCount ?? 0;
+		await this._commentRepository.updateById(comment.id, {
+			likesCount: currentLikes + 1,
+		});
+
 		await this._eventBus.publish(
 			new ArticleCommentReactionCreatedEvent(
 				article.id,
 				article.slug,
 				article.authorId,
 				comment.id,
-				input.reactionType,
+				"LIKE",
 				input.userId,
 			),
 		);

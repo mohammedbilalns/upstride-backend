@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import type {
-	IArticleRepository,
 	IReportRepository,
 	IUserRepository,
 	ReportQuery,
@@ -21,8 +20,6 @@ export class GetReportsUseCase implements IGetReportsUseCase {
 		private readonly _reportRepository: IReportRepository,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
-		@inject(TYPES.Repositories.ArticleRepository)
-		private readonly _articleRepository: IArticleRepository, // Use any for now or import IArticleRepository
 	) {}
 
 	async execute(input: GetReportsInput): Promise<GetReportsOutput> {
@@ -49,22 +46,8 @@ export class GetReportsUseCase implements IGetReportsUseCase {
 			sort: { createdAt: -1 },
 		});
 
-		const articleIds = result.items
-			.filter((r) => r.targetType === "ARTICLE")
-			.map((r) => r.targetId);
-
-		const articleSlugs: Record<string, string> = {};
-		if (articleIds.length > 0) {
-			const articles = await this._articleRepository.query({
-				query: { ids: articleIds },
-			});
-			articles.forEach((a: any) => {
-				articleSlugs[a.id] = a.slug;
-			});
-		}
-
 		return {
-			reports: ReportMapper.toDtos(result.items, articleSlugs),
+			reports: ReportMapper.toDtos(result.items),
 			total: result.total,
 			page: result.page,
 			limit: result.limit,

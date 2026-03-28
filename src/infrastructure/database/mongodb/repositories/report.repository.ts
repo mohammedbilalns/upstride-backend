@@ -49,11 +49,13 @@ export class MongoReportRepository
 
 	async query({ query, sort }: QueryParams<ReportQuery>): Promise<Report[]> {
 		const filter = this._buildFilter(query);
-		const docs = await this.model
+		let docs = await this.model
 			.find(filter)
 			.sort(sort ?? { createdAt: -1 })
 			.lean();
-		return docs.map((doc) => this.toDomain(doc as ReportDocument));
+
+		docs = await this._populateDocs(docs);
+		return docs.map((doc) => this.toDomain(doc as any));
 	}
 
 	async paginate({
@@ -65,7 +67,7 @@ export class MongoReportRepository
 		const filter = this._buildFilter(query);
 		const skip = (page - 1) * limit;
 
-		const [docs, total] = await Promise.all([
+		let [docs, total] = await Promise.all([
 			this.model
 				.find(filter)
 				.sort(sort ?? { createdAt: -1 })
@@ -75,7 +77,9 @@ export class MongoReportRepository
 			this.model.countDocuments(filter),
 		]);
 
-		const items = docs.map((doc) => this.toDomain(doc as ReportDocument));
+		docs = await this._populateDocs(docs);
+
+		const items = docs.map((doc) => this.toDomain(doc as any));
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
 
@@ -102,5 +106,37 @@ export class MongoReportRepository
 		}
 
 		return filter;
+	}
+
+	private async _populateDocs(docs: any[]): Promise<any[]> {
+		if (!docs.length) return docs;
+
+		// Populate reporters unconditionally
+		await this.model.populate(docs, {
+			path: "reporterId",
+			model: "User",
+			select: "name email",
+		});
+
+		// Categorize targets by type for specific populates
+		const userDocs = docs.filter((d) => d.targetType === "USER");
+		if (userDocs.length > 0) {
+			await this.model.populate(userDocs, {
+				path: "targetId",
+				model: "User",
+				select: "name email",
+			});
+		}
+
+		const articleDocs = docs.filter((d) => d.targetType === "ARTICLE");
+		if (articleDocs.length > 0) {
+			await this.model.populate(articleDocs, {
+				path: "targetId",
+				model: "Article",
+				select: "title slug",
+			});
+		}
+
+		return docs;
 	}
 }

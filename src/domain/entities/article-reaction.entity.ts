@@ -1,4 +1,4 @@
-export const ArticleReactionTypeValues = ["LIKE", "DISLIKE"] as const;
+export const ArticleReactionTypeValues = ["LIKE"] as const;
 export type ArticleReactionType = (typeof ArticleReactionTypeValues)[number];
 
 export class ArticleReaction {
