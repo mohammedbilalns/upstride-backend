@@ -3,12 +3,15 @@ import type { ISessionBookingRepository } from "../../../../domain/repositories/
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
-import { SlotNotFoundError } from "../../session-slot-management/errors";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
 } from "../dtos/session-booking.dto";
-import { BookingAlreadyCancelledError, BookingNotFoundError } from "../errors";
+import { BookingAlreadyCancelledError } from "../errors";
+import {
+	getBookingForUserOrThrow,
+	releaseSlotOrThrow,
+} from "../utils/booking.util";
 import type { ICancelBookingUseCase } from "./cancel-booking.usecase.interface";
 
 @injectable()
@@ -27,10 +30,11 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 		bookingId,
 		reason,
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
-		const booking = await this._bookingRepository.findById(bookingId);
-		if (!booking || booking.userId !== userId) {
-			throw new BookingNotFoundError();
-		}
+		const booking = await getBookingForUserOrThrow(
+			this._bookingRepository,
+			bookingId,
+			userId,
+		);
 
 		if (booking.status === "cancelled" || booking.status === "refunded") {
 			throw new BookingAlreadyCancelledError();
@@ -50,13 +54,7 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 			updatedAt: new Date(),
 		});
 
-		const slotUpdated = await this._slotRepository.updateById(booking.slotId, {
-			status: "available",
-			bookingId: null,
-		});
-		if (!slotUpdated) {
-			throw new SlotNotFoundError();
-		}
+		await releaseSlotOrThrow(this._slotRepository, booking.slotId);
 
 		if (refundAmount > 0) {
 			await this._refundService.processRefund({

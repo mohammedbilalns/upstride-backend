@@ -3,14 +3,17 @@ import type { IMentorWriteRepository } from "../../../../domain/repositories/men
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
-import { SlotNotFoundError } from "../../session-slot-management/errors";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
 } from "../dtos/session-booking.dto";
-import { BookingCannotBeCancelledError, BookingNotFoundError } from "../errors";
+import { BookingCannotBeCancelledError } from "../errors";
+import {
+	getBookingForMentorOrThrow,
+	releaseSlotOrThrow,
+} from "../utils/booking.util";
 import type { ICancelBookingByMentorUseCase } from "./cancel-booking-by-mentor.usecase.interface";
 
 @injectable()
@@ -33,15 +36,17 @@ export class CancelBookingByMentorUseCase
 		bookingId,
 		reason,
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError("Mentor profile not found");
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+			"Mentor profile not found",
+		);
 
-		const booking = await this._bookingRepository.findById(bookingId);
-		if (!booking || booking.mentorId !== mentor.id) {
-			throw new BookingNotFoundError();
-		}
+		const booking = await getBookingForMentorOrThrow(
+			this._bookingRepository,
+			bookingId,
+			mentor.id,
+		);
 
 		if (
 			booking.status === "cancelled" ||
@@ -58,13 +63,7 @@ export class CancelBookingByMentorUseCase
 			updatedAt: new Date(),
 		});
 
-		const slotUpdated = await this._slotRepository.updateById(booking.slotId, {
-			status: "available",
-			bookingId: null,
-		});
-		if (!slotUpdated) {
-			throw new SlotNotFoundError();
-		}
+		await releaseSlotOrThrow(this._slotRepository, booking.slotId);
 
 		const refundAmount = booking.price;
 

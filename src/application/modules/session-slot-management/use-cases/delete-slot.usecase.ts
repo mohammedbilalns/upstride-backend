@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	DeleteSlotInput,
 	DeleteSlotResponse,
@@ -24,10 +24,10 @@ export class DeleteSlotUseCase implements IDeleteSlotUseCase {
 		userId,
 		slotId,
 	}: DeleteSlotInput): Promise<DeleteSlotResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError();
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+		);
 
 		const slot = await this._slotRepository.findById(slotId);
 		if (!slot || slot.mentorId !== mentor.id) {

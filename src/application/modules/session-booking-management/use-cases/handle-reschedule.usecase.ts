@@ -4,14 +4,18 @@ import type { ISessionBookingRepository } from "../../../../domain/repositories/
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import { ValidationError } from "../../../shared/errors/validation-error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import { SlotNotFoundError } from "../../session-slot-management/errors";
 import type {
 	HandleRescheduleInput,
 	HandleRescheduleResponse,
 } from "../dtos/session-booking.dto";
-import { BookingNotFoundError, RescheduleWindowPassedError } from "../errors";
+import {
+	assertRescheduleWindow,
+	getBookingForMentorOrThrow,
+	updateSlotStatus,
+} from "../utils/booking.util";
 import type { IHandleRescheduleUseCase } from "./handle-reschedule.usecase.interface";
 
 @injectable()
@@ -32,22 +36,20 @@ export class HandleRescheduleUseCase implements IHandleRescheduleUseCase {
 		bookingId,
 		newSlotId,
 	}: HandleRescheduleInput): Promise<HandleRescheduleResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError("Mentor profile not found");
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+			"Mentor profile not found",
+		);
 
-		const booking = await this._bookingRepository.findById(bookingId);
-		if (!booking || booking.mentorId !== mentor.id) {
-			throw new BookingNotFoundError();
-		}
+		const booking = await getBookingForMentorOrThrow(
+			this._bookingRepository,
+			bookingId,
+			mentor.id,
+		);
 
 		const hours = this._platformSettingsService.sessions.rescheduleWindowHours;
-		const latest = new Date(booking.startTime);
-		latest.setHours(latest.getHours() - hours);
-		if (new Date() > latest) {
-			throw new RescheduleWindowPassedError();
-		}
+		assertRescheduleWindow(booking.startTime, hours);
 
 		const newSlot = await this._slotRepository.findById(newSlotId);
 		if (!newSlot || newSlot.mentorId !== mentor.id) {
@@ -57,14 +59,18 @@ export class HandleRescheduleUseCase implements IHandleRescheduleUseCase {
 			throw new ValidationError("Slot is not available");
 		}
 
-		await this._slotRepository.updateById(booking.slotId, {
-			status: "available",
-			bookingId: null,
-		});
-		await this._slotRepository.updateById(newSlot.id, {
-			status: "booked",
+		await updateSlotStatus(
+			this._slotRepository,
+			booking.slotId,
+			"available",
+			null,
+		);
+		await updateSlotStatus(
+			this._slotRepository,
+			newSlot.id,
+			"booked",
 			bookingId,
-		});
+		);
 
 		await this._bookingRepository.updateById(bookingId, {
 			slotId: newSlot.id,

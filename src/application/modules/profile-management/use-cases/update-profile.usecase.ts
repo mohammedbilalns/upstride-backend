@@ -6,7 +6,7 @@ import { TYPES } from "../../../../shared/types/types";
 import type { EventBus } from "../../../events/event-bus.interface";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import { ValidationError } from "../../../shared/errors/validation-error";
-import { UserNotFoundError } from "../../authentication/errors";
+import { getUserByIdOrThrow } from "../../../shared/utilities/user.util";
 import type { UpdateProfileInput } from "../dtos/update-profile.dto";
 import type { IUpdateProfileUseCase } from "./update-profile.usecase.interface";
 
@@ -22,10 +22,7 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 	) {}
 
 	async execute(input: UpdateProfileInput): Promise<void> {
-		const user = await this._userRepository.findById(input.userId);
-		if (!user) {
-			throw new UserNotFoundError();
-		}
+		const user = await getUserByIdOrThrow(this._userRepository, input.userId);
 
 		const updateData: Record<string, unknown> = {};
 
