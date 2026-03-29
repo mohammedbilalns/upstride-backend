@@ -12,5 +12,7 @@ export class ArticleCommentReactionCreatedEvent implements AppEvent {
 		public readonly commentId: string,
 		public readonly reactionType: ArticleReactionType,
 		public readonly actorId: string,
+		public readonly actorName: string,
+		public readonly count: number,
 	) {}
 }

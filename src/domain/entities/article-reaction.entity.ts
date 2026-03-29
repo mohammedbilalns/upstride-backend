@@ -8,5 +8,6 @@ export class ArticleReaction {
 		public readonly userId: string,
 		public readonly reactionType: ArticleReactionType,
 		public readonly createdAt: Date | null,
+		public readonly actorName?: string,
 	) {}
 }

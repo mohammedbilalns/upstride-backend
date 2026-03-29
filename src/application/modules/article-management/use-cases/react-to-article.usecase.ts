@@ -67,6 +67,8 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 				article.authorId,
 				"LIKE",
 				input.userId,
+				created.actorName || "",
+				(article.likesCount ?? 0) + 1,
 			),
 		);
 

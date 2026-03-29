@@ -84,6 +84,8 @@ export class ReactToArticleCommentUseCase
 				comment.id,
 				"LIKE",
 				input.userId,
+				created.actorName || "",
+				currentLikes + 1,
 			),
 		);
 		return { reaction: ArticleReactionMapper.toDto(created) };

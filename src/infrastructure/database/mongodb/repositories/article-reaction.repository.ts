@@ -33,7 +33,9 @@ export class MongoArticleReactionRepository
 	}
 
 	async create(reaction: ArticleReaction): Promise<ArticleReaction> {
-		return this.createDocument(reaction);
+		const doc = await this.model.create(this.toDocument(reaction));
+		const populated = await doc.populate("userId", "name");
+		return this.toDomain(populated as any);
 	}
 
 	async findById(id: string): Promise<ArticleReaction | null> {

@@ -90,6 +90,9 @@ export class CreateArticleCommentUseCase
 			}
 		}
 
+		const user = await this._userRepository.findById(input.userId);
+		const actorName = user?.name || "";
+
 		await this._eventBus.publish(
 			new ArticleCommentCreatedEvent(
 				article.id,
@@ -97,17 +100,18 @@ export class CreateArticleCommentUseCase
 				article.authorId,
 				created.id,
 				input.userId,
+				actorName,
+				currentComments + 1,
 				parentId,
 			),
 		);
 
-		const user = await this._userRepository.findById(input.userId);
 		const avatarUrl = user?.profilePictureId
 			? this._storageService.getPublicUrl(user.profilePictureId)
 			: undefined;
 
 		const authorSnapshot = {
-			name: user?.name || "Unknown User",
+			name: actorName,
 			avatarUrl,
 		};
 

@@ -3,13 +3,24 @@ import { ArticleReaction } from "../../../../domain/entities/article-reaction.en
 import type { ArticleReactionDocument } from "../models/article-reaction.model";
 
 export class ArticleReactionMapper {
-	static toDomain(doc: ArticleReactionDocument): ArticleReaction {
+	static toDomain(doc: any): ArticleReaction {
+		const userId = doc.userId;
+		const actorName =
+			userId && typeof userId === "object" && "name" in userId
+				? (userId as any).name
+				: undefined;
+		const userIdStr =
+			userId && typeof userId === "object" && "_id" in userId
+				? (userId as any)._id.toString()
+				: userId.toString();
+
 		return new ArticleReaction(
 			doc._id.toString(),
 			doc.resourceId.toString(),
-			doc.userId.toString(),
+			userIdStr,
 			doc.reactionType,
 			doc.createdAt,
+			actorName,
 		);
 	}
 
