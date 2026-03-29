@@ -6,13 +6,13 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { createUniqueSlug } from "../../../shared/utilities/slug.util";
 import { UserNotFoundError } from "../../authentication/errors";
 import type {
 	CreateArticleInput,
 	CreateArticleOutput,
 } from "../dtos/article-input.dto";
+import { MentorOnlyArticleActionError } from "../errors";
 import { ArticleMapper } from "../mappers/article.mapper";
 import { generatePreviewContent } from "../utils/preview-content";
 import type { ICreateArticleUseCase } from "./create-article.usecase.interface";
@@ -35,7 +35,7 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 		}
 
 		if (user.role !== "MENTOR") {
-			throw new ValidationError("Only mentors can create articles");
+			throw new MentorOnlyArticleActionError("create");
 		}
 
 		const avatarUrl = user.profilePictureId

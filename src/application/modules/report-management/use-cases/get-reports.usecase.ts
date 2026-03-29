@@ -5,9 +5,9 @@ import type {
 	ReportQuery,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { GetReportsInput, GetReportsOutput } from "../dtos/report.dto";
+import { AdminOnlyReportActionError } from "../errors";
 import { ReportMapper } from "../mappers/report.mapper";
 import type { IGetReportsUseCase } from "./get-reports.usecase.interface";
 
@@ -29,7 +29,7 @@ export class GetReportsUseCase implements IGetReportsUseCase {
 		}
 
 		if (admin.role !== "ADMIN" && admin.role !== "SUPER_ADMIN") {
-			throw new ValidationError("Only admins can view reports");
+			throw new AdminOnlyReportActionError("view reports");
 		}
 
 		const query: ReportQuery = {

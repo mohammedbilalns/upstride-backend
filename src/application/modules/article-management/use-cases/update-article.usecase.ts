@@ -5,13 +5,16 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { UserNotFoundError } from "../../authentication/errors";
 import type {
 	UpdateArticleInput,
 	UpdateArticleOutput,
 } from "../dtos/article-input.dto";
-import { ArticleNotFoundError } from "../errors";
+import {
+	ArticleNotFoundError,
+	ArticleOwnershipError,
+	MentorOnlyArticleActionError,
+} from "../errors";
 import { ArticleMapper } from "../mappers/article.mapper";
 import { generatePreviewContent } from "../utils/preview-content";
 import type { IUpdateArticleUseCase } from "./update-article.usecase.interface";
@@ -34,7 +37,7 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 		}
 
 		if (user.role !== "MENTOR") {
-			throw new ValidationError("Only mentors can update articles");
+			throw new MentorOnlyArticleActionError("update");
 		}
 
 		const existing = await this._articleRepository.findById(input.articleId);
@@ -43,7 +46,7 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 		}
 
 		if (existing.authorId !== input.userId) {
-			throw new ValidationError("You can only update your own articles");
+			throw new ArticleOwnershipError("update");
 		}
 
 		const featuredImageUrl =

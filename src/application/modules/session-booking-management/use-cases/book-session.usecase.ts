@@ -19,7 +19,7 @@ import type {
 	BookSessionInput,
 	BookSessionResponse,
 } from "../dtos/session-booking.dto";
-import { SlotNotAvailableError } from "../errors/slot-not-available.error";
+import { SlotNotAvailableError } from "../errors";
 import type { IBookSessionUseCase } from "./book-session.usecase.interface";
 
 //FIX: violates SRP

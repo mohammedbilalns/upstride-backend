@@ -4,12 +4,14 @@ import type {
 	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	DeleteArticleCommentInput,
 	DeleteArticleCommentOutput,
 } from "../dtos/article-input.dto";
-import { ArticleCommentNotFoundError } from "../errors";
+import {
+	ArticleCommentNotFoundError,
+	ArticleCommentOwnershipError,
+} from "../errors";
 import type { IDeleteArticleCommentUseCase } from "./delete-article-comment.usecase.interface";
 
 @injectable()
@@ -32,7 +34,7 @@ export class DeleteArticleCommentUseCase
 		}
 
 		if (comment.userId !== input.userId) {
-			throw new ValidationError("You can only delete your own comments");
+			throw new ArticleCommentOwnershipError("delete");
 		}
 
 		await this._commentRepository.updateById(input.commentId, {

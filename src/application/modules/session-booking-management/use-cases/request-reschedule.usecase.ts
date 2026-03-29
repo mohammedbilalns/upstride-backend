@@ -8,6 +8,7 @@ import type {
 	RequestRescheduleInput,
 	RequestRescheduleResponse,
 } from "../dtos/session-booking.dto";
+import { RescheduleWindowPassedError } from "../errors";
 import type { IRequestRescheduleUseCase } from "./request-reschedule.usecase.interface";
 
 @injectable()
@@ -36,7 +37,7 @@ export class RequestRescheduleUseCase implements IRequestRescheduleUseCase {
 		const latest = new Date(booking.startTime);
 		latest.setHours(latest.getHours() - hours);
 		if (new Date() > latest) {
-			throw new ValidationError("Reschedule window has passed");
+			throw new RescheduleWindowPassedError();
 		}
 
 		await this._bookingRepository.updateById(bookingId, {

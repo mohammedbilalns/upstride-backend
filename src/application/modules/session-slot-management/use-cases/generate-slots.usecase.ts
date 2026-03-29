@@ -7,11 +7,11 @@ import { IST_OFFSET_MINUTES } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	GenerateSlotsInput,
 	GenerateSlotsResponse,
 } from "../dtos/session-slots.dto";
+import { MentorPricingNotConfiguredError } from "../errors";
 import type { IGenerateSlotsUseCase } from "./generate-slots.usecase.interface";
 
 //FIX:  has timezone logic hardcoded** but also directly computes slot generation without abstracting the scheduling algorithm. A `ISlotGenerationStrategy` interface would allow different scheduling rules without modifying the use case.
@@ -37,7 +37,7 @@ export class GenerateSlotsUseCase implements IGenerateSlotsUseCase {
 		}
 
 		if (!mentor.currentPricePer30Min) {
-			throw new ValidationError("Mentor pricing is not configured");
+			throw new MentorPricingNotConfiguredError();
 		}
 
 		const availability = await this._availabilityRepository.findByOwnerId(

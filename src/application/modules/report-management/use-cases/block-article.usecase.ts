@@ -4,11 +4,11 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { ArticleNotFoundError } from "../../article-management/errors";
 import { ArticleMapper } from "../../article-management/mappers/article.mapper";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { BlockArticleInput, BlockArticleOutput } from "../dtos/report.dto";
+import { AdminOnlyReportActionError } from "../errors";
 import type { IBlockArticleUseCase } from "./block-article.usecase.interface";
 
 @injectable()
@@ -27,7 +27,7 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		}
 
 		if (admin.role !== "ADMIN" && admin.role !== "SUPER_ADMIN") {
-			throw new ValidationError("Only admins can block articles");
+			throw new AdminOnlyReportActionError("block articles");
 		}
 
 		const article = await this._articleRepository.findById(input.articleId);

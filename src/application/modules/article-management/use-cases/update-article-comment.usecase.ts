@@ -5,12 +5,14 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	UpdateArticleCommentInput,
 	UpdateArticleCommentOutput,
 } from "../dtos/article-input.dto";
-import { ArticleCommentNotFoundError } from "../errors";
+import {
+	ArticleCommentNotFoundError,
+	ArticleCommentOwnershipError,
+} from "../errors";
 import { ArticleCommentMapper } from "../mappers/article-comment.mapper";
 import type { IUpdateArticleCommentUseCase } from "./update-article-comment.usecase.interface";
 
@@ -36,7 +38,7 @@ export class UpdateArticleCommentUseCase
 		}
 
 		if (comment.userId !== input.userId) {
-			throw new ValidationError("You can only update your own comments");
+			throw new ArticleCommentOwnershipError("update");
 		}
 
 		const updated = await this._commentRepository.updateById(input.commentId, {

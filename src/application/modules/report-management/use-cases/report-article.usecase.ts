@@ -13,6 +13,7 @@ import type {
 	ReportArticleInput,
 	ReportArticleOutput,
 } from "../dtos/report.dto";
+import { ReporterRoleError } from "../errors";
 import { ReportMapper } from "../mappers/report.mapper";
 import type { IReportArticleUseCase } from "./report-article.usecase.interface";
 
@@ -38,7 +39,7 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 		}
 
 		if (reporter.role !== "USER" && reporter.role !== "MENTOR") {
-			throw new ValidationError("Only users and mentors can report articles");
+			throw new ReporterRoleError("articles");
 		}
 
 		if (!article || !article.isActive || article.isArchived) {

@@ -7,8 +7,7 @@ import type {
 	CancelSlotInput,
 	CancelSlotResponse,
 } from "../dtos/session-slots.dto";
-import { CannotCancelBookedSlotError } from "../errors/cannot-canell-booked-slot.error";
-import { SlotNotFoundError } from "../errors/slot-not-found.error";
+import { CannotCancelBookedSlotError, SlotNotFoundError } from "../errors";
 import type { ICancelSlotUseCase } from "./cancel-slot.usecase.interface";
 
 @injectable()

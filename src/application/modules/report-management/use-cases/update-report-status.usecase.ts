@@ -4,14 +4,13 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { ICreateNotificationUseCase } from "../../notifications/use-cases";
 import type {
 	UpdateReportStatusInput,
 	UpdateReportStatusOutput,
 } from "../dtos/report.dto";
-import { ReportNotFoundError } from "../errors";
+import { AdminOnlyReportActionError, ReportNotFoundError } from "../errors";
 import { ReportMapper } from "../mappers/report.mapper";
 import type { IUpdateReportStatusUseCase } from "./update-report-status.usecase.interface";
 
@@ -35,7 +34,7 @@ export class UpdateReportStatusUseCase implements IUpdateReportStatusUseCase {
 		}
 
 		if (admin.role !== "ADMIN" && admin.role !== "SUPER_ADMIN") {
-			throw new ValidationError("Only admins can update report status");
+			throw new AdminOnlyReportActionError("update report status");
 		}
 
 		const existing = await this._reportRepository.findById(input.reportId);

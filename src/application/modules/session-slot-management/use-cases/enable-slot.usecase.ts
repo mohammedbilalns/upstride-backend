@@ -7,8 +7,8 @@ import type {
 	EnableSlotInput,
 	EnableSlotResponse,
 } from "../dtos/session-slots.dto";
+import { SlotNotFoundError } from "../errors";
 import { CannotEnableBookedSlotError } from "../errors/cannot-enable-booked-slot.error";
-import { SlotNotFoundError } from "../errors/slot-not-found.error";
 import type { IEnableSlotUseCase } from "./enable-slot.usecase.interface";
 
 @injectable()

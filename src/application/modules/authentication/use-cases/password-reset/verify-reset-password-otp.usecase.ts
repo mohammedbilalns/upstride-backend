@@ -6,9 +6,9 @@ import { TYPES } from "../../../../../shared/types/types";
 import type { ITokenService } from "../../../../services";
 import type { VerifyOtpResponse } from "../../dtos";
 import type { VerifyResetPasswordOtpInput } from "../../dtos/otp/verify-reset-password-otp.dto";
+import { UserNotFoundError } from "../../errors";
 import { InvalidOtpError } from "../../errors/invalid-otp.error";
 import { MaxAttemptsExceededError } from "../../errors/max-attempts-exceeded.error";
-import { UserNotFoundError } from "../../errors/user-not-found.error";
 import type { IVerifyResetPasswordOtpUseCase } from "./verify-reset-password-otp.usecase.interface";
 
 @injectable()

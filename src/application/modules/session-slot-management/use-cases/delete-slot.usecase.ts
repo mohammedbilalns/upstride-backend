@@ -7,8 +7,8 @@ import type {
 	DeleteSlotInput,
 	DeleteSlotResponse,
 } from "../dtos/session-slots.dto";
+import { SlotNotFoundError } from "../errors";
 import { CannotCancelBookedSlotError } from "../errors/cannot-canell-booked-slot.error";
-import { SlotNotFoundError } from "../errors/slot-not-found.error";
 import type { IDeleteSlotUseCase } from "./delete-slot.usecase.interface";
 
 @injectable()

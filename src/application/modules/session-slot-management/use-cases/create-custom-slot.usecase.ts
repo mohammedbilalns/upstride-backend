@@ -11,6 +11,7 @@ import type {
 	CreateCustomSlotInput,
 	CreateCustomSlotResponse,
 } from "../dtos/session-slots.dto";
+import { MentorPricingNotConfiguredError } from "../errors";
 import type { ICreateCustomSlotUseCase } from "./create-custom-slot.usecase.interface";
 
 @injectable()
@@ -36,7 +37,7 @@ export class CreateCustomSlotUseCase implements ICreateCustomSlotUseCase {
 		}
 
 		if (!mentor.currentPricePer30Min) {
-			throw new ValidationError("Mentor pricing is not configured");
+			throw new MentorPricingNotConfiguredError();
 		}
 
 		const start = new Date(startTime);

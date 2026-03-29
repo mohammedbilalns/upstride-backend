@@ -10,6 +10,7 @@ import type {
 	HandleRescheduleInput,
 	HandleRescheduleResponse,
 } from "../dtos/session-booking.dto";
+import { RescheduleWindowPassedError } from "../errors";
 import type { IHandleRescheduleUseCase } from "./handle-reschedule.usecase.interface";
 
 @injectable()
@@ -44,7 +45,7 @@ export class HandleRescheduleUseCase implements IHandleRescheduleUseCase {
 		const latest = new Date(booking.startTime);
 		latest.setHours(latest.getHours() - hours);
 		if (new Date() > latest) {
-			throw new ValidationError("Reschedule window has passed");
+			throw new RescheduleWindowPassedError();
 		}
 
 		const newSlot = await this._slotRepository.findById(newSlotId);

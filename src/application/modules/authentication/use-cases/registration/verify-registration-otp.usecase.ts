@@ -8,9 +8,9 @@ import type { EventBus } from "../../../../events/event-bus.interface";
 import type { ITokenService } from "../../../../services";
 import type { VerifyOtpResponse } from "../../dtos";
 import type { VerifyRegistrationOtpInput } from "../../dtos/otp/verify-registration-otp.dto";
+import { UserNotFoundError } from "../../errors";
 import { InvalidOtpError } from "../../errors/invalid-otp.error";
 import { MaxAttemptsExceededError } from "../../errors/max-attempts-exceeded.error";
-import { UserNotFoundError } from "../../errors/user-not-found.error";
 import type { IVerifyRegistrationOtpUseCase } from "./verify-registration-otp.usecase.interface";
 
 @injectable()
