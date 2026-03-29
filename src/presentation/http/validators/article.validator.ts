@@ -60,12 +60,20 @@ export const MentorArticlesQuerySchema = z.object({
 });
 
 export const CreateCommentBodySchema = z.object({
-	content: z.string().trim().min(1, "Content is required").max(2000),
+	content: z
+		.string()
+		.trim()
+		.min(2, "Content must be at least 2 characters")
+		.max(500, "Content must be at most 500 characters"),
 	parentId: objectIdSchema.optional().nullable(),
 });
 
 export const UpdateCommentBodySchema = z.object({
-	content: z.string().trim().min(1, "Content is required").max(2000),
+	content: z
+		.string()
+		.trim()
+		.min(2, "Content must be at least 2 characters")
+		.max(500, "Content must be at most 500 characters"),
 });
 
 export const CommentsQuerySchema = z.object({
