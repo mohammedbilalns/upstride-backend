@@ -56,6 +56,7 @@ export interface GetArticlesInput {
 	authorId?: string;
 	isMentorView?: boolean;
 	ids?: string[];
+	limit?: number;
 }
 
 export interface GetArticlesOutput {

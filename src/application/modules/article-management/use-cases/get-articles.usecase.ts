@@ -48,7 +48,7 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 					items: [],
 					total: 0,
 					page: input.page,
-					limit: DEFAULT_PAGE_SIZE,
+					limit: input.limit ?? DEFAULT_PAGE_SIZE,
 					totalPages: 0,
 				};
 			}
@@ -70,7 +70,7 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 
 		const result = await this._articleRepository.paginate({
 			page: input.page,
-			limit: DEFAULT_PAGE_SIZE,
+			limit: input.limit ?? DEFAULT_PAGE_SIZE,
 			query,
 		});
 

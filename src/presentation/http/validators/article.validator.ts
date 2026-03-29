@@ -52,6 +52,8 @@ export const ArticlesQuerySchema = z.object({
 	search: z.string().trim().min(1).optional(),
 	skill: z.string().trim().min(1).optional(),
 	interest: z.string().trim().min(1).optional(),
+	authorId: objectIdSchema.optional(),
+	limit: z.coerce.number().int().min(1).max(50).optional(),
 });
 
 export const MentorArticlesQuerySchema = z.object({
