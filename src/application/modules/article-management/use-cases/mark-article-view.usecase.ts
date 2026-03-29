@@ -19,8 +19,12 @@ export class MarkArticleViewUseCase implements IMarkArticleViewUseCase {
 
 	async execute(input: MarkArticleViewInput): Promise<void> {
 		const article = await this._articleRepository.findById(input.articleId);
-		if (!article || !article.isActive) {
+		if (!article) {
 			throw new ArticleNotFoundError();
+		}
+
+		if (!article.isActive) {
+			return;
 		}
 
 		if (article.authorId === input.viewerUserId) {

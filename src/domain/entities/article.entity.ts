@@ -4,7 +4,11 @@ export class Article {
 	constructor(
 		public readonly id: string,
 		public readonly authorId: string,
-		public readonly authorSnapshot: { name: string; avatarUrl?: string },
+		public readonly authorSnapshot: {
+			name: string;
+			avatarUrl?: string;
+			isBlocked?: boolean;
+		},
 		public readonly slug: string,
 		public readonly featuredImageUrl: string,
 		public readonly title: string,

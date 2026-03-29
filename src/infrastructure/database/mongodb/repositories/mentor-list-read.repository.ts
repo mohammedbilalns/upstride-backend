@@ -129,6 +129,10 @@ export class MongoMentorListReadRepository
 			isRejected: false,
 		};
 
+		if (!query?.isAdminView) {
+			filter.isUserBlocked = { $ne: true };
+		}
+
 		if (query?.excludeUserId) {
 			filter.userId = { $ne: new Types.ObjectId(query.excludeUserId) };
 		}

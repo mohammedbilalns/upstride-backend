@@ -1,11 +1,13 @@
 import { inject, injectable } from "inversify";
 import type { Session } from "../../../../domain/entities/session.entity";
+import { UserStatusChangedEvent } from "../../../../domain/events/user-status-changed.event";
 import type {
 	ISessionRepository,
 	IUserRepository,
 } from "../../../../domain/repositories";
 import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revocation.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import { REFRESH_TOKEN_EXPIRES_IN } from "../../../services";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { BlockUserInput } from "../dtos/block-user.dto";
@@ -20,6 +22,8 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		private _sessionRepository: ISessionRepository,
 		@inject(TYPES.Repositories.TokenRevocationRepository)
 		private _tokenRevocationRepository: ITokenRevocationRepository,
+		@inject(TYPES.Services.EventBus)
+		private _eventBus: EventBus,
 	) {}
 
 	async execute(input: BlockUserInput): Promise<void> {
@@ -48,5 +52,9 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 				),
 			]);
 		}
+
+		await this._eventBus.publish(
+			new UserStatusChangedEvent(input.userId, true),
+		);
 	}
 }

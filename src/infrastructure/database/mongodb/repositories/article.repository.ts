@@ -44,7 +44,7 @@ export class MongoArticleRepository
 
 	async updateAuthorSnapshotByAuthorId(
 		authorId: string,
-		snapshot: { name?: string; avatarUrl?: string },
+		snapshot: { name?: string; avatarUrl?: string; isBlocked?: boolean },
 	): Promise<void> {
 		const update: Record<string, unknown> = {};
 		if (snapshot.name !== undefined) {
@@ -52,6 +52,9 @@ export class MongoArticleRepository
 		}
 		if (snapshot.avatarUrl !== undefined) {
 			update["authorSnapshot.avatarUrl"] = snapshot.avatarUrl;
+		}
+		if (snapshot.isBlocked !== undefined) {
+			update["authorSnapshot.isBlocked"] = snapshot.isBlocked;
 		}
 		if (Object.keys(update).length === 0) {
 			return;
@@ -145,6 +148,10 @@ export class MongoArticleRepository
 				_id: { $in: query.ids.map((id) => new Types.ObjectId(id)) },
 			}),
 		});
+
+		if (!query.isAdminView) {
+			filter["authorSnapshot.isBlocked"] = { $ne: true };
+		}
 
 		if (query.excludeAuthorId) {
 			const excludeId = new Types.ObjectId(query.excludeAuthorId);

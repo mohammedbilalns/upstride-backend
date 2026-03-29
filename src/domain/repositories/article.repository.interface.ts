@@ -16,6 +16,7 @@ export interface ArticleQuery {
 	slug?: string;
 	excludeAuthorId?: string;
 	ids?: string[];
+	isAdminView?: boolean;
 }
 
 export interface IArticleRepository
@@ -27,7 +28,7 @@ export interface IArticleRepository
 	findBySlug(slug: string): Promise<Article | null>;
 	updateAuthorSnapshotByAuthorId(
 		authorId: string,
-		snapshot: { name?: string; avatarUrl?: string },
+		snapshot: { name?: string; avatarUrl?: string; isBlocked?: boolean },
 	): Promise<void>;
 	getTopTags(
 		limit: number,

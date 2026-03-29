@@ -69,9 +69,12 @@ export class ArticleController {
 	getArticles = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const query = req.validated?.query as GetArticlesInput;
+			const isAdminView =
+				req.user?.role === "ADMIN" || req.user?.role === "SUPER_ADMIN";
 			const data = await this._getArticlesUseCase.execute({
 				...query,
 				viewerUserId: req.user?.id,
+				isAdminView,
 			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
@@ -80,10 +83,13 @@ export class ArticleController {
 	getMentorArticles = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const query = req.validated?.query as GetArticlesInput;
+			const isAdminView =
+				req.user?.role === "ADMIN" || req.user?.role === "SUPER_ADMIN";
 			const data = await this._getArticlesUseCase.execute({
 				...query,
 				authorId: req.user.id,
 				isMentorView: true,
+				isAdminView,
 			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
@@ -92,9 +98,12 @@ export class ArticleController {
 	getArticle = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const { slug } = req.validated?.params as { slug: string };
+			const isAdminView =
+				req.user?.role === "ADMIN" || req.user?.role === "SUPER_ADMIN";
 			const data = await this._getArticleUseCase.execute({
 				slug,
-				viewerUserId: req.user.id,
+				viewerUserId: req.user?.id,
+				isAdminView,
 			} as GetArticleInput);
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},

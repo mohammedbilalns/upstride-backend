@@ -6,6 +6,7 @@ export interface ArticleDocument {
 	authorSnapshot: {
 		name: string;
 		avatarUrl?: string;
+		isBlocked?: boolean;
 	};
 	slug: string;
 	featuredImageUrl: string;
@@ -28,6 +29,7 @@ const articleSchema = new Schema<ArticleDocument>(
 		authorSnapshot: {
 			name: { type: String, required: true },
 			avatarUrl: { type: String },
+			isBlocked: { type: Boolean, default: false },
 		},
 		slug: { type: String, required: true, unique: true },
 		featuredImageUrl: { type: String, default: "" },

@@ -10,6 +10,7 @@ export class ArticleMapper {
 			{
 				name: doc.authorSnapshot.name,
 				avatarUrl: doc.authorSnapshot.avatarUrl || undefined,
+				isBlocked: doc.authorSnapshot.isBlocked,
 			},
 			doc.slug,
 			doc.featuredImageUrl,
@@ -33,6 +34,7 @@ export class ArticleMapper {
 			authorSnapshot: {
 				name: entity.authorSnapshot.name,
 				avatarUrl: entity.authorSnapshot.avatarUrl,
+				isBlocked: entity.authorSnapshot.isBlocked,
 			},
 			slug: entity.slug,
 			featuredImageUrl: entity.featuredImageUrl,

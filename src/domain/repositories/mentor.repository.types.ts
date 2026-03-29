@@ -13,9 +13,11 @@ export interface MentorDiscoveryQuery {
 	excludeUserId?: string;
 	minExperience?: number;
 	maxExperience?: number;
+	isAdminView?: boolean;
 }
 
 export interface MentorApplicationDetails extends Mentor {
+	isUserBlocked: boolean;
 	user: {
 		name: string;
 		email: string;
@@ -38,6 +40,7 @@ export interface MentorApplicationDetails extends Mentor {
 }
 
 export interface MentorDiscoveryDetails extends Mentor {
+	isUserBlocked: boolean;
 	user: {
 		name: string;
 		profilePictureId?: string;
@@ -56,6 +59,7 @@ export interface MentorDiscoveryDetails extends Mentor {
 }
 
 export interface MentorProfileDetails extends Mentor {
+	isUserBlocked: boolean;
 	user: {
 		name: string;
 		email: string;

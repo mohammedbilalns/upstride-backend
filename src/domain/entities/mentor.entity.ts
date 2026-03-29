@@ -45,6 +45,7 @@ export class Mentor {
 		public readonly updatedAt: Date,
 		public readonly rejectionReason: string | null = null,
 		public readonly avgRating: number = 0,
+		public readonly isUserBlocked: boolean = false,
 	) {
 		if (this.score < 0 || this.score > 100) {
 			throw new EntityValidationError(

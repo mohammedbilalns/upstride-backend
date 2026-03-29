@@ -48,7 +48,10 @@ export class GetPublicMentorProfileUseCase
 			throw new MentorNotFoundError();
 		}
 
-		if (!isAdmin && (!profile.isApproved || profile.isRejected)) {
+		if (
+			!isAdmin &&
+			(!profile.isApproved || profile.isRejected || profile.isUserBlocked)
+		) {
 			throw new MentorNotFoundError();
 		}
 
@@ -58,12 +61,13 @@ export class GetPublicMentorProfileUseCase
 			);
 		}
 
-		const upcomingSlots =
-			await this._sessionSlotRepository.findUpcomingAvailableByMentorId(
-				profile.id,
-				3,
-				new Date(),
-			);
+		const upcomingSlots = !isAdmin
+			? await this._sessionSlotRepository.findUpcomingAvailableByMentorId(
+					profile.id,
+					3,
+					new Date(),
+				)
+			: [];
 
 		const avatar = profile.user.profilePictureId
 			? this._storageService.getPublicUrl(profile.user.profilePictureId)

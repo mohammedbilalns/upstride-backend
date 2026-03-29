@@ -37,6 +37,7 @@ export interface DeleteArticleInput {
 export interface GetArticleInput {
 	slug: string;
 	viewerUserId?: string;
+	isAdminView?: boolean;
 }
 
 export interface GetArticleOutput {
@@ -57,6 +58,7 @@ export interface GetArticlesInput {
 	isMentorView?: boolean;
 	ids?: string[];
 	limit?: number;
+	isAdminView?: boolean;
 }
 
 export interface GetArticlesOutput {

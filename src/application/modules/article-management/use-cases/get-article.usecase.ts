@@ -32,7 +32,15 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 
 	async execute(input: GetArticleInput): Promise<GetArticleOutput> {
 		const article = await this._articleRepository.findBySlug(input.slug);
-		if (!article || !article.isActive) {
+
+		const isAdmin = !!input.isAdminView;
+		const isAuthor = article?.authorId === input.viewerUserId;
+
+		if (!article || (!article.isActive && !isAdmin && !isAuthor)) {
+			throw new ArticleNotFoundError();
+		}
+
+		if (article.authorSnapshot.isBlocked && !isAdmin && !isAuthor) {
 			throw new ArticleNotFoundError();
 		}
 

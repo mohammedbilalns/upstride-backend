@@ -38,6 +38,7 @@ export class MentorMapper {
 			doc.updatedAt,
 			doc.rejectionReason,
 			doc.avgRating ?? 0,
+			doc.isUserBlocked ?? false,
 		);
 	}
 
@@ -74,6 +75,7 @@ export class MentorMapper {
 			applicationAttempts: entity.applicationAttempts,
 			rejectionReason: entity.rejectionReason,
 			avgRating: entity.avgRating,
+			isUserBlocked: entity.isUserBlocked,
 		};
 	}
 }

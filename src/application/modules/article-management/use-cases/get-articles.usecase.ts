@@ -57,7 +57,9 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 		const query: ArticleQuery = {
 			...(input.isMentorView
 				? { authorId: input.authorId }
-				: { isActive: true, isArchived: false }),
+				: !input.isAdminView
+					? { isActive: true, isArchived: false }
+					: {}),
 			...(input.search && { title: input.search }),
 			...(authorIds && { authorId: authorIds }),
 			...(!input.isMentorView &&
@@ -66,6 +68,7 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 			...(tags.length === 1 && { tags: tags[0] }),
 			...(tags.length > 1 && { tags }),
 			...(input.ids && { ids: input.ids }),
+			isAdminView: input.isAdminView,
 		};
 
 		const result = await this._articleRepository.paginate({

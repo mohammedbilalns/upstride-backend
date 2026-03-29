@@ -2,7 +2,9 @@ import type { Container } from "inversify";
 import { ArticleCommentCreatedHandler } from "../../application/events/handlers/article/article-comment-created.handler";
 import { ArticleCommentReactionCreatedHandler } from "../../application/events/handlers/article/article-comment-reaction-created.handler";
 import { ArticleReactionCreatedHandler } from "../../application/events/handlers/article/article-reaction-created.handler";
+import { ArticleUserStatusChangedHandler } from "../../application/events/handlers/article/user-status-changed.handler";
 import { MessageSentHandler } from "../../application/events/handlers/chat/message-sent.handler";
+import { MentorUserStatusChangedHandler } from "../../application/events/handlers/mentor/user-status-changed.handler";
 import type { CheckoutCompletedHandler } from "../../application/events/handlers/payment/checkout-completed.handler";
 import type { CheckoutExpiredHandler } from "../../application/events/handlers/payment/checkout-expired.handler";
 import type { CheckoutFailedHandler } from "../../application/events/handlers/payment/checkout-failed.handler";
@@ -58,6 +60,12 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	const profileUpdatedHandler = new ProfileUpdatedHandler(
 		container.get(TYPES.Repositories.ArticleRepository),
 	);
+	const articleUserStatusChangedHandler = new ArticleUserStatusChangedHandler(
+		container.get(TYPES.Repositories.ArticleRepository),
+	);
+	const mentorUserStatusChangedHandler = new MentorUserStatusChangedHandler(
+		container.get(TYPES.Repositories.MentorWriteRepository),
+	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -95,6 +103,16 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	bullMQEventBus.registerHandler(
 		"profile.updated",
 		profileUpdatedHandler.handle.bind(profileUpdatedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"UserStatusChangedEvent",
+		articleUserStatusChangedHandler.handle.bind(
+			articleUserStatusChangedHandler,
+		),
+	);
+	bullMQEventBus.registerHandler(
+		"UserStatusChangedEvent",
+		mentorUserStatusChangedHandler.handle.bind(mentorUserStatusChangedHandler),
 	);
 	bullMQEventBus.registerHandler(
 		"CheckoutCompletedEvent",
