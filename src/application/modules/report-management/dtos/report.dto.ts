@@ -82,6 +82,7 @@ export interface UpdateReportStatusOutput {
 export interface BlockArticleInput {
 	adminId: string;
 	articleId: string;
+	reason: string;
 }
 
 export interface BlockArticleOutput {

@@ -83,3 +83,9 @@ export const UpdateReportStatusBodySchema = z.object({
 export type UpdateReportStatusBody = z.infer<
 	typeof UpdateReportStatusBodySchema
 >;
+
+export const BlockArticleBodySchema = z.object({
+	reason: reportReasonSchema,
+});
+
+export type BlockArticleBody = z.infer<typeof BlockArticleBodySchema>;

@@ -20,6 +20,11 @@ export class Article {
 		public readonly commentsCount: number,
 		public readonly likesCount: number,
 		public readonly isArchived: boolean,
+		public readonly isBlockedByAdmin: boolean = false,
+		public readonly blockingReason: string | null = null,
+		public readonly blockedAt: Date | null = null,
+		public readonly appealMessage: string | null = null,
+		public readonly appealedAt: Date | null = null,
 		public readonly createdAt: Date | null,
 		public readonly updatedAt: Date | null,
 	) {

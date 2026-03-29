@@ -19,6 +19,11 @@ export interface ArticleDocument {
 	commentsCount: number;
 	likesCount: number;
 	isArchived: boolean;
+	isBlockedByAdmin: boolean;
+	blockingReason: string | null;
+	blockedAt: Date | null;
+	appealMessage: string | null;
+	appealedAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -42,6 +47,11 @@ const articleSchema = new Schema<ArticleDocument>(
 		commentsCount: { type: Number, required: true, default: 0 },
 		likesCount: { type: Number, required: true, default: 0 },
 		isArchived: { type: Boolean, required: true, default: false },
+		isBlockedByAdmin: { type: Boolean, default: false },
+		blockingReason: { type: String, default: null },
+		blockedAt: { type: Date, default: null },
+		appealMessage: { type: String, default: null },
+		appealedAt: { type: Date, default: null },
 	},
 	{ timestamps: true },
 );

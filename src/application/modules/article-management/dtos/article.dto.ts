@@ -1,6 +1,7 @@
 export interface ArticleAuthorSnapshotDto {
 	name: string;
 	avatarUrl?: string;
+	isBlocked?: boolean;
 }
 
 export interface ArticleDto {
@@ -17,5 +18,7 @@ export interface ArticleDto {
 	views: number;
 	commentsCount: number;
 	likesCount: number;
+	isBlockedByAdmin: boolean;
+	blockingReason: string | null;
 	createdAt: Date;
 }

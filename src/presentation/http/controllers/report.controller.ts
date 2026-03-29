@@ -12,6 +12,7 @@ import { TYPES } from "../../../shared/types/types";
 import { ReportResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
+	BlockArticleBody,
 	BlockArticleParam,
 	GetReportsQuery,
 	ReportArticleParam,
@@ -114,10 +115,12 @@ export class ReportController {
 	blockArticle = asyncHandler(async (req, res) => {
 		const adminId = (req as AuthenticatedRequest).user.id;
 		const { articleId } = req.validated?.params as BlockArticleParam;
+		const { reason } = req.validated?.body as BlockArticleBody;
 
 		const result = await this._blockArticleUseCase.execute({
 			adminId,
 			articleId,
+			reason,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {

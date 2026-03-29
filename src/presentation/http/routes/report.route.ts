@@ -5,6 +5,7 @@ import { ROUTES } from "../constants";
 import type { ReportController } from "../controllers/report.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
+	BlockArticleBodySchema,
 	BlockArticleParamSchema,
 	GetReportsQuerySchema,
 	ReportArticleParamSchema,
@@ -50,8 +51,11 @@ router.patch(
 router.patch(
 	ROUTES.REPORTS.BLOCK_ARTICLE(":articleId"),
 	authorizeRoles(["ADMIN", "SUPER_ADMIN"]),
-	validate({ params: BlockArticleParamSchema }),
-	controller.blockArticle,
+	validate({
+		params: BlockArticleParamSchema,
+		body: BlockArticleBodySchema,
+	}),
+	controller.blockArticle.bind(controller),
 );
 
 export { router as reportRouter };

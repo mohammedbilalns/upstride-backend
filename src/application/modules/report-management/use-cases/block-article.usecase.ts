@@ -1,9 +1,11 @@
 import { inject, injectable } from "inversify";
+import { ArticleBlockedEvent } from "../../../../domain/events/article-blocked.event";
 import type {
 	IArticleRepository,
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import { ArticleNotFoundError } from "../../article-management/errors";
 import { ArticleMapper } from "../../article-management/mappers/article.mapper";
 import { UserNotFoundError } from "../../authentication/errors";
@@ -18,6 +20,8 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: BlockArticleInput): Promise<BlockArticleOutput> {
@@ -31,18 +35,24 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		}
 
 		const article = await this._articleRepository.findById(input.articleId);
-		if (!article || !article.isActive) {
+		if (!article) {
 			throw new ArticleNotFoundError();
 		}
 
 		const updated = await this._articleRepository.updateById(input.articleId, {
 			isActive: false,
 			isArchived: true,
+			isBlockedByAdmin: true,
+			blockingReason: input.reason,
 		});
 
 		if (!updated) {
 			throw new ArticleNotFoundError();
 		}
+
+		await this._eventBus.publish(
+			new ArticleBlockedEvent(updated.id, updated.authorId, input.reason),
+		);
 
 		return { article: ArticleMapper.toDto(updated) };
 	}

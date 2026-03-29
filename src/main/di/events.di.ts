@@ -1,4 +1,5 @@
 import type { Container } from "inversify";
+import { ArticleBlockedHandler } from "../../application/events/handlers/article/article-blocked.handler";
 import { ArticleCommentCreatedHandler } from "../../application/events/handlers/article/article-comment-created.handler";
 import { ArticleCommentReactionCreatedHandler } from "../../application/events/handlers/article/article-comment-reaction-created.handler";
 import { ArticleReactionCreatedHandler } from "../../application/events/handlers/article/article-reaction-created.handler";
@@ -66,6 +67,11 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	const mentorUserStatusChangedHandler = new MentorUserStatusChangedHandler(
 		container.get(TYPES.Repositories.MentorWriteRepository),
 	);
+	const articleBlockedHandler = new ArticleBlockedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -113,6 +119,10 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	bullMQEventBus.registerHandler(
 		"UserStatusChangedEvent",
 		mentorUserStatusChangedHandler.handle.bind(mentorUserStatusChangedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"ArticleBlockedEvent",
+		articleBlockedHandler.handle.bind(articleBlockedHandler),
 	);
 	bullMQEventBus.registerHandler(
 		"CheckoutCompletedEvent",

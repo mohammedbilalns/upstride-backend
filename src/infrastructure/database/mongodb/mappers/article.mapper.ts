@@ -23,6 +23,11 @@ export class ArticleMapper {
 			doc.commentsCount,
 			doc.likesCount,
 			doc.isArchived,
+			doc.isBlockedByAdmin ?? false,
+			doc.blockingReason ?? null,
+			doc.blockedAt ?? null,
+			doc.appealMessage ?? null,
+			doc.appealedAt ?? null,
 			doc.createdAt,
 			doc.updatedAt,
 		);
@@ -47,6 +52,11 @@ export class ArticleMapper {
 			commentsCount: entity.commentsCount,
 			likesCount: entity.likesCount,
 			isArchived: entity.isArchived,
+			isBlockedByAdmin: entity.isBlockedByAdmin,
+			blockingReason: entity.blockingReason,
+			blockedAt: entity.blockedAt,
+			appealMessage: entity.appealMessage,
+			appealedAt: entity.appealedAt,
 			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};
 	}

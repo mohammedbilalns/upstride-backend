@@ -67,6 +67,8 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 			0,
 			0,
 			false,
+			false,
+			null,
 			null,
 			null,
 		);

@@ -9,6 +9,7 @@ export class ArticleMapper {
 			authorSnapshot: {
 				name: entity.authorSnapshot.name,
 				avatarUrl: entity.authorSnapshot.avatarUrl,
+				isBlocked: entity.authorSnapshot.isBlocked,
 			},
 			slug: entity.slug,
 			featuredImageUrl: entity.featuredImageUrl,
@@ -20,6 +21,8 @@ export class ArticleMapper {
 			views: entity.views,
 			commentsCount: entity.commentsCount ?? 0,
 			likesCount: entity.likesCount ?? 0,
+			isBlockedByAdmin: entity.isBlockedByAdmin,
+			blockingReason: entity.blockingReason,
 			createdAt: entity.createdAt as Date,
 		};
 	}
