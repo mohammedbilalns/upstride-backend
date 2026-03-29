@@ -2,15 +2,13 @@ import { inject, injectable } from "inversify";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../../domain/repositories/session-availability.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	DeleteRecurringRuleInput,
 	DeleteRecurringRuleResponse,
 } from "../dtos/recurring-rules.dto";
-import {
-	AvailabilityNotFoundError,
-	RecurringRuleNotFoundError,
-} from "../errors";
+import { RecurringRuleNotFoundError } from "../errors";
+import { getAvailabilityByMentorIdOrThrow } from "../utils/availability.util";
 import type { IDeleteRecurringRuleUseCase } from "./delete-recurring-rule.usecase.interface";
 
 @injectable()
@@ -26,17 +24,15 @@ export class DeleteRecurringRuleUseCase implements IDeleteRecurringRuleUseCase {
 		userId,
 		ruleId,
 	}: DeleteRecurringRuleInput): Promise<DeleteRecurringRuleResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError();
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+		);
 
-		const availability = await this._availabilityRepository.findByOwnerId(
+		const availability = await getAvailabilityByMentorIdOrThrow(
+			this._availabilityRepository,
 			mentor.id,
 		);
-		if (!availability) {
-			throw new AvailabilityNotFoundError();
-		}
 
 		const existing = availability.recurringRules.find(
 			(rule) => rule.ruleId === ruleId,

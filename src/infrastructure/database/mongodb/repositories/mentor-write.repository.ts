@@ -62,4 +62,11 @@ export class MongoMentorWriteRepository
 
 		return doc ? this.toDomain(doc as MentorDocument) : null;
 	}
+
+	async updateIsUserBlockedStatusByUserId(
+		userId: string,
+		isUserBlocked: boolean,
+	): Promise<void> {
+		await this.model.updateMany({ userId }, { $set: { isUserBlocked } });
+	}
 }

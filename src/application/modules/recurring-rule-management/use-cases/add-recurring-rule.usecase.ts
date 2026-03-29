@@ -5,8 +5,8 @@ import type { ISessionAvailabilityRepository } from "../../../../domain/reposito
 import { SessionSlotLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import { ValidationError } from "../../../shared/errors/validation-error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type { IGenerateSlotsUseCase } from "../../session-slot-management/use-cases/generate-slots.usecase.interface";
 import type {
 	AddRecurringRuleInput,
@@ -32,10 +32,10 @@ export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 		userId,
 		rule,
 	}: AddRecurringRuleInput): Promise<AddRecurringRuleResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError();
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+		);
 
 		const availability = await this._availabilityRepository.findByOwnerId(
 			mentor.id,

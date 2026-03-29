@@ -13,7 +13,13 @@ export const NotificationEventValues = [
 	"MESSAGE_RECEIVED",
 	"SESSION_BOOKED",
 	"ARTICLE_LIKED",
+	"ARTICLE_COMMENTED",
+	"ARTICLE_REACTED",
+	"COMMENT_REACTED",
 	"PAYMENT_SUCCESS",
+	"REPORT_STATUS_UPDATED",
+	"ARTICLE_BLOCKED",
+	"ARTICLE_UNBLOCKED",
 ] as const;
 
 export type NotificationEvent = (typeof NotificationEventValues)[number];

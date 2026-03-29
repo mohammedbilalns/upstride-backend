@@ -35,6 +35,7 @@ export interface MentorDocument {
 	isRejected: boolean;
 	rejectionReason: string | null;
 	avgRating: number;
+	isUserBlocked: boolean;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -101,11 +102,13 @@ const mentorSchema = new Schema<MentorDocument>(
 			],
 		},
 		rejectionReason: { type: String },
+		isUserBlocked: { type: Boolean, default: false },
 	},
 	{ timestamps: true },
 );
 
 mentorSchema.index({ userId: 1 }, { unique: true });
 mentorSchema.index({ isApproved: 1 });
+mentorSchema.index({ isUserBlocked: 1 });
 
 export const MentorModel = model<MentorDocument>("Mentor", mentorSchema);

@@ -15,4 +15,8 @@ export interface IMentorWriteRepository
 		isApproved: boolean,
 		rejectionReason?: string | null,
 	): Promise<Mentor | null>;
+	updateIsUserBlockedStatusByUserId(
+		userId: string,
+		isUserBlocked: boolean,
+	): Promise<void>;
 }

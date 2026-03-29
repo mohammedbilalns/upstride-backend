@@ -3,7 +3,7 @@ import type { IMentorProfileReadRepository } from "../../../../domain/repositori
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	GetBookingsInput,
 	GetBookingsResponse,
@@ -28,10 +28,11 @@ export class GetMentorBookingsUseCase implements IGetMentorBookingsUseCase {
 		page,
 		limit,
 	}: GetBookingsInput): Promise<GetBookingsResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new NotFoundError("Mentor profile not found");
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+			"Mentor profile not found",
+		);
 
 		const result = await this._bookingRepository.paginateByMentor(
 			mentor.id,

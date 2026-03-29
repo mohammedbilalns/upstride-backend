@@ -45,7 +45,7 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 			result.items.map(async (item) => {
 				const dto = MentorDiscoveryMapper.toDto(item);
 				if (item.user.profilePictureId) {
-					dto.avatar = await this._storageService.getSignedUrl(
+					dto.avatar = this._storageService.getPublicUrl(
 						item.user.profilePictureId,
 					);
 				} else {

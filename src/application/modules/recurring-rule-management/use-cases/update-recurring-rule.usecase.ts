@@ -3,17 +3,15 @@ import { Availability } from "../../../../domain/entities/session-availability.e
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../../domain/repositories/session-availability.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import { ValidationError } from "../../../shared/errors/validation-error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type { IGenerateSlotsUseCase } from "../../session-slot-management/use-cases/generate-slots.usecase.interface";
 import type {
 	UpdateRecurringRuleInput,
 	UpdateRecurringRuleResponse,
 } from "../dtos/recurring-rules.dto";
-import {
-	AvailabilityNotFoundError,
-	RecurringRuleNotFoundError,
-} from "../errors";
+import { RecurringRuleNotFoundError } from "../errors";
+import { getAvailabilityByMentorIdOrThrow } from "../utils/availability.util";
 import { hasRecurringRuleOverlap } from "../utils/recurring-rule-overlap";
 import type { IUpdateRecurringRuleUseCase } from "./update-recurring-rule.usecase.interface";
 
@@ -33,17 +31,15 @@ export class UpdateRecurringRuleUseCase implements IUpdateRecurringRuleUseCase {
 		ruleId,
 		updates,
 	}: UpdateRecurringRuleInput): Promise<UpdateRecurringRuleResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError();
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+		);
 
-		const availability = await this._availabilityRepository.findByOwnerId(
+		const availability = await getAvailabilityByMentorIdOrThrow(
+			this._availabilityRepository,
 			mentor.id,
 		);
-		if (!availability) {
-			throw new AvailabilityNotFoundError();
-		}
 
 		const rules = availability.recurringRules.map((rule) =>
 			rule.ruleId === ruleId

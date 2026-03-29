@@ -1,6 +1,7 @@
 import type { Container } from "inversify";
 import {
 	AdminManagementController,
+	ArticleController,
 	AuthController,
 	CatalogController,
 	ChatController,
@@ -14,6 +15,7 @@ import {
 	PlatformSettingsController,
 	ProfileController,
 	RecurringRuleController,
+	ReportController,
 	SessionBookingController,
 	SessionSlotController,
 	UserManagementController,
@@ -39,6 +41,8 @@ export const registerPresentationBindings = (container: Container): void => {
 	container
 		.bind(TYPES.Controllers.AdminManagement)
 		.to(AdminManagementController);
+	container.bind(ArticleController).to(ArticleController);
+	container.bind(TYPES.Controllers.Article).to(ArticleController);
 	container.bind(FileController).to(FileController);
 	container.bind(TYPES.Controllers.File).to(FileController);
 	container.bind(MentorController).to(MentorController);
@@ -63,6 +67,8 @@ export const registerPresentationBindings = (container: Container): void => {
 	container
 		.bind<ProfileController>(TYPES.Controllers.Profile)
 		.to(ProfileController);
+	container.bind(ReportController).to(ReportController);
+	container.bind(TYPES.Controllers.Report).to(ReportController);
 	container.bind(WalletController).to(WalletController);
 	container.bind(TYPES.Controllers.Wallet).to(WalletController);
 };

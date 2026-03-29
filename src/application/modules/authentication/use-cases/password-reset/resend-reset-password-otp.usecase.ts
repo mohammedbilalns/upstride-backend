@@ -6,8 +6,8 @@ import type { IOtpRepository } from "../../../../../domain/repositories/otp.repo
 import { TYPES } from "../../../../../shared/types/types";
 import type { IMailService, IOtpGenerator } from "../../../../services";
 import type { ResendResetPasswordOtpInput } from "../../dtos/otp/resend-reset-password-otp.dto";
+import { UserNotFoundError } from "../../errors";
 import { MaxResendsExceededError } from "../../errors/max-resend-exceeded.error";
-import { UserNotFoundError } from "../../errors/user-not-found.error";
 import type { IResendResetPasswordOtpUseCase } from "./resend-reset-password-otp.usecase.interface";
 
 @injectable()

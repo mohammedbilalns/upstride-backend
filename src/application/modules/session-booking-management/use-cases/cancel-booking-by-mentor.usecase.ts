@@ -3,14 +3,17 @@ import type { IMentorWriteRepository } from "../../../../domain/repositories/men
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
-import { ValidationError } from "../../../shared/errors/validation-error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
-import { SlotNotFoundError } from "../../session-slot-management/errors";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
 } from "../dtos/session-booking.dto";
+import { BookingCannotBeCancelledError } from "../errors";
+import {
+	getBookingForMentorOrThrow,
+	releaseSlotOrThrow,
+} from "../utils/booking.util";
 import type { ICancelBookingByMentorUseCase } from "./cancel-booking-by-mentor.usecase.interface";
 
 @injectable()
@@ -33,22 +36,24 @@ export class CancelBookingByMentorUseCase
 		bookingId,
 		reason,
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new NotFoundError("Mentor profile not found");
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+			"Mentor profile not found",
+		);
 
-		const booking = await this._bookingRepository.findById(bookingId);
-		if (!booking || booking.mentorId !== mentor.id) {
-			throw new NotFoundError("Booking not found");
-		}
+		const booking = await getBookingForMentorOrThrow(
+			this._bookingRepository,
+			bookingId,
+			mentor.id,
+		);
 
 		if (
 			booking.status === "cancelled" ||
 			booking.status === "refunded" ||
 			booking.status === "completed"
 		) {
-			throw new ValidationError("Booking cannot be cancelled");
+			throw new BookingCannotBeCancelledError();
 		}
 
 		await this._bookingRepository.updateById(bookingId, {
@@ -58,13 +63,7 @@ export class CancelBookingByMentorUseCase
 			updatedAt: new Date(),
 		});
 
-		const slotUpdated = await this._slotRepository.updateById(booking.slotId, {
-			status: "available",
-			bookingId: null,
-		});
-		if (!slotUpdated) {
-			throw new SlotNotFoundError();
-		}
+		await releaseSlotOrThrow(this._slotRepository, booking.slotId);
 
 		const refundAmount = booking.price;
 

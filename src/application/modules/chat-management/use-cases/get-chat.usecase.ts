@@ -47,7 +47,7 @@ export class GetChatUseCase implements IGetChatUseCase {
 
 		if (receiverUser) {
 			const profilePictureUrl = receiverUser.profilePictureId
-				? await this._storageService.getSignedUrl(receiverUser.profilePictureId)
+				? this._storageService.getPublicUrl(receiverUser.profilePictureId)
 				: null;
 			receiverDto = {
 				id: receiverUser.id,
@@ -60,7 +60,7 @@ export class GetChatUseCase implements IGetChatUseCase {
 			const user = await this._userRepository.findById(input.otherUserId);
 			if (user) {
 				const profilePictureUrl = user.profilePictureId
-					? await this._storageService.getSignedUrl(user.profilePictureId)
+					? this._storageService.getPublicUrl(user.profilePictureId)
 					: null;
 				receiverDto = {
 					id: user.id,

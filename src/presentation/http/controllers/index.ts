@@ -1,4 +1,5 @@
 export * from "./admin-management.controller";
+export * from "./article.controller";
 export * from "./auth.controller";
 export * from "./catalog.controller";
 export * from "./chat.controller";
@@ -12,6 +13,7 @@ export * from "./payment.controller";
 export * from "./platform-settings.controller";
 export * from "./profile.controller";
 export * from "./recurring-rule.controller";
+export * from "./report.controller";
 export * from "./session-booking.controller";
 export * from "./session-slot.controller";
 export * from "./user-management.controller";

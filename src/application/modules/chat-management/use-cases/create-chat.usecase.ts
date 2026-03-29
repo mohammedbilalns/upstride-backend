@@ -55,7 +55,7 @@ export class CreateChatUseCase implements ICreateChatUseCase {
 
 		const usersById = new Map();
 		const receiverProfilePictureUrl = otherUser.profilePictureId
-			? await this._storageService.getSignedUrl(otherUser.profilePictureId)
+			? this._storageService.getPublicUrl(otherUser.profilePictureId)
 			: null;
 
 		usersById.set(user.id, {

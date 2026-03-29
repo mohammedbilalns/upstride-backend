@@ -82,3 +82,10 @@ export const WalletResponseMessages = {
 	COIN_TRANSACTIONS_FETCHED: "Coin transactions fetched successfully",
 	PAYMENT_TRANSACTIONS_FETCHED: "Payment transactions fetched successfully",
 };
+
+export const ReportResponseMessages = {
+	REPORT_SUBMITTED_SUCCESS: "Report submitted successfully",
+	REPORTS_FETCHED_SUCCESS: "Reports fetched successfully",
+	REPORT_STATUS_UPDATED_SUCCESS: "Report status updated successfully",
+	ARTICLE_BLOCKED_SUCCESS: "Article blocked successfully",
+};

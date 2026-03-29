@@ -2,13 +2,12 @@ import { inject, injectable } from "inversify";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	CancelSlotInput,
 	CancelSlotResponse,
 } from "../dtos/session-slots.dto";
-import { CannotCancelBookedSlotError } from "../errors/cannot-canell-booked-slot.error";
-import { SlotNotFoundError } from "../errors/slot-not-found.error";
+import { CannotCancelBookedSlotError, SlotNotFoundError } from "../errors";
 import type { ICancelSlotUseCase } from "./cancel-slot.usecase.interface";
 
 @injectable()
@@ -24,10 +23,10 @@ export class CancelSlotUseCase implements ICancelSlotUseCase {
 		userId,
 		slotId,
 	}: CancelSlotInput): Promise<CancelSlotResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError();
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+		);
 
 		const slot = await this._slotRepository.findById(slotId);
 		if (!slot || slot.mentorId !== mentor.id) {

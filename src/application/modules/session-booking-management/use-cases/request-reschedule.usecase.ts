@@ -2,12 +2,15 @@ import { inject, injectable } from "inversify";
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	RequestRescheduleInput,
 	RequestRescheduleResponse,
 } from "../dtos/session-booking.dto";
+import { BookingNotConfirmedForRescheduleError } from "../errors";
+import {
+	assertRescheduleWindow,
+	getBookingForUserOrThrow,
+} from "../utils/booking.util";
 import type { IRequestRescheduleUseCase } from "./request-reschedule.usecase.interface";
 
 @injectable()
@@ -23,21 +26,18 @@ export class RequestRescheduleUseCase implements IRequestRescheduleUseCase {
 		userId,
 		bookingId,
 	}: RequestRescheduleInput): Promise<RequestRescheduleResponse> {
-		const booking = await this._bookingRepository.findById(bookingId);
-		if (!booking || booking.userId !== userId) {
-			throw new NotFoundError("Booking not found");
-		}
+		const booking = await getBookingForUserOrThrow(
+			this._bookingRepository,
+			bookingId,
+			userId,
+		);
 
 		if (booking.status !== "confirmed") {
-			throw new ValidationError("Only confirmed bookings can be rescheduled");
+			throw new BookingNotConfirmedForRescheduleError();
 		}
 
 		const hours = this._platformSettingsService.sessions.rescheduleWindowHours;
-		const latest = new Date(booking.startTime);
-		latest.setHours(latest.getHours() - hours);
-		if (new Date() > latest) {
-			throw new ValidationError("Reschedule window has passed");
-		}
+		assertRescheduleWindow(booking.startTime, hours);
 
 		await this._bookingRepository.updateById(bookingId, {
 			status: "pending",

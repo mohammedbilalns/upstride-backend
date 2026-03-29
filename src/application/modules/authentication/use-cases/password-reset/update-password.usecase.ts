@@ -3,8 +3,9 @@ import type { IUserRepository } from "../../../../../domain/repositories";
 import { TYPES } from "../../../../../shared/types/types";
 import type { ITokenService } from "../../../../services";
 import type { IPasswordService } from "../../../../services/password.service.interface";
+import { getUserByEmailOrThrow } from "../../../../shared/utilities/user.util";
 import type { UpdatePasswordInput } from "../../dtos";
-import { AuthenticationError, UserNotFoundError } from "../../errors";
+import { AuthenticationError } from "../../errors";
 import type { IUpdatePasswordUseCase } from ".";
 
 @injectable()
@@ -19,9 +20,7 @@ export class UpdatePasswordUseCase implements IUpdatePasswordUseCase {
 	) {}
 
 	async execute(input: UpdatePasswordInput): Promise<void> {
-		const user = await this._userRepository.findByEmail(input.email);
-
-		if (!user) throw new UserNotFoundError();
+		const user = await getUserByEmailOrThrow(this._userRepository, input.email);
 
 		const { sub } = this._tokenService.verifyResetToken(input.tempToken);
 

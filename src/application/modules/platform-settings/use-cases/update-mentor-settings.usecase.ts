@@ -2,12 +2,12 @@ import { inject, injectable } from "inversify";
 import type { IPlatformSettingsRepository } from "../../../../domain/repositories/platform-settings.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
 	UpdateMentorSettingsInput,
 	UpdateMentorSettingsResponse,
 } from "../dtos/update-mentor-settings.dto";
+import { PlatformSettingsNotFoundError } from "../errors";
 import { PlatformSettingsDtoMapper } from "../mappers/platform-settings.mapper";
 import type { IUpdateMentorSettingsUseCase } from "./update-mentor-settings.usecase.interface";
 
@@ -28,7 +28,7 @@ export class UpdateMentorSettingsUseCase
 		const existing =
 			await this._platformSettingsRepository.findByType("mentors");
 		if (!existing) {
-			throw new NotFoundError("Platform mentor settings not found");
+			throw new PlatformSettingsNotFoundError("mentor");
 		}
 
 		const current = PlatformSettingsDtoMapper.toMentorSettingsDto(
@@ -64,7 +64,7 @@ export class UpdateMentorSettingsUseCase
 		);
 
 		if (!updated) {
-			throw new NotFoundError("Platform mentor settings not found");
+			throw new PlatformSettingsNotFoundError("mentor");
 		}
 
 		await this._platformSettingsService.refresh();

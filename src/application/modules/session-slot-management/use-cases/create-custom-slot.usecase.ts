@@ -5,12 +5,13 @@ import type { ISessionSlotRepository } from "../../../../domain/repositories/ses
 import { SessionSlotLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
-import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import { ValidationError } from "../../../shared/errors/validation-error";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	CreateCustomSlotInput,
 	CreateCustomSlotResponse,
 } from "../dtos/session-slots.dto";
+import { MentorPricingNotConfiguredError } from "../errors";
 import type { ICreateCustomSlotUseCase } from "./create-custom-slot.usecase.interface";
 
 @injectable()
@@ -30,13 +31,13 @@ export class CreateCustomSlotUseCase implements ICreateCustomSlotUseCase {
 		endTime,
 		durationMinutes,
 	}: CreateCustomSlotInput): Promise<CreateCustomSlotResponse> {
-		const mentor = await this._mentorRepository.findByUserId(userId);
-		if (!mentor) {
-			throw new MentorNotFoundError();
-		}
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorRepository,
+			userId,
+		);
 
 		if (!mentor.currentPricePer30Min) {
-			throw new ValidationError("Mentor pricing is not configured");
+			throw new MentorPricingNotConfiguredError();
 		}
 
 		const start = new Date(startTime);

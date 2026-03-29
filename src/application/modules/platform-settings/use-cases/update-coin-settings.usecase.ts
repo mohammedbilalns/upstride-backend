@@ -2,11 +2,11 @@ import { inject, injectable } from "inversify";
 import type { IPlatformSettingsRepository } from "../../../../domain/repositories/platform-settings.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
 import type {
 	UpdateEconomySettingsInput,
 	UpdateEconomySettingsResponse,
 } from "../dtos/update-coin-settings.dto";
+import { PlatformSettingsNotFoundError } from "../errors";
 import { PlatformSettingsDtoMapper } from "../mappers/platform-settings.mapper";
 import type { IUpdateEconomySettingsUseCase } from "./update-coin-settings.usecase.interface";
 
@@ -30,7 +30,7 @@ export class UpdateEconomySettingsUseCase
 		);
 
 		if (!updated) {
-			throw new NotFoundError("Platform coin settings not found");
+			throw new PlatformSettingsNotFoundError("coin");
 		}
 
 		await this._platformSettingsService.refresh();

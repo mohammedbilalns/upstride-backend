@@ -1,4 +1,5 @@
 export const ROUTES = {
+	HEALTH_CHECK: "/health",
 	AUTH: {
 		BASE: "/auth",
 		LOGIN: "/login",
@@ -93,6 +94,20 @@ export const ROUTES = {
 		ADD_MENTOR: "/:listId/mentors",
 		REMOVE_MENTOR: "/:listId/mentors/:mentorId",
 	},
+	ARTICLES: {
+		BASE: "/articles",
+		ROOT: "/",
+		TOP_TAGS: "/top-tags",
+		BY_SLUG: "/:slug",
+		BY_ID: "/:articleId",
+		COMMENTS: "/:articleId/comments",
+		COMMENT_BY_ID: "/comments/:commentId",
+		ARTICLE_REACTIONS: "/:articleId/reactions",
+		COMMENT_REACTIONS: "/comments/:commentId/reactions",
+		MENTOR: "/mentor",
+		EDIT: (articleId: string) => `/${articleId}/edit`,
+		APPEAL: (articleId: string) => `/${articleId}/appeal`,
+	},
 	RECURRING_RULES: {
 		BASE: "/recurring-rules",
 		ROOT: "/",
@@ -142,5 +157,14 @@ export const ROUTES = {
 		PLATFORM_BALANCE: "/platform/balance",
 		PLATFORM_COIN_TRANSACTIONS: "/platform/coin-transactions",
 		PLATFORM_PAYMENT_TRANSACTIONS: "/platform/payment-transactions",
+	},
+	REPORTS: {
+		BASE: "/reports",
+		ROOT: "/",
+		REPORT_ARTICLE: (articleId: string) => `/articles/${articleId}`,
+		REPORT_USER: (userId: string) => `/users/${userId}`,
+		STATUS: (reportId: string) => `/${reportId}/status`,
+		BLOCK_ARTICLE: (articleId: string) => `/articles/${articleId}/block`,
+		UNBLOCK_ARTICLE: (articleId: string) => `/articles/${articleId}/unblock`,
 	},
 };

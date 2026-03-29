@@ -18,8 +18,8 @@ import type {
 	SaveUserInterestsInput,
 	SaveUserInterestsResponse,
 } from "../../dtos";
+import { UserNotFoundError } from "../../errors";
 import { AuthenticationError } from "../../errors/authentication.error";
-import { UserNotFoundError } from "../../errors/user-not-found.error";
 import { LoginResponseMapper } from "../../mappers/login-response.mapper";
 import type { ISaveUserInterestsUseCase } from ".";
 
@@ -117,7 +117,7 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 
 		let profilePictureUrl: string | null = null;
 		if (finalUser.profilePictureId) {
-			profilePictureUrl = await this._storageService.getSignedUrl(
+			profilePictureUrl = this._storageService.getPublicUrl(
 				finalUser.profilePictureId,
 			);
 		}

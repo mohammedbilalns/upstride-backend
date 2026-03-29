@@ -8,6 +8,7 @@ export interface GetMentorsInput {
 	minExperience?: number;
 	maxExperience?: number;
 	sort?: "rating" | "recent";
+	isAdminView?: boolean;
 }
 
 export interface MentorDiscoveryDto {

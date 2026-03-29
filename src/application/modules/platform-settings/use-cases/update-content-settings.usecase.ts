@@ -2,11 +2,11 @@ import { inject, injectable } from "inversify";
 import type { IPlatformSettingsRepository } from "../../../../domain/repositories/platform-settings.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
 import type {
 	UpdateContentSettingsInput,
 	UpdateContentSettingsResponse,
 } from "../dtos/update-content-settings.dto";
+import { PlatformSettingsNotFoundError } from "../errors";
 import { PlatformSettingsDtoMapper } from "../mappers/platform-settings.mapper";
 import type { IUpdateContentSettingsUseCase } from "./update-content-settings.usecase.interface";
 
@@ -30,7 +30,7 @@ export class UpdateContentSettingsUseCase
 		);
 
 		if (!updated) {
-			throw new NotFoundError("Platform content settings not found");
+			throw new PlatformSettingsNotFoundError("content");
 		}
 
 		await this._platformSettingsService.refresh();

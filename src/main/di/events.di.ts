@@ -1,8 +1,16 @@
 import type { Container } from "inversify";
+import { ArticleBlockedHandler } from "../../application/events/handlers/article/article-blocked.handler";
+import { ArticleCommentCreatedHandler } from "../../application/events/handlers/article/article-comment-created.handler";
+import { ArticleCommentReactionCreatedHandler } from "../../application/events/handlers/article/article-comment-reaction-created.handler";
+import { ArticleReactionCreatedHandler } from "../../application/events/handlers/article/article-reaction-created.handler";
+import { ArticleUnblockedHandler } from "../../application/events/handlers/article/article-unblocked.handler";
+import { ArticleUserStatusChangedHandler } from "../../application/events/handlers/article/user-status-changed.handler";
 import { MessageSentHandler } from "../../application/events/handlers/chat/message-sent.handler";
+import { MentorUserStatusChangedHandler } from "../../application/events/handlers/mentor/user-status-changed.handler";
 import type { CheckoutCompletedHandler } from "../../application/events/handlers/payment/checkout-completed.handler";
 import type { CheckoutExpiredHandler } from "../../application/events/handlers/payment/checkout-expired.handler";
 import type { CheckoutFailedHandler } from "../../application/events/handlers/payment/checkout-failed.handler";
+import { ProfileUpdatedHandler } from "../../application/events/handlers/profile/profile-updated.handler";
 import { SignupRewardHandler } from "../../application/events/handlers/signup-reward.handler";
 import type { ICreateNotificationUseCase } from "../../application/modules/notifications/use-cases/create-notification.usecase.interface";
 import type { PlatformSettingsService } from "../../application/services/platform-settings.service";
@@ -35,6 +43,41 @@ export const bootstrapEventHandlers = (container: Container): void => {
 			TYPES.UseCases.CreateNotification,
 		),
 	);
+	const articleCommentCreatedHandler = new ArticleCommentCreatedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
+	const articleReactionCreatedHandler = new ArticleReactionCreatedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
+	const articleCommentReactionCreatedHandler =
+		new ArticleCommentReactionCreatedHandler(
+			container.get<ICreateNotificationUseCase>(
+				TYPES.UseCases.CreateNotification,
+			),
+		);
+	const profileUpdatedHandler = new ProfileUpdatedHandler(
+		container.get(TYPES.Repositories.ArticleRepository),
+	);
+	const articleUserStatusChangedHandler = new ArticleUserStatusChangedHandler(
+		container.get(TYPES.Repositories.ArticleRepository),
+	);
+	const mentorUserStatusChangedHandler = new MentorUserStatusChangedHandler(
+		container.get(TYPES.Repositories.MentorWriteRepository),
+	);
+	const articleBlockedHandler = new ArticleBlockedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
+	const articleUnblockedHandler = new ArticleUnblockedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -54,6 +97,42 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	bullMQEventBus.registerHandler(
 		"chat.message.sent",
 		messageSentHandler.handle.bind(messageSentHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"article.comment.created",
+		articleCommentCreatedHandler.handle.bind(articleCommentCreatedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"article.reaction.created",
+		articleReactionCreatedHandler.handle.bind(articleReactionCreatedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"article.comment.reaction.created",
+		articleCommentReactionCreatedHandler.handle.bind(
+			articleCommentReactionCreatedHandler,
+		),
+	);
+	bullMQEventBus.registerHandler(
+		"profile.updated",
+		profileUpdatedHandler.handle.bind(profileUpdatedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"UserStatusChangedEvent",
+		articleUserStatusChangedHandler.handle.bind(
+			articleUserStatusChangedHandler,
+		),
+	);
+	bullMQEventBus.registerHandler(
+		"UserStatusChangedEvent",
+		mentorUserStatusChangedHandler.handle.bind(mentorUserStatusChangedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"ArticleBlockedEvent",
+		articleBlockedHandler.handle.bind(articleBlockedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"ArticleUnblockedEvent",
+		articleUnblockedHandler.handle.bind(articleUnblockedHandler),
 	);
 	bullMQEventBus.registerHandler(
 		"CheckoutCompletedEvent",

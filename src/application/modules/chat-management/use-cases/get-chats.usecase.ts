@@ -57,9 +57,7 @@ export class GetChatsUseCase implements IGetChatsUseCase {
 					return;
 				}
 				const profilePictureUrl = receiverUser.profilePictureId
-					? await this._storageService.getSignedUrl(
-							receiverUser.profilePictureId,
-						)
+					? this._storageService.getPublicUrl(receiverUser.profilePictureId)
 					: null;
 				receiverUrlCache.set(receiverId, profilePictureUrl);
 				usersById.set(receiverUser.id, {

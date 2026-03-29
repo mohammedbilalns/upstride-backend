@@ -1,5 +1,9 @@
 import type { Container } from "inversify";
 import type {
+	IArticleCommentRepository,
+	IArticleReactionRepository,
+	IArticleRepository,
+	IArticleViewRepository,
 	IChatMessageRepository,
 	IChatRepository,
 	IMentorListReadRepository,
@@ -9,9 +13,14 @@ import type {
 	INotificationRepository,
 	IPlatformSettingsRepository,
 	IProfessionRepository,
+	IReportRepository,
 	ISavedMentorRepository,
 } from "../../domain/repositories";
 import {
+	MongoArticleCommentRepository,
+	MongoArticleReactionRepository,
+	MongoArticleRepository,
+	MongoArticleViewRepository,
 	MongoChatMessageRepository,
 	MongoChatRepository,
 	MongoCoinTransactionRepository,
@@ -24,6 +33,7 @@ import {
 	MongoPaymentTransactionRepository,
 	MongoPlatformSettingsRepository,
 	MongoPlatformWalletRepository,
+	MongoReportRepository,
 	MongoSavedMentorRepository,
 	MongoSessionAvailabilityRepository,
 	MongoSessionBookingRepository,
@@ -115,6 +125,30 @@ export const registerRepositoryBindings = (container: Container): void => {
 	container
 		.bind<INotificationRepository>(TYPES.Repositories.NotificationRepository)
 		.to(MongoNotificationRepository)
+		.inSingletonScope();
+	container
+		.bind<IReportRepository>(TYPES.Repositories.ReportRepository)
+		.to(MongoReportRepository)
+		.inSingletonScope();
+	container
+		.bind<IArticleRepository>(TYPES.Repositories.ArticleRepository)
+		.to(MongoArticleRepository)
+		.inSingletonScope();
+	container
+		.bind<IArticleCommentRepository>(
+			TYPES.Repositories.ArticleCommentRepository,
+		)
+		.to(MongoArticleCommentRepository)
+		.inSingletonScope();
+	container
+		.bind<IArticleReactionRepository>(
+			TYPES.Repositories.ArticleReactionRepository,
+		)
+		.to(MongoArticleReactionRepository)
+		.inSingletonScope();
+	container
+		.bind<IArticleViewRepository>(TYPES.Repositories.ArticleViewRepository)
+		.to(MongoArticleViewRepository)
 		.inSingletonScope();
 	container
 		.bind<ISavedMentorRepository>(TYPES.Repositories.SavedMentorRepository)

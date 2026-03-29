@@ -72,6 +72,14 @@ export class S3StorageService implements IStorageService {
 		return getSignedUrl(this._s3, command, { expiresIn });
 	}
 
+	getPublicUrl(objectKey: string): string {
+		const safeKey = objectKey
+			.split("/")
+			.map((segment) => encodeURIComponent(segment))
+			.join("/");
+		return `https://${this._bucket}.s3.${env.AWS_REGION}.amazonaws.com/${safeKey}`;
+	}
+
 	async getSignedUploadUrl(
 		objectKey: string,
 		mimetype: string,

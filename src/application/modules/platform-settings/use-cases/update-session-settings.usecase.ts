@@ -2,11 +2,11 @@ import { inject, injectable } from "inversify";
 import type { IPlatformSettingsRepository } from "../../../../domain/repositories/platform-settings.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
 import type {
 	UpdateSessionSettingsInput,
 	UpdateSessionSettingsResponse,
 } from "../dtos/update-session-settings.dto";
+import { PlatformSettingsNotFoundError } from "../errors";
 import { PlatformSettingsDtoMapper } from "../mappers/platform-settings.mapper";
 import type { IUpdateSessionSettingsUseCase } from "./update-session-settings.usecase.interface";
 
@@ -30,7 +30,7 @@ export class UpdateSessionSettingsUseCase
 		);
 
 		if (!updated) {
-			throw new NotFoundError("Platform session settings not found");
+			throw new PlatformSettingsNotFoundError("session");
 		}
 
 		await this._platformSettingsService.refresh();

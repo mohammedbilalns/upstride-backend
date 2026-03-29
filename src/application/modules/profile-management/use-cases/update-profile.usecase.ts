@@ -1,10 +1,12 @@
 import { inject, injectable } from "inversify";
+import { ProfileUpdatedEvent } from "../../../../domain/events/profile-updated.event";
 import type { IUserRepository } from "../../../../domain/repositories";
 import { UserPreferencesLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import { ValidationError } from "../../../shared/errors/validation-error";
-import { UserNotFoundError } from "../../authentication/errors";
+import { getUserByIdOrThrow } from "../../../shared/utilities/user.util";
 import type { UpdateProfileInput } from "../dtos/update-profile.dto";
 import type { IUpdateProfileUseCase } from "./update-profile.usecase.interface";
 
@@ -15,21 +17,25 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: UpdateProfileInput): Promise<void> {
-		const user = await this._userRepository.findById(input.userId);
-		if (!user) {
-			throw new UserNotFoundError();
-		}
+		const user = await getUserByIdOrThrow(this._userRepository, input.userId);
 
 		const updateData: Record<string, unknown> = {};
 
-		if (input.name) {
+		const nameChanged = input.name !== undefined && input.name !== user.name;
+		const profilePictureChanged =
+			input.profilePictureId !== undefined &&
+			input.profilePictureId !== user.profilePictureId;
+
+		if (nameChanged) {
 			updateData.name = input.name;
 		}
 
-		if (input.profilePictureId) {
+		if (profilePictureChanged && input.profilePictureId) {
 			if (user.profilePictureId) {
 				await this._storageService.delete(user.profilePictureId);
 			}
@@ -63,5 +69,23 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 		}
 
 		await this._userRepository.updateById(user.id, updateData);
+
+		if (user.role === "MENTOR" && (nameChanged || profilePictureChanged)) {
+			const updatedName = nameChanged ? (input.name as string) : user.name;
+			const profilePictureId = profilePictureChanged
+				? (input.profilePictureId as string | null)
+				: user.profilePictureId;
+			const avatarUrl = profilePictureId
+				? this._storageService.getPublicUrl(profilePictureId)
+				: "";
+
+			await this._eventBus.publish(
+				new ProfileUpdatedEvent(
+					user.id,
+					nameChanged ? updatedName : undefined,
+					profilePictureChanged ? avatarUrl : undefined,
+				),
+			);
+		}
 	}
 }

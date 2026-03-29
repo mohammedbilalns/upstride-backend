@@ -62,7 +62,9 @@ export class MentorController {
 
 	getDiscovery = asyncHandler(async (req, res) => {
 		const query = req.validated?.query as MentorDiscoveryQuery;
-		const userId = (req as AuthenticatedRequest).user.id;
+		const user = (req as AuthenticatedRequest).user;
+		const userId = user.id;
+		const isAdminView = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
 
 		const result = await this._getMentorsDiscoveryUseCase.execute({
 			page: query.page,
@@ -74,6 +76,7 @@ export class MentorController {
 			minExperience: query.minExperience,
 			maxExperience: query.maxExperience,
 			sort: query.sort,
+			isAdminView,
 		} as GetMentorsInput);
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -125,10 +128,12 @@ export class MentorController {
 
 	getPublicProfile = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
+		const role = (req as AuthenticatedRequest).user.role;
 		const { id: mentorId } = req.validated?.params as MentorIdParam;
 		const data = await this._getPublicMentorProfileUseCase.execute({
 			mentorId,
 			requesterUserId: userId,
+			requesterRole: role,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {

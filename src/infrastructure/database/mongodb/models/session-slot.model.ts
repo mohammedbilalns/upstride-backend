@@ -35,6 +35,7 @@ const sessionSlotSchema = new Schema<SessionSlotDocument>(
 );
 
 sessionSlotSchema.index({ mentorId: 1, startTime: 1 });
+sessionSlotSchema.index({ mentorId: 1, status: 1, startTime: 1 });
 
 export const SessionSlotModel = model<SessionSlotDocument>(
 	"SessionSlot",

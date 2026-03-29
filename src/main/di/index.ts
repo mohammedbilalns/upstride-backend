@@ -1,4 +1,5 @@
 export * from "./admin-management.di";
+export * from "./article.di";
 export * from "./authentication.di";
 export * from "./catalog.di";
 export * from "./chat.di";
@@ -14,6 +15,7 @@ export * from "./presentation.di";
 export * from "./profile.di";
 export * from "./queues.di";
 export * from "./recurring-rule.di";
+export * from "./report.di";
 export * from "./repositories.di";
 export * from "./session-booking.di";
 export * from "./session-slot.di";

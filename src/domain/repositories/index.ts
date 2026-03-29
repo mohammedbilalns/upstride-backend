@@ -1,3 +1,7 @@
+export * from "./article.repository.interface";
+export * from "./article-comment.repository.interface";
+export * from "./article-reaction.repository.interface";
+export * from "./article-view.repository.interface";
 export * from "./capabilities/creatable.repository.interface";
 export * from "./capabilities/find-by-id.repository.interface";
 export * from "./capabilities/find-by-owner.repository.interface";
@@ -18,6 +22,7 @@ export * from "./payment-transactions.repository.interface";
 export * from "./platform-settings.repository.interface";
 export * from "./platform-wallet.repository.interface";
 export * from "./profession.repository.interface";
+export * from "./report.repository.interface";
 export * from "./saved-mentor.repository.interface";
 export * from "./session.repository.interface";
 export * from "./session-availability.repository.interface";
