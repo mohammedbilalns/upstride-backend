@@ -96,20 +96,21 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 			bookingId: created.id,
 		});
 
-		await this._coinTransactionRepository.create(
-			new CoinTransaction(
-				this._idGenerator.generate(),
-				userId,
-				slot.price,
-				CoinTransactionType.SessionEarning,
-				"session_booking",
-				created.id,
-				undefined,
-				"platform",
+		await Promise.all([
+			this._coinTransactionRepository.create(
+				new CoinTransaction(
+					this._idGenerator.generate(),
+					userId,
+					slot.price,
+					CoinTransactionType.SessionEarning,
+					"session_booking",
+					created.id,
+					undefined,
+					"platform",
+				),
 			),
-		);
-
-		await this._platformWalletRepository.incrementBalance(slot.price);
+			this._platformWalletRepository.incrementBalance(slot.price),
+		]);
 
 		return { bookingId: created.id };
 	}

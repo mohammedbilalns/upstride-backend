@@ -28,7 +28,11 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 	) {}
 
 	async execute(input: ReportArticleInput): Promise<ReportArticleOutput> {
-		const reporter = await this._userRepository.findById(input.reporterId);
+		const [reporter, article] = await Promise.all([
+			this._userRepository.findById(input.reporterId),
+			this._articleRepository.findById(input.articleId),
+		]);
+
 		if (!reporter) {
 			throw new UserNotFoundError();
 		}
@@ -37,7 +41,6 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 			throw new ValidationError("Only users and mentors can report articles");
 		}
 
-		const article = await this._articleRepository.findById(input.articleId);
 		if (!article || !article.isActive || article.isArchived) {
 			throw new ArticleNotFoundError();
 		}

@@ -33,16 +33,18 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		}
 
 		const starterTier = this._platformSettingsService.mentors.starter;
-		await this._mentorRepository.updateById(mentorId, {
-			isApproved: true,
-			isRejected: false,
-			rejectionReason: null,
-			tierName: starterTier.name,
-			tierMax30minPayment: starterTier.maxPricePer30Min,
-			currentPricePer30Min: starterTier.maxPricePer30Min,
-			score: starterTier.minScore,
-		});
-		await this._userRepository.updateById(mentor.userId, { role: "MENTOR" });
+		await Promise.all([
+			this._mentorRepository.updateById(mentorId, {
+				isApproved: true,
+				isRejected: false,
+				rejectionReason: null,
+				tierName: starterTier.name,
+				tierMax30minPayment: starterTier.maxPricePer30Min,
+				currentPricePer30Min: starterTier.maxPricePer30Min,
+				score: starterTier.minScore,
+			}),
+			this._userRepository.updateById(mentor.userId, { role: "MENTOR" }),
+		]);
 
 		await this._mailService.send(user.email, new MentorApprovalMailTemplate(), {
 			name: user.name,

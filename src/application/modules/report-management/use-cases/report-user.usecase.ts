@@ -21,7 +21,11 @@ export class ReportUserUseCase implements IReportUserUseCase {
 	) {}
 
 	async execute(input: ReportUserInput): Promise<ReportUserOutput> {
-		const reporter = await this._userRepository.findById(input.reporterId);
+		const [reporter, targetUser] = await Promise.all([
+			this._userRepository.findById(input.reporterId),
+			this._userRepository.findById(input.targetUserId),
+		]);
+
 		if (!reporter) {
 			throw new UserNotFoundError();
 		}
@@ -30,7 +34,6 @@ export class ReportUserUseCase implements IReportUserUseCase {
 			throw new ValidationError("Only users and mentors can report users");
 		}
 
-		const targetUser = await this._userRepository.findById(input.targetUserId);
 		if (!targetUser) {
 			throw new UserNotFoundError("Reported user not found");
 		}

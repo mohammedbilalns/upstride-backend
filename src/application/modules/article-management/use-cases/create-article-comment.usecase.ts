@@ -72,9 +72,12 @@ export class CreateArticleCommentUseCase
 		const created = await this._commentRepository.create(comment);
 
 		const currentComments = article.commentsCount ?? 0;
-		await this._articleRepository.updateById(input.articleId, {
-			commentsCount: currentComments + 1,
-		});
+		const [, user] = await Promise.all([
+			this._articleRepository.updateById(input.articleId, {
+				commentsCount: currentComments + 1,
+			}),
+			this._userRepository.findById(input.userId),
+		]);
 
 		if (parentId) {
 			let currentParentId: string | null = parentId;
@@ -90,7 +93,6 @@ export class CreateArticleCommentUseCase
 			}
 		}
 
-		const user = await this._userRepository.findById(input.userId);
 		const actorName = user?.name || "";
 
 		await this._eventBus.publish(
