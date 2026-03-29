@@ -30,8 +30,10 @@ export interface MentorProfileDto {
 
 export interface GetMentorProfileInput {
 	userId: string;
+	viewerUserId?: string;
 }
 
 export interface GetMentorProfileResponse {
 	profile: MentorProfileDto;
+	isReported?: boolean;
 }

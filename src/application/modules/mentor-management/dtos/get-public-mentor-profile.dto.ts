@@ -36,4 +36,5 @@ export interface GetPublicMentorProfileInput {
 export interface GetPublicMentorProfileResponse {
 	profile: PublicMentorProfileDto;
 	nextAvailableSessions: PublicMentorSlotDto[];
+	isReported?: boolean;
 }

@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
+import type { IReportRepository } from "../../../../domain/repositories/report.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
@@ -19,12 +20,15 @@ export class GetMentorProfileUseCase implements IGetMentorProfileUseCase {
 		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Repositories.MentorWriteRepository)
 		private readonly _mentorWriteRepository: IMentorWriteRepository,
+		@inject(TYPES.Repositories.ReportRepository)
+		private readonly _reportRepository: IReportRepository,
 		@inject(TYPES.Services.PlatformSettings)
 		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute({
 		userId,
+		viewerUserId,
 	}: GetMentorProfileInput): Promise<GetMentorProfileResponse> {
 		let profile =
 			await this._mentorProfileReadRepository.findProfileByUserId(userId);
@@ -51,11 +55,24 @@ export class GetMentorProfileUseCase implements IGetMentorProfileUseCase {
 				.sessionPercentage;
 		const mentorSessionEarningPercentage = Math.max(0, 100 - sessionPercentage);
 
+		let isReported = false;
+		if (viewerUserId) {
+			const activeReports = await this._reportRepository.query({
+				query: {
+					targetId: userId,
+					reporterId: viewerUserId,
+					status: "PENDING",
+				},
+			});
+			isReported = activeReports.length > 0;
+		}
+
 		return {
 			profile: MentorProfileMapper.toDto(
 				profile,
 				mentorSessionEarningPercentage,
 			),
+			isReported,
 		};
 	}
 }

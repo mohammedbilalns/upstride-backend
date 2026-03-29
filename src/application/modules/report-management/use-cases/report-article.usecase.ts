@@ -46,6 +46,18 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 			throw new ValidationError("You cannot report your own article");
 		}
 
+		const existingReports = await this._reportRepository.query({
+			query: {
+				targetId: input.articleId,
+				reporterId: input.reporterId,
+				status: "PENDING",
+			},
+		});
+
+		if (existingReports.length > 0) {
+			throw new ValidationError("You have already reported this article");
+		}
+
 		const report = new Report(
 			"",
 			input.reporterId,

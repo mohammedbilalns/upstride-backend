@@ -39,6 +39,18 @@ export class ReportUserUseCase implements IReportUserUseCase {
 			throw new ValidationError("You cannot report yourself");
 		}
 
+		const existingReports = await this._reportRepository.query({
+			query: {
+				targetId: input.targetUserId,
+				reporterId: input.reporterId,
+				status: "PENDING",
+			},
+		});
+
+		if (existingReports.length > 0) {
+			throw new ValidationError("You have already reported this user");
+		}
+
 		const report = new Report(
 			"",
 			input.reporterId,

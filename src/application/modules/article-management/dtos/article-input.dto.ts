@@ -43,6 +43,7 @@ export interface GetArticleOutput {
 	article: ArticleDto;
 	isAuthor?: boolean;
 	userReaction?: ArticleReactionType;
+	isReported?: boolean;
 }
 
 export interface GetArticlesInput {

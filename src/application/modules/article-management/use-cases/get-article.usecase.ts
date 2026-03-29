@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import type {
 	IArticleReactionRepository,
 	IArticleRepository,
+	IReportRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
@@ -21,6 +22,8 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleReactionRepository)
 		private readonly _reactionRepository: IArticleReactionRepository,
+		@inject(TYPES.Repositories.ReportRepository)
+		private readonly _reportRepository: IReportRepository,
 		@inject(TYPES.UseCases.MarkArticleView)
 		private readonly _markArticleViewUseCase: IMarkArticleViewUseCase,
 		@inject(TYPES.Services.Storage)
@@ -34,11 +37,19 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 		}
 
 		let userReaction: any;
+		let isReported = false;
 
 		if (input.viewerUserId) {
-			const [reactions] = await Promise.all([
+			const [reactions, activeReports] = await Promise.all([
 				this._reactionRepository.query({
 					query: { resourceId: article.id, userId: input.viewerUserId },
+				}),
+				this._reportRepository.query({
+					query: {
+						targetId: article.id,
+						reporterId: input.viewerUserId,
+						status: "PENDING",
+					},
 				}),
 				this._markArticleViewUseCase.execute({
 					articleId: article.id,
@@ -48,6 +59,7 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			if (reactions.length > 0) {
 				userReaction = reactions[0].reactionType;
 			}
+			isReported = activeReports.length > 0;
 		}
 
 		const dto = ArticleMapper.toDto(article);
@@ -65,6 +77,7 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			article: dto,
 			isAuthor: input.viewerUserId === article.authorId,
 			userReaction,
+			isReported,
 		};
 	}
 }

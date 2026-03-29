@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
+import type { IReportRepository } from "../../../../domain/repositories/report.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
@@ -21,6 +22,8 @@ export class GetPublicMentorProfileUseCase
 		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Repositories.SessionSlotRepository)
 		private readonly _sessionSlotRepository: ISessionSlotRepository,
+		@inject(TYPES.Repositories.ReportRepository)
+		private readonly _reportRepository: IReportRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}
@@ -52,6 +55,18 @@ export class GetPublicMentorProfileUseCase
 			? this._storageService.getPublicUrl(profile.user.profilePictureId)
 			: undefined;
 
+		let isReported = false;
+		if (requesterUserId) {
+			const activeReports = await this._reportRepository.query({
+				query: {
+					targetId: profile.userId,
+					reporterId: requesterUserId,
+					status: "PENDING",
+				},
+			});
+			isReported = activeReports.length > 0;
+		}
+
 		return {
 			profile: MentorPublicProfileMapper.toDto(profile, avatar),
 			nextAvailableSessions: upcomingSlots.map((slot) => ({
@@ -62,6 +77,7 @@ export class GetPublicMentorProfileUseCase
 				price: slot.price,
 				currency: slot.currency,
 			})),
+			isReported,
 		};
 	}
 }
