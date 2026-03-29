@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import type { ArticleReactionCreatedEvent } from "../../../../domain/events/article-reaction-created.event";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
-import { shouldNotify } from "../../../../shared/utils/notification.utils";
+import { shouldNotify } from "../../../../shared/utilities/notification.utils";
 import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.usecase.interface";
 
 @injectable()
