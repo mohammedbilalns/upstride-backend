@@ -78,7 +78,10 @@ export const UpdateCommentBodySchema = z.object({
 
 export const CommentsQuerySchema = z.object({
 	page: pageSchema,
-	parentId: objectIdSchema.optional().nullable(),
+	parentId: z.preprocess(
+		(val) => (val === "null" || val === "" ? null : val),
+		objectIdSchema.nullable().optional(),
+	),
 });
 
 export const ReactBodySchema = z.object({

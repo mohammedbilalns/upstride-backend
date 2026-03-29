@@ -1,5 +1,10 @@
-import type { DeleteArticleCommentInput } from "../dtos/article-input.dto";
+import type {
+	DeleteArticleCommentInput,
+	DeleteArticleCommentOutput,
+} from "../dtos/article-input.dto";
 
 export interface IDeleteArticleCommentUseCase {
-	execute(input: DeleteArticleCommentInput): Promise<void>;
+	execute(
+		input: DeleteArticleCommentInput,
+	): Promise<DeleteArticleCommentOutput>;
 }

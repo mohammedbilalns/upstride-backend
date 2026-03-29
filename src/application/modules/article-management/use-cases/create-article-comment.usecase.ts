@@ -43,7 +43,6 @@ export class CreateArticleCommentUseCase
 		}
 
 		let parentId: string | null = null;
-		let parentRepliesCount = 0;
 		if (input.parentId !== undefined && input.parentId !== null) {
 			const parent = await this._commentRepository.findById(input.parentId);
 			if (!parent || !parent.isActive) {
@@ -55,7 +54,6 @@ export class CreateArticleCommentUseCase
 				);
 			}
 			parentId = parent.id;
-			parentRepliesCount = parent.repliesCount ?? 0;
 		}
 
 		const comment = new ArticleComment(
@@ -79,9 +77,17 @@ export class CreateArticleCommentUseCase
 		});
 
 		if (parentId) {
-			await this._commentRepository.updateById(parentId, {
-				repliesCount: parentRepliesCount + 1,
-			});
+			let currentParentId: string | null = parentId;
+			while (currentParentId) {
+				const parentComment =
+					await this._commentRepository.findById(currentParentId);
+				if (!parentComment) break;
+
+				await this._commentRepository.updateById(currentParentId, {
+					repliesCount: (parentComment.repliesCount ?? 0) + 1,
+				});
+				currentParentId = parentComment.parentId;
+			}
 		}
 
 		await this._eventBus.publish(
@@ -91,6 +97,7 @@ export class CreateArticleCommentUseCase
 				article.authorId,
 				created.id,
 				input.userId,
+				parentId,
 			),
 		);
 

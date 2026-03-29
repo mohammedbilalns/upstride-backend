@@ -220,7 +220,7 @@ export class ArticleController {
 			const data = await this._getArticleCommentsUseCase.execute({
 				articleId,
 				page: query.page,
-				parentId: query.parentId ?? undefined,
+				parentId: query.parentId,
 			} as GetArticleCommentsInput);
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},

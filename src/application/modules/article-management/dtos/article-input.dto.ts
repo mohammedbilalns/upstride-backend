@@ -96,6 +96,10 @@ export interface DeleteArticleCommentInput {
 	commentId: string;
 }
 
+export interface DeleteArticleCommentOutput {
+	commentId: string;
+}
+
 export interface GetArticleCommentsInput {
 	articleId: string;
 	page: number;

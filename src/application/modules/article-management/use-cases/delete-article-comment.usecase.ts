@@ -5,7 +5,10 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import { ValidationError } from "../../../shared/errors/validation-error";
-import type { DeleteArticleCommentInput } from "../dtos/article-input.dto";
+import type {
+	DeleteArticleCommentInput,
+	DeleteArticleCommentOutput,
+} from "../dtos/article-input.dto";
 import { ArticleCommentNotFoundError } from "../errors";
 import type { IDeleteArticleCommentUseCase } from "./delete-article-comment.usecase.interface";
 
@@ -20,7 +23,9 @@ export class DeleteArticleCommentUseCase
 		private readonly _commentRepository: IArticleCommentRepository,
 	) {}
 
-	async execute(input: DeleteArticleCommentInput): Promise<void> {
+	async execute(
+		input: DeleteArticleCommentInput,
+	): Promise<DeleteArticleCommentOutput> {
 		const comment = await this._commentRepository.findById(input.commentId);
 		if (!comment || !comment.isActive) {
 			throw new ArticleCommentNotFoundError();
@@ -42,5 +47,7 @@ export class DeleteArticleCommentUseCase
 				commentsCount: Math.max(0, currentComments - 1),
 			});
 		}
+
+		return { commentId: input.commentId };
 	}
 }

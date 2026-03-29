@@ -10,5 +10,6 @@ export class ArticleCommentCreatedEvent implements AppEvent {
 		public readonly articleAuthorId: string,
 		public readonly commentId: string,
 		public readonly actorId: string,
+		public readonly parentId?: string | null,
 	) {}
 }

@@ -31,12 +31,8 @@ export class GetArticleCommentsUseCase implements IGetArticleCommentsUseCase {
 	): Promise<GetArticleCommentsOutput> {
 		const query: ArticleCommentQuery = {
 			articleId: input.articleId,
-			isActive: true,
+			parentId: input.parentId ?? null,
 		};
-
-		if (input.parentId !== undefined) {
-			query.parentId = input.parentId ?? null;
-		}
 
 		const result = await this._commentRepository.paginate({
 			page: input.page,

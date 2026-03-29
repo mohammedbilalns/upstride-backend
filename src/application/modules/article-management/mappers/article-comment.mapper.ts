@@ -11,11 +11,15 @@ export class ArticleCommentMapper {
 			id: entity.id,
 			articleId: entity.articleId,
 			parentId: entity.parentId,
-			userId: entity.userId,
-			authorSnapshot,
-			likesCount: entity.likesCount ?? 0,
+			userId: entity.isActive ? entity.userId : "",
+			authorSnapshot: entity.isActive
+				? authorSnapshot
+				: { name: "Deleted User", avatarUrl: undefined },
+			likesCount: entity.isActive ? (entity.likesCount ?? 0) : 0,
 			repliesCount: entity.repliesCount ?? 0,
-			content: entity.content,
+			content: entity.isActive
+				? entity.content
+				: "[This comment has been deleted]",
 			isActive: entity.isActive,
 			createdAt: entity.createdAt as Date,
 			updatedAt: entity.updatedAt as Date,
