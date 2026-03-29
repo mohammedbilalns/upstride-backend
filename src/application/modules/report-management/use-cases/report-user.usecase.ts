@@ -5,10 +5,13 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { ReportUserInput, ReportUserOutput } from "../dtos/report.dto";
-import { ReporterRoleError } from "../errors";
+import {
+	ReportAlreadyExistsError,
+	ReporterRoleError,
+	ReportSelfError,
+} from "../errors";
 import { ReportMapper } from "../mappers/report.mapper";
 import type { IReportUserUseCase } from "./report-user.usecase.interface";
 
@@ -40,7 +43,7 @@ export class ReportUserUseCase implements IReportUserUseCase {
 		}
 
 		if (input.reporterId === input.targetUserId) {
-			throw new ValidationError("You cannot report yourself");
+			throw new ReportSelfError("user");
 		}
 
 		const existingReports = await this._reportRepository.query({
@@ -52,7 +55,7 @@ export class ReportUserUseCase implements IReportUserUseCase {
 		});
 
 		if (existingReports.length > 0) {
-			throw new ValidationError("You have already reported this user");
+			throw new ReportAlreadyExistsError("user");
 		}
 
 		const report = new Report(

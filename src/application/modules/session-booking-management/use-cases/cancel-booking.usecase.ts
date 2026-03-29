@@ -2,14 +2,13 @@ import { inject, injectable } from "inversify";
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
 import { SlotNotFoundError } from "../../session-slot-management/errors";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
 } from "../dtos/session-booking.dto";
+import { BookingAlreadyCancelledError, BookingNotFoundError } from "../errors";
 import type { ICancelBookingUseCase } from "./cancel-booking.usecase.interface";
 
 @injectable()
@@ -30,11 +29,11 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
 		const booking = await this._bookingRepository.findById(bookingId);
 		if (!booking || booking.userId !== userId) {
-			throw new NotFoundError("Booking not found");
+			throw new BookingNotFoundError();
 		}
 
 		if (booking.status === "cancelled" || booking.status === "refunded") {
-			throw new ValidationError("Booking is already cancelled");
+			throw new BookingAlreadyCancelledError();
 		}
 
 		const now = new Date();

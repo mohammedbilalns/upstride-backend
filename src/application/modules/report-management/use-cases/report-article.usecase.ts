@@ -6,14 +6,17 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { ArticleNotFoundError } from "../../article-management/errors";
 import { UserNotFoundError } from "../../authentication/errors";
 import type {
 	ReportArticleInput,
 	ReportArticleOutput,
 } from "../dtos/report.dto";
-import { ReporterRoleError } from "../errors";
+import {
+	ReportAlreadyExistsError,
+	ReporterRoleError,
+	ReportSelfError,
+} from "../errors";
 import { ReportMapper } from "../mappers/report.mapper";
 import type { IReportArticleUseCase } from "./report-article.usecase.interface";
 
@@ -47,7 +50,7 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 		}
 
 		if (article.authorId === input.reporterId) {
-			throw new ValidationError("You cannot report your own article");
+			throw new ReportSelfError("article");
 		}
 
 		const existingReports = await this._reportRepository.query({
@@ -59,7 +62,7 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 		});
 
 		if (existingReports.length > 0) {
-			throw new ValidationError("You have already reported this article");
+			throw new ReportAlreadyExistsError("article");
 		}
 
 		const report = new Report(

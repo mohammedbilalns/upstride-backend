@@ -3,14 +3,14 @@ import type { IMentorWriteRepository } from "../../../../domain/repositories/men
 import type { ISessionBookingRepository } from "../../../../domain/repositories/session-booking.repository.interface";
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
-import { ValidationError } from "../../../shared/errors/validation-error";
+import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
 import { SlotNotFoundError } from "../../session-slot-management/errors";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
 } from "../dtos/session-booking.dto";
+import { BookingCannotBeCancelledError, BookingNotFoundError } from "../errors";
 import type { ICancelBookingByMentorUseCase } from "./cancel-booking-by-mentor.usecase.interface";
 
 @injectable()
@@ -35,12 +35,12 @@ export class CancelBookingByMentorUseCase
 	}: CancelBookingInput): Promise<CancelBookingResponse> {
 		const mentor = await this._mentorRepository.findByUserId(userId);
 		if (!mentor) {
-			throw new NotFoundError("Mentor profile not found");
+			throw new MentorNotFoundError("Mentor profile not found");
 		}
 
 		const booking = await this._bookingRepository.findById(bookingId);
 		if (!booking || booking.mentorId !== mentor.id) {
-			throw new NotFoundError("Booking not found");
+			throw new BookingNotFoundError();
 		}
 
 		if (
@@ -48,7 +48,7 @@ export class CancelBookingByMentorUseCase
 			booking.status === "refunded" ||
 			booking.status === "completed"
 		) {
-			throw new ValidationError("Booking cannot be cancelled");
+			throw new BookingCannotBeCancelledError();
 		}
 
 		await this._bookingRepository.updateById(bookingId, {

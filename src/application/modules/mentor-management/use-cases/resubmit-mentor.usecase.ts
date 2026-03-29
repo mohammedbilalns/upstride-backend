@@ -5,6 +5,7 @@ import {
 } from "../../../../domain/entities/mentor.entity";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import type { ResubmitMentorInput } from "../dtos/resubmit-mentor.dto";
 import { MaxApplicationAttemptsExceededError } from "../errors/max-application-attempts-exceeded.error";
 import type { IResubmitMentorUseCase } from "./resubmit-mentor.usecase.interface";
@@ -22,7 +23,7 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 		);
 
 		if (!existingMentor) {
-			throw new Error("Mentor profile not found.");
+			throw new MentorNotFoundError("Mentor profile not found");
 		}
 
 		if (existingMentor.applicationAttempts >= MAX_MENTOR_APPLICATION_ATTEMPTS) {

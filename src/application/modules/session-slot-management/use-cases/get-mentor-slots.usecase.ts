@@ -3,7 +3,7 @@ import type { IMentorWriteRepository } from "../../../../domain/repositories/men
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { NotFoundError } from "../../../shared/errors/not-found-error";
+import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import type {
 	GetMentorSlotsInput,
 	GetMentorSlotsResponse,
@@ -29,7 +29,7 @@ export class GetMentorSlotsUseCase implements IGetMentorSlotsUseCase {
 	}: GetMentorSlotsInput): Promise<GetMentorSlotsResponse> {
 		const mentor = await this._mentorRepository.findByUserId(userId);
 		if (!mentor) {
-			throw new NotFoundError("Mentor profile not found");
+			throw new MentorNotFoundError("Mentor profile not found");
 		}
 		if (mentor.tierName === null || mentor.tierMax30minPayment === null) {
 			const starterTier = this._platformSettingsService.mentors.starter;
