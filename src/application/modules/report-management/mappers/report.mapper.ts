@@ -15,6 +15,10 @@ export class ReportMapper {
 			description: entity.description,
 			status: entity.status,
 			actionTaken: entity.actionTaken,
+			appealMessage: entity.appealMessage,
+			appealedAt: entity.appealedAt,
+			isAppealSubmitted: entity.isAppealSubmitted,
+			actionTakenAt: entity.actionTakenAt,
 			createdAt: entity.createdAt as Date,
 			updatedAt: entity.updatedAt as Date,
 		};

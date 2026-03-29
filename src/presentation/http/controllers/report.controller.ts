@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import type { IUnblockArticleUseCase } from "../../../application/modules/article-management/use-cases";
 import type {
 	IBlockArticleUseCase,
 	IGetReportsUseCase,
@@ -35,6 +36,8 @@ export class ReportController {
 		private readonly _updateReportStatusUseCase: IUpdateReportStatusUseCase,
 		@inject(TYPES.UseCases.BlockArticle)
 		private readonly _blockArticleUseCase: IBlockArticleUseCase,
+		@inject(TYPES.UseCases.UnblockArticle)
+		private readonly _unblockArticleUseCase: IUnblockArticleUseCase,
 	) {}
 
 	reportArticle = asyncHandler(async (req, res) => {
@@ -113,18 +116,34 @@ export class ReportController {
 	});
 
 	blockArticle = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
 		const { articleId } = req.validated?.params as BlockArticleParam;
-		const { reason } = req.validated?.body as BlockArticleBody;
+		const { reason, reportId } = req.validated?.body as BlockArticleBody;
+		const adminId = (req as AuthenticatedRequest).user.id;
 
 		const result = await this._blockArticleUseCase.execute({
 			adminId,
 			articleId,
 			reason,
+			reportId,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: ReportResponseMessages.ARTICLE_BLOCKED_SUCCESS,
+			data: result,
+		});
+	});
+
+	unblockArticle = asyncHandler(async (req, res) => {
+		const adminId = (req as AuthenticatedRequest).user.id;
+		const { articleId } = req.validated?.params as BlockArticleParam;
+
+		const result = await this._unblockArticleUseCase.execute({
+			adminId,
+			articleId,
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: "Article unblocked successfully",
 			data: result,
 		});
 	});

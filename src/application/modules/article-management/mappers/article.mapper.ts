@@ -23,7 +23,8 @@ export class ArticleMapper {
 			likesCount: entity.likesCount ?? 0,
 			isBlockedByAdmin: entity.isBlockedByAdmin,
 			blockingReason: entity.blockingReason,
-			createdAt: entity.createdAt as Date,
+			blockedAt: entity.blockedAt ? entity.blockedAt.toISOString() : null,
+			createdAt: (entity.createdAt as Date).toISOString(),
 		};
 	}
 

@@ -20,5 +20,6 @@ export interface ArticleDto {
 	likesCount: number;
 	isBlockedByAdmin: boolean;
 	blockingReason: string | null;
-	createdAt: Date;
+	blockedAt: string | null;
+	createdAt: string;
 }

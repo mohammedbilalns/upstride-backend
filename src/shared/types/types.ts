@@ -135,6 +135,8 @@ export const TYPES = {
 		UpdateArticle: Symbol.for("UpdateArticleUseCase"),
 		DeleteArticle: Symbol.for("DeleteArticleUseCase"),
 		BlockArticle: Symbol.for("BlockArticleUseCase"),
+		UnblockArticle: Symbol.for("UnblockArticleUseCase"),
+		SubmitArticleAppeal: Symbol.for("SubmitArticleAppealUseCase"),
 		GetArticle: Symbol.for("GetArticleUseCase"),
 		GetArticles: Symbol.for("GetArticlesUseCase"),
 		GetArticleTopTags: Symbol.for("GetArticleTopTagsUseCase"),

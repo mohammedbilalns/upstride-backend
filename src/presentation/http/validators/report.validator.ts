@@ -67,6 +67,10 @@ export const GetReportsQuerySchema = z.object({
 	targetType: reportTargetTypeFilterSchema.optional(),
 	targetId: objectIdSchema.optional(),
 	reporterId: objectIdSchema.optional(),
+	isAppealSubmitted: z
+		.enum(["true", "false"])
+		.transform((val) => val === "true")
+		.optional(),
 });
 
 export type GetReportsQuery = z.infer<typeof GetReportsQuerySchema>;
@@ -86,6 +90,7 @@ export type UpdateReportStatusBody = z.infer<
 
 export const BlockArticleBodySchema = z.object({
 	reason: reportReasonSchema,
+	reportId: objectIdSchema.optional(),
 });
 
 export type BlockArticleBody = z.infer<typeof BlockArticleBodySchema>;

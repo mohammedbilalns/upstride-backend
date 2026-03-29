@@ -21,6 +21,7 @@ export class Report {
 		public readonly actionTaken: string,
 		public readonly createdAt: Date | null,
 		public readonly updatedAt: Date | null,
+		public readonly actionTakenAt: Date | null = null,
 		public readonly reporter?: { id: string; name: string; email: string },
 		public readonly target?: {
 			id: string;
@@ -28,6 +29,10 @@ export class Report {
 			email?: string;
 			title?: string;
 			slug?: string;
+			blockingReason?: string;
 		},
+		public readonly appealMessage: string | null = null,
+		public readonly appealedAt: Date | null = null,
+		public readonly isAppealSubmitted: boolean = false,
 	) {}
 }

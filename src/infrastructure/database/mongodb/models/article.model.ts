@@ -22,8 +22,7 @@ export interface ArticleDocument {
 	isBlockedByAdmin: boolean;
 	blockingReason: string | null;
 	blockedAt: Date | null;
-	appealMessage: string | null;
-	appealedAt: Date | null;
+	blockedByReportId: Types.ObjectId | null;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -41,7 +40,7 @@ const articleSchema = new Schema<ArticleDocument>(
 		title: { type: String, required: true },
 		description: { type: String, required: true },
 		previewContent: { type: String, required: true },
-		tags: { type: [String], default: [] },
+		tags: [{ type: String }],
 		isActive: { type: Boolean, required: true, default: true },
 		views: { type: Number, required: true, default: 0 },
 		commentsCount: { type: Number, required: true, default: 0 },
@@ -50,14 +49,17 @@ const articleSchema = new Schema<ArticleDocument>(
 		isBlockedByAdmin: { type: Boolean, default: false },
 		blockingReason: { type: String, default: null },
 		blockedAt: { type: Date, default: null },
-		appealMessage: { type: String, default: null },
-		appealedAt: { type: Date, default: null },
+		blockedByReportId: {
+			type: Schema.Types.ObjectId,
+			ref: "Report",
+			default: null,
+		},
 	},
 	{ timestamps: true },
 );
 
-articleSchema.index({ authorId: 1, createdAt: -1 });
-articleSchema.index({ isActive: 1, isArchived: 1, createdAt: -1 });
+articleSchema.index({ authorId: 1 });
 articleSchema.index({ tags: 1 });
+articleSchema.index({ createdAt: -1 });
 
 export const ArticleModel = model<ArticleDocument>("Article", articleSchema);

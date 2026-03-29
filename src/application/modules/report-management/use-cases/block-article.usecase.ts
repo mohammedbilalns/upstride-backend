@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { ArticleBlockedEvent } from "../../../../domain/events/article-blocked.event";
 import type {
 	IArticleRepository,
+	IReportRepository,
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
@@ -20,6 +21,8 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Repositories.ReportRepository)
+		private readonly _reportRepository: IReportRepository,
 		@inject(TYPES.Services.EventBus)
 		private readonly _eventBus: EventBus,
 	) {}
@@ -44,6 +47,8 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 			isArchived: true,
 			isBlockedByAdmin: true,
 			blockingReason: input.reason,
+			blockedAt: new Date(),
+			blockedByReportId: input.reportId || null,
 		});
 
 		if (!updated) {
@@ -53,6 +58,14 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		await this._eventBus.publish(
 			new ArticleBlockedEvent(updated.id, updated.authorId, input.reason),
 		);
+
+		if (input.reportId) {
+			await this._reportRepository.updateById(input.reportId, {
+				status: "RESOLVED",
+				actionTaken: `Blocked article: ${input.reason}`,
+				actionTakenAt: new Date(),
+			});
+		}
 
 		return { article: ArticleMapper.toDto(updated) };
 	}

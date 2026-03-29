@@ -22,6 +22,7 @@ import type {
 	IGetArticleUseCase,
 	IReactToArticleCommentUseCase,
 	IReactToArticleUseCase,
+	ISubmitArticleAppealUseCase,
 	IUpdateArticleCommentUseCase,
 	IUpdateArticleUseCase,
 } from "../../../application/modules/article-management/use-cases";
@@ -29,6 +30,7 @@ import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type { AppealArticleBody } from "../validators/article.validator";
 
 @injectable()
 export class ArticleController {
@@ -57,6 +59,8 @@ export class ArticleController {
 		private readonly _reactToArticleCommentUseCase: IReactToArticleCommentUseCase,
 		@inject(TYPES.UseCases.GetArticleTopTags)
 		private readonly _getTopTagsUseCase: IGetArticleTopTagsUseCase,
+		@inject(TYPES.UseCases.SubmitArticleAppeal)
+		private readonly _submitArticleAppealUseCase: ISubmitArticleAppealUseCase,
 	) {}
 
 	getTopTags = asyncHandler(
@@ -258,6 +262,23 @@ export class ArticleController {
 				reactionType: body.reactionType,
 			} as ReactToArticleCommentInput);
 			return sendSuccess(res, HttpStatus.OK, { data });
+		},
+	);
+
+	submitAppeal = asyncHandler(
+		async (req: AuthenticatedRequest, res: Response) => {
+			const { articleId } = req.validated?.params as { articleId: string };
+			const { message } = req.validated?.body as AppealArticleBody;
+
+			await this._submitArticleAppealUseCase.execute({
+				userId: req.user.id,
+				articleId,
+				message,
+			});
+
+			return sendSuccess(res, HttpStatus.OK, {
+				message: "Appeal submitted successfully",
+			});
 		},
 	);
 }

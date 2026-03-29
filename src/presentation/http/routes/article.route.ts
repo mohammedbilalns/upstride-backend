@@ -5,6 +5,7 @@ import { ROUTES } from "../constants";
 import type { ArticleController } from "../controllers/article.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
+	AppealArticleBodySchema,
 	ArticleIdParamSchema,
 	ArticleSlugParamSchema,
 	ArticlesQuerySchema,
@@ -111,6 +112,13 @@ router.post(
 	authorizeRoles(["USER", "MENTOR"]),
 	validate({ params: CommentIdParamSchema, body: ReactBodySchema }),
 	controller.reactToComment.bind(controller),
+);
+
+router.post(
+	ROUTES.ARTICLES.APPEAL(":articleId"),
+	authorizeRoles(["MENTOR"]),
+	validate({ params: ArticleIdParamSchema, body: AppealArticleBodySchema }),
+	controller.submitAppeal.bind(controller),
 );
 
 export { router as articleRouter };

@@ -44,6 +44,7 @@ export class UpdateReportStatusUseCase implements IUpdateReportStatusUseCase {
 
 		const updated = await this._reportRepository.updateById(input.reportId, {
 			status: input.status,
+			actionTakenAt: new Date(),
 			...(input.actionTaken !== undefined && {
 				actionTaken: input.actionTaken,
 			}),

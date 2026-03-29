@@ -22,8 +22,12 @@ export interface ReportDto {
 	};
 	targetSlug?: string;
 	actionTaken: string;
+	appealMessage: string | null;
+	appealedAt: Date | null;
+	isAppealSubmitted: boolean;
 	createdAt: Date;
 	updatedAt: Date;
+	actionTakenAt: Date | null;
 }
 
 export interface ReportArticleInput {
@@ -56,6 +60,7 @@ export interface GetReportsInput {
 	targetType?: ReportTargetType | ReportTargetType[];
 	targetId?: string;
 	reporterId?: string;
+	isAppealSubmitted?: boolean;
 }
 
 export interface GetReportsOutput {
@@ -83,6 +88,7 @@ export interface BlockArticleInput {
 	adminId: string;
 	articleId: string;
 	reason: string;
+	reportId?: string;
 }
 
 export interface BlockArticleOutput {

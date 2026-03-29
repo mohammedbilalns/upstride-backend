@@ -45,6 +45,8 @@ export interface GetArticleOutput {
 	isAuthor?: boolean;
 	userReaction?: ArticleReactionType;
 	isReported?: boolean;
+	appealMessage?: string | null;
+	appealedAt?: string | null;
 }
 
 export interface GetArticlesInput {

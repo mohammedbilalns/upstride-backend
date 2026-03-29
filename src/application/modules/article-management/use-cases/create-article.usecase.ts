@@ -71,6 +71,8 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 			null,
 			null,
 			null,
+			null,
+			null,
 		);
 
 		const created = await this._articleRepository.create(article);

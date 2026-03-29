@@ -16,6 +16,7 @@ export interface ReportQuery {
 	targetId?: string;
 	targetType?: ReportTargetType | ReportTargetType[];
 	status?: ReportStatus | ReportStatus[];
+	isAppealSubmitted?: boolean;
 }
 
 export interface IReportRepository

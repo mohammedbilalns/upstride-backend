@@ -58,4 +58,13 @@ router.patch(
 	controller.blockArticle.bind(controller),
 );
 
+router.patch(
+	ROUTES.REPORTS.UNBLOCK_ARTICLE(":articleId"),
+	authorizeRoles(["ADMIN", "SUPER_ADMIN"]),
+	validate({
+		params: BlockArticleParamSchema,
+	}),
+	controller.unblockArticle.bind(controller),
+);
+
 export { router as reportRouter };

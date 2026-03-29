@@ -26,6 +26,7 @@ export class ReportMapper {
 					email: doc.targetId.email,
 					title: doc.targetId.title,
 					slug: doc.targetId.slug,
+					blockingReason: doc.targetId.blockingReason,
 				}
 			: undefined;
 
@@ -40,8 +41,12 @@ export class ReportMapper {
 			doc.actionTaken ?? "",
 			doc.createdAt,
 			doc.updatedAt,
+			doc.actionTakenAt ?? null,
 			reporter,
 			target,
+			doc.appealMessage ?? null,
+			doc.appealedAt ?? null,
+			doc.isAppealSubmitted ?? false,
 		);
 	}
 
@@ -54,6 +59,10 @@ export class ReportMapper {
 			description: entity.description,
 			status: entity.status,
 			actionTaken: entity.actionTaken,
+			actionTakenAt: entity.actionTakenAt,
+			appealMessage: entity.appealMessage,
+			appealedAt: entity.appealedAt,
+			isAppealSubmitted: entity.isAppealSubmitted,
 			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};
 	}

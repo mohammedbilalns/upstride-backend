@@ -3,6 +3,7 @@ import { ArticleBlockedHandler } from "../../application/events/handlers/article
 import { ArticleCommentCreatedHandler } from "../../application/events/handlers/article/article-comment-created.handler";
 import { ArticleCommentReactionCreatedHandler } from "../../application/events/handlers/article/article-comment-reaction-created.handler";
 import { ArticleReactionCreatedHandler } from "../../application/events/handlers/article/article-reaction-created.handler";
+import { ArticleUnblockedHandler } from "../../application/events/handlers/article/article-unblocked.handler";
 import { ArticleUserStatusChangedHandler } from "../../application/events/handlers/article/user-status-changed.handler";
 import { MessageSentHandler } from "../../application/events/handlers/chat/message-sent.handler";
 import { MentorUserStatusChangedHandler } from "../../application/events/handlers/mentor/user-status-changed.handler";
@@ -72,6 +73,11 @@ export const bootstrapEventHandlers = (container: Container): void => {
 			TYPES.UseCases.CreateNotification,
 		),
 	);
+	const articleUnblockedHandler = new ArticleUnblockedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -123,6 +129,10 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	bullMQEventBus.registerHandler(
 		"ArticleBlockedEvent",
 		articleBlockedHandler.handle.bind(articleBlockedHandler),
+	);
+	bullMQEventBus.registerHandler(
+		"ArticleUnblockedEvent",
+		articleUnblockedHandler.handle.bind(articleUnblockedHandler),
 	);
 	bullMQEventBus.registerHandler(
 		"CheckoutCompletedEvent",

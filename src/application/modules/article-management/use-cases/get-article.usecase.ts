@@ -70,6 +70,29 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			isReported = activeReports.length > 0;
 		}
 
+		let appealMessage: string | null = null;
+		let appealedAt: string | null = null;
+
+		if (isAuthor && article.isBlockedByAdmin) {
+			const reports = await this._reportRepository.query({
+				query: {
+					targetId: article.id,
+					targetType: "ARTICLE",
+					status: ["RESOLVED", "PENDING", "CLOSED"],
+				},
+			});
+			if (reports.length > 0) {
+				const latestReport = reports.sort(
+					(a, b) =>
+						(b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0),
+				)[0];
+				appealMessage = latestReport.appealMessage;
+				appealedAt = latestReport.appealedAt
+					? latestReport.appealedAt.toISOString()
+					: null;
+			}
+		}
+
 		const dto = ArticleMapper.toDto(article);
 		if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
 			try {
@@ -86,6 +109,8 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			isAuthor: input.viewerUserId === article.authorId,
 			userReaction,
 			isReported,
+			appealMessage,
+			appealedAt,
 		};
 	}
 }

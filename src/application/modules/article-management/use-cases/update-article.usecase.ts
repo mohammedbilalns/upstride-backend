@@ -11,7 +11,6 @@ import type {
 	UpdateArticleOutput,
 } from "../dtos/article-input.dto";
 import {
-	ArticleBlockedByAdminError,
 	ArticleNotFoundError,
 	ArticleOwnershipError,
 	MentorOnlyArticleActionError,
@@ -43,14 +42,6 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 
 		const existing = await this._articleRepository.findById(input.articleId);
 		if (!existing) {
-			throw new ArticleNotFoundError();
-		}
-
-		if (existing.isBlockedByAdmin) {
-			throw new ArticleBlockedByAdminError();
-		}
-
-		if (!existing.isActive) {
 			throw new ArticleNotFoundError();
 		}
 

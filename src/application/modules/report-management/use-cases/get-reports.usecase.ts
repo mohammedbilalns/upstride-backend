@@ -37,6 +37,9 @@ export class GetReportsUseCase implements IGetReportsUseCase {
 			...(input.targetType && { targetType: input.targetType }),
 			...(input.targetId && { targetId: input.targetId }),
 			...(input.reporterId && { reporterId: input.reporterId }),
+			...(typeof input.isAppealSubmitted !== "undefined" && {
+				isAppealSubmitted: input.isAppealSubmitted,
+			}),
 		};
 
 		const result = await this._reportRepository.paginate({

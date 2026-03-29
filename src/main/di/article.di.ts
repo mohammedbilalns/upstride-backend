@@ -19,11 +19,15 @@ import {
 	type IMarkArticleViewUseCase,
 	type IReactToArticleCommentUseCase,
 	type IReactToArticleUseCase,
+	type ISubmitArticleAppealUseCase,
+	type IUnblockArticleUseCase,
 	type IUpdateArticleCommentUseCase,
 	type IUpdateArticleUseCase,
 	MarkArticleViewUseCase,
 	ReactToArticleCommentUseCase,
 	ReactToArticleUseCase,
+	SubmitArticleAppealUseCase,
+	UnblockArticleUseCase,
 	UpdateArticleCommentUseCase,
 	UpdateArticleUseCase,
 } from "../../application/modules/article-management/use-cases";
@@ -57,6 +61,14 @@ export const registerArticleBindings = (container: Container): void => {
 	container
 		.bind<IMarkArticleViewUseCase>(TYPES.UseCases.MarkArticleView)
 		.to(MarkArticleViewUseCase)
+		.inSingletonScope();
+	container
+		.bind<IUnblockArticleUseCase>(TYPES.UseCases.UnblockArticle)
+		.to(UnblockArticleUseCase)
+		.inSingletonScope();
+	container
+		.bind<ISubmitArticleAppealUseCase>(TYPES.UseCases.SubmitArticleAppeal)
+		.to(SubmitArticleAppealUseCase)
 		.inSingletonScope();
 	container
 		.bind<ICreateArticleCommentUseCase>(TYPES.UseCases.CreateArticleComment)

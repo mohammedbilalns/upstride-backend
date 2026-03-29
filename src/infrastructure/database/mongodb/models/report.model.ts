@@ -15,8 +15,12 @@ export interface ReportDocument {
 	description: string;
 	status: ReportStatus;
 	actionTaken: string;
+	appealMessage: string | null;
+	appealedAt: Date | null;
+	isAppealSubmitted: boolean;
 	createdAt: Date;
 	updatedAt: Date;
+	actionTakenAt: Date | null;
 }
 
 const reportSchema = new Schema<ReportDocument>(
@@ -33,6 +37,10 @@ const reportSchema = new Schema<ReportDocument>(
 			default: "PENDING",
 		},
 		actionTaken: { type: String, default: "" },
+		actionTakenAt: { type: Date, default: null },
+		appealMessage: { type: String, default: null },
+		appealedAt: { type: Date, default: null },
+		isAppealSubmitted: { type: Boolean, default: false },
 	},
 	{ timestamps: true },
 );

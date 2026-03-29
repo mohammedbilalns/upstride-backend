@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import type { Session } from "../../../../domain/entities/session.entity";
 import { UserStatusChangedEvent } from "../../../../domain/events/user-status-changed.event";
 import type {
+	IReportRepository,
 	ISessionRepository,
 	IUserRepository,
 } from "../../../../domain/repositories";
@@ -22,6 +23,8 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		private _sessionRepository: ISessionRepository,
 		@inject(TYPES.Repositories.TokenRevocationRepository)
 		private _tokenRevocationRepository: ITokenRevocationRepository,
+		@inject(TYPES.Repositories.ReportRepository)
+		private _reportRepository: IReportRepository,
 		@inject(TYPES.Services.EventBus)
 		private _eventBus: EventBus,
 	) {}
@@ -56,5 +59,12 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		await this._eventBus.publish(
 			new UserStatusChangedEvent(input.userId, true),
 		);
+
+		if (input.reportId) {
+			await this._reportRepository.updateById(input.reportId, {
+				status: "RESOLVED",
+				actionTaken: "blocked user",
+			});
+		}
 	}
 }

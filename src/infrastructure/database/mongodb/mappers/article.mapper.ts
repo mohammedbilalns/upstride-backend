@@ -26,8 +26,7 @@ export class ArticleMapper {
 			doc.isBlockedByAdmin ?? false,
 			doc.blockingReason ?? null,
 			doc.blockedAt ?? null,
-			doc.appealMessage ?? null,
-			doc.appealedAt ?? null,
+			doc.blockedByReportId ? doc.blockedByReportId.toString() : null,
 			doc.createdAt,
 			doc.updatedAt,
 		);
@@ -55,8 +54,9 @@ export class ArticleMapper {
 			isBlockedByAdmin: entity.isBlockedByAdmin,
 			blockingReason: entity.blockingReason,
 			blockedAt: entity.blockedAt,
-			appealMessage: entity.appealMessage,
-			appealedAt: entity.appealedAt,
+			blockedByReportId: entity.blockedByReportId
+				? new Types.ObjectId(entity.blockedByReportId)
+				: null,
 			...(entity.createdAt && { createdAt: entity.createdAt }),
 		};
 	}

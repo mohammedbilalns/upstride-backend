@@ -89,3 +89,13 @@ export const CommentsQuerySchema = z.object({
 export const ReactBodySchema = z.object({
 	reactionType: z.enum(ArticleReactionTypeValues).optional().default("LIKE"),
 });
+
+export const AppealArticleBodySchema = z.object({
+	message: z
+		.string()
+		.trim()
+		.min(10, "Appeal message must be at least 10 characters")
+		.max(1000, "Appeal message must be at most 1000 characters"),
+});
+
+export type AppealArticleBody = z.infer<typeof AppealArticleBodySchema>;
