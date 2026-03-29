@@ -36,7 +36,7 @@ mentorRouter.get(
 mentorRouter.get(
 	ROUTES.MENTOR.PUBLIC_PROFILE(":id"),
 	verifySession,
-	authorizeRoles(["USER", "MENTOR"]),
+	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
 	validate({ params: MentorIdParamSchema }),
 	mentorController.getPublicProfile,
 );

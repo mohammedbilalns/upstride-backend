@@ -125,10 +125,12 @@ export class MentorController {
 
 	getPublicProfile = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
+		const role = (req as AuthenticatedRequest).user.role;
 		const { id: mentorId } = req.validated?.params as MentorIdParam;
 		const data = await this._getPublicMentorProfileUseCase.execute({
 			mentorId,
 			requesterUserId: userId,
+			requesterRole: role,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {

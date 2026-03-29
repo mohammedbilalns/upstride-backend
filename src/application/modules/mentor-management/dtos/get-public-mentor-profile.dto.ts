@@ -31,6 +31,7 @@ export interface PublicMentorProfileDto {
 export interface GetPublicMentorProfileInput {
 	mentorId: string;
 	requesterUserId: string;
+	requesterRole?: string;
 }
 
 export interface GetPublicMentorProfileResponse {

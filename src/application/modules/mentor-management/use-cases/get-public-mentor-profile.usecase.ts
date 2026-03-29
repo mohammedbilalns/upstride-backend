@@ -31,14 +31,28 @@ export class GetPublicMentorProfileUseCase
 	async execute({
 		mentorId,
 		requesterUserId,
+		requesterRole,
 	}: GetPublicMentorProfileInput): Promise<GetPublicMentorProfileResponse> {
-		const profile =
+		const isAdmin =
+			requesterRole === "ADMIN" || requesterRole === "SUPER_ADMIN";
+
+		let profile =
 			await this._mentorProfileReadRepository.findProfileById(mentorId);
-		if (!profile || !profile.isApproved || profile.isRejected) {
+
+		if (!profile && isAdmin) {
+			profile =
+				await this._mentorProfileReadRepository.findProfileByUserId(mentorId);
+		}
+
+		if (!profile) {
 			throw new MentorNotFoundError();
 		}
 
-		if (profile.userId === requesterUserId) {
+		if (!isAdmin && (!profile.isApproved || profile.isRejected)) {
+			throw new MentorNotFoundError();
+		}
+
+		if (!isAdmin && profile.userId === requesterUserId) {
 			throw new ValidationError(
 				"Mentor cannot access their own public profile",
 			);
