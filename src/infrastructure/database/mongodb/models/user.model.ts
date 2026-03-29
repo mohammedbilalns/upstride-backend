@@ -65,5 +65,7 @@ export const userSchema = new Schema<UserDocument>(
 
 userSchema.index({ googleId: 1 }, { unique: true, sparse: true });
 userSchema.index({ linkedinId: 1 }, { unique: true, sparse: true });
+userSchema.index({ role: 1 });
+userSchema.index({ isBlocked: 1, role: 1 });
 
 export const UserModel = model<UserDocument>("User", userSchema);

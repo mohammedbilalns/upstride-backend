@@ -50,6 +50,24 @@ export class MongoArticleViewRepository
 		return docs.map((doc) => this.toDomain(doc as ArticleViewDocument));
 	}
 
+	async upsert(articleId: string, userId: string): Promise<boolean> {
+		const { Types } = await import("mongoose");
+		const result = await this.model.findOneAndUpdate(
+			{
+				articleId: new Types.ObjectId(articleId),
+				userId: new Types.ObjectId(userId),
+			},
+			{
+				$setOnInsert: {
+					articleId: new Types.ObjectId(articleId),
+					userId: new Types.ObjectId(userId),
+				},
+			},
+			{ upsert: true, returnDocument: "before" },
+		);
+		return result === null;
+	}
+
 	private _buildFilter(
 		query?: ArticleViewQuery,
 	): QueryFilter<ArticleViewDocument> {

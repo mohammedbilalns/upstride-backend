@@ -40,5 +40,6 @@ const reportSchema = new Schema<ReportDocument>(
 reportSchema.index({ reporterId: 1, createdAt: -1 });
 reportSchema.index({ targetType: 1, targetId: 1, createdAt: -1 });
 reportSchema.index({ status: 1, createdAt: -1 });
+reportSchema.index({ reporterId: 1, targetId: 1, status: 1 });
 
 export const ReportModel = model<ReportDocument>("Report", reportSchema);

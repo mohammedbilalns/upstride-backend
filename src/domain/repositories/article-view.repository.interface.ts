@@ -13,4 +13,6 @@ export interface ArticleViewQuery {
 export interface IArticleViewRepository
 	extends CreatableRepository<ArticleView>,
 		FindByIdRepository<ArticleView>,
-		QueryableRepository<ArticleView, ArticleViewQuery> {}
+		QueryableRepository<ArticleView, ArticleViewQuery> {
+	upsert(articleId: string, userId: string): Promise<boolean>;
+}

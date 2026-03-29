@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import { ArticleView } from "../../../../domain/entities/article-view.entity";
 import type {
 	IArticleRepository,
 	IArticleViewRepository,
@@ -28,23 +27,15 @@ export class MarkArticleViewUseCase implements IMarkArticleViewUseCase {
 			return;
 		}
 
-		const existingViews = await this._articleViewRepository.query({
-			query: {
-				articleId: input.articleId,
-				userId: input.viewerUserId,
-			},
-		});
+		const wasNew = await this._articleViewRepository.upsert(
+			input.articleId,
+			input.viewerUserId,
+		);
 
-		if (existingViews.length > 0) {
-			return;
+		if (wasNew) {
+			await this._articleRepository.updateById(input.articleId, {
+				views: (article.views ?? 0) + 1,
+			});
 		}
-
-		const view = new ArticleView("", input.articleId, input.viewerUserId);
-
-		await this._articleViewRepository.create(view);
-
-		await this._articleRepository.updateById(input.articleId, {
-			views: (article.views ?? 0) + 1,
-		});
 	}
 }
