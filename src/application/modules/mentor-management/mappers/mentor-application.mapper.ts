@@ -40,6 +40,7 @@ export class MentorApplicationMapper {
 			personalWebsite: item.personalWebsite,
 			expertises,
 			resumeUrl,
+			educationalQualifications: item.educationalQualifications,
 			resubmissionCount: item.applicationAttempts,
 			status,
 			rejectionReason: item.isRejected ? (item.rejectionReason ?? null) : null,
