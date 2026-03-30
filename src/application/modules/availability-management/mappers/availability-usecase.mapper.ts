@@ -16,7 +16,6 @@ export class AvailabilityUsecaseMapper {
 			breakTimes: entity.breakTimes,
 			slotDuration: entity.slotDuration,
 			bufferTime: entity.bufferTime,
-			priority: entity.priority,
 			status: entity.status,
 			createdAt: entity.createdAt,
 			updatedAt: entity.updatedAt,

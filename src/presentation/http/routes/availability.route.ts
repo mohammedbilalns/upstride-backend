@@ -24,6 +24,14 @@ availabilityRouter.post(
 	availabilityController.createAvailability,
 );
 
+availabilityRouter.post(
+	ROUTES.AVAILABILITY.CHECK_CREATE,
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	validate(createAvailabilitySchema),
+	availabilityController.checkAndCreateAvailability,
+);
+
 availabilityRouter.get(
 	ROUTES.AVAILABILITY.MENTOR,
 	verifySession,
@@ -42,6 +50,14 @@ availabilityRouter.put(
 
 availabilityRouter.put(
 	"/reenable/:id",
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	validate(availabilityIdParamSchema),
+	availabilityController.reenableAvailability,
+);
+
+availabilityRouter.patch(
+	ROUTES.AVAILABILITY.REENABLE(":id"),
 	verifySession,
 	authorizeRoles(["MENTOR"]),
 	validate(availabilityIdParamSchema),

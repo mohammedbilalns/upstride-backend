@@ -153,6 +153,7 @@ export const TYPES = {
 		UpdateReportStatus: Symbol.for("UpdateReportStatusUseCase"),
 		// Availability
 		CreateAvailability: Symbol.for("CreateAvailabilityUseCase"),
+		CheckAndCreateAvailability: Symbol.for("CheckAndCreateAvailabilityUseCase"),
 		UpdateAvailability: Symbol.for("UpdateAvailabilityUseCase"),
 		DeleteAvailability: Symbol.for("DeleteAvailabilityUseCase"),
 		ReenableAvailability: Symbol.for("ReenableAvailabilityUseCase"),

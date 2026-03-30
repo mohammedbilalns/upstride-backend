@@ -16,7 +16,7 @@ export interface IAvailabilityRepository
 		UpdatableByIdRepository<Availability> {
 	findByMentorId(
 		mentorId: string,
-		options?: { activeOnly?: boolean; expired?: boolean },
+		options?: { status?: boolean; expired?: boolean },
 	): Promise<Availability[]>;
 
 	findActiveByMentorIdAndDate(

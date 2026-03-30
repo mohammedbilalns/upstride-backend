@@ -47,7 +47,6 @@ export class UpdateAvailabilityUseCase implements IUpdateAvailabilityUseCase {
 				...(input.bufferTime !== undefined && {
 					bufferTime: input.bufferTime,
 				}),
-				...(input.priority !== undefined && { priority: input.priority }),
 				...(input.status !== undefined && { status: input.status }),
 			},
 		);

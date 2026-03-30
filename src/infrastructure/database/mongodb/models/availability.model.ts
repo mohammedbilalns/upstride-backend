@@ -22,7 +22,6 @@ export interface AvailabilityDocument {
 	breakTimes: BreakTimeDocument[];
 	slotDuration: SlotDuration;
 	bufferTime: number;
-	priority: number;
 	status: boolean;
 	createdAt: Date;
 	updatedAt: Date;
@@ -61,14 +60,12 @@ const availabilitySchema = new Schema<AvailabilityDocument>(
 		breakTimes: { type: [breakTimeSchema], default: [] },
 		slotDuration: { type: Number, enum: [30, 60], required: true },
 		bufferTime: { type: Number, required: true, min: 0 },
-		priority: { type: Number, required: true, min: 0 },
 		status: { type: Boolean, default: true },
 	},
 	{ timestamps: true },
 );
 
 availabilitySchema.index({ mentorId: 1, status: 1 });
-availabilitySchema.index({ mentorId: 1, priority: -1 });
 availabilitySchema.index({ mentorId: 1, startDate: 1, endDate: 1 });
 
 export const AvailabilityModel = model<AvailabilityDocument>(

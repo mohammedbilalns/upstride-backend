@@ -171,7 +171,9 @@ export const ROUTES = {
 		BASE: "/availability",
 		ROOT: "/",
 		MENTOR: "/mentor/me",
+		CHECK_CREATE: "/check-create",
 		BY_ID: (id: string) => `/${id}`,
+		REENABLE: (id: string) => `/${id}/reenable`,
 	},
 	BOOKINGS: {
 		BASE: "/bookings",

@@ -20,10 +20,16 @@ export class GetMentorAvailabilitiesUseCase
 	async execute(
 		input: GetMentorAvailabilitiesInput,
 	): Promise<GetMentorAvailabilitiesResponse> {
+		const status =
+			input.status === "active"
+				? true
+				: input.status === "disabled"
+					? false
+					: undefined;
 		const availabilities = await this._availabilityRepository.findByMentorId(
 			input.mentorId,
 			{
-				activeOnly: input.expired === undefined || input.expired === false,
+				status,
 				expired: input.expired,
 			},
 		);

@@ -35,7 +35,6 @@ export class CreateAvailabilityUseCase implements ICreateAvailabilityUseCase {
 			breakTimes: input.breakTimes,
 			slotDuration: input.slotDuration as SlotDuration,
 			bufferTime: input.bufferTime,
-			priority: input.priority,
 			status: true,
 		});
 

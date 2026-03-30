@@ -24,7 +24,6 @@ export class AvailabilityMapper {
 			})),
 			doc.slotDuration as SlotDuration,
 			doc.bufferTime,
-			doc.priority,
 			doc.status,
 			doc.createdAt,
 			doc.updatedAt,
@@ -46,6 +45,7 @@ export class AvailabilityMapper {
 		entity: Omit<Availability, "id" | "createdAt" | "updatedAt">,
 	) {
 		return {
+			mentorId: entity.mentorId,
 			name: entity.name,
 			description: entity.description,
 			days: Array.from(entity.days),
@@ -59,7 +59,6 @@ export class AvailabilityMapper {
 			})),
 			slotDuration: entity.slotDuration,
 			bufferTime: entity.bufferTime,
-			priority: entity.priority,
 			status: entity.status,
 		};
 	}

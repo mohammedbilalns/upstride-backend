@@ -4,6 +4,7 @@ export const RESPONSE_MESSAGES = {
 		UPDATED: "Availability updated successfully",
 		DELETED: "Availability deleted successfully",
 		RETRIEVED: "Mentor availabilities retrieved successfully",
+		CONFLICT: "Availability conflict detected",
 	},
 	BOOKING: {
 		SLOTS_COMPUTED: "Available slots computed successfully",

@@ -29,12 +29,12 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 
 	async findByMentorId(
 		mentorId: string,
-		options: { activeOnly?: boolean; expired?: boolean } = {},
+		options: { status?: boolean; expired?: boolean } = {},
 	): Promise<Availability[]> {
 		const query: QueryFilter<AvailabilityDocument> = { mentorId };
 
-		if (options.activeOnly) {
-			query.status = true;
+		if (typeof options.status === "boolean") {
+			query.status = options.status;
 		}
 
 		const today = new Date();
@@ -46,9 +46,7 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 			query.endDate = { $gte: today };
 		}
 
-		const docs = await AvailabilityModel.find(query)
-			.sort({ priority: -1 })
-			.lean();
+		const docs = await AvailabilityModel.find(query).lean();
 		return docs.map((d) => AvailabilityMapper.toDomain(d));
 	}
 

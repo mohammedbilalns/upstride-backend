@@ -1,4 +1,6 @@
 import type { Container } from "inversify";
+import { CheckAndCreateAvailabilityUseCase } from "../../application/modules/availability-management/use-cases/check-and-create-availability.usecase";
+import type { ICheckAndCreateAvailabilityUseCase } from "../../application/modules/availability-management/use-cases/check-and-create-availability.usecase.interface";
 import { CreateAvailabilityUseCase } from "../../application/modules/availability-management/use-cases/create-availability.usecase";
 import type { ICreateAvailabilityUseCase } from "../../application/modules/availability-management/use-cases/create-availability.usecase.interface";
 import { DeleteAvailabilityUseCase } from "../../application/modules/availability-management/use-cases/delete-availability.usecase";
@@ -17,6 +19,12 @@ export const registerAvailabilityBindings = (container: Container): void => {
 	container
 		.bind<ICreateAvailabilityUseCase>(TYPES.UseCases.CreateAvailability)
 		.to(CreateAvailabilityUseCase)
+		.inSingletonScope();
+	container
+		.bind<ICheckAndCreateAvailabilityUseCase>(
+			TYPES.UseCases.CheckAndCreateAvailability,
+		)
+		.to(CheckAndCreateAvailabilityUseCase)
 		.inSingletonScope();
 	container
 		.bind<IUpdateAvailabilityUseCase>(TYPES.UseCases.UpdateAvailability)

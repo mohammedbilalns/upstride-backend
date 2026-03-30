@@ -18,11 +18,19 @@ export interface CreateAvailabilityInput {
 	breakTimes: { startTime: string; endTime: string }[];
 	slotDuration: SlotDuration;
 	bufferTime: number;
-	priority: number;
 }
 
 export interface CreateAvailabilityResponse {
 	availabilityId: string;
+}
+
+// ──────────────────────────────────────────────
+// Check + Create
+// ──────────────────────────────────────────────
+export interface CheckAndCreateAvailabilityResponse {
+	created: boolean;
+	availability?: AvailabilityDto;
+	conflicts?: AvailabilityDto[];
 }
 
 // ──────────────────────────────────────────────
@@ -41,7 +49,6 @@ export interface UpdateAvailabilityInput {
 	breakTimes?: { startTime: string; endTime: string }[];
 	slotDuration?: SlotDuration;
 	bufferTime?: number;
-	priority?: number;
 	status?: boolean;
 }
 
@@ -68,6 +75,7 @@ export interface ReenableAvailabilityInput {
 export interface GetMentorAvailabilitiesInput {
 	mentorId: string;
 	expired?: boolean;
+	status?: "active" | "disabled";
 }
 
 export interface AvailabilityDto {
@@ -83,7 +91,6 @@ export interface AvailabilityDto {
 	breakTimes: { startTime: string; endTime: string }[];
 	slotDuration: SlotDuration;
 	bufferTime: number;
-	priority: number;
 	status: boolean;
 	createdAt: Date;
 	updatedAt: Date;
