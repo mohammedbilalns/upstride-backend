@@ -1,0 +1,101 @@
+import { injectable } from "inversify";
+import type {
+	Availability,
+	Day,
+} from "../../../../domain/entities/availability.entity";
+import type { IAvailabilityRepository } from "../../../../domain/repositories/availability.repository.interface";
+import { AvailabilityMapper } from "../mappers/availability.mapper";
+import { AvailabilityModel } from "../models/availability.model";
+
+@injectable()
+export class AvailabilityRepository implements IAvailabilityRepository {
+	async create(
+		entity: Omit<Availability, "id" | "createdAt" | "updatedAt">,
+	): Promise<Availability> {
+		const doc = await AvailabilityModel.create(
+			AvailabilityMapper.toPersistence(entity),
+		);
+		return AvailabilityMapper.toDomain(doc);
+	}
+
+	async findById(id: string): Promise<Availability | null> {
+		const doc = await AvailabilityModel.findById(id).lean();
+		return doc ? AvailabilityMapper.toDomain(doc) : null;
+	}
+
+	async findByMentorId(mentorId: string): Promise<Availability[]> {
+		const docs = await AvailabilityModel.find({ mentorId }).lean();
+		return docs.map((d) => AvailabilityMapper.toDomain(d));
+	}
+
+	async findActiveByMentorIdAndDate(
+		mentorId: string,
+		date: Date,
+	): Promise<Availability[]> {
+		const dayNames: Day[] = [
+			"Sunday",
+			"Monday",
+			"Tuesday",
+			"Wednesday",
+			"Thursday",
+			"Friday",
+			"Saturday",
+		];
+		const dayName = dayNames[date.getUTCDay()];
+
+		const startOfDay = new Date(date);
+		startOfDay.setUTCHours(0, 0, 0, 0);
+
+		const docs = await AvailabilityModel.find({
+			mentorId,
+			status: true,
+			days: dayName,
+			startDate: { $lte: startOfDay },
+			endDate: { $gte: startOfDay },
+		}).lean();
+
+		return docs.map((d) => AvailabilityMapper.toDomain(d));
+	}
+
+	async updateById(
+		id: string,
+		update: Partial<Availability>,
+	): Promise<Availability | null> {
+		const persistenceUpdate: Record<string, unknown> = { ...update };
+
+		if (typeof update.startTime === "string") {
+			const [h, m] = update.startTime.split(":").map(Number);
+			const d = new Date(0);
+			d.setUTCHours(h, m, 0, 0);
+			persistenceUpdate.startTime = d;
+		}
+		if (typeof update.endTime === "string") {
+			const [h, m] = update.endTime.split(":").map(Number);
+			const d = new Date(0);
+			d.setUTCHours(h, m, 0, 0);
+			persistenceUpdate.endTime = d;
+		}
+		if (typeof update.startDate === "string") {
+			persistenceUpdate.startDate = new Date(
+				`${update.startDate}T00:00:00.000Z`,
+			);
+		}
+		if (typeof update.endDate === "string") {
+			persistenceUpdate.endDate = new Date(`${update.endDate}T00:00:00.000Z`);
+		}
+		if (update.days instanceof Set) {
+			persistenceUpdate.days = Array.from(update.days);
+		}
+
+		const doc = await AvailabilityModel.findByIdAndUpdate(
+			id,
+			{ $set: persistenceUpdate },
+			{ new: true },
+		).lean();
+		return doc ? AvailabilityMapper.toDomain(doc) : null;
+	}
+
+	async deleteById(id: string): Promise<void> {
+		await AvailabilityModel.findByIdAndDelete(id);
+	}
+}
