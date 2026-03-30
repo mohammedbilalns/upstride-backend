@@ -111,5 +111,7 @@ export const getMentorAvailabilitiesSchema = {
 			.optional()
 			.transform((val) => val === "true"),
 		status: z.enum(["active", "disabled"]).optional(),
+		page: z.coerce.number().int().min(1).optional(),
+		limit: z.coerce.number().int().min(1).max(50).optional(),
 	}),
 };

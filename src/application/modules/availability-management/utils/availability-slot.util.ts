@@ -10,6 +10,7 @@ export class AvailabilitySlotUtil {
 		date: Date, // UTC Date representing the day
 		existingBookings: { startTime: string; endTime: string }[],
 	): { startTime: string; endTime: string }[] {
+		if (!availability.status) return [];
 		const slots: { startTime: string; endTime: string }[] = [];
 		const dateStr = date.toISOString().slice(0, 10); // YYYY-MM-DD
 

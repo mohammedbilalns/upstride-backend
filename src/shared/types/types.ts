@@ -154,6 +154,9 @@ export const TYPES = {
 		// Availability
 		CreateAvailability: Symbol.for("CreateAvailabilityUseCase"),
 		CheckAndCreateAvailability: Symbol.for("CheckAndCreateAvailabilityUseCase"),
+		CheckAndReenableAvailability: Symbol.for(
+			"CheckAndReenableAvailabilityUseCase",
+		),
 		UpdateAvailability: Symbol.for("UpdateAvailabilityUseCase"),
 		DeleteAvailability: Symbol.for("DeleteAvailabilityUseCase"),
 		ReenableAvailability: Symbol.for("ReenableAvailabilityUseCase"),

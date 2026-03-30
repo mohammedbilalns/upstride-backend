@@ -2,12 +2,12 @@ import { inject, injectable } from "inversify";
 import { Availability } from "../../../../domain/entities/availability.entity";
 import type { IAvailabilityRepository } from "../../../../domain/repositories/availability.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { toMinutes } from "../../../../shared/utilities/time.util";
 import type {
 	CheckAndCreateAvailabilityResponse,
 	CreateAvailabilityInput,
 } from "../dtos/availability.dto";
 import { AvailabilityUsecaseMapper } from "../mappers/availability-usecase.mapper";
+import { isAvailabilityConflict } from "../utils/availability-conflict.util";
 import type { ICheckAndCreateAvailabilityUseCase } from "./check-and-create-availability.usecase.interface";
 import type { ICreateAvailabilityUseCase } from "./create-availability.usecase.interface";
 
@@ -46,13 +46,13 @@ export class CheckAndCreateAvailabilityUseCase
 		);
 
 		const conflicts = existing.filter((rule) =>
-			CheckAndCreateAvailabilityUseCase.isConflict(candidate, rule),
+			isAvailabilityConflict(candidate, rule),
 		);
 
 		if (conflicts.length > 0) {
 			return {
 				created: false,
-				conflicts: AvailabilityUsecaseMapper.toDtos(conflicts),
+				conflicts: AvailabilityUsecaseMapper.toConflictSummaries(conflicts),
 			};
 		}
 
@@ -69,34 +69,5 @@ export class CheckAndCreateAvailabilityUseCase
 		};
 	}
 
-	private static isConflict(
-		candidate: Omit<Availability, "id" | "createdAt" | "updatedAt">,
-		existing: Availability,
-	): boolean {
-		const candidateStartDate = new Date(`${candidate.startDate}T00:00:00.000Z`);
-		const candidateEndDate = new Date(`${candidate.endDate}T00:00:00.000Z`);
-		const existingStartDate = new Date(`${existing.startDate}T00:00:00.000Z`);
-		const existingEndDate = new Date(`${existing.endDate}T00:00:00.000Z`);
-
-		const dateOverlap =
-			candidateStartDate <= existingEndDate &&
-			candidateEndDate >= existingStartDate;
-
-		if (!dateOverlap) return false;
-
-		const dayOverlap = Array.from(candidate.days).some((day) =>
-			existing.days.has(day),
-		);
-
-		if (!dayOverlap) return false;
-
-		const candidateStartMin = toMinutes(candidate.startTime);
-		const candidateEndMin = toMinutes(candidate.endTime);
-		const existingStartMin = toMinutes(existing.startTime);
-		const existingEndMin = toMinutes(existing.endTime);
-
-		return (
-			candidateStartMin < existingEndMin && candidateEndMin > existingStartMin
-		);
-	}
+	// conflict logic moved to utils
 }

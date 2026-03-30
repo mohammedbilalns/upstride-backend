@@ -1,5 +1,8 @@
 import type { Availability } from "../../../../domain/entities/availability.entity";
-import type { AvailabilityDto } from "../dtos/availability.dto";
+import type {
+	AvailabilityDto,
+	ConflictAvailabilitySummary,
+} from "../dtos/availability.dto";
 
 export class AvailabilityUsecaseMapper {
 	static toDto(entity: Availability): AvailabilityDto {
@@ -24,5 +27,23 @@ export class AvailabilityUsecaseMapper {
 
 	static toDtos(entities: Availability[]): AvailabilityDto[] {
 		return entities.map((entity) => AvailabilityUsecaseMapper.toDto(entity));
+	}
+
+	static toConflictSummary(entity: Availability): ConflictAvailabilitySummary {
+		return {
+			name: entity.name,
+			startDate: entity.startDate,
+			endDate: entity.endDate,
+			startTime: entity.startTime,
+			endTime: entity.endTime,
+		};
+	}
+
+	static toConflictSummaries(
+		entities: Availability[],
+	): ConflictAvailabilitySummary[] {
+		return entities.map((entity) =>
+			AvailabilityUsecaseMapper.toConflictSummary(entity),
+		);
 	}
 }

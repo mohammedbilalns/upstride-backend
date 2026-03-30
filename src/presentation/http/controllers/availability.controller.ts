@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { z } from "zod";
 import type { ICheckAndCreateAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/check-and-create-availability.usecase.interface";
+import type { ICheckAndReenableAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/check-and-reenable-availability.usecase.interface";
 import type { ICreateAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/create-availability.usecase.interface";
 import type { IDeleteAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/delete-availability.usecase.interface";
 import type { IGetMentorAvailabilitiesUseCase } from "../../../application/modules/availability-management/use-cases/get-mentor-availabilities.usecase.interface";
@@ -29,6 +30,8 @@ export class AvailabilityController {
 		private readonly _createAvailabilityUseCase: ICreateAvailabilityUseCase,
 		@inject(TYPES.UseCases.CheckAndCreateAvailability)
 		private readonly _checkAndCreateAvailabilityUseCase: ICheckAndCreateAvailabilityUseCase,
+		@inject(TYPES.UseCases.CheckAndReenableAvailability)
+		private readonly _checkAndReenableAvailabilityUseCase: ICheckAndReenableAvailabilityUseCase,
 		@inject(TYPES.UseCases.UpdateAvailability)
 		private readonly _updateAvailabilityUseCase: IUpdateAvailabilityUseCase,
 		@inject(TYPES.UseCases.DeleteAvailability)
@@ -153,6 +156,34 @@ export class AvailabilityController {
 		});
 	});
 
+	checkAndReenableAvailability = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorWriteRepository,
+			userId,
+		);
+		const { params } = req.validated as {
+			params: z.infer<typeof availabilityIdParamSchema.params>;
+		};
+
+		const result = await this._checkAndReenableAvailabilityUseCase.execute({
+			availabilityId: params.id,
+			mentorId: mentor.id,
+		});
+
+		if (result.enabled) {
+			return sendSuccess(res, HttpStatus.OK, {
+				message: RESPONSE_MESSAGES.AVAILABILITY.UPDATED,
+				data: result,
+			});
+		}
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: RESPONSE_MESSAGES.AVAILABILITY.CONFLICT,
+			data: result,
+		});
+	});
+
 	getMentorAvailabilities = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
 		const mentor = await getMentorByUserIdOrThrow(
@@ -172,6 +203,8 @@ export class AvailabilityController {
 			mentorId: mentor.id,
 			expired: query.expired,
 			status: query.status,
+			page: query.page,
+			limit: query.limit,
 		});
 
 		if (
@@ -183,6 +216,8 @@ export class AvailabilityController {
 				mentorId: mentor.userId,
 				expired: query.expired,
 				status: query.status,
+				page: query.page,
+				limit: query.limit,
 			});
 			if (legacyResult.availabilities.length > 0) {
 				logger.warn(
@@ -200,7 +235,8 @@ export class AvailabilityController {
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: RESPONSE_MESSAGES.AVAILABILITY.RETRIEVED,
-			data: result,
+			data: { availabilities: result.availabilities },
+			pagination: result.pagination,
 		});
 	});
 }

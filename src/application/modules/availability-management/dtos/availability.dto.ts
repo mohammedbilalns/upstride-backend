@@ -30,7 +30,15 @@ export interface CreateAvailabilityResponse {
 export interface CheckAndCreateAvailabilityResponse {
 	created: boolean;
 	availability?: AvailabilityDto;
-	conflicts?: AvailabilityDto[];
+	conflicts?: ConflictAvailabilitySummary[];
+}
+
+export interface ConflictAvailabilitySummary {
+	name: string;
+	startDate: string;
+	endDate: string;
+	startTime: string;
+	endTime: string;
 }
 
 // ──────────────────────────────────────────────
@@ -69,6 +77,11 @@ export interface ReenableAvailabilityInput {
 	availabilityId: string;
 }
 
+export interface CheckAndReenableAvailabilityResponse {
+	enabled: boolean;
+	conflicts?: ConflictAvailabilitySummary[];
+}
+
 // ──────────────────────────────────────────────
 // Get
 // ──────────────────────────────────────────────
@@ -76,6 +89,8 @@ export interface GetMentorAvailabilitiesInput {
 	mentorId: string;
 	expired?: boolean;
 	status?: "active" | "disabled";
+	page?: number;
+	limit?: number;
 }
 
 export interface AvailabilityDto {
@@ -98,4 +113,10 @@ export interface AvailabilityDto {
 
 export interface GetMentorAvailabilitiesResponse {
 	availabilities: AvailabilityDto[];
+	pagination?: {
+		page: number;
+		limit: number;
+		totalPages: number;
+		totalCount: number;
+	};
 }

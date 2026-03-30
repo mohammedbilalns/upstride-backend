@@ -29,8 +29,39 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 
 	async findByMentorId(
 		mentorId: string,
-		options: { status?: boolean; expired?: boolean } = {},
+		options: {
+			status?: boolean;
+			expired?: boolean;
+			page?: number;
+			limit?: number;
+		} = {},
 	): Promise<Availability[]> {
+		const query = this.buildMentorQuery(mentorId, options);
+		const page = options.page ?? 1;
+		const limit = options.limit ?? 0;
+		const skip = limit > 0 ? (page - 1) * limit : 0;
+
+		let dbQuery = AvailabilityModel.find(query);
+		if (limit > 0) {
+			dbQuery = dbQuery.skip(skip).limit(limit);
+		}
+
+		const docs = await dbQuery.lean();
+		return docs.map((d) => AvailabilityMapper.toDomain(d));
+	}
+
+	async countByMentorId(
+		mentorId: string,
+		options: { status?: boolean; expired?: boolean } = {},
+	): Promise<number> {
+		const query = this.buildMentorQuery(mentorId, options);
+		return AvailabilityModel.countDocuments(query);
+	}
+
+	private buildMentorQuery(
+		mentorId: string,
+		options: { status?: boolean; expired?: boolean } = {},
+	): QueryFilter<AvailabilityDocument> {
 		const query: QueryFilter<AvailabilityDocument> = { mentorId };
 
 		if (typeof options.status === "boolean") {
@@ -46,8 +77,7 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 			query.endDate = { $gte: today };
 		}
 
-		const docs = await AvailabilityModel.find(query).lean();
-		return docs.map((d) => AvailabilityMapper.toDomain(d));
+		return query;
 	}
 
 	async findActiveByMentorIdAndDate(

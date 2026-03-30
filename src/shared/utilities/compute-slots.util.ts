@@ -25,13 +25,14 @@ export function computeSlotsForDate(
 	existingBookings: { startTime: Date; endTime: Date }[],
 ): SlotWindow[] {
 	const slots: SlotWindow[] = [];
+	const activeAvailabilities = availabilities.filter((av) => av.status);
 	const now = Date.now();
 
 	// Midnight UTC of the requested date
 	const midnight = new Date(date);
 	midnight.setUTCHours(0, 0, 0, 0);
 
-	for (const av of availabilities) {
+	for (const av of activeAvailabilities) {
 		const startMinutes = toMinutes(av.startTime);
 		const endMinutes = toMinutes(av.endTime);
 		const step = av.slotDuration + av.bufferTime;

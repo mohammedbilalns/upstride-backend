@@ -26,16 +26,37 @@ export class GetMentorAvailabilitiesUseCase
 				: input.status === "disabled"
 					? false
 					: undefined;
+		const page = input.page ?? 1;
+		const limit = input.limit ?? 0;
+
 		const availabilities = await this._availabilityRepository.findByMentorId(
 			input.mentorId,
 			{
 				status,
 				expired: input.expired,
+				page,
+				limit,
 			},
 		);
 
+		let pagination: GetMentorAvailabilitiesResponse["pagination"] | undefined;
+		if (limit > 0) {
+			const totalCount = await this._availabilityRepository.countByMentorId(
+				input.mentorId,
+				{ status, expired: input.expired },
+			);
+			const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+			pagination = {
+				page,
+				limit,
+				totalPages,
+				totalCount,
+			};
+		}
+
 		return {
 			availabilities: AvailabilityUsecaseMapper.toDtos(availabilities),
+			pagination,
 		};
 	}
 }

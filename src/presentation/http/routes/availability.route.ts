@@ -64,6 +64,14 @@ availabilityRouter.patch(
 	availabilityController.reenableAvailability,
 );
 
+availabilityRouter.patch(
+	ROUTES.AVAILABILITY.CHECK_REENABLE(":id"),
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	validate(availabilityIdParamSchema),
+	availabilityController.checkAndReenableAvailability,
+);
+
 availabilityRouter.delete(
 	ROUTES.AVAILABILITY.BY_ID(":id"),
 	verifySession,

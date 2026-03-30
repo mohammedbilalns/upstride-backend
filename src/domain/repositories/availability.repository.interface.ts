@@ -16,8 +16,17 @@ export interface IAvailabilityRepository
 		UpdatableByIdRepository<Availability> {
 	findByMentorId(
 		mentorId: string,
-		options?: { status?: boolean; expired?: boolean },
+		options?: {
+			status?: boolean;
+			expired?: boolean;
+			page?: number;
+			limit?: number;
+		},
 	): Promise<Availability[]>;
+	countByMentorId(
+		mentorId: string,
+		options?: { status?: boolean; expired?: boolean },
+	): Promise<number>;
 
 	findActiveByMentorIdAndDate(
 		mentorId: string,
