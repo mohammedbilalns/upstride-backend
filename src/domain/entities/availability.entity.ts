@@ -50,8 +50,23 @@ export class Availability {
 				"Atleast one day must be selected",
 			);
 		}
+
 		if (!isValidTimeRange(data.startTime, data.endTime)) {
-			throw new Error("Invalid time range");
+			throw new EntityValidationError("Availability", "Invalid time range");
+		}
+
+		if (new Date(data.startDate) >= new Date(data.endDate)) {
+			throw new EntityValidationError(
+				"Availability",
+				"startDate must be before endDate",
+			);
+		}
+
+		if (data.priority < 0) {
+			throw new EntityValidationError(
+				"Availability",
+				"Priority must be non-negative",
+			);
 		}
 
 		if (data.bufferTime < 0) {
@@ -67,6 +82,7 @@ export class Availability {
 				"Buffer time must be less than slot duration",
 			);
 		}
+
 		const breakValidationError = validateBreaks(
 			data.breakTimes,
 			data.startTime,

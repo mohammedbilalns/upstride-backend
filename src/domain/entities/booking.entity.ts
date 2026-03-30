@@ -53,4 +53,41 @@ export class Booking {
 			notes: data.notes,
 		};
 	}
+
+	/**
+	 * Asserts that the booker is not booking their own session slot.
+	 */
+	static assertCanBook(bookerUserId: string, mentorUserId: string): void {
+		if (bookerUserId === mentorUserId) {
+			throw new EntityValidationError(
+				"Booking",
+				"You cannot book your own session.",
+			);
+		}
+	}
+
+	/**
+	 * Asserts that the booking is in a state that allows cancellation.
+	 */
+	static assertCancellable(status: BookingStatus): void {
+		if (status !== "PENDING" && status !== "CONFIRMED") {
+			throw new EntityValidationError(
+				"Booking",
+				"Only pending or confirmed bookings can be cancelled.",
+			);
+		}
+	}
+
+	/**
+	 * Asserts that the booking can still be rescheduled given a minimum
+	 */
+	assertReschedulable(windowHours: number): void {
+		const windowMs = windowHours * 60 * 60 * 1000;
+		if (new Date(this.startTime).getTime() - Date.now() < windowMs) {
+			throw new EntityValidationError(
+				"Booking",
+				`Cannot reschedule within ${windowHours} hours of the session start.`,
+			);
+		}
+	}
 }
