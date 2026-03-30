@@ -12,6 +12,8 @@ export interface IBookingRepository
 	extends CreatableRepository<Booking>,
 		FindByIdRepository<Booking>,
 		UpdatableByIdRepository<Booking> {
+	create(entity: Booking): Promise<Booking>;
+
 	findOverlapping(
 		mentorId: string,
 		startTime: Date,

@@ -1,4 +1,8 @@
-import type { BookingStatus } from "../../../../domain/entities/booking.entity";
+import type {
+	BookingStatus,
+	PaymentStatus,
+	PaymentType,
+} from "../../../../domain/entities/booking.entity";
 import { Booking } from "../../../../domain/entities/booking.entity";
 import { toHHMM } from "../../../../shared/utilities/time.util";
 import type { BookingDocument } from "../models/booking.model";
@@ -13,6 +17,10 @@ export class BookingMapper {
 			doc.endTime.toISOString(),
 			doc.status as BookingStatus,
 			doc.meetingLink,
+			doc.paymentType as PaymentType,
+			doc.paymentStatus as PaymentStatus,
+			doc.totalAmount,
+			doc.currency,
 			doc.notes,
 			doc.createdAt,
 			doc.updatedAt,
@@ -29,6 +37,10 @@ export class BookingMapper {
 			endTime: entity.endTime,
 			status: entity.status,
 			meetingLink: entity.meetingLink,
+			paymentType: entity.paymentType,
+			paymentStatus: entity.paymentStatus,
+			totalAmount: entity.totalAmount,
+			currency: entity.currency,
 			notes: entity.notes,
 		};
 	}
@@ -46,6 +58,10 @@ export class BookingMapper {
 			startDate: booking.startTime.slice(0, 10),
 			status: booking.status,
 			meetingLink: booking.meetingLink,
+			paymentType: booking.paymentType,
+			paymentStatus: booking.paymentStatus,
+			totalAmount: booking.totalAmount,
+			currency: booking.currency,
 			notes: booking.notes,
 			createdAt: booking.createdAt,
 			updatedAt: booking.updatedAt,

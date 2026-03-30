@@ -13,6 +13,7 @@ export interface PaymentWebhookEvent {
 	coins: number;
 	amountMinor: number;
 	currency: string;
+	metadata?: Record<string, string>;
 }
 
 export interface PaymentWebhookParseInput {

@@ -52,6 +52,7 @@ export class StripeWebhookParser implements IPaymentWebhookParser {
 			coins,
 			amountMinor,
 			currency,
+			metadata: session.metadata as Record<string, string>,
 		};
 	}
 }

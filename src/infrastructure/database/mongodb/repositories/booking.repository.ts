@@ -10,10 +10,11 @@ import { BookingModel } from "../models/booking.model";
 
 @injectable()
 export class BookingRepository implements IBookingRepository {
-	async create(
-		entity: Omit<Booking, "id" | "createdAt" | "updatedAt">,
-	): Promise<Booking> {
-		const doc = await BookingModel.create(BookingMapper.toPersistence(entity));
+	async create(entity: Booking): Promise<Booking> {
+		const doc = await BookingModel.create({
+			_id: entity.id,
+			...BookingMapper.toPersistence(entity),
+		});
 		return BookingMapper.toDomain(doc);
 	}
 

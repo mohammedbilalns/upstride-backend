@@ -1,5 +1,9 @@
 import { model, Schema, type Types } from "mongoose";
-import type { BookingStatus } from "../../../../domain/entities/booking.entity";
+import type {
+	BookingStatus,
+	PaymentStatus,
+	PaymentType,
+} from "../../../../domain/entities/booking.entity";
 
 export interface BookingDocument {
 	_id: Types.ObjectId;
@@ -9,6 +13,10 @@ export interface BookingDocument {
 	endTime: Date;
 	status: BookingStatus;
 	meetingLink: string;
+	paymentType: PaymentType;
+	paymentStatus: PaymentStatus;
+	totalAmount: number;
+	currency: string;
 	notes: string | null;
 	createdAt: Date;
 	updatedAt: Date;
@@ -31,6 +39,14 @@ const bookingSchema = new Schema<BookingDocument>(
 			],
 			default: "PENDING",
 		},
+		paymentType: { type: String, enum: ["COINS", "STRIPE"], required: true },
+		paymentStatus: {
+			type: String,
+			enum: ["PENDING", "COMPLETED", "FAILED", "REFUNDED"],
+			default: "PENDING",
+		},
+		totalAmount: { type: Number, required: true },
+		currency: { type: String, required: true },
 		meetingLink: { type: String, default: "" },
 		notes: { type: String, default: null },
 	},

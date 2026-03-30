@@ -10,14 +10,30 @@ export const BookingStatus = [
 ] as const;
 export type BookingStatus = (typeof BookingStatus)[number];
 
+export const PaymentType = ["COINS", "STRIPE"] as const;
+export type PaymentType = (typeof PaymentType)[number];
+
+export const PaymentStatus = [
+	"PENDING",
+	"COMPLETED",
+	"FAILED",
+	"REFUNDED",
+] as const;
+export type PaymentStatus = (typeof PaymentStatus)[number];
+
 type CreateBookingData = {
 	mentorId: string;
 	menteeId: string;
 	startTime: string;
 	endTime: string;
 	meetingLink: string;
+	paymentType: PaymentType;
+	paymentStatus: PaymentStatus;
+	totalAmount: number;
+	currency: string;
 	notes?: string;
 };
+
 export class Booking {
 	constructor(
 		public readonly id: string,
@@ -27,6 +43,10 @@ export class Booking {
 		public readonly endTime: string,
 		public readonly status: BookingStatus,
 		public readonly meetingLink: string,
+		public readonly paymentType: PaymentType,
+		public readonly paymentStatus: PaymentStatus,
+		public readonly totalAmount: number,
+		public readonly currency: string,
 		public readonly notes: string | null,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
@@ -50,6 +70,10 @@ export class Booking {
 			startTime: data.startTime,
 			endTime: data.endTime,
 			meetingLink: data.meetingLink,
+			paymentType: data.paymentType,
+			paymentStatus: data.paymentStatus,
+			totalAmount: data.totalAmount,
+			currency: data.currency,
 			notes: data.notes,
 		};
 	}

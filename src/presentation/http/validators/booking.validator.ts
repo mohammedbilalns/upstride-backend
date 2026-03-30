@@ -48,6 +48,7 @@ export const createBookingSchema = {
 			}
 			return date;
 		}),
+		paymentType: z.enum(["COINS", "STRIPE"]),
 		notes: z.string().optional(),
 	}),
 };

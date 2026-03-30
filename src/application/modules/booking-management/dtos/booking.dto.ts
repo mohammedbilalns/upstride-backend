@@ -1,3 +1,7 @@
+import type {
+	PaymentStatus,
+	PaymentType,
+} from "../../../../domain/entities/booking.entity";
 import type { BookingFilter } from "../../../../domain/repositories/booking.repository.interface";
 
 // ──────────────────────────────────────────────
@@ -27,11 +31,14 @@ export interface CreateBookingInput {
 	mentorId: string;
 	startTime: string;
 	endTime: string;
+	paymentType: PaymentType;
 	notes?: string;
 }
 
 export interface CreateBookingResponse {
 	bookingId: string;
+	paymentStatus: PaymentStatus;
+	paymentUrl?: string | null;
 }
 
 // ──────────────────────────────────────────────
@@ -66,6 +73,10 @@ export interface BookingDto {
 	endTime: string;
 	startDate: string;
 	status: string;
+	paymentType: PaymentType;
+	paymentStatus: PaymentStatus;
+	totalAmount: number;
+	currency: string;
 	meetingLink: string;
 	notes: string | null;
 	createdAt: Date;

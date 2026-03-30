@@ -1,7 +1,12 @@
 import { inject, injectable } from "inversify";
 import { Booking } from "../../../../domain/entities/booking.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import type { IIdGenerator } from "../../../services/id-generator.service.interface";
+import type { IPaymentService } from "../../../services/payment.service.interface";
+import type { IWalletService } from "../../../services/wallet.service.interface";
+import { NotFoundError } from "../../../shared/errors/not-found-error";
 import type {
 	CreateBookingInput,
 	CreateBookingResponse,
@@ -14,10 +19,31 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorRepository: IMentorProfileReadRepository,
+		@inject(TYPES.Services.WalletService)
+		private readonly _walletService: IWalletService,
+		@inject(TYPES.Services.PaymentService)
+		private readonly _paymentService: IPaymentService,
+		@inject(TYPES.Services.IdGenerator)
+		private readonly _idGenerator: IIdGenerator,
 	) {}
 
 	async execute(input: CreateBookingInput): Promise<CreateBookingResponse> {
 		Booking.assertCanBook(input.menteeId, input.mentorId);
+
+		const bookingId = this._idGenerator.generate();
+
+		const mentor = await this._mentorRepository.findProfileById(input.mentorId);
+		if (!mentor) {
+			throw new NotFoundError("Mentor not found");
+		}
+
+		const pricePer30Min = mentor.currentPricePer30Min ?? 0;
+		const start = new Date(input.startTime);
+		const end = new Date(input.endTime);
+		const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+		const totalAmount = (durationMinutes / 30) * pricePer30Min;
 
 		const validationData = Booking.create({
 			menteeId: input.menteeId,
@@ -25,29 +51,77 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			startTime: input.startTime,
 			endTime: input.endTime,
 			meetingLink: "Pending",
+			paymentType: input.paymentType,
+			paymentStatus: "PENDING",
+			totalAmount,
+			currency: input.paymentType === "STRIPE" ? "inr" : "COINS",
 			notes: input.notes,
 		});
 
 		const overlap = await this._bookingRepository.findOverlapping(
 			input.mentorId,
-			new Date(input.startTime),
-			new Date(input.endTime),
+			start,
+			end,
 		);
 
 		if (overlap.length > 0) {
 			throw new SlotNotAvailableError();
 		}
 
-		const createdBooking = await this._bookingRepository.create({
-			menteeId: validationData.menteeId,
-			mentorId: validationData.mentorId,
-			startTime: validationData.startTime,
-			endTime: validationData.endTime,
-			status: "PENDING",
-			meetingLink: validationData.meetingLink,
-			notes: validationData.notes || null,
-		} as any);
+		let paymentStatus: any = "PENDING";
+		let paymentUrl: string | undefined;
 
-		return { bookingId: createdBooking.id };
+		if (input.paymentType === "COINS") {
+			// Debit coins first
+			await this._walletService.debit(
+				input.menteeId,
+				totalAmount,
+				"session_spend" as any,
+				"Booking",
+				bookingId,
+			);
+			paymentStatus = "COMPLETED";
+		}
+
+		const booking = new Booking(
+			bookingId,
+			validationData.mentorId,
+			validationData.menteeId,
+			validationData.startTime,
+			validationData.endTime,
+			paymentStatus === "COMPLETED" ? "CONFIRMED" : "PENDING",
+			validationData.meetingLink,
+			validationData.paymentType,
+			paymentStatus,
+			validationData.totalAmount,
+			validationData.currency,
+			validationData.notes || null,
+			new Date(),
+			new Date(),
+		);
+
+		const createdBooking = await this._bookingRepository.create(booking);
+
+		if (input.paymentType === "STRIPE") {
+			const session = await this._paymentService.createCheckoutSession({
+				userId: input.menteeId,
+				coins: 0,
+				amount: Math.round(totalAmount * 100),
+				currency: "inr",
+				successUrl: `${process.env.FRONTEND_URL}/bookings/success?id=${createdBooking.id}`,
+				cancelUrl: `${process.env.FRONTEND_URL}/bookings/cancel?id=${createdBooking.id}`,
+				metadata: {
+					bookingId: createdBooking.id,
+					type: "BOOKING_PAYMENT",
+				},
+			});
+			paymentUrl = session.url ?? undefined;
+		}
+
+		return {
+			bookingId: createdBooking.id,
+			paymentStatus,
+			paymentUrl,
+		};
 	}
 }

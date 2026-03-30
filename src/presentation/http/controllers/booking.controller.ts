@@ -65,11 +65,15 @@ export class BookingController {
 			mentorId: body.mentorId,
 			startTime: body.startTime.toISOString(),
 			endTime: body.endTime.toISOString(),
+			paymentType: body.paymentType,
 			notes: body.notes,
 		});
 
 		return sendSuccess(res, HttpStatus.CREATED, {
-			message: RESPONSE_MESSAGES.BOOKING.CONFIRMED,
+			message:
+				result.paymentStatus === "COMPLETED"
+					? RESPONSE_MESSAGES.BOOKING.CONFIRMED
+					: "Booking initiated. Please complete the payment.",
 			data: result,
 		});
 	});
