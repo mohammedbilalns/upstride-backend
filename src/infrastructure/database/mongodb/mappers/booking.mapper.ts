@@ -9,8 +9,8 @@ export class BookingMapper {
 			doc._id.toString(),
 			doc.mentorId.toString(),
 			doc.menteeId.toString(),
-			doc.startTime,
-			doc.endTime,
+			doc.startTime.toISOString(),
+			doc.endTime.toISOString(),
 			doc.status as BookingStatus,
 			doc.meetingLink,
 			doc.notes,
@@ -35,16 +35,15 @@ export class BookingMapper {
 
 	/**
 	 * Converts a Booking domain entity to a client-facing DTO.
-	 * Times are serialised as "HH:MM" (UTC) for display purposes.
 	 */
 	static toDTO(booking: Booking) {
 		return {
 			id: booking.id,
 			mentorId: booking.mentorId,
 			menteeId: booking.menteeId,
-			startTime: toHHMM(booking.startTime),
-			endTime: toHHMM(booking.endTime),
-			startDate: booking.startTime.toISOString().slice(0, 10),
+			startTime: toHHMM(new Date(booking.startTime)),
+			endTime: toHHMM(new Date(booking.endTime)),
+			startDate: booking.startTime.slice(0, 10),
 			status: booking.status,
 			meetingLink: booking.meetingLink,
 			notes: booking.notes,

@@ -42,13 +42,13 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		);
 		const sids = sessions
 			.filter((s: Session) => !s.revoked)
-			.map((s: Session) => s.sid);
+			.map((s: Session) => s.sid as string);
 
 		if (sids.length > 0) {
 			await Promise.all([
 				this._sessionRepository.revokeMultiple(sids),
 				this._tokenRevocationRepository.revokeMultiple(
-					sids.map((sid) => ({
+					sids.map((sid: string) => ({
 						sessionId: sid,
 						ttl: REFRESH_TOKEN_EXPIRES_IN,
 					})),

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { IReportRepository } from "../../../../domain/repositories/report.repository.interface";
-import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
+
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
@@ -20,8 +20,7 @@ export class GetPublicMentorProfileUseCase
 	constructor(
 		@inject(TYPES.Repositories.MentorProfileReadRepository)
 		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
-		@inject(TYPES.Repositories.SessionSlotRepository)
-		private readonly _sessionSlotRepository: ISessionSlotRepository,
+
 		@inject(TYPES.Repositories.ReportRepository)
 		private readonly _reportRepository: IReportRepository,
 		@inject(TYPES.Services.Storage)
@@ -61,14 +60,6 @@ export class GetPublicMentorProfileUseCase
 			);
 		}
 
-		const upcomingSlots = !isAdmin
-			? await this._sessionSlotRepository.findUpcomingAvailableByMentorId(
-					profile.id,
-					3,
-					new Date(),
-				)
-			: [];
-
 		const avatar = profile.user.profilePictureId
 			? this._storageService.getPublicUrl(profile.user.profilePictureId)
 			: undefined;
@@ -87,14 +78,6 @@ export class GetPublicMentorProfileUseCase
 
 		return {
 			profile: MentorPublicProfileMapper.toDto(profile, avatar),
-			nextAvailableSessions: upcomingSlots.map((slot) => ({
-				id: slot.id,
-				startTime: slot.startTime,
-				endTime: slot.endTime,
-				durationMinutes: slot.durationMinutes,
-				price: slot.price,
-				currency: slot.currency,
-			})),
 			isReported,
 		};
 	}

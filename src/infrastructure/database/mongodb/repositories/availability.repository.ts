@@ -1,11 +1,15 @@
 import { injectable } from "inversify";
+import type { QueryFilter } from "mongoose";
 import type {
 	Availability,
 	Day,
 } from "../../../../domain/entities/availability.entity";
 import type { IAvailabilityRepository } from "../../../../domain/repositories/availability.repository.interface";
 import { AvailabilityMapper } from "../mappers/availability.mapper";
-import { AvailabilityModel } from "../models/availability.model";
+import {
+	type AvailabilityDocument,
+	AvailabilityModel,
+} from "../models/availability.model";
 
 @injectable()
 export class AvailabilityRepository implements IAvailabilityRepository {
@@ -23,8 +27,28 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 		return doc ? AvailabilityMapper.toDomain(doc) : null;
 	}
 
-	async findByMentorId(mentorId: string): Promise<Availability[]> {
-		const docs = await AvailabilityModel.find({ mentorId }).lean();
+	async findByMentorId(
+		mentorId: string,
+		options: { activeOnly?: boolean; expired?: boolean } = {},
+	): Promise<Availability[]> {
+		const query: QueryFilter<AvailabilityDocument> = { mentorId };
+
+		if (options.activeOnly) {
+			query.status = true;
+		}
+
+		const today = new Date();
+		today.setUTCHours(0, 0, 0, 0);
+
+		if (options.expired === true) {
+			query.endDate = { $lt: today };
+		} else if (options.expired === false) {
+			query.endDate = { $gte: today };
+		}
+
+		const docs = await AvailabilityModel.find(query)
+			.sort({ priority: -1 })
+			.lean();
 		return docs.map((d) => AvailabilityMapper.toDomain(d));
 	}
 
@@ -95,7 +119,11 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 		return doc ? AvailabilityMapper.toDomain(doc) : null;
 	}
 
+	async updateStatus(id: string, status: boolean): Promise<void> {
+		await AvailabilityModel.findByIdAndUpdate(id, { $set: { status } });
+	}
+
 	async deleteById(id: string): Promise<void> {
-		await AvailabilityModel.findByIdAndDelete(id);
+		await this.updateStatus(id, false);
 	}
 }

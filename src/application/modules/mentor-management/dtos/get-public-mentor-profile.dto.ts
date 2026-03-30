@@ -1,12 +1,3 @@
-export interface PublicMentorSlotDto {
-	id: string;
-	startTime: Date;
-	endTime: Date;
-	durationMinutes: number;
-	price: number;
-	currency: "coins";
-}
-
 export interface PublicMentorProfileDto {
 	id: string;
 	user: {
@@ -36,6 +27,5 @@ export interface GetPublicMentorProfileInput {
 
 export interface GetPublicMentorProfileResponse {
 	profile: PublicMentorProfileDto;
-	nextAvailableSessions: PublicMentorSlotDto[];
 	isReported?: boolean;
 }
