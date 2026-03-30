@@ -17,8 +17,8 @@ export class BookingUsecaseMapper {
 			currency: entity.currency,
 			meetingLink: entity.meetingLink,
 			notes: entity.notes,
-			createdAt: entity.createdAt,
-			updatedAt: entity.updatedAt,
+			createdAt: entity.createdAt.toISOString(),
+			updatedAt: entity.updatedAt.toISOString(),
 		};
 	}
 

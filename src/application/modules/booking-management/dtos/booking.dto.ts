@@ -1,4 +1,5 @@
 import type {
+	BookingStatus,
 	PaymentStatus,
 	PaymentType,
 } from "../../../../domain/entities/booking.entity";
@@ -72,15 +73,15 @@ export interface BookingDto {
 	startTime: string;
 	endTime: string;
 	startDate: string;
-	status: string;
+	status: BookingStatus;
 	paymentType: PaymentType;
 	paymentStatus: PaymentStatus;
 	totalAmount: number;
 	currency: string;
 	meetingLink: string;
 	notes: string | null;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface GetBookingsResponse {

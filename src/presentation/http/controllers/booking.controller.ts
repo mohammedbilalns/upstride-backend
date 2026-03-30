@@ -6,6 +6,8 @@ import type { ICreateBookingUseCase } from "../../../application/modules/booking
 import type { IGetAvailableSlotsUseCase } from "../../../application/modules/booking-management/use-cases/get-available-slots.usecase.interface";
 import type { IGetMentorBookingsUseCase } from "../../../application/modules/booking-management/use-cases/get-mentor-bookings.usecase.interface";
 import type { IGetUserBookingsUseCase } from "../../../application/modules/booking-management/use-cases/get-user-bookings.usecase.interface";
+import { getMentorByUserIdOrThrow } from "../../../application/shared/utilities/mentor.util";
+import type { IMentorWriteRepository } from "../../../domain/repositories/mentor-write.repository.interface";
 import { HttpStatus } from "../../../shared/constants/http-status-codes";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
@@ -33,6 +35,8 @@ export class BookingController {
 		private readonly _getUserBookingsUseCase: IGetUserBookingsUseCase,
 		@inject(TYPES.UseCases.GetMentorBookings)
 		private readonly _getMentorBookingsUseCase: IGetMentorBookingsUseCase,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorWriteRepository: IMentorWriteRepository,
 	) {}
 
 	getAvailableSlots = asyncHandler(async (req, res) => {
@@ -99,13 +103,17 @@ export class BookingController {
 
 	cancelBookingByMentor = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorWriteRepository,
+			userId,
+		);
 		const { params, body } = req.validated as {
 			params: z.infer<typeof cancelBookingSchema.params>;
 			body: z.infer<typeof cancelBookingSchema.body>;
 		};
 
 		const result = await this._cancelBookingByMentorUseCase.execute({
-			userId,
+			userId: mentor.id,
 			bookingId: params.id,
 			reason: body.reason,
 		});
@@ -136,12 +144,16 @@ export class BookingController {
 
 	getMentorBookings = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorWriteRepository,
+			userId,
+		);
 		const { query } = req.validated as {
 			query: z.infer<typeof bookingListSchema.query>;
 		};
 
 		const result = await this._getMentorBookingsUseCase.execute({
-			userId,
+			userId: mentor.id,
 			filter: query.filter,
 			page: query.page,
 			limit: query.limit,
