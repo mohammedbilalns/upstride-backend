@@ -7,11 +7,7 @@ import type {
 import { TYPES } from "../../../../shared/types/types";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { ReportUserInput, ReportUserOutput } from "../dtos/report.dto";
-import {
-	ReportAlreadyExistsError,
-	ReporterRoleError,
-	ReportSelfError,
-} from "../errors";
+import { ReportAlreadyExistsError } from "../errors";
 import { ReportMapper } from "../mappers/report.mapper";
 import type { IReportUserUseCase } from "./report-user.usecase.interface";
 
@@ -34,17 +30,11 @@ export class ReportUserUseCase implements IReportUserUseCase {
 			throw new UserNotFoundError();
 		}
 
-		if (reporter.role !== "USER" && reporter.role !== "MENTOR") {
-			throw new ReporterRoleError("users");
-		}
-
 		if (!targetUser) {
 			throw new UserNotFoundError("Reported user not found");
 		}
 
-		if (input.reporterId === input.targetUserId) {
-			throw new ReportSelfError("user");
-		}
+		Report.assertCanReport(reporter.role, reporter.id, targetUser.id);
 
 		const existingReports = await this._reportRepository.query({
 			query: {

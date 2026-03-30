@@ -27,6 +27,7 @@ export class ReportMapper {
 					title: doc.targetId.title,
 					slug: doc.targetId.slug,
 					blockingReason: doc.targetId.blockingReason,
+					isBlocked: doc.targetId.isBlocked,
 				}
 			: undefined;
 

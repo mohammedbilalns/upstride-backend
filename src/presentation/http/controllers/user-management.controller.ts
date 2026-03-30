@@ -41,7 +41,7 @@ export class UserManagementController {
 
 	blockUser = asyncHandler(async (req, res) => {
 		const { id } = req.validated?.params as { id: string };
-		const { reportId } = req.body as { reportId?: string };
+		const { reportId } = (req.body ?? {}) as { reportId?: string };
 		await this._blockUserUseCase.execute({ userId: id, reportId });
 
 		sendSuccess(res, HttpStatus.OK, {

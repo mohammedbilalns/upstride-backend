@@ -26,10 +26,7 @@ export class MarkMessagesReadUseCase implements IMarkMessagesReadUseCase {
 			throw new ChatNotFoundError();
 		}
 
-		const isParticipant =
-			chat.user1Id === input.readerId || chat.user2Id === input.readerId;
-
-		if (!isParticipant) {
+		if (!chat.hasParticipant(input.readerId)) {
 			throw new ChatAccessDeniedError();
 		}
 
@@ -38,10 +35,11 @@ export class MarkMessagesReadUseCase implements IMarkMessagesReadUseCase {
 			input.readerId,
 		);
 
-		const unreadCount = new Map(chat.unreadCount);
-		unreadCount.set(input.readerId, 0);
+		chat.markRead(input.readerId);
 
-		await this._chatRepository.updateById(chat.id, { unreadCount });
+		await this._chatRepository.updateById(chat.id, {
+			unreadCount: chat.unreadCount,
+		});
 
 		// TODO: Publish a "chat.messages.read" domain event for websocket sync.
 		return { updatedCount };

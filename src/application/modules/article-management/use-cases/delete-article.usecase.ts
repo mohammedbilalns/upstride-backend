@@ -2,11 +2,7 @@ import { inject, injectable } from "inversify";
 import type { IArticleRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { DeleteArticleInput } from "../dtos/article-input.dto";
-import {
-	ArticleBlockedByAdminError,
-	ArticleNotFoundError,
-	ArticleOwnershipError,
-} from "../errors";
+import { ArticleNotFoundError } from "../errors";
 import type { IDeleteArticleUseCase } from "./delete-article.usecase.interface";
 
 @injectable()
@@ -22,17 +18,7 @@ export class DeleteArticleUseCase implements IDeleteArticleUseCase {
 			throw new ArticleNotFoundError();
 		}
 
-		if (article.isBlockedByAdmin) {
-			throw new ArticleBlockedByAdminError();
-		}
-
-		if (!article.isActive) {
-			throw new ArticleNotFoundError();
-		}
-
-		if (article.authorId !== input.userId) {
-			throw new ArticleOwnershipError("delete");
-		}
+		article.canDelete(input.userId);
 
 		await this._articleRepository.updateById(input.articleId, {
 			isActive: false,

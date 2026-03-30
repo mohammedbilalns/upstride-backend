@@ -19,6 +19,7 @@ export interface ReportDto {
 		email?: string;
 		title?: string;
 		slug?: string;
+		isBlocked?: boolean;
 	};
 	targetSlug?: string;
 	actionTaken: string;

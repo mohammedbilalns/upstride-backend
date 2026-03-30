@@ -124,7 +124,7 @@ export class MongoReportRepository
 			await this.model.populate(userDocs, {
 				path: "targetId",
 				model: "User",
-				select: "name email",
+				select: "name email isBlocked",
 			});
 		}
 

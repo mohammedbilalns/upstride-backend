@@ -1,16 +1,12 @@
 import { inject, injectable } from "inversify";
-import { MAX_MENTORS_PER_LIST } from "../../../../domain/entities/mentor.entity";
+import { MentorList } from "../../../../domain/entities/mentor-list.entity";
 import { SavedMentor } from "../../../../domain/entities/saved-mentor.entity";
 import type { IMentorListRepository } from "../../../../domain/repositories/mentor-list.repository.interface";
 import type { ISavedMentorRepository } from "../../../../domain/repositories/saved-mentor.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { AddMentorToListInput } from "../dtos/mentor-list.dto";
-import {
-	MaxMentorsPerListError,
-	MentorAlreadySavedError,
-	MentorListNotFoundError,
-} from "../errors";
+import { MentorAlreadySavedError, MentorListNotFoundError } from "../errors";
 import type { IAddMentorToListUseCase } from "./add-mentor-to-list.usecase.interface";
 
 @injectable()
@@ -42,9 +38,8 @@ export class AddMentorToListUseCase implements IAddMentorToListUseCase {
 		if (existing) {
 			throw new MentorAlreadySavedError();
 		}
-		if (count >= MAX_MENTORS_PER_LIST) {
-			throw new MaxMentorsPerListError();
-		}
+
+		MentorList.assertCanAddMentor(count);
 
 		const saved = new SavedMentor(
 			this._idGenerator.generate(),

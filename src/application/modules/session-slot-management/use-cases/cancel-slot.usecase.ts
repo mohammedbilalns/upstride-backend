@@ -7,7 +7,7 @@ import type {
 	CancelSlotInput,
 	CancelSlotResponse,
 } from "../dtos/session-slots.dto";
-import { CannotCancelBookedSlotError, SlotNotFoundError } from "../errors";
+import { SlotNotFoundError } from "../errors";
 import type { ICancelSlotUseCase } from "./cancel-slot.usecase.interface";
 
 @injectable()
@@ -33,12 +33,9 @@ export class CancelSlotUseCase implements ICancelSlotUseCase {
 			throw new SlotNotFoundError();
 		}
 
-		if (slot.status === "booked") {
-			throw new CannotCancelBookedSlotError();
-		}
-
+		const updated = slot.transitionTo("blocked");
 		await this._slotRepository.updateById(slotId, {
-			status: "blocked",
+			status: updated.status,
 		});
 
 		return { slotId, status: "blocked" };

@@ -1,11 +1,10 @@
 import { inject, injectable } from "inversify";
+import { UserPreferences } from "../../../../domain/entities/user-preferences.entity";
 import { ProfileUpdatedEvent } from "../../../../domain/events/profile-updated.event";
 import type { IUserRepository } from "../../../../domain/repositories";
-import { UserPreferencesLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { EventBus } from "../../../events/event-bus.interface";
 import type { IStorageService } from "../../../services/storage.service.interface";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { getUserByIdOrThrow } from "../../../shared/utilities/user.util";
 import type { UpdateProfileInput } from "../dtos/update-profile.dto";
 import type { IUpdateProfileUseCase } from "./update-profile.usecase.interface";
@@ -46,26 +45,8 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 			const newInterests = input.interests || user.preferences?.interests || [];
 			const newSkills = input.skills || user.preferences?.skills || [];
 
-			if (
-				newInterests.length < UserPreferencesLimits.MIN_INTERESTS ||
-				newInterests.length > UserPreferencesLimits.MAX_INTERESTS
-			) {
-				throw new ValidationError();
-			}
-
-			if (
-				newSkills.length < UserPreferencesLimits.MIN_SKILLS_PER_INTEREST ||
-				newSkills.length >
-					UserPreferencesLimits.MAX_INTERESTS *
-						UserPreferencesLimits.MAX_SKILLS_PER_INTEREST
-			) {
-				throw new ValidationError();
-			}
-
-			updateData.preferences = {
-				interests: newInterests,
-				skills: newSkills,
-			};
+			const prefs = UserPreferences.create(newInterests, newSkills);
+			updateData.preferences = prefs.toRaw();
 		}
 
 		await this._userRepository.updateById(user.id, updateData);

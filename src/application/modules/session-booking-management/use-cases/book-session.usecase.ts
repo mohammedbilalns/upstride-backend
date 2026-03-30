@@ -13,7 +13,6 @@ import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { IWalletService } from "../../../services/wallet.service.interface";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { SlotNotFoundError } from "../../session-slot-management/errors";
 import type {
 	BookSessionInput,
@@ -50,6 +49,7 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 		if (!slot) {
 			throw new SlotNotFoundError();
 		}
+
 		if (slot.status !== "available") {
 			throw new SlotNotAvailableError();
 		}
@@ -58,9 +58,8 @@ export class BookSessionUseCase implements IBookSessionUseCase {
 		if (!mentor) {
 			throw new MentorNotFoundError();
 		}
-		if (mentor.userId === userId) {
-			throw new ValidationError("You cannot book your own session.");
-		}
+
+		SessionBooking.assertCanBook(userId, mentor.userId);
 
 		const debitTransactionId = await this._walletService.debit(
 			userId,

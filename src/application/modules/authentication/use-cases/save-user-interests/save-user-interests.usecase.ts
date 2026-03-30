@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
 import { Session } from "../../../../../domain/entities/session.entity";
+import { UserPreferences } from "../../../../../domain/entities/user-preferences.entity";
 import type {
 	ISessionRepository,
 	IUserRepository,
 } from "../../../../../domain/repositories";
-import { UserPreferencesLimits } from "../../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../../shared/types/types";
 import { formatDeviceString } from "../../../../../shared/utilities/device.util";
 import {
@@ -13,7 +13,6 @@ import {
 } from "../../../../services";
 import type { IIdGenerator } from "../../../../services/id-generator.service.interface";
 import type { IStorageService } from "../../../../services/storage.service.interface";
-import { ValidationError } from "../../../../shared/errors/validation-error";
 import type {
 	SaveUserInterestsInput,
 	SaveUserInterestsResponse,
@@ -49,27 +48,10 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 		const user = await this._userRepository.findById(userId);
 		if (!user) throw new UserNotFoundError();
 
-		if (
-			input.interests.length < UserPreferencesLimits.MIN_INTERESTS ||
-			input.interests.length > UserPreferencesLimits.MAX_INTERESTS
-		) {
-			throw new ValidationError();
-		}
-
-		if (
-			input.skills.length < UserPreferencesLimits.MIN_SKILLS_PER_INTEREST ||
-			input.skills.length >
-				UserPreferencesLimits.MAX_INTERESTS *
-					UserPreferencesLimits.MAX_SKILLS_PER_INTEREST
-		) {
-			throw new ValidationError();
-		}
+		const prefs = UserPreferences.create(input.interests, input.skills);
 
 		const updatedUser = await this._userRepository.updateById(user.id, {
-			preferences: {
-				interests: input.interests,
-				skills: input.skills,
-			},
+			preferences: prefs.toRaw(),
 		});
 
 		const finalUser = updatedUser || user;

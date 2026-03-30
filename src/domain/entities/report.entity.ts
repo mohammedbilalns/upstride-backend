@@ -1,3 +1,6 @@
+import { EntityValidationError } from "../errors";
+import type { UserRole } from "./user.entity";
+
 export const ReportTargetTypeValues = ["USER", "ARTICLE"] as const;
 export type ReportTargetType = (typeof ReportTargetTypeValues)[number];
 
@@ -30,9 +33,26 @@ export class Report {
 			title?: string;
 			slug?: string;
 			blockingReason?: string;
+			isBlocked?: boolean;
 		},
 		public readonly appealMessage: string | null = null,
 		public readonly appealedAt: Date | null = null,
 		public readonly isAppealSubmitted: boolean = false,
 	) {}
+
+	static assertCanReport(
+		reporterRole: UserRole,
+		reporterId: string,
+		targetId: string,
+	): void {
+		if (reporterRole !== "USER" && reporterRole !== "MENTOR") {
+			throw new EntityValidationError(
+				"Report",
+				"Only users and mentors can submit reports.",
+			);
+		}
+		if (reporterId === targetId) {
+			throw new EntityValidationError("Report", "You cannot report yourself.");
+		}
+	}
 }

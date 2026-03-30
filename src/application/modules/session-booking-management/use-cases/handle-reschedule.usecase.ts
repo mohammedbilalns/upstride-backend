@@ -4,15 +4,14 @@ import type { ISessionBookingRepository } from "../../../../domain/repositories/
 import type { ISessionSlotRepository } from "../../../../domain/repositories/session-slot.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import { SlotNotFoundError } from "../../session-slot-management/errors";
+
 import type {
 	HandleRescheduleInput,
 	HandleRescheduleResponse,
 } from "../dtos/session-booking.dto";
 import {
-	assertRescheduleWindow,
 	getBookingForMentorOrThrow,
 	updateSlotStatus,
 } from "../utils/booking.util";
@@ -49,15 +48,15 @@ export class HandleRescheduleUseCase implements IHandleRescheduleUseCase {
 		);
 
 		const hours = this._platformSettingsService.sessions.rescheduleWindowHours;
-		assertRescheduleWindow(booking.startTime, hours);
+
+		booking.assertReschedulable(hours);
 
 		const newSlot = await this._slotRepository.findById(newSlotId);
 		if (!newSlot || newSlot.mentorId !== mentor.id) {
 			throw new SlotNotFoundError();
 		}
-		if (newSlot.status !== "available") {
-			throw new ValidationError("Slot is not available");
-		}
+
+		const updated = newSlot.transitionTo("booked");
 
 		await updateSlotStatus(
 			this._slotRepository,
@@ -68,7 +67,7 @@ export class HandleRescheduleUseCase implements IHandleRescheduleUseCase {
 		await updateSlotStatus(
 			this._slotRepository,
 			newSlot.id,
-			"booked",
+			updated.status,
 			bookingId,
 		);
 

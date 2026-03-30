@@ -12,11 +12,7 @@ import type {
 	ReportArticleInput,
 	ReportArticleOutput,
 } from "../dtos/report.dto";
-import {
-	ReportAlreadyExistsError,
-	ReporterRoleError,
-	ReportSelfError,
-} from "../errors";
+import { ReportAlreadyExistsError } from "../errors";
 import { ReportMapper } from "../mappers/report.mapper";
 import type { IReportArticleUseCase } from "./report-article.usecase.interface";
 
@@ -41,17 +37,11 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 			throw new UserNotFoundError();
 		}
 
-		if (reporter.role !== "USER" && reporter.role !== "MENTOR") {
-			throw new ReporterRoleError("articles");
-		}
-
 		if (!article || !article.isActive || article.isArchived) {
 			throw new ArticleNotFoundError();
 		}
 
-		if (article.authorId === input.reporterId) {
-			throw new ReportSelfError("article");
-		}
+		Report.assertCanReport(reporter.role, reporter.id, article.authorId);
 
 		const existingReports = await this._reportRepository.query({
 			query: {

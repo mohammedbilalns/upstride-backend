@@ -8,7 +8,6 @@ import type {
 	EnableSlotResponse,
 } from "../dtos/session-slots.dto";
 import { SlotNotFoundError } from "../errors";
-import { CannotEnableBookedSlotError } from "../errors/cannot-enable-booked-slot.error";
 import type { IEnableSlotUseCase } from "./enable-slot.usecase.interface";
 
 @injectable()
@@ -34,12 +33,9 @@ export class EnableSlotUseCase implements IEnableSlotUseCase {
 			throw new SlotNotFoundError();
 		}
 
-		if (slot.status === "booked") {
-			throw new CannotEnableBookedSlotError();
-		}
-
+		const updated = slot.transitionTo("available");
 		await this._slotRepository.updateById(slotId, {
-			status: "available",
+			status: updated.status,
 		});
 
 		return { slotId, status: "available" };

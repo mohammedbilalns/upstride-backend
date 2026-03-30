@@ -58,10 +58,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 			}
 		}
 
-		const isParticipant =
-			chat.user1Id === input.senderId || chat.user2Id === input.senderId;
-
-		if (!isParticipant) {
+		if (!chat.hasParticipant(input.senderId)) {
 			throw new ChatAccessDeniedError("Sender is not part of this chat");
 		}
 
@@ -85,13 +82,11 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
 		const created = await this._chatMessageRepository.create(message);
 
-		const unreadCount = new Map(chat.unreadCount);
-		unreadCount.set(receiverId, (unreadCount.get(receiverId) ?? 0) + 1);
-		unreadCount.set(input.senderId, 0);
+		chat.incrementUnreadFor(receiverId, input.senderId);
 
 		await this._chatRepository.updateById(chat.id, {
 			lastMessageId: created.id,
-			unreadCount,
+			unreadCount: chat.unreadCount,
 		});
 
 		const messageDto = ChatMessageMapper.toDto(created);

@@ -1,3 +1,5 @@
+import { hasRecurringRuleOverlap } from "../../application/modules/recurring-rule-management/utils/recurring-rule-overlap";
+import { SessionSlotLimits } from "../../shared/constants/app.constants";
 import { EntityValidationError } from "../errors";
 
 export type AllowedDuration = 30 | 60;
@@ -50,5 +52,24 @@ export class Availability {
 				);
 			}
 		}
+	}
+
+	addRule(newRule: AvailabilityRule): void {
+		const rulesForDay = this.recurringRules.filter(
+			(r) => r.weekDay === newRule.weekDay,
+		);
+		if (rulesForDay.length >= SessionSlotLimits.MAX_RECURRING_RULE_PER_DAY) {
+			throw new EntityValidationError(
+				"Availability",
+				`Maximum of ${SessionSlotLimits.MAX_RECURRING_RULE_PER_DAY} recurring rules per day allowed.`,
+			);
+		}
+		if (hasRecurringRuleOverlap(this.recurringRules, newRule)) {
+			throw new EntityValidationError(
+				"Availability",
+				"Recurring rule overlaps with an existing rule.",
+			);
+		}
+		this.recurringRules.push(newRule);
 	}
 }

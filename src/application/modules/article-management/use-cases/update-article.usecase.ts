@@ -10,11 +10,7 @@ import type {
 	UpdateArticleInput,
 	UpdateArticleOutput,
 } from "../dtos/article-input.dto";
-import {
-	ArticleNotFoundError,
-	ArticleOwnershipError,
-	MentorOnlyArticleActionError,
-} from "../errors";
+import { ArticleNotFoundError } from "../errors";
 import { ArticleMapper } from "../mappers/article.mapper";
 import { generatePreviewContent } from "../utils/preview-content";
 import type { IUpdateArticleUseCase } from "./update-article.usecase.interface";
@@ -36,18 +32,12 @@ export class UpdateArticleUseCase implements IUpdateArticleUseCase {
 			throw new UserNotFoundError();
 		}
 
-		if (user.role !== "MENTOR") {
-			throw new MentorOnlyArticleActionError("update");
-		}
-
 		const existing = await this._articleRepository.findById(input.articleId);
 		if (!existing) {
 			throw new ArticleNotFoundError();
 		}
 
-		if (existing.authorId !== input.userId) {
-			throw new ArticleOwnershipError("update");
-		}
+		existing.canUpdate(user.role, input.userId);
 
 		const featuredImageUrl =
 			input.featuredImageUrl ?? existing.featuredImageUrl;

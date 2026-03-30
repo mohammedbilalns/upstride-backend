@@ -55,4 +55,29 @@ export class SessionBooking {
 			);
 		}
 	}
+
+	/**
+	 * Asserts that the booker is not booking their own session slot.
+	 */
+	static assertCanBook(bookerUserId: string, mentorUserId: string): void {
+		if (bookerUserId === mentorUserId) {
+			throw new EntityValidationError(
+				"SessionBooking",
+				"You cannot book your own session.",
+			);
+		}
+	}
+
+	/**
+	 * Asserts that the booking can still be rescheduled given the
+	 */
+	assertReschedulable(windowHours: number): void {
+		const windowMs = windowHours * 60 * 60 * 1000;
+		if (this.startTime.getTime() - Date.now() < windowMs) {
+			throw new EntityValidationError(
+				"SessionBooking",
+				`Cannot reschedule within ${windowHours} hours of the session start.`,
+			);
+		}
+	}
 }

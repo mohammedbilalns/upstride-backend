@@ -42,30 +42,8 @@ export class CreateCustomSlotUseCase implements ICreateCustomSlotUseCase {
 
 		const start = new Date(startTime);
 		const end = new Date(endTime);
-		const startMs = start.getTime();
-		const endMs = end.getTime();
 
-		if (Number.isNaN(startMs) || Number.isNaN(endMs)) {
-			throw new ValidationError("Invalid start or end time");
-		}
-
-		if (endMs <= startMs) {
-			throw new ValidationError("End time must be after start time");
-		}
-
-		if (durationMinutes !== 30 && durationMinutes !== 60) {
-			throw new ValidationError("Duration must be 30 or 60 minutes");
-		}
-
-		const diffMinutes = Math.round((endMs - startMs) / 60000);
-		if (diffMinutes !== durationMinutes) {
-			throw new ValidationError("End time must match start time plus duration");
-		}
-
-		const nowMs = Date.now();
-		if (startMs < nowMs || endMs < nowMs) {
-			throw new ValidationError("Cannot create a slot in the past");
-		}
+		SessionSlot.assertFuture(start);
 
 		const overlapping = await this._slotRepository.findOverlapping(
 			mentor.id,

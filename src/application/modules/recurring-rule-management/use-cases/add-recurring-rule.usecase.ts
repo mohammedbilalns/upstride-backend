@@ -2,17 +2,14 @@ import { inject, injectable } from "inversify";
 import { Availability } from "../../../../domain/entities/session-availability.entity";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { ISessionAvailabilityRepository } from "../../../../domain/repositories/session-availability.repository.interface";
-import { SessionSlotLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
-import { ValidationError } from "../../../shared/errors/validation-error";
 import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type { IGenerateSlotsUseCase } from "../../session-slot-management/use-cases/generate-slots.usecase.interface";
 import type {
 	AddRecurringRuleInput,
 	AddRecurringRuleResponse,
 } from "../dtos/recurring-rules.dto";
-import { hasRecurringRuleOverlap } from "../utils/recurring-rule-overlap";
 import type { IAddRecurringRuleUseCase } from "./add-recurring-rule.usecase.interface";
 
 @injectable()
@@ -50,27 +47,6 @@ export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 			isActive: true,
 		};
 
-		const hasOverlap = hasRecurringRuleOverlap(
-			availability?.recurringRules ?? [],
-			newRule,
-		);
-
-		if (hasOverlap) {
-			throw new ValidationError(
-				"Recurring rule overlaps with an existing rule",
-			);
-		}
-
-		const existingRules = availability?.recurringRules ?? [];
-		const rulesForDay = existingRules.filter(
-			(existingRule) => existingRule.weekDay === newRule.weekDay,
-		);
-		if (rulesForDay.length >= SessionSlotLimits.MAX_RECURRING_RULE_PER_DAY) {
-			throw new ValidationError(
-				`Maximum of ${SessionSlotLimits.MAX_RECURRING_RULE_PER_DAY} recurring rules per day allowed`,
-			);
-		}
-
 		if (!availability) {
 			const created = new Availability(
 				this._idGenerator.generate(),
@@ -80,15 +56,9 @@ export class AddRecurringRuleUseCase implements IAddRecurringRuleUseCase {
 			);
 			await this._availabilityRepository.create(created);
 		} else {
-			const updatedRules = [...availability.recurringRules, newRule];
-			new Availability(
-				availability.id,
-				updatedRules,
-				mentor.id,
-				availability.createdAt,
-			);
+			availability.addRule(newRule);
 			await this._availabilityRepository.updateById(availability.id, {
-				recurringRules: updatedRules,
+				recurringRules: availability.recurringRules,
 			});
 		}
 

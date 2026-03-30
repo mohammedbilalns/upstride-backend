@@ -42,14 +42,12 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 			throw new ArticleNotFoundError();
 		}
 
-		const updated = await this._articleRepository.updateById(input.articleId, {
-			isActive: false,
-			isArchived: true,
-			isBlockedByAdmin: true,
-			blockingReason: input.reason,
-			blockedAt: new Date(),
-			blockedByReportId: input.reportId || null,
-		});
+		const blockPayload = article.block(input.reason, input.reportId || null);
+
+		const updated = await this._articleRepository.updateById(
+			input.articleId,
+			blockPayload,
+		);
 
 		if (!updated) {
 			throw new ArticleNotFoundError();
