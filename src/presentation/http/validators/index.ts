@@ -1,5 +1,7 @@
 export * from "./article.validator";
 export * from "./auth";
+export * from "./availability.validator";
+export * from "./booking.validator";
 export * from "./change-password.validator";
 export * from "./chat.validator";
 export * from "./mentor-list.validator";

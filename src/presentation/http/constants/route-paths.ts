@@ -167,4 +167,19 @@ export const ROUTES = {
 		BLOCK_ARTICLE: (articleId: string) => `/articles/${articleId}/block`,
 		UNBLOCK_ARTICLE: (articleId: string) => `/articles/${articleId}/unblock`,
 	},
+	AVAILABILITY: {
+		BASE: "/availability",
+		ROOT: "/",
+		MENTOR: "/mentor/me",
+		BY_ID: (id: string) => `/${id}`,
+	},
+	BOOKINGS: {
+		BASE: "/bookings",
+		ROOT: "/",
+		SLOTS: (mentorId: string) => `/slots/${mentorId}`,
+		CANCEL: (id: string) => `/${id}/cancel`,
+		MENTOR_CANCEL: (id: string) => `/${id}/mentor/cancel`,
+		USER: "/me",
+		MENTOR: "/mentor/me",
+	},
 };

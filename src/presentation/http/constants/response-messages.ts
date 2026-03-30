@@ -1,80 +1,52 @@
+export const RESPONSE_MESSAGES = {
+	AVAILABILITY: {
+		CREATED: "Availability created successfully",
+		UPDATED: "Availability updated successfully",
+		DELETED: "Availability deleted successfully",
+		RETRIEVED: "Mentor availabilities retrieved successfully",
+	},
+	BOOKING: {
+		SLOTS_COMPUTED: "Available slots computed successfully",
+		CONFIRMED: "Booking confirmed successfully",
+		CANCELLED: "Booking cancelled successfully",
+		CANCELLED_BY_MENTOR: "Booking cancelled dynamically by mentor",
+	},
+};
+
 export const AuthResponseMessages = {
-	LOGIN_SUCCESS: "Login Successful",
-	REGISTER_SUCCESS:
-		"An OTP has been sent to your email address, verify it to continue",
-	RESET_OTP_SEND:
-		"If an account with this email address exists, you will receive an OTP to reset your password.",
-	OTP_VERIFIED: "OTP verified successfully",
-	OTP_RESENT: "A new OTP has been sent to your email",
-	PASSWORD_CHANGED: "Password changed successfully",
-	REFRESH_SESSION_SUCCESS: "Refresh session successful",
 	LOGOUT_SUCCESS: "Logout successful",
 	SESSION_REVOKED: "Session revoked successfully",
 	ALL_OTHER_SESSIONS_REVOKED: "All other sessions revoked successfully",
-	FETCH_USER_SUCCESS: "User fetched successfully",
 	FETCH_SESSIONS_SUCCESS: "Active sessions fetched successfully",
-	OTP_SENT: "An OTP has been sent to your email address",
+	LOGIN_SUCCESS: "Login successful",
+	REGISTER_SUCCESS: "Registration successful",
+	OTP_SENT: "OTP sent successfully",
+	OTP_VERIFIED: "OTP verified successfully",
+	PASSWORD_RESET_SUCCESS: "Password reset successful",
+	PASSWORD_CHANGED: "Password changed successfully",
+	FETCH_USER_SUCCESS: "User information fetched successfully",
+	OTP_RESENT: "OTP resent successfully",
+	REFRESH_SESSION_SUCCESS: "Session refreshed successfully",
+	RESET_OTP_SEND: "Password reset OTP sent successfully",
 };
 
-export const CatalogResponseMessages = {
-	CATALOG_FETCHED_SUCCESS: "Onboarding catalog fetched successfully",
-	INTEREST_ADDED_SUCCESS: "Interest added successfully",
-	INTEREST_DISABLED_SUCCESS: "Interest disabled successfully",
-	INTEREST_ENABLED_SUCCESS: "Interest enabled successfully",
-	SKILL_ADDED_SUCCESS: "Skill added successfully",
-	SKILL_DISABLED_SUCCESS: "Skill disabled successfully",
-	SKILL_ENABLED_SUCCESS: "Skill enabled successfully",
-	PROFESSION_ADDED_SUCCESS: "Profession added successfully",
-	PROFESSION_DISABLED_SUCCESS: "Profession disabled successfully",
-	PROFESSION_ENABLED_SUCCESS: "Profession enabled successfully",
+export const ProfileResponseMessages = {
+	FETCH_PROFILE_SUCCESS: "Profile fetched successfully",
+	UPDATE_PROFILE_SUCCESS: "Profile updated successfully",
+	CHANGE_PASSWORD_SUCCESS: "Password changed successfully",
+};
+
+export const ReportResponseMessages = {
+	REPORT_SUBMITTED_SUCCESS: "Report submitted successfully",
+	REPORTS_FETCHED_SUCCESS: "Reports fetched successfully",
+	REPORT_STATUS_UPDATED_SUCCESS: "Report status updated successfully",
+	ARTICLE_BLOCKED_SUCCESS: "Article blocked successfully",
 };
 
 export const UserManagementResponseMessages = {
 	USERS_FETCHED_SUCCESS: "Users fetched successfully",
-	USER_UNBLOCKED_SUCCESS: "User unblocked successfully",
 	USER_BLOCKED_SUCCESS: "User blocked successfully",
-};
-
-export const AdminManagementResponseMessages = {
-	ADMINS_FETCHED_SUCCESS: "Admins fetched successfully",
-	ADMIN_CREATED_SUCCESS: "Admin created successfully",
-	ADMIN_UNBLOCKED_SUCCESS: "Admin unblocked successfully",
-	ADMIN_BLOCKED_SUCCESS: "Admin blocked successfully",
-};
-
-export const MentorResponseMessages = {
-	FETCH_REGISTRATION_INFO_SUCCESS:
-		"Mentor registration info fetched successfully",
-	REGISTRATION_SUBMITTED_SUCCESS: "Mentor registration submitted successfully",
-	REGISTRATION_RESUBMITTED_SUCCESS:
-		"Mentor registration resubmitted successfully",
-	FETCH_DISCOVERY_SUCCESS: "Mentors fetched successfully",
-	FETCH_APPLICATIONS_SUCCESS: "Mentor applications fetched successfully",
-	APPROVE_APPLICATION_SUCCESS: "Mentor application approved successfully",
-	REJECT_APPLICATION_SUCCESS: "Mentor application rejected successfully",
-};
-
-export const ProfileResponseMessages = {
-	FETCH_PROFILE_SUCCESS: "User profile fetched successfully",
-	UPDATE_PROFILE_SUCCESS: "User profile updated successfully",
-	CHANGE_PASSWORD_SUCCESS: "Password changed successfully",
-};
-
-export const FileResponseMessages = {
-	PRESIGNED_URL_GENERATED: "Pre-signed URL generated successfully.",
-	DELETED: "File deleted successfully.",
-};
-
-export const PlatformSettingsResponseMessages = {
-	SETTINGS_FETCHED_SUCCESS: "Platform settings fetched successfully",
-	ECONOMY_UPDATED_SUCCESS: "Coin settings updated successfully",
-	MENTORS_UPDATED_SUCCESS: "Mentor settings updated successfully",
-	CONTENT_UPDATED_SUCCESS: "Content settings updated successfully",
-	SESSIONS_UPDATED_SUCCESS: "Session settings updated successfully",
-};
-
-export const PaymentResponseMessages = {
-	CHECKOUT_SESSION_CREATED: "Checkout session created successfully",
+	USER_UNBLOCKED_SUCCESS: "User unblocked successfully",
 };
 
 export const WalletResponseMessages = {
@@ -83,9 +55,51 @@ export const WalletResponseMessages = {
 	PAYMENT_TRANSACTIONS_FETCHED: "Payment transactions fetched successfully",
 };
 
-export const ReportResponseMessages = {
-	REPORT_SUBMITTED_SUCCESS: "Report submitted successfully",
-	REPORTS_FETCHED_SUCCESS: "Reports fetched successfully",
-	REPORT_STATUS_UPDATED_SUCCESS: "Report status updated successfully",
-	ARTICLE_BLOCKED_SUCCESS: "Article blocked successfully",
+export const MentorResponseMessages = {
+	FETCH_APPLICATIONS_SUCCESS: "Mentor applications fetched successfully",
+	FETCH_DISCOVERY_SUCCESS: "Mentors fetched successfully",
+	APPROVE_APPLICATION_SUCCESS: "Mentor application approved successfully",
+	REJECT_APPLICATION_SUCCESS: "Mentor application rejected successfully",
+	FETCH_REGISTRATION_INFO_SUCCESS:
+		"Mentor registration info fetched successfully",
+	REGISTRATION_SUBMITTED_SUCCESS: "Mentor registration submitted successfully",
+	REGISTRATION_RESUBMITTED_SUCCESS:
+		"Mentor registration resubmitted successfully",
+};
+
+export const PaymentResponseMessages = {
+	CHECKOUT_SESSION_CREATED: "Checkout session created successfully",
+};
+
+export const PlatformSettingsResponseMessages = {
+	SETTINGS_FETCHED_SUCCESS: "Platform settings fetched successfully",
+	ECONOMY_UPDATED_SUCCESS: "Economy settings updated successfully",
+	MENTORS_UPDATED_SUCCESS: "Mentor settings updated successfully",
+	CONTENT_UPDATED_SUCCESS: "Content settings updated successfully",
+	SESSIONS_UPDATED_SUCCESS: "Session settings updated successfully",
+};
+
+export const CatalogResponseMessages = {
+	CATALOG_FETCHED_SUCCESS: "Catalog fetched successfully",
+	INTEREST_ADDED_SUCCESS: "Interest added successfully",
+	INTEREST_DISABLED_SUCCESS: "Interest disabled successfully",
+	SKILL_ADDED_SUCCESS: "Skill added successfully",
+	SKILL_DISABLED_SUCCESS: "Skill disabled successfully",
+	PROFESSION_ADDED_SUCCESS: "Profession added successfully",
+	PROFESSION_DISABLED_SUCCESS: "Profession disabled successfully",
+	INTEREST_ENABLED_SUCCESS: "Interest enabled successfully",
+	SKILL_ENABLED_SUCCESS: "Skill enabled successfully",
+	PROFESSION_ENABLED_SUCCESS: "Profession enabled successfully",
+};
+
+export const AdminManagementResponseMessages = {
+	ADMINS_FETCHED_SUCCESS: "Admins fetched successfully",
+	ADMIN_CREATED_SUCCESS: "Admin created successfully",
+	ADMIN_BLOCKED_SUCCESS: "Admin blocked successfully",
+	ADMIN_UNBLOCKED_SUCCESS: "Admin unblocked successfully",
+};
+
+export const FileResponseMessages = {
+	PRESIGNED_URL_GENERATED: "Presigned URL generated successfully",
+	DELETED: "File deleted successfully",
 };
