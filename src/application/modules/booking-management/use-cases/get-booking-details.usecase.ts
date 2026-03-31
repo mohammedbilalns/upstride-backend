@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type {
 	GetBookingDetailsInput,
 	GetBookingDetailsResponse,
@@ -24,6 +25,18 @@ export class GetBookingDetailsUseCase implements IGetBookingDetailsUseCase {
 			throw new BookingNotFoundError();
 		}
 
-		return { booking: BookingUsecaseMapper.toDto(booking) };
+		let meetingLink = booking.meetingLink;
+		if (
+			booking.paymentStatus === "COMPLETED" &&
+			(!booking.meetingLink || booking.meetingLink === "Pending")
+		) {
+			meetingLink = `${getClientBaseUrl()}/sessions/${booking.id}`;
+			await this._bookingRepository.updateById(booking.id, { meetingLink });
+		}
+
+		const dto = BookingUsecaseMapper.toDto(booking);
+		dto.meetingLink = meetingLink;
+
+		return { booking: dto };
 	}
 }

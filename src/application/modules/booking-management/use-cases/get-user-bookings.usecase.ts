@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type {
 	GetBookingsInput,
 	GetBookingsResponse,
@@ -27,8 +28,34 @@ export class GetUserBookingsUseCase implements IGetUserBookingsUseCase {
 			limit,
 		);
 
+		const clientBaseUrl = getClientBaseUrl();
+		const needsMeetingLink = result.items.filter(
+			(booking) =>
+				booking.paymentStatus === "COMPLETED" &&
+				(!booking.meetingLink || booking.meetingLink === "Pending"),
+		);
+
+		if (needsMeetingLink.length > 0) {
+			await Promise.all(
+				needsMeetingLink.map((booking) =>
+					this._bookingRepository.updateById(booking.id, {
+						meetingLink: `${clientBaseUrl}/sessions/${booking.id}`,
+					}),
+				),
+			);
+		}
+
 		return {
-			items: result.items.map((b) => BookingUsecaseMapper.toDto(b)),
+			items: result.items.map((b) => {
+				const dto = BookingUsecaseMapper.toDto(b);
+				if (
+					b.paymentStatus === "COMPLETED" &&
+					(!b.meetingLink || b.meetingLink === "Pending")
+				) {
+					dto.meetingLink = `${clientBaseUrl}/sessions/${b.id}`;
+				}
+				return dto;
+			}),
 			total: result.total,
 			page: result.page,
 			limit: result.limit,
