@@ -1,4 +1,3 @@
-import { isValidTimeRange } from "../../shared/utilities/time.util";
 import { EntityValidationError } from "../errors";
 
 export const BookingStatus = [
@@ -48,6 +47,7 @@ export class Booking {
 		public readonly totalAmount: number,
 		public readonly currency: string,
 		public readonly notes: string | null,
+		public readonly mentorName: string | null,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
 	) {}
@@ -60,8 +60,17 @@ export class Booking {
 			);
 		}
 
-		if (!isValidTimeRange(data.startTime, data.endTime)) {
+		const start = new Date(data.startTime);
+		const end = new Date(data.endTime);
+		if (
+			Number.isNaN(start.getTime()) ||
+			Number.isNaN(end.getTime()) ||
+			start.getTime() >= end.getTime()
+		) {
 			throw new EntityValidationError("Booking", "Invalid time range");
+		}
+		if (start.getTime() <= Date.now()) {
+			throw new EntityValidationError("Booking", "Booking time is in the past");
 		}
 
 		return {

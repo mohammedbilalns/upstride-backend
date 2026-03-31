@@ -6,7 +6,12 @@ import type {
 	UpdatableByIdRepository,
 } from "./capabilities";
 
-export type BookingFilter = "all" | "upcoming" | "past" | "cancelled";
+export type BookingFilter =
+	| "all"
+	| "upcoming"
+	| "past"
+	| "cancelled"
+	| "payment_pending";
 
 export interface IBookingRepository
 	extends CreatableRepository<Booking>,

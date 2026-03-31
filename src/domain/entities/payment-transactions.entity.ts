@@ -10,6 +10,8 @@ export enum PaymentProvider {
 }
 
 export type PaymentTransactionOwner = "platform" | "user" | "mentor";
+export type PaymentTransactionPurpose = "coins" | "session";
+export type PaymentTransactionPaymentType = "STRIPE" | "COINS";
 
 export class PaymentTransaction {
 	public readonly id: string;
@@ -20,6 +22,8 @@ export class PaymentTransaction {
 	public readonly currency: string;
 	public readonly status: PaymentStatus;
 	public readonly coinsGranted: number;
+	public readonly purpose: PaymentTransactionPurpose;
+	public readonly paymentType: PaymentTransactionPaymentType;
 	public readonly transactionOwner?: PaymentTransactionOwner;
 	public readonly createdAt: Date;
 
@@ -32,6 +36,8 @@ export class PaymentTransaction {
 		currency: string,
 		status: PaymentStatus,
 		coinsGranted: number,
+		purpose: PaymentTransactionPurpose,
+		paymentType: PaymentTransactionPaymentType,
 		createdAt?: Date,
 		transactionOwner?: PaymentTransactionOwner,
 	) {
@@ -49,6 +55,8 @@ export class PaymentTransaction {
 		this.currency = currency;
 		this.status = status;
 		this.coinsGranted = coinsGranted;
+		this.purpose = purpose;
+		this.paymentType = paymentType;
 		this.transactionOwner = transactionOwner;
 		this.createdAt = createdAt ?? new Date();
 
