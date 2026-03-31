@@ -1,7 +1,4 @@
-import type {
-	PaymentStatus,
-	PaymentType,
-} from "../entities/booking.entity";
+import type { PaymentStatus, PaymentType } from "../entities/booking.entity";
 import { AppEvent } from "./domain-event";
 
 export type SessionRefundedPayload = {
