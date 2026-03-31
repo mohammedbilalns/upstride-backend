@@ -70,6 +70,28 @@ export interface CancelBookingInput {
 export interface CancelBookingResponse {
 	bookingId: string;
 	status: "CANCELLED_BY_MENTEE" | "CANCELLED_BY_MENTOR";
+	refund?: RefundInfo;
+}
+
+export interface RefundInfo {
+	amount: number;
+	percentage: number;
+	currency: "COINS";
+	reason: string;
+}
+
+export interface RefundSessionAmountInput {
+	bookingId: string;
+	userId: string;
+	startTime: string;
+	paymentType: PaymentType;
+	paymentStatus: PaymentStatus;
+	totalAmount: number;
+	cancelledBy: "user" | "mentor";
+}
+
+export interface RefundSessionAmountResponse {
+	refund: RefundInfo;
 }
 
 // ──────────────────────────────────────────────

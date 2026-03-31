@@ -12,12 +12,15 @@ import {
 	UnauthorizedBookingActionError,
 } from "../errors/booking.errors";
 import type { ICancelBookingUseCase } from "./cancel-booking.usecase.interface";
+import type { IRefundSessionAmountUseCase } from "./refund-session-amount.usecase.interface";
 
 @injectable()
 export class CancelBookingUseCase implements ICancelBookingUseCase {
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.UseCases.RefundSessionAmount)
+		private readonly _refundSessionAmountUseCase: IRefundSessionAmountUseCase,
 	) {}
 
 	async execute(input: CancelBookingInput): Promise<CancelBookingResponse> {
@@ -47,9 +50,20 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 				: `Cancellation Reason: ${input.reason || "None provided"}`,
 		});
 
+		const refundResult = await this._refundSessionAmountUseCase.execute({
+			bookingId: booking.id,
+			userId: booking.menteeId,
+			startTime: booking.startTime,
+			paymentType: booking.paymentType,
+			paymentStatus: booking.paymentStatus,
+			totalAmount: booking.totalAmount,
+			cancelledBy: "user",
+		});
+
 		return {
 			bookingId: booking.id,
 			status: "CANCELLED_BY_MENTEE",
+			refund: refundResult.refund,
 		};
 	}
 }
