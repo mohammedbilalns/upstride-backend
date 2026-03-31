@@ -7,10 +7,16 @@ import { CreateBookingUseCase } from "../../application/modules/booking-manageme
 import type { ICreateBookingUseCase } from "../../application/modules/booking-management/use-cases/create-booking.usecase.interface";
 import { GetAvailableSlotsUseCase } from "../../application/modules/booking-management/use-cases/get-available-slots.usecase";
 import type { IGetAvailableSlotsUseCase } from "../../application/modules/booking-management/use-cases/get-available-slots.usecase.interface";
+import { GetBookingDetailsUseCase } from "../../application/modules/booking-management/use-cases/get-booking-details.usecase";
+import type { IGetBookingDetailsUseCase } from "../../application/modules/booking-management/use-cases/get-booking-details.usecase.interface";
 import { GetMentorBookingsUseCase } from "../../application/modules/booking-management/use-cases/get-mentor-bookings.usecase";
 import type { IGetMentorBookingsUseCase } from "../../application/modules/booking-management/use-cases/get-mentor-bookings.usecase.interface";
 import { GetUserBookingsUseCase } from "../../application/modules/booking-management/use-cases/get-user-bookings.usecase";
 import type { IGetUserBookingsUseCase } from "../../application/modules/booking-management/use-cases/get-user-bookings.usecase.interface";
+import { RefundSessionAmountUseCase } from "../../application/modules/booking-management/use-cases/refund-session-amount.usecase";
+import type { IRefundSessionAmountUseCase } from "../../application/modules/booking-management/use-cases/refund-session-amount.usecase.interface";
+import { RepayBookingUseCase } from "../../application/modules/booking-management/use-cases/repay-booking.usecase";
+import type { IRepayBookingUseCase } from "../../application/modules/booking-management/use-cases/repay-booking.usecase.interface";
 import { BookingController } from "../../presentation/http/controllers/booking.controller";
 import { TYPES } from "../../shared/types/types";
 
@@ -29,6 +35,10 @@ export const registerBookingBindings = (container: Container): void => {
 		.to(CancelBookingUseCase)
 		.inSingletonScope();
 	container
+		.bind<IRefundSessionAmountUseCase>(TYPES.UseCases.RefundSessionAmount)
+		.to(RefundSessionAmountUseCase)
+		.inSingletonScope();
+	container
 		.bind<ICancelBookingByMentorUseCase>(TYPES.UseCases.CancelBookingByMentor)
 		.to(CancelBookingByMentorUseCase)
 		.inSingletonScope();
@@ -39,6 +49,14 @@ export const registerBookingBindings = (container: Container): void => {
 	container
 		.bind<IGetMentorBookingsUseCase>(TYPES.UseCases.GetMentorBookings)
 		.to(GetMentorBookingsUseCase)
+		.inSingletonScope();
+	container
+		.bind<IGetBookingDetailsUseCase>(TYPES.UseCases.GetBookingDetails)
+		.to(GetBookingDetailsUseCase)
+		.inSingletonScope();
+	container
+		.bind<IRepayBookingUseCase>(TYPES.UseCases.RepayBooking)
+		.to(RepayBookingUseCase)
 		.inSingletonScope();
 
 	// Controller

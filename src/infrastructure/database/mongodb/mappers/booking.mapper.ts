@@ -9,9 +9,16 @@ import type { BookingDocument } from "../models/booking.model";
 
 export class BookingMapper {
 	static toDomain(doc: BookingDocument): Booking {
+		const mentorDoc = doc.mentorId as
+			| { _id?: { toString(): string }; userId?: { name?: string } }
+			| undefined;
+		const mentorId =
+			mentorDoc?._id?.toString?.() ?? (doc.mentorId as any).toString();
+		const mentorName = mentorDoc?.userId?.name ?? null;
+
 		return new Booking(
 			doc._id.toString(),
-			doc.mentorId.toString(),
+			mentorId,
 			doc.menteeId.toString(),
 			doc.startTime.toISOString(),
 			doc.endTime.toISOString(),
@@ -22,6 +29,7 @@ export class BookingMapper {
 			doc.totalAmount,
 			doc.currency,
 			doc.notes,
+			mentorName,
 			doc.createdAt,
 			doc.updatedAt,
 		);

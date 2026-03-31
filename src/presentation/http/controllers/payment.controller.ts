@@ -4,15 +4,17 @@ import type {
 	ICreateCheckoutSessionUseCase,
 	IHandlePaymentWebhookUseCase,
 } from "../../../application/modules/payments/use-cases";
-import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
+import { getClientBaseUrl } from "../../../shared/utilities/url.util";
 import { PaymentResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 
 interface CreateCheckoutSessionBody {
 	coins: number;
+	successPath?: string;
+	cancelPath?: string;
 }
 
 @injectable()
@@ -26,15 +28,24 @@ export class PaymentController {
 
 	createCheckoutSession = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { coins } = (req.validated?.body ??
+			const coinsBody = (req.validated?.body ??
 				req.body) as CreateCheckoutSessionBody;
+			const { coins } = coinsBody;
 			const userId = req.user.id;
+
+			const baseUrl = getClientBaseUrl();
+			const successUrl = coinsBody.successPath
+				? `${baseUrl}${coinsBody.successPath}`
+				: `${baseUrl}/payments/success`;
+			const cancelUrl = coinsBody.cancelPath
+				? `${baseUrl}${coinsBody.cancelPath}`
+				: `${baseUrl}/payments/cancel`;
 
 			const session = await this._createCheckoutSessionUseCase.execute({
 				userId,
 				coins,
-				successUrl: env.STRIPE_SUCCESS_URL,
-				cancelUrl: env.STRIPE_CANCEL_URL,
+				successUrl,
+				cancelUrl,
 			});
 
 			return sendSuccess(res, HttpStatus.OK, {

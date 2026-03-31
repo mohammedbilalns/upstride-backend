@@ -4,8 +4,10 @@ import type { ICancelBookingUseCase } from "../../../application/modules/booking
 import type { ICancelBookingByMentorUseCase } from "../../../application/modules/booking-management/use-cases/cancel-booking-by-mentor.usecase.interface";
 import type { ICreateBookingUseCase } from "../../../application/modules/booking-management/use-cases/create-booking.usecase.interface";
 import type { IGetAvailableSlotsUseCase } from "../../../application/modules/booking-management/use-cases/get-available-slots.usecase.interface";
+import type { IGetBookingDetailsUseCase } from "../../../application/modules/booking-management/use-cases/get-booking-details.usecase.interface";
 import type { IGetMentorBookingsUseCase } from "../../../application/modules/booking-management/use-cases/get-mentor-bookings.usecase.interface";
 import type { IGetUserBookingsUseCase } from "../../../application/modules/booking-management/use-cases/get-user-bookings.usecase.interface";
+import type { IRepayBookingUseCase } from "../../../application/modules/booking-management/use-cases/repay-booking.usecase.interface";
 import { getMentorByUserIdOrThrow } from "../../../application/shared/utilities/mentor.util";
 import type { IMentorWriteRepository } from "../../../domain/repositories/mentor-write.repository.interface";
 import { HttpStatus } from "../../../shared/constants/http-status-codes";
@@ -14,10 +16,12 @@ import { TYPES } from "../../../shared/types/types";
 import { RESPONSE_MESSAGES } from "../constants/response-messages";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
+	bookingDetailsSchema,
 	bookingListSchema,
 	cancelBookingSchema,
 	createBookingSchema,
 	getAvailableSlotsSchema,
+	repayBookingSchema,
 } from "../validators/booking.validator";
 
 @injectable()
@@ -35,6 +39,10 @@ export class BookingController {
 		private readonly _getUserBookingsUseCase: IGetUserBookingsUseCase,
 		@inject(TYPES.UseCases.GetMentorBookings)
 		private readonly _getMentorBookingsUseCase: IGetMentorBookingsUseCase,
+		@inject(TYPES.UseCases.GetBookingDetails)
+		private readonly _getBookingDetailsUseCase: IGetBookingDetailsUseCase,
+		@inject(TYPES.UseCases.RepayBooking)
+		private readonly _repayBookingUseCase: IRepayBookingUseCase,
 		@inject(TYPES.Repositories.MentorWriteRepository)
 		private readonly _mentorWriteRepository: IMentorWriteRepository,
 	) {}
@@ -54,7 +62,7 @@ export class BookingController {
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: RESPONSE_MESSAGES.BOOKING.SLOTS_COMPUTED,
-			data: result.slots,
+			data: { slots: result.slots },
 		});
 	});
 
@@ -124,6 +132,23 @@ export class BookingController {
 		});
 	});
 
+	repayBooking = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const { params } = req.validated as {
+			params: z.infer<typeof repayBookingSchema.params>;
+		};
+
+		const result = await this._repayBookingUseCase.execute({
+			userId,
+			bookingId: params.id,
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: "Booking payment initiated.",
+			data: result,
+		});
+	});
+
 	getUserBookings = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
 		const { query } = req.validated as {
@@ -157,6 +182,22 @@ export class BookingController {
 			filter: query.filter,
 			page: query.page,
 			limit: query.limit,
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			data: result,
+		});
+	});
+
+	getBookingDetails = asyncHandler(async (req, res) => {
+		const userId = (req as AuthenticatedRequest).user.id;
+		const { params } = req.validated as {
+			params: z.infer<typeof bookingDetailsSchema.params>;
+		};
+
+		const result = await this._getBookingDetailsUseCase.execute({
+			userId,
+			bookingId: params.id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {

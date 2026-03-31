@@ -167,8 +167,11 @@ export const TYPES = {
 		CreateBooking: Symbol.for("CreateBookingUseCase"),
 		CancelBooking: Symbol.for("CancelBookingUseCase"),
 		CancelBookingByMentor: Symbol.for("CancelBookingByMentorUseCase"),
+		RefundSessionAmount: Symbol.for("RefundSessionAmountUseCase"),
+		GetBookingDetails: Symbol.for("GetBookingDetailsUseCase"),
 		GetUserBookings: Symbol.for("GetUserBookingsUseCase"),
 		GetMentorBookings: Symbol.for("GetMentorBookingsUseCase"),
+		RepayBooking: Symbol.for("RepayBookingUseCase"),
 
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
 		HandlePaymentWebhook: Symbol.for("HandlePaymentWebhookUseCase"),

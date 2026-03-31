@@ -19,7 +19,13 @@ export class BookingRepository implements IBookingRepository {
 	}
 
 	async findById(id: string): Promise<Booking | null> {
-		const doc = await BookingModel.findById(id).lean();
+		const doc = await BookingModel.findById(id)
+			.populate({
+				path: "mentorId",
+				select: "userId",
+				populate: { path: "userId", select: "name" },
+			})
+			.lean();
 		return doc ? BookingMapper.toDomain(doc) : null;
 	}
 
@@ -48,7 +54,7 @@ export class BookingRepository implements IBookingRepository {
 
 		const docs = await BookingModel.find({
 			mentorId,
-			status: { $in: ["PENDING", "CONFIRMED"] },
+			status: { $in: ["PENDING", "CONFIRMED", "COMPLETED"] },
 			startTime: { $gte: startOfDay, $lte: endOfDay },
 		}).lean();
 		return docs.map((d) => BookingMapper.toDomain(d));
@@ -74,7 +80,19 @@ export class BookingRepository implements IBookingRepository {
 		const base: Record<string, unknown> = { [field]: value };
 		const now = new Date();
 		if (filter === "upcoming")
-			return { ...base, startTime: { $gt: now }, status: "CONFIRMED" };
+			return {
+				...base,
+				startTime: { $gt: now },
+				status: { $in: ["CONFIRMED", "PENDING"] },
+			};
+		if (filter === "payment_pending")
+			return {
+				...base,
+				startTime: { $gt: now },
+				status: { $in: ["CONFIRMED", "PENDING"] },
+				paymentType: "STRIPE",
+				paymentStatus: { $ne: "COMPLETED" },
+			};
 		if (filter === "past") return { ...base, endTime: { $lt: now } };
 		if (filter === "cancelled")
 			return {
@@ -113,6 +131,11 @@ export class BookingRepository implements IBookingRepository {
 		const skip = (page - 1) * limit;
 		const [docs, total] = await Promise.all([
 			BookingModel.find(query)
+				.populate({
+					path: "mentorId",
+					select: "userId",
+					populate: { path: "userId", select: "name" },
+				})
 				.sort({ createdAt: -1 })
 				.skip(skip)
 				.limit(limit)

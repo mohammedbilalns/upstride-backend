@@ -3,6 +3,7 @@ import { z } from "zod";
 const objectIdSchema = z
 	.string()
 	.regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");
+const bookingIdSchema = z.string().min(1, "Booking ID is required");
 
 export const getAvailableSlotsSchema = {
 	params: z.object({
@@ -55,13 +56,25 @@ export const createBookingSchema = {
 
 export const cancelBookingSchema = {
 	params: z.object({
-		id: objectIdSchema,
+		id: bookingIdSchema,
 	}),
 	body: z.object({
 		reason: z
 			.string()
 			.min(5, "Cancellation reason must be at least 5 characters")
 			.optional(),
+	}),
+};
+
+export const repayBookingSchema = {
+	params: z.object({
+		id: bookingIdSchema,
+	}),
+};
+
+export const bookingDetailsSchema = {
+	params: z.object({
+		id: bookingIdSchema,
 	}),
 };
 
@@ -75,6 +88,8 @@ export const bookingListSchema = {
 				message: "Limit must be 10, 12, 20, 24, 48 or 50",
 			})
 			.default(12),
-		filter: z.enum(["past", "cancelled", "upcoming", "all"]).default("all"),
+		filter: z
+			.enum(["past", "cancelled", "upcoming", "all", "payment_pending"])
+			.default("all"),
 	}),
 };

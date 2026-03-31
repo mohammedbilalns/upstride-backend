@@ -6,7 +6,7 @@ import type {
 } from "../../../../domain/entities/booking.entity";
 
 export interface BookingDocument {
-	_id: Types.ObjectId;
+	_id: string;
 	mentorId: Types.ObjectId;
 	menteeId: Types.ObjectId;
 	startTime: Date;
@@ -24,6 +24,7 @@ export interface BookingDocument {
 
 const bookingSchema = new Schema<BookingDocument>(
 	{
+		_id: { type: String, required: true },
 		mentorId: { type: Schema.Types.ObjectId, ref: "Mentor", required: true },
 		menteeId: { type: Schema.Types.ObjectId, ref: "User", required: true },
 		startTime: { type: Date, required: true },

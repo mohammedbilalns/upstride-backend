@@ -5,9 +5,11 @@ import { ROUTES } from "../constants";
 import type { BookingController } from "../controllers/booking.controller";
 import { authorizeRoles, verifySession } from "../middlewares";
 import {
+	bookingDetailsSchema,
 	bookingListSchema,
 	cancelBookingSchema,
 	createBookingSchema,
+	repayBookingSchema,
 } from "../validators/booking.validator";
 
 const bookingRouter = Router();
@@ -47,11 +49,25 @@ bookingRouter.put(
 	bookingController.cancelBookingByMentor,
 );
 
+bookingRouter.post(
+	ROUTES.BOOKINGS.REPAY(":id"),
+	verifySession,
+	validate(repayBookingSchema),
+	bookingController.repayBooking,
+);
+
 bookingRouter.get(
 	ROUTES.BOOKINGS.USER,
 	verifySession,
 	validate(bookingListSchema),
 	bookingController.getUserBookings,
+);
+
+bookingRouter.get(
+	ROUTES.BOOKINGS.BY_ID(":id"),
+	verifySession,
+	validate(bookingDetailsSchema),
+	bookingController.getBookingDetails,
 );
 
 bookingRouter.get(

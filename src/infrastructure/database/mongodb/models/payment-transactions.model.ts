@@ -14,6 +14,8 @@ export interface PaymentTransactionDocument {
 	currency: string;
 	status: PaymentStatus;
 	coinsGranted: number;
+	purpose: "coins" | "session";
+	paymentType: "STRIPE" | "COINS";
 	transactionOwner?: "platform" | "user" | "mentor";
 	createdAt: Date;
 	updatedAt: Date;
@@ -37,6 +39,8 @@ export const paymentTransactionSchema = new Schema<PaymentTransactionDocument>(
 			required: true,
 		},
 		coinsGranted: { type: Number, required: true },
+		purpose: { type: String, enum: ["coins", "session"], required: true },
+		paymentType: { type: String, enum: ["STRIPE", "COINS"], required: true },
 		transactionOwner: { type: String, enum: ["platform", "user", "mentor"] },
 	},
 	{ timestamps: true },
