@@ -3,8 +3,10 @@ import { Booking } from "../../../../domain/entities/booking.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { IPaymentService } from "../../../services/payment.service.interface";
+import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { IWalletService } from "../../../services/wallet.service.interface";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
 import type {
@@ -23,6 +25,8 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		private readonly _mentorRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Services.WalletService)
 		private readonly _walletService: IWalletService,
+		@inject(TYPES.Services.PlatformSettings)
+		private readonly _platformSettingsService: PlatformSettingsService,
 		@inject(TYPES.Services.PaymentService)
 		private readonly _paymentService: IPaymentService,
 		@inject(TYPES.Services.IdGenerator)
@@ -43,7 +47,13 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		const start = new Date(input.startTime);
 		const end = new Date(input.endTime);
 		const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
-		const totalAmount = (durationMinutes / 30) * pricePer30Min;
+		const totalAmountCoins = (durationMinutes / 30) * pricePer30Min;
+		await this._platformSettingsService.load();
+		const coinValue = this._platformSettingsService.economy.coinValue;
+		if (!Number.isFinite(coinValue) || coinValue <= 0) {
+			throw new NotFoundError("Invalid coin value configuration");
+		}
+		const totalAmountCurrency = totalAmountCoins / coinValue;
 
 		const validationData = Booking.create({
 			menteeId: input.menteeId,
@@ -53,7 +63,8 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			meetingLink: "Pending",
 			paymentType: input.paymentType,
 			paymentStatus: "PENDING",
-			totalAmount,
+			totalAmount:
+				input.paymentType === "STRIPE" ? totalAmountCurrency : totalAmountCoins,
 			currency: input.paymentType === "STRIPE" ? "inr" : "COINS",
 			notes: input.notes,
 		});
@@ -75,13 +86,18 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			// Debit coins first
 			await this._walletService.debit(
 				input.menteeId,
-				totalAmount,
+				totalAmountCoins,
 				"session_spend" as any,
 				"Booking",
 				bookingId,
 			);
 			paymentStatus = "COMPLETED";
 		}
+
+		const meetingLink =
+			paymentStatus === "COMPLETED"
+				? `${getClientBaseUrl()}/sessions/${bookingId}`
+				: validationData.meetingLink;
 
 		const booking = new Booking(
 			bookingId,
@@ -90,12 +106,13 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			validationData.startTime,
 			validationData.endTime,
 			paymentStatus === "COMPLETED" ? "CONFIRMED" : "PENDING",
-			validationData.meetingLink,
+			meetingLink,
 			validationData.paymentType,
 			paymentStatus,
 			validationData.totalAmount,
 			validationData.currency,
 			validationData.notes || null,
+			null,
 			new Date(),
 			new Date(),
 		);
@@ -103,13 +120,14 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		const createdBooking = await this._bookingRepository.create(booking);
 
 		if (input.paymentType === "STRIPE") {
+			const frontendBaseUrl = getClientBaseUrl();
 			const session = await this._paymentService.createCheckoutSession({
 				userId: input.menteeId,
 				coins: 0,
-				amount: Math.round(totalAmount * 100),
+				amount: Math.round(totalAmountCurrency * 100),
 				currency: "inr",
-				successUrl: `${process.env.FRONTEND_URL}/bookings/success?id=${createdBooking.id}`,
-				cancelUrl: `${process.env.FRONTEND_URL}/bookings/cancel?id=${createdBooking.id}`,
+				successUrl: `${frontendBaseUrl}/bookings/success?id=${createdBooking.id}`,
+				cancelUrl: `${frontendBaseUrl}/bookings/cancel?id=${createdBooking.id}`,
 				metadata: {
 					bookingId: createdBooking.id,
 					type: "BOOKING_PAYMENT",

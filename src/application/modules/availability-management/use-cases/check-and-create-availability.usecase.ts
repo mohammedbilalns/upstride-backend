@@ -68,6 +68,4 @@ export class CheckAndCreateAvailabilityUseCase
 				: undefined,
 		};
 	}
-
-	// conflict logic moved to utils
 }

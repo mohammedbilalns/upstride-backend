@@ -11,6 +11,7 @@ import type { IPaymentTransactionRepository } from "../../../../domain/repositor
 import { container } from "../../../../main/container";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
+import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { PaymentWebhookEvent } from "../../../services/payment-webhook.parser.interface";
 import type { IWalletService } from "../../../services/wallet.service.interface";
@@ -125,10 +126,16 @@ export class CheckoutCompletedHandler {
 
 		if (booking.paymentStatus === "COMPLETED") return;
 
+		const meetingLink =
+			booking.meetingLink && booking.meetingLink !== "Pending"
+				? booking.meetingLink
+				: `${getClientBaseUrl()}/sessions/${booking.id}`;
+
 		// 1. Update booking
 		await bookingRepository.updateById(bookingId, {
 			status: "CONFIRMED",
 			paymentStatus: "COMPLETED",
+			meetingLink,
 		} as any);
 
 		await Promise.all([
@@ -142,6 +149,8 @@ export class CheckoutCompletedHandler {
 					currency,
 					PaymentStatus.Completed,
 					0,
+					"session",
+					"STRIPE",
 					undefined,
 					"user",
 				),
@@ -156,6 +165,8 @@ export class CheckoutCompletedHandler {
 					currency,
 					PaymentStatus.Completed,
 					0,
+					"session",
+					"STRIPE",
 					undefined,
 					"platform",
 				),
@@ -189,6 +200,8 @@ export class CheckoutCompletedHandler {
 					currency,
 					PaymentStatus.Completed,
 					coins,
+					"coins",
+					"STRIPE",
 					undefined,
 					owner,
 				),

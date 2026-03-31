@@ -1,4 +1,10 @@
 import type { Availability } from "../../../../domain/entities/availability.entity";
+import { toMinutes } from "../../../../shared/utilities/time.util";
+
+interface Slot {
+	startTime: string;
+	endTime: string;
+}
 
 export class AvailabilitySlotUtil {
 	/**
@@ -11,13 +17,9 @@ export class AvailabilitySlotUtil {
 		existingBookings: { startTime: string; endTime: string }[],
 	): { startTime: string; endTime: string }[] {
 		if (!availability.status) return [];
-		const slots: { startTime: string; endTime: string }[] = [];
+		const slots: Slot[] = [];
 		const dateStr = date.toISOString().slice(0, 10); // YYYY-MM-DD
-
-		const toMins = (time: string) => {
-			const [h, m] = time.split(":").map(Number);
-			return h * 60 + m;
-		};
+		const now = Date.now();
 
 		const toStr = (mins: number) => {
 			const h = Math.floor(mins / 60)
@@ -27,8 +29,8 @@ export class AvailabilitySlotUtil {
 			return `${h}:${m}`;
 		};
 
-		let currentMin = toMins(availability.startTime);
-		const endMin = toMins(availability.endTime);
+		let currentMin = toMinutes(availability.startTime);
+		const endMin = toMinutes(availability.endTime);
 
 		while (currentMin + availability.slotDuration <= endMin) {
 			const slotStartMin = currentMin;
@@ -40,11 +42,18 @@ export class AvailabilitySlotUtil {
 			// Compute exact ISO datetimes for overlap check
 			const slotStartIso = `${dateStr}T${slotStartStr}:00.000Z`;
 			const slotEndIso = `${dateStr}T${slotEndStr}:00.000Z`;
+			const slotStartMs = Date.parse(slotStartIso);
+
+			// Skip past slots (only relevant for today's date)
+			if (!Number.isNaN(slotStartMs) && slotStartMs <= now) {
+				currentMin += availability.slotDuration + availability.bufferTime;
+				continue;
+			}
 
 			// Check break overlaps
 			const overlapsBreak = availability.breakTimes.some((b) => {
-				const bStart = toMins(b.startTime);
-				const bEnd = toMins(b.endTime);
+				const bStart = toMinutes(b.startTime);
+				const bEnd = toMinutes(b.endTime);
 				return slotStartMin < bEnd && slotEndMin > bStart;
 			});
 

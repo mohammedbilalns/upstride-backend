@@ -16,8 +16,10 @@ export interface GetAvailableSlotsInput {
 }
 
 export interface SlotDto {
-	startTime: string; // HH:MM (UTC)
-	endTime: string; // HH:MM (UTC)
+	startTime: string; // ISO string (UTC)
+	endTime: string; // ISO string (UTC)
+	durationMinutes: number;
+	price: number;
 }
 
 export interface GetAvailableSlotsResponse {
@@ -43,6 +45,20 @@ export interface CreateBookingResponse {
 }
 
 // ──────────────────────────────────────────────
+// Repay Booking (Stripe)
+// ──────────────────────────────────────────────
+export interface RepayBookingInput {
+	userId: string;
+	bookingId: string;
+}
+
+export interface RepayBookingResponse {
+	bookingId: string;
+	paymentStatus: PaymentStatus;
+	paymentUrl?: string | null;
+}
+
+// ──────────────────────────────────────────────
 // Cancel Booking
 // ──────────────────────────────────────────────
 export interface CancelBookingInput {
@@ -54,6 +70,18 @@ export interface CancelBookingInput {
 export interface CancelBookingResponse {
 	bookingId: string;
 	status: "CANCELLED_BY_MENTEE" | "CANCELLED_BY_MENTOR";
+}
+
+// ──────────────────────────────────────────────
+// Get Booking Details
+// ──────────────────────────────────────────────
+export interface GetBookingDetailsInput {
+	userId: string;
+	bookingId: string;
+}
+
+export interface GetBookingDetailsResponse {
+	booking: BookingDto;
 }
 
 // ──────────────────────────────────────────────
@@ -80,6 +108,7 @@ export interface BookingDto {
 	currency: string;
 	meetingLink: string;
 	notes: string | null;
+	mentorName: string | null;
 	createdAt: string;
 	updatedAt: string;
 }

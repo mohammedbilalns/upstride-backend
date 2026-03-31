@@ -1,6 +1,8 @@
 import type {
 	PaymentProvider,
 	PaymentStatus,
+	PaymentTransactionPaymentType,
+	PaymentTransactionPurpose,
 } from "../../../../domain/entities/payment-transactions.entity";
 
 export interface GetPaymentTransactionsInput {
@@ -19,6 +21,8 @@ export interface PaymentTransactionDto {
 	currency: string;
 	coinsGranted: number;
 	direction: "credit" | "debit";
+	purpose: PaymentTransactionPurpose;
+	paymentType: PaymentTransactionPaymentType;
 	createdAt: Date;
 }
 

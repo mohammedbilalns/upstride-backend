@@ -14,6 +14,8 @@ export class PaymentTransactionDtoMapper {
 			currency: entity.currency,
 			coinsGranted: entity.coinsGranted,
 			direction,
+			purpose: entity.purpose,
+			paymentType: entity.paymentType,
 			createdAt: entity.createdAt,
 		};
 	}

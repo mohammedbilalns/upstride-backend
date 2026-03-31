@@ -1,7 +1,9 @@
 import { inject, injectable } from "inversify";
 import type { IAvailabilityRepository } from "../../../../domain/repositories/availability.repository.interface";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { NotFoundError } from "../../../shared/errors/not-found-error";
 import { AvailabilitySlotUtil } from "../../availability-management/utils/availability-slot.util";
 import type {
 	GetAvailableSlotsInput,
@@ -17,6 +19,8 @@ export class GetAvailableSlotsUseCase implements IGetAvailableSlotsUseCase {
 		private readonly _availabilityRepository: IAvailabilityRepository,
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
 	) {}
 
 	async execute(
@@ -50,7 +54,21 @@ export class GetAvailableSlotsUseCase implements IGetAvailableSlotsUseCase {
 			endTime: b.endTime,
 		}));
 
-		const allSlots: { startTime: string; endTime: string }[] = [];
+		const mentor = await this._mentorProfileReadRepository.findProfileById(
+			input.mentorId,
+		);
+		if (!mentor) {
+			throw new NotFoundError("Mentor not found");
+		}
+		const pricePer30Min = mentor.currentPricePer30Min ?? 0;
+
+		const allSlots: {
+			startTime: string;
+			endTime: string;
+			durationMinutes: number;
+			price: number;
+		}[] = [];
+		const dateStr = targetDate.toISOString().slice(0, 10);
 
 		for (const availability of availabilities) {
 			const slots = AvailabilitySlotUtil.computeSlotsForDate(
@@ -58,12 +76,32 @@ export class GetAvailableSlotsUseCase implements IGetAvailableSlotsUseCase {
 				targetDate,
 				mappedBookings,
 			);
-			allSlots.push(...slots);
+			for (const slot of slots) {
+				const startIso = `${dateStr}T${slot.startTime}:00.000Z`;
+				const endIso = `${dateStr}T${slot.endTime}:00.000Z`;
+				const start = new Date(startIso);
+				const end = new Date(endIso);
+				const durationMinutes = Math.round(
+					(end.getTime() - start.getTime()) / (1000 * 60),
+				);
+				const price = (durationMinutes / 30) * pricePer30Min;
+				allSlots.push({
+					startTime: startIso,
+					endTime: endIso,
+					durationMinutes,
+					price,
+				});
+			}
 		}
 
 		const uniqueSlotsMap = new Map<
 			string,
-			{ startTime: string; endTime: string }
+			{
+				startTime: string;
+				endTime: string;
+				durationMinutes: number;
+				price: number;
+			}
 		>();
 		for (const slot of allSlots) {
 			uniqueSlotsMap.set(`${slot.startTime}-${slot.endTime}`, slot);
