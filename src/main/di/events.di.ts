@@ -18,17 +18,13 @@ import type { PlatformSettingsService } from "../../application/services/platfor
 import type { IWalletService } from "../../application/services/wallet.service.interface";
 import { WebSocketEventBridge } from "../../infrastructure/events/websocket-event-bridge";
 import { TYPES } from "../../shared/types/types";
-import {
-	bullMQEventBus,
-	inMemoryEventBus,
-	orchestratedEventBus,
-} from "./queues.di";
+import { appEventBus } from "./queues.di";
 
 export const bootstrapEventHandlers = (container: Container): void => {
 	const wsBridge = new WebSocketEventBridge(
 		container.get(TYPES.Services.WebSocketServer),
 	);
-	orchestratedEventBus.setWebSocketBridge(wsBridge);
+	appEventBus.setWebSocketBridge(wsBridge);
 
 	const walletService = container.get<IWalletService>(
 		TYPES.Services.WalletService,
@@ -99,63 +95,63 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	);
 
 	// Durable (BullMQ) Bus Registrations -
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"user.registered",
 		signupHandler.handle.bind(signupHandler),
 	);
-	inMemoryEventBus.registerHandler(
+	appEventBus.registerRealtimeHandler(
 		"chat.message.sent",
 		messageSentHandler.handle.bind(messageSentHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.comment.created",
 		articleCommentCreatedHandler.handle.bind(articleCommentCreatedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.reaction.created",
 		articleReactionCreatedHandler.handle.bind(articleReactionCreatedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.comment.reaction.created",
 		articleCommentReactionCreatedHandler.handle.bind(
 			articleCommentReactionCreatedHandler,
 		),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"profile.updated",
 		profileUpdatedHandler.handle.bind(profileUpdatedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"user.status.changed",
 		articleUserStatusChangedHandler.handle.bind(
 			articleUserStatusChangedHandler,
 		),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"user.status.changed",
 		mentorUserStatusChangedHandler.handle.bind(mentorUserStatusChangedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.blocked",
 		articleBlockedHandler.handle.bind(articleBlockedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.unblocked",
 		articleUnblockedHandler.handle.bind(articleUnblockedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"session.refunded",
 		sessionRefundedHandler.handle.bind(sessionRefundedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"checkout.completed",
 		checkoutCompletedHandler.handle.bind(checkoutCompletedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"checkout.expired",
 		checkoutExpiredHandler.handle.bind(checkoutExpiredHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"checkout.failed",
 		checkoutFailedHandler.handle.bind(checkoutFailedHandler),
 	);

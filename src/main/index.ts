@@ -8,7 +8,6 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import { createAppEventWorker } from "../infrastructure/events/domain-event.worker";
 import { createMailWorker } from "../infrastructure/queue/workers/mail.worker";
 import env from "../shared/config/env";
 import logger from "../shared/logging/logger";
@@ -16,8 +15,8 @@ import { TYPES } from "../shared/types/types";
 import App from "./app";
 import { container } from "./container";
 import {
+	appEventBus,
 	bootstrapEventHandlers,
-	bullMQEventBus,
 	domainEventsQueue,
 	mailQueue,
 } from "./di";
@@ -42,7 +41,7 @@ async function start() {
 
 	//workers for background jobs
 	mailWorker = createMailWorker(redisClient);
-	appEventWorker = createAppEventWorker(redisClient, bullMQEventBus);
+	appEventWorker = appEventBus.createDurableWorker(redisClient);
 
 	// initialize http server
 	appInstance = new App();
