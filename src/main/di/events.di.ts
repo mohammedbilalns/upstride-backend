@@ -100,7 +100,7 @@ export const bootstrapEventHandlers = (container: Container): void => {
 		"UserRegisteredEvent",
 		signupHandler.handle.bind(signupHandler),
 	);
-	bullMQEventBus.registerHandler(
+	inMemoryEventBus.registerHandler(
 		"chat.message.sent",
 		messageSentHandler.handle.bind(messageSentHandler),
 	);

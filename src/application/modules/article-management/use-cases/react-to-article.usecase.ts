@@ -6,7 +6,7 @@ import type {
 	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { DurableEventBus } from "../../../events/durable-event-bus.interface";
 import type {
 	ReactToArticleInput,
 	ReactToArticleOutput,
@@ -22,8 +22,8 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleReactionRepository)
 		private readonly _reactionRepository: IArticleReactionRepository,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.DurableEventBus)
+		private readonly _eventBus: DurableEventBus,
 	) {}
 
 	async execute(input: ReactToArticleInput): Promise<ReactToArticleOutput> {

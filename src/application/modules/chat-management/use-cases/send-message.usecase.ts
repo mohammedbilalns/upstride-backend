@@ -6,7 +6,7 @@ import type {
 	IChatRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { RealtimeEventBus } from "../../../events/realtime-event-bus.interface";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { SendMessageInput, SendMessageOutput } from "../dtos/chat.dto";
 import {
@@ -29,8 +29,8 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.UseCases.CreateChat)
 		private readonly _createChatUseCase: ICreateChatUseCase,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.RealtimeEventBus)
+		private readonly _eventBus: RealtimeEventBus,
 	) {}
 
 	async execute(input: SendMessageInput): Promise<SendMessageOutput> {

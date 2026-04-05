@@ -6,7 +6,7 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { DurableEventBus } from "../../../events/durable-event-bus.interface";
 import { ArticleNotFoundError } from "../../article-management/errors";
 import { ArticleMapper } from "../../article-management/mappers/article.mapper";
 import { UserNotFoundError } from "../../authentication/errors";
@@ -23,8 +23,8 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.ReportRepository)
 		private readonly _reportRepository: IReportRepository,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.DurableEventBus)
+		private readonly _eventBus: DurableEventBus,
 	) {}
 
 	async execute(input: BlockArticleInput): Promise<BlockArticleOutput> {

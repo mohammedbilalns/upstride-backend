@@ -3,7 +3,7 @@ import { Notification } from "../../../../domain/entities/notification.entity";
 import { NotificationCreatedEvent } from "../../../../domain/events/notification-created.event";
 import type { INotificationRepository } from "../../../../domain/repositories/notification.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { RealtimeEventBus } from "../../../events/realtime-event-bus.interface";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type {
 	CreateNotificationInput,
@@ -19,8 +19,8 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 		private readonly _notificationRepository: INotificationRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.RealtimeEventBus)
+		private readonly _eventBus: RealtimeEventBus,
 	) {}
 
 	async execute(
@@ -45,7 +45,7 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 		const created = await this._notificationRepository.create(notification);
 		const notificationDto = NotificationMapper.toDto(created);
 
-		// Publish  event for background processing
+		// Publish event for websocket delivery
 		await this._eventBus.publish(
 			new NotificationCreatedEvent(input.userId, notificationDto),
 		);

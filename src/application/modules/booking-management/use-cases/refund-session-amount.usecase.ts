@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { SessionRefundedEvent } from "../../../../domain/events/session-refunded.event";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { DurableEventBus } from "../../../events/durable-event-bus.interface";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
 import type {
@@ -19,8 +19,8 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 		private readonly _refundService: IRefundService,
 		@inject(TYPES.Services.PlatformSettings)
 		private readonly _platformSettingsService: PlatformSettingsService,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.DurableEventBus)
+		private readonly _eventBus: DurableEventBus,
 	) {}
 
 	async execute(

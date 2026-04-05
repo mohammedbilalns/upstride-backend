@@ -3,7 +3,7 @@ import { UserPreferences } from "../../../../domain/entities/user-preferences.en
 import { ProfileUpdatedEvent } from "../../../../domain/events/profile-updated.event";
 import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { DurableEventBus } from "../../../events/durable-event-bus.interface";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import { getUserByIdOrThrow } from "../../../shared/utilities/user.util";
 import type { UpdateProfileInput } from "../dtos/update-profile.dto";
@@ -16,8 +16,8 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.DurableEventBus)
+		private readonly _eventBus: DurableEventBus,
 	) {}
 
 	async execute(input: UpdateProfileInput): Promise<void> {
