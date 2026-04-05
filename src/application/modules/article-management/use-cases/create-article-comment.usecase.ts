@@ -96,16 +96,16 @@ export class CreateArticleCommentUseCase
 		const actorName = user?.name || "";
 
 		await this._eventBus.publish(
-			new ArticleCommentCreatedEvent(
-				article.id,
-				article.slug,
-				article.authorId,
-				created.id,
-				input.userId,
+			new ArticleCommentCreatedEvent({
+				articleId: article.id,
+				articleSlug: article.slug,
+				articleAuthorId: article.authorId,
+				commentId: created.id,
+				actorId: input.userId,
 				actorName,
-				currentComments + 1,
+				count: currentComments + 1,
 				parentId,
-			),
+			}),
 		);
 
 		const avatarUrl = user?.profilePictureId

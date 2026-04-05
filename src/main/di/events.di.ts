@@ -97,7 +97,7 @@ export const bootstrapEventHandlers = (container: Container): void => {
 
 	// Durable (BullMQ) Bus Registrations -
 	bullMQEventBus.registerHandler(
-		"UserRegisteredEvent",
+		"user.registered",
 		signupHandler.handle.bind(signupHandler),
 	);
 	inMemoryEventBus.registerHandler(
@@ -123,37 +123,37 @@ export const bootstrapEventHandlers = (container: Container): void => {
 		profileUpdatedHandler.handle.bind(profileUpdatedHandler),
 	);
 	bullMQEventBus.registerHandler(
-		"UserStatusChangedEvent",
+		"user.status.changed",
 		articleUserStatusChangedHandler.handle.bind(
 			articleUserStatusChangedHandler,
 		),
 	);
 	bullMQEventBus.registerHandler(
-		"UserStatusChangedEvent",
+		"user.status.changed",
 		mentorUserStatusChangedHandler.handle.bind(mentorUserStatusChangedHandler),
 	);
 	bullMQEventBus.registerHandler(
-		"ArticleBlockedEvent",
+		"article.blocked",
 		articleBlockedHandler.handle.bind(articleBlockedHandler),
 	);
 	bullMQEventBus.registerHandler(
-		"ArticleUnblockedEvent",
+		"article.unblocked",
 		articleUnblockedHandler.handle.bind(articleUnblockedHandler),
 	);
 	bullMQEventBus.registerHandler(
-		"SessionRefundedEvent",
+		"session.refunded",
 		sessionRefundedHandler.handle.bind(sessionRefundedHandler),
 	);
 	bullMQEventBus.registerHandler(
-		"CheckoutCompletedEvent",
+		"checkout.completed",
 		checkoutCompletedHandler.handleEvent.bind(checkoutCompletedHandler),
 	);
 	bullMQEventBus.registerHandler(
-		"CheckoutExpiredEvent",
+		"checkout.expired",
 		checkoutExpiredHandler.handleEvent.bind(checkoutExpiredHandler),
 	);
 	bullMQEventBus.registerHandler(
-		"CheckoutFailedEvent",
+		"checkout.failed",
 		checkoutFailedHandler.handleEvent.bind(checkoutFailedHandler),
 	);
 };

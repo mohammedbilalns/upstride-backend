@@ -23,11 +23,11 @@ export class WebSocketEventBridge {
 			"chat.message.sent",
 			(event) => {
 				logger.info(
-					`[WS BRIDGE] Bridging chat message for user ${event.receiverId}`,
+					`[WS BRIDGE] Bridging chat message for user ${event.payload.receiverId}`,
 				);
-				this._wsServer.emitToUser(event.receiverId, "chat:message", {
-					chatId: event.chatId,
-					message: event.message,
+				this._wsServer.emitToUser(event.payload.receiverId, "chat:message", {
+					chatId: event.payload.chatId,
+					message: event.payload.message,
 				});
 			},
 		);
@@ -37,10 +37,10 @@ export class WebSocketEventBridge {
 			"notification.created",
 			(event) => {
 				logger.info(
-					`[WS BRIDGE] Bridging notification for user ${event.userId}`,
+					`[WS BRIDGE] Bridging notification for user ${event.payload.userId}`,
 				);
-				this._wsServer.emitToUser(event.userId, "notification:new", {
-					notification: event.notification,
+				this._wsServer.emitToUser(event.payload.userId, "notification:new", {
+					notification: event.payload.notification,
 				});
 			},
 		);

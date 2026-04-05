@@ -12,14 +12,14 @@ export class ArticleBlockedHandler {
 
 	async handle(event: ArticleBlockedEvent): Promise<void> {
 		await this._createNotificationUseCase.execute({
-			userId: event.authorId,
+			userId: event.payload.authorId,
 			type: "ARTICLE",
 			event: "ARTICLE_BLOCKED",
 			title: "Article Blocked",
-			description: `Your article has been blocked by an administrator. Reason: ${event.reason}`,
+			description: `Your article has been blocked by an administrator. Reason: ${event.payload.reason}`,
 			metadata: {
-				articleId: event.articleId,
-				reason: event.reason,
+				articleId: event.payload.articleId,
+				reason: event.payload.reason,
 			},
 		});
 	}

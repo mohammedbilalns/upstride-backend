@@ -77,16 +77,16 @@ export class ReactToArticleCommentUseCase
 		});
 
 		await this._eventBus.publish(
-			new ArticleCommentReactionCreatedEvent(
-				article.id,
-				article.slug,
-				article.authorId,
-				comment.id,
-				"LIKE",
-				input.userId,
-				created.actorName || "",
-				currentLikes + 1,
-			),
+			new ArticleCommentReactionCreatedEvent({
+				articleId: article.id,
+				articleSlug: article.slug,
+				articleAuthorId: article.authorId,
+				commentId: comment.id,
+				reactionType: "LIKE",
+				actorId: input.userId,
+				actorName: created.actorName || "",
+				count: currentLikes + 1,
+			}),
 		);
 		return { reaction: ArticleReactionMapper.toDto(created) };
 	}

@@ -1,4 +1,4 @@
-import type { AppEvent } from "../../domain/events/domain-event";
+import type { AppEvent } from "../../domain/events/app-event";
 
 export interface EventBus {
 	publish(event: AppEvent): Promise<void>;

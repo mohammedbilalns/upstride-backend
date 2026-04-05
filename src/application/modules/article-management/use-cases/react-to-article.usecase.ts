@@ -61,15 +61,15 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		});
 
 		await this._eventBus.publish(
-			new ArticleReactionCreatedEvent(
-				article.id,
-				article.slug,
-				article.authorId,
-				"LIKE",
-				input.userId,
-				created.actorName || "",
-				(article.likesCount ?? 0) + 1,
-			),
+			new ArticleReactionCreatedEvent({
+				articleId: article.id,
+				articleSlug: article.slug,
+				articleAuthorId: article.authorId,
+				reactionType: "LIKE",
+				actorId: input.userId,
+				actorName: created.actorName || "",
+				count: (article.likesCount ?? 0) + 1,
+			}),
 		);
 
 		return { reaction: ArticleReactionMapper.toDto(created) };

@@ -1,9 +1,13 @@
-import { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
 
 export class UserRegisteredEvent extends AppEvent {
+	readonly eventName = "user.registered";
+
 	constructor(
-		public readonly userId: string,
-		public readonly email: string,
+		public readonly payload: {
+			userId: string;
+			email: string;
+		},
 	) {
 		super();
 	}

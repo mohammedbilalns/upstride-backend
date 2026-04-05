@@ -1,12 +1,15 @@
-import type { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
 
-export class ProfileUpdatedEvent implements AppEvent {
+export class ProfileUpdatedEvent extends AppEvent {
 	readonly eventName = "profile.updated";
-	readonly occurredAt = new Date();
 
 	constructor(
-		public readonly userId: string,
-		public readonly name?: string,
-		public readonly avatarUrl?: string,
-	) {}
+		public readonly payload: {
+			userId: string;
+			name?: string;
+			avatarUrl?: string;
+		},
+	) {
+		super();
+	}
 }

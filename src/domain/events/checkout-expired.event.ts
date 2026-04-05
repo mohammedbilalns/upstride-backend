@@ -1,8 +1,10 @@
-import type { PaymentWebhookEvent } from "../../application/services/payment-webhook.parser.interface";
-import { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
+import type { PaymentEventPayload } from "./payment-event-payload";
 
 export class CheckoutExpiredEvent extends AppEvent {
-	constructor(public readonly payload: PaymentWebhookEvent) {
+	readonly eventName = "checkout.expired";
+
+	constructor(public readonly payload: PaymentEventPayload) {
 		super();
 	}
 }

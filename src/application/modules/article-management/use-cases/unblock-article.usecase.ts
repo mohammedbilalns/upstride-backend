@@ -48,7 +48,10 @@ export class UnblockArticleUseCase implements IUnblockArticleUseCase {
 
 		if (updated) {
 			await this._eventBus.publish(
-				new ArticleUnblockedEvent(updated.id, updated.authorId),
+				new ArticleUnblockedEvent({
+					articleId: updated.id,
+					authorId: updated.authorId,
+				}),
 			);
 
 			if (article.blockedByReportId) {

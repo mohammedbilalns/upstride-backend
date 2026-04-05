@@ -54,7 +54,11 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		}
 
 		await this._eventBus.publish(
-			new ArticleBlockedEvent(updated.id, updated.authorId, input.reason),
+			new ArticleBlockedEvent({
+				articleId: updated.id,
+				authorId: updated.authorId,
+				reason: input.reason,
+			}),
 		);
 
 		if (input.reportId) {

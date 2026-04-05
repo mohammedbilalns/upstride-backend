@@ -25,7 +25,7 @@ export class UnblockUserUseCase implements IUnblockUserUseCase {
 		await this._userRepository.updateById(input.userId, { isBlocked: false });
 
 		await this._eventBus.publish(
-			new UserStatusChangedEvent(input.userId, false),
+			new UserStatusChangedEvent({ userId: input.userId, isBlocked: false }),
 		);
 	}
 }

@@ -13,7 +13,7 @@ export class SignupRewardHandler {
 		const rewardAmount = this._platformSettings.economy.userJoinRewardCoinCount;
 
 		await this._walletService.credit(
-			event.userId,
+			event.payload.userId,
 			rewardAmount,
 			CoinTransactionType.SignupBonus,
 		);

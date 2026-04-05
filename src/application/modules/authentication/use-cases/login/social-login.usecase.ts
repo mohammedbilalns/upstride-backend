@@ -121,7 +121,9 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 			isVerified: identity.isVerified,
 		} as User);
 
-		await this._eventBus.publish(new UserRegisteredEvent(user.id, user.email));
+		await this._eventBus.publish(
+			new UserRegisteredEvent({ userId: user.id, email: user.email }),
+		);
 
 		return {
 			setupToken: this._tokenService.generateSetupToken({

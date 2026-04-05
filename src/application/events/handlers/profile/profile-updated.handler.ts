@@ -13,20 +13,25 @@ export class ProfileUpdatedHandler {
 
 	async handle(event: ProfileUpdatedEvent): Promise<void> {
 		logger.info(
-			`Handling ProfileUpdatedEvent for articles by user: ${event.userId}`,
+			`Handling ProfileUpdatedEvent for articles by user: ${event.payload.userId}`,
 		);
 
-		if (event.name === undefined && event.avatarUrl === undefined) {
+		if (
+			event.payload.name === undefined &&
+			event.payload.avatarUrl === undefined
+		) {
 			return;
 		}
 
 		try {
 			await this._articleRepository.updateAuthorSnapshotByAuthorId(
-				event.userId,
+				event.payload.userId,
 				{
-					...(event.name !== undefined && { name: event.name }),
-					...(event.avatarUrl !== undefined && {
-						avatarUrl: event.avatarUrl,
+					...(event.payload.name !== undefined && {
+						name: event.payload.name,
+					}),
+					...(event.payload.avatarUrl !== undefined && {
+						avatarUrl: event.payload.avatarUrl,
 					}),
 				},
 			);

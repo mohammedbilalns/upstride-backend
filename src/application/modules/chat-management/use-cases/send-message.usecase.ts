@@ -1,6 +1,9 @@
 import { inject, injectable } from "inversify";
 import { Chatmessage } from "../../../../domain/entities/chat-message.entity";
-import { MessageSentEvent } from "../../../../domain/events/message-sent.event";
+import {
+	type ChatMessagePayload,
+	MessageSentEvent,
+} from "../../../../domain/events/message-sent.event";
 import type {
 	IChatMessageRepository,
 	IChatRepository,
@@ -99,14 +102,28 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		const receiverName = usersById.get(receiverId)?.name ?? "someone";
 
 		// Publish event
+		const messagePayload: ChatMessagePayload = {
+			id: messageDto.id,
+			chatId: messageDto.chatId,
+			senderId: messageDto.senderId,
+			messageType: messageDto.messageType,
+			content: messageDto.content,
+			attachementId: messageDto.attachementId,
+			mediaUrl: messageDto.mediaUrl,
+			repliedTo: messageDto.repliedTo,
+			status: messageDto.status,
+			createdAt: messageDto.createdAt,
+			updatedAt: messageDto.updatedAt,
+		};
+
 		await this._eventBus.publish(
-			new MessageSentEvent(
-				chat.id,
+			new MessageSentEvent({
+				chatId: chat.id,
 				receiverId,
-				messageDto,
+				message: messagePayload,
 				senderName,
 				receiverName,
-			),
+			}),
 		);
 
 		return { message: messageDto };

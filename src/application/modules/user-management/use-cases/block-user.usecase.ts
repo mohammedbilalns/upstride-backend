@@ -57,7 +57,7 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		}
 
 		await this._eventBus.publish(
-			new UserStatusChangedEvent(input.userId, true),
+			new UserStatusChangedEvent({ userId: input.userId, isBlocked: true }),
 		);
 
 		if (input.reportId) {

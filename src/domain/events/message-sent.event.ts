@@ -1,15 +1,35 @@
-import type { ChatMessageDto } from "../../application/modules/chat-management/dtos/chat.dto";
-import type { AppEvent } from "./domain-event";
+import type {
+	MessageStatus,
+	MessageType,
+} from "../entities/chat-message.entity";
+import { AppEvent } from "./app-event";
 
-export class MessageSentEvent implements AppEvent {
+export type ChatMessagePayload = {
+	id: string;
+	chatId: string;
+	senderId: string;
+	messageType: MessageType;
+	content: string | null;
+	attachementId: string | null;
+	mediaUrl: string | null;
+	repliedTo: string | null;
+	status: MessageStatus;
+	createdAt: Date;
+	updatedAt: Date;
+};
+
+export class MessageSentEvent extends AppEvent {
 	readonly eventName = "chat.message.sent";
-	readonly occurredAt = new Date();
 
 	constructor(
-		public readonly chatId: string,
-		public readonly receiverId: string,
-		public readonly message: ChatMessageDto,
-		public readonly senderName: string,
-		public readonly receiverName: string,
-	) {}
+		public readonly payload: {
+			chatId: string;
+			receiverId: string;
+			message: ChatMessagePayload;
+			senderName: string;
+			receiverName: string;
+		},
+	) {
+		super();
+	}
 }

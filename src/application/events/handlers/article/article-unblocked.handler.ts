@@ -12,13 +12,13 @@ export class ArticleUnblockedHandler {
 
 	async handle(event: ArticleUnblockedEvent): Promise<void> {
 		await this._createNotificationUseCase.execute({
-			userId: event.authorId,
+			userId: event.payload.authorId,
 			type: "ARTICLE",
 			event: "ARTICLE_UNBLOCKED",
 			title: "Article Unblocked",
 			description: "Your article has been unblocked by an administrator.",
 			metadata: {
-				articleId: event.articleId,
+				articleId: event.payload.articleId,
 			},
 		});
 	}

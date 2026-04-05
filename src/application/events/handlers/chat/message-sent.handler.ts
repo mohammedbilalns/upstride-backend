@@ -13,23 +13,23 @@ export class MessageSentHandler {
 
 	async handle(event: MessageSentEvent): Promise<void> {
 		logger.info(
-			`Handling MessageSentEvent for notification creation: ${event.message.id}`,
+			`Handling MessageSentEvent for notification creation: ${event.payload.message.id}`,
 		);
 
 		try {
 			await this._createNotificationUseCase.execute({
-				userId: event.receiverId,
+				userId: event.payload.receiverId,
 				title: "New Message",
-				description: `You have received a message from ${event.senderName}`,
+				description: `You have received a message from ${event.payload.senderName}`,
 				type: "CHAT",
 				event: "MESSAGE_RECEIVED",
-				actorId: event.message.senderId,
-				relatedEntityId: event.message.senderId,
+				actorId: event.payload.message.senderId,
+				relatedEntityId: event.payload.message.senderId,
 				metadata: {
-					chatId: event.chatId,
-					messageId: event.message.id,
-					senderName: event.senderName,
-					receiverName: event.receiverName,
+					chatId: event.payload.chatId,
+					messageId: event.payload.message.id,
+					senderName: event.payload.senderName,
+					receiverName: event.payload.receiverName,
 				},
 			});
 		} catch (error) {

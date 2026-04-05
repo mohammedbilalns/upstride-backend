@@ -14,30 +14,33 @@ export class ArticleCommentCreatedHandler {
 
 	async handle(event: ArticleCommentCreatedEvent): Promise<void> {
 		logger.info(
-			`Handling ArticleCommentCreatedEvent for comment: ${event.commentId}`,
+			`Handling ArticleCommentCreatedEvent for comment: ${event.payload.commentId}`,
 		);
 
-		if (event.actorId === event.articleAuthorId || !shouldNotify(event.count)) {
+		if (
+			event.payload.actorId === event.payload.articleAuthorId ||
+			!shouldNotify(event.payload.count)
+		) {
 			return;
 		}
 
-		const description = `You have ${event.count} ${
-			event.count === 1 ? "comment" : "comments"
+		const description = `You have ${event.payload.count} ${
+			event.payload.count === 1 ? "comment" : "comments"
 		} on your article`;
 
 		try {
 			await this._createNotificationUseCase.execute({
-				userId: event.articleAuthorId,
+				userId: event.payload.articleAuthorId,
 				title: "New Comment",
 				description,
 				type: "ARTICLE",
 				event: "ARTICLE_COMMENTED",
-				actorId: event.actorId,
-				relatedEntityId: event.articleId,
+				actorId: event.payload.actorId,
+				relatedEntityId: event.payload.articleId,
 				metadata: {
-					articleId: event.articleId,
-					articleSlug: event.articleSlug,
-					commentId: event.commentId,
+					articleId: event.payload.articleId,
+					articleSlug: event.payload.articleSlug,
+					commentId: event.payload.commentId,
 				},
 			});
 		} catch (error) {

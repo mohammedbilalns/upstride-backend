@@ -14,35 +14,38 @@ export class ArticleReactionCreatedHandler {
 
 	async handle(event: ArticleReactionCreatedEvent): Promise<void> {
 		logger.info(
-			`Handling ArticleReactionCreatedEvent for article: ${event.articleId}`,
+			`Handling ArticleReactionCreatedEvent for article: ${event.payload.articleId}`,
 		);
 
-		if (event.actorId === event.articleAuthorId || !shouldNotify(event.count)) {
+		if (
+			event.payload.actorId === event.payload.articleAuthorId ||
+			!shouldNotify(event.payload.count)
+		) {
 			return;
 		}
 
-		const action = event.reactionType === "LIKE" ? "liked" : "disliked";
-		const othersCount = event.count - 1;
+		const action = event.payload.reactionType === "LIKE" ? "liked" : "disliked";
+		const othersCount = event.payload.count - 1;
 		const description =
 			othersCount > 0
-				? `${event.actorName} and ${othersCount} ${
+				? `${event.payload.actorName} and ${othersCount} ${
 						othersCount === 1 ? "other" : "others"
 					} ${action} your article`
-				: `${event.actorName} ${action} your article`;
+				: `${event.payload.actorName} ${action} your article`;
 
 		try {
 			await this._createNotificationUseCase.execute({
-				userId: event.articleAuthorId,
+				userId: event.payload.articleAuthorId,
 				title: "New Reaction",
 				description,
 				type: "ARTICLE",
 				event: "ARTICLE_REACTED",
-				actorId: event.actorId,
-				relatedEntityId: event.articleId,
+				actorId: event.payload.actorId,
+				relatedEntityId: event.payload.articleId,
 				metadata: {
-					articleId: event.articleId,
-					articleSlug: event.articleSlug,
-					reactionType: event.reactionType,
+					articleId: event.payload.articleId,
+					articleSlug: event.payload.articleSlug,
+					reactionType: event.payload.reactionType,
 				},
 			});
 		} catch (error) {

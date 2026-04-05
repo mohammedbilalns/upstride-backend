@@ -70,7 +70,10 @@ export class VerifyRegistrationOtpUseCase
 		const finalUser = updatedUser || user;
 
 		await this._eventBus.publish(
-			new UserRegisteredEvent(finalUser.id, finalUser.email),
+			new UserRegisteredEvent({
+				userId: finalUser.id,
+				email: finalUser.email,
+			}),
 		);
 
 		const setupToken = this._tokenService.generateSetupToken({

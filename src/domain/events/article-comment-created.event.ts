@@ -1,17 +1,20 @@
-import type { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
 
-export class ArticleCommentCreatedEvent implements AppEvent {
+export class ArticleCommentCreatedEvent extends AppEvent {
 	readonly eventName = "article.comment.created";
-	readonly occurredAt = new Date();
 
 	constructor(
-		public readonly articleId: string,
-		public readonly articleSlug: string,
-		public readonly articleAuthorId: string,
-		public readonly commentId: string,
-		public readonly actorId: string,
-		public readonly actorName: string,
-		public readonly count: number,
-		public readonly parentId?: string | null,
-	) {}
+		public readonly payload: {
+			articleId: string;
+			articleSlug: string;
+			articleAuthorId: string;
+			commentId: string;
+			actorId: string;
+			actorName: string;
+			count: number;
+			parentId?: string | null;
+		},
+	) {
+		super();
+	}
 }

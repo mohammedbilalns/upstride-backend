@@ -6,8 +6,8 @@ export class MentorUserStatusChangedHandler {
 
 	async handle(event: UserStatusChangedEvent): Promise<void> {
 		await this._mentorRepository.updateIsUserBlockedStatusByUserId(
-			event.userId,
-			event.isBlocked,
+			event.payload.userId,
+			event.payload.isBlocked,
 		);
 	}
 }

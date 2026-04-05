@@ -1,7 +1,13 @@
-import { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
 
 export class MentorRequestApprovedEvent extends AppEvent {
-	constructor(public readonly mentorId: string) {
+	readonly eventName = "mentor.request.approved";
+
+	constructor(
+		public readonly payload: {
+			mentorId: string;
+		},
+	) {
 		super();
 	}
 }

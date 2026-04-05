@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import type { RealtimeEventBus } from "../../application/events/realtime-event-bus.interface";
-import type { AppEvent } from "../../domain/events/domain-event";
+import type { AppEvent } from "../../domain/events/app-event";
 
 /**
  *  implementation of the EventBus using Node.js EventEmitter.

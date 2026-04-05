@@ -61,11 +61,11 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 				: "";
 
 			await this._eventBus.publish(
-				new ProfileUpdatedEvent(
-					user.id,
-					nameChanged ? updatedName : undefined,
-					profilePictureChanged ? avatarUrl : undefined,
-				),
+				new ProfileUpdatedEvent({
+					userId: user.id,
+					name: nameChanged ? updatedName : undefined,
+					avatarUrl: profilePictureChanged ? avatarUrl : undefined,
+				}),
 			);
 		}
 	}

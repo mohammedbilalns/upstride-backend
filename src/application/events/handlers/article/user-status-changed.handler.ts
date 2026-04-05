@@ -5,8 +5,11 @@ export class ArticleUserStatusChangedHandler {
 	constructor(private readonly _articleRepository: IArticleRepository) {}
 
 	async handle(event: UserStatusChangedEvent): Promise<void> {
-		await this._articleRepository.updateAuthorSnapshotByAuthorId(event.userId, {
-			isBlocked: event.isBlocked,
-		});
+		await this._articleRepository.updateAuthorSnapshotByAuthorId(
+			event.payload.userId,
+			{
+				isBlocked: event.payload.isBlocked,
+			},
+		);
 	}
 }

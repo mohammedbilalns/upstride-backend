@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Queue } from "bullmq";
 import type { DurableEventBus } from "../../application/events/durable-event-bus.interface";
-import type { AppEvent } from "../../domain/events/domain-event";
+import type { AppEvent } from "../../domain/events/app-event";
 
 export const APP_EVENTS_QUEUE = "appEvents";
 
