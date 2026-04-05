@@ -3,9 +3,10 @@ import type { MessageSentEvent } from "../../../../domain/events/message-sent.ev
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.usecase.interface";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class MessageSentHandler {
+export class MessageSentHandler implements EventHandler<MessageSentEvent> {
 	constructor(
 		@inject(TYPES.UseCases.CreateNotification)
 		private readonly _createNotificationUseCase: ICreateNotificationUseCase,

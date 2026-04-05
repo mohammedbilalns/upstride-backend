@@ -1,9 +1,12 @@
+import { injectable } from "inversify";
 import { CoinTransactionType } from "../../../domain/entities/coin-transactions.entity";
 import type { UserRegisteredEvent } from "../../../domain/events/user-registered.event";
 import type { PlatformSettingsService } from "../../services/platform-settings.service";
 import type { IWalletService } from "../../services/wallet.service.interface";
+import type { EventHandler } from "../event-handler.interface";
 
-export class SignupRewardHandler {
+@injectable()
+export class SignupRewardHandler implements EventHandler<UserRegisteredEvent> {
 	constructor(
 		private _walletService: IWalletService,
 		private _platformSettings: PlatformSettingsService,

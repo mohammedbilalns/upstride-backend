@@ -3,9 +3,12 @@ import type { ProfileUpdatedEvent } from "../../../../domain/events/profile-upda
 import type { IArticleRepository } from "../../../../domain/repositories";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class ProfileUpdatedHandler {
+export class ProfileUpdatedHandler
+	implements EventHandler<ProfileUpdatedEvent>
+{
 	constructor(
 		@inject(TYPES.Repositories.ArticleRepository)
 		private readonly _articleRepository: IArticleRepository,

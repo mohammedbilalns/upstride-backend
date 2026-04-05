@@ -4,9 +4,12 @@ import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import { shouldNotify } from "../../../../shared/utilities/notification.utils";
 import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.usecase.interface";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class ArticleCommentReactionCreatedHandler {
+export class ArticleCommentReactionCreatedHandler
+	implements EventHandler<ArticleCommentReactionCreatedEvent>
+{
 	constructor(
 		@inject(TYPES.UseCases.CreateNotification)
 		private readonly _createNotificationUseCase: ICreateNotificationUseCase,

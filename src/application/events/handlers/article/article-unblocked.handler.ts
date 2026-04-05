@@ -2,9 +2,12 @@ import { inject, injectable } from "inversify";
 import type { ArticleUnblockedEvent } from "../../../../domain/events/article-unblocked.event";
 import { TYPES } from "../../../../shared/types/types";
 import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.usecase.interface";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class ArticleUnblockedHandler {
+export class ArticleUnblockedHandler
+	implements EventHandler<ArticleUnblockedEvent>
+{
 	constructor(
 		@inject(TYPES.UseCases.CreateNotification)
 		private readonly _createNotificationUseCase: ICreateNotificationUseCase,

@@ -2,9 +2,12 @@ import { inject, injectable } from "inversify";
 import type { SessionRefundedEvent } from "../../../../domain/events/session-refunded.event";
 import { TYPES } from "../../../../shared/types/types";
 import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.usecase.interface";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class SessionRefundedHandler {
+export class SessionRefundedHandler
+	implements EventHandler<SessionRefundedEvent>
+{
 	constructor(
 		@inject(TYPES.UseCases.CreateNotification)
 		private readonly _createNotificationUseCase: ICreateNotificationUseCase,

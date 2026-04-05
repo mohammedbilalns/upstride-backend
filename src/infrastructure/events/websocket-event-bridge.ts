@@ -29,6 +29,19 @@ const NOTIFICATION_CREATED_CONFIG: WsEventConfig<NotificationCreatedEvent> = {
 	}),
 };
 
+type WsEventMap = {
+	"chat.message.sent": WsEventConfig<MessageSentEvent>;
+	"notification.created": WsEventConfig<NotificationCreatedEvent>;
+};
+
+const WS_EVENT_MAP: WsEventMap = {
+	"chat.message.sent": MESSAGE_SENT_CONFIG,
+	"notification.created": NOTIFICATION_CREATED_CONFIG,
+};
+
+const isWsEventName = (name: string): name is keyof WsEventMap =>
+	name in WS_EVENT_MAP;
+
 /**
  * Bridges domain events to WebSocket emissions.
  * Listens on the InMemoryEventBus and uses WebSocketServer to reach clients.
@@ -41,29 +54,26 @@ export class WebSocketEventBridge {
 	) {}
 
 	public handle(event: AppEvent): void {
-		if (event.eventName === "chat.message.sent") {
-			const typedEvent = event as MessageSentEvent;
-			logger.info("[WS BRIDGE] Bridging chat.message.sent");
-			const target = MESSAGE_SENT_CONFIG.resolveTarget(typedEvent);
-			const payload = MESSAGE_SENT_CONFIG.buildPayload
-				? MESSAGE_SENT_CONFIG.buildPayload(typedEvent)
-				: typedEvent.payload;
-			this._wsServer.emitToUser(target, MESSAGE_SENT_CONFIG.wsEvent, payload);
+		if (!isWsEventName(event.eventName)) return;
+
+		logger.info(
+			{ eventName: event.eventName },
+			"[WS BRIDGE] Emitting websocket event",
+		);
+
+		const config = WS_EVENT_MAP[event.eventName];
+
+		const typedEvent = event as any;
+
+		const target = config.resolveTarget(typedEvent);
+		if (!target) {
+			logger.warn({ eventName: event.eventName }, "[WS BRIDGE] Invalid target");
 			return;
 		}
 
-		if (event.eventName === "notification.created") {
-			const typedEvent = event as NotificationCreatedEvent;
-			logger.info("[WS BRIDGE] Bridging notification.created");
-			const target = NOTIFICATION_CREATED_CONFIG.resolveTarget(typedEvent);
-			const payload = NOTIFICATION_CREATED_CONFIG.buildPayload
-				? NOTIFICATION_CREATED_CONFIG.buildPayload(typedEvent)
-				: typedEvent.payload;
-			this._wsServer.emitToUser(
-				target,
-				NOTIFICATION_CREATED_CONFIG.wsEvent,
-				payload,
-			);
-		}
+		const payload = config.buildPayload
+			? config.buildPayload(typedEvent)
+			: typedEvent.payload;
+		this._wsServer.emitToUser(target, config.wsEvent, payload);
 	}
 }
