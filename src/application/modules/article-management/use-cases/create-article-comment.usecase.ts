@@ -7,7 +7,7 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { DurableEventBus } from "../../../events/durable-event-bus.interface";
+import type { IEventBus } from "../../../events/app-event-bus.interface";
 import type { IStorageService } from "../../../services/storage.service.interface";
 import type {
 	CreateArticleCommentInput,
@@ -30,8 +30,8 @@ export class CreateArticleCommentUseCase
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
-		@inject(TYPES.Services.DurableEventBus)
-		private readonly _eventBus: DurableEventBus,
+		@inject(TYPES.Services.AppEventBus)
+		private readonly _eventBus: IEventBus,
 	) {}
 
 	async execute(
@@ -106,6 +106,7 @@ export class CreateArticleCommentUseCase
 				count: currentComments + 1,
 				parentId,
 			}),
+			{ durable: true },
 		);
 
 		const avatarUrl = user?.profilePictureId

@@ -8,17 +8,21 @@ import {
 import type { CheckoutCompletedEvent } from "../../../../domain/events/checkout-completed.event";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
-import { container } from "../../../../main/container";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { PaymentWebhookEvent } from "../../../services/payment-webhook.parser.interface";
 import type { IWalletService } from "../../../services/wallet.service.interface";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class CheckoutCompletedHandler {
+export class CheckoutCompletedHandler
+	implements EventHandler<CheckoutCompletedEvent>
+{
 	constructor(
+		@inject(TYPES.Repositories.BookingRepository)
+		private readonly _bookingRepository: IBookingRepository,
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
 		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
 		@inject(TYPES.Services.WalletService)
@@ -27,7 +31,7 @@ export class CheckoutCompletedHandler {
 		private readonly _idGenerator: IIdGenerator,
 	) {}
 
-	async handleEvent({ payload: event }: CheckoutCompletedEvent): Promise<void> {
+	async handle({ payload: event }: CheckoutCompletedEvent): Promise<void> {
 		const {
 			userId,
 			coins,
@@ -112,10 +116,7 @@ export class CheckoutCompletedHandler {
 		currency: string,
 		userId: string,
 	): Promise<void> {
-		const bookingRepository = container.get<IBookingRepository>(
-			TYPES.Repositories.BookingRepository,
-		);
-		const booking = await bookingRepository.findById(bookingId);
+		const booking = await this._bookingRepository.findById(bookingId);
 		if (!booking) {
 			logger.error(
 				{ bookingId },
@@ -132,7 +133,7 @@ export class CheckoutCompletedHandler {
 				: `${getClientBaseUrl()}/sessions/${booking.id}`;
 
 		// 1. Update booking
-		await bookingRepository.updateById(bookingId, {
+		await this._bookingRepository.updateById(bookingId, {
 			status: "CONFIRMED",
 			paymentStatus: "COMPLETED",
 			meetingLink,

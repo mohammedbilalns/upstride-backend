@@ -20,6 +20,7 @@ export type ChatMessagePayload = {
 
 export class MessageSentEvent extends AppEvent {
 	readonly eventName = "chat.message.sent";
+	readonly meta = { realtime: true };
 
 	constructor(
 		public readonly payload: {

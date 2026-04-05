@@ -7,7 +7,7 @@ import type {
 	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { DurableEventBus } from "../../../events/durable-event-bus.interface";
+import type { IEventBus } from "../../../events/app-event-bus.interface";
 import type {
 	ReactToArticleCommentInput,
 	ReactToArticleCommentOutput,
@@ -27,8 +27,8 @@ export class ReactToArticleCommentUseCase
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleReactionRepository)
 		private readonly _reactionRepository: IArticleReactionRepository,
-		@inject(TYPES.Services.DurableEventBus)
-		private readonly _eventBus: DurableEventBus,
+		@inject(TYPES.Services.AppEventBus)
+		private readonly _eventBus: IEventBus,
 	) {}
 
 	async execute(
@@ -87,6 +87,7 @@ export class ReactToArticleCommentUseCase
 				actorName: created.actorName || "",
 				count: currentLikes + 1,
 			}),
+			{ durable: true },
 		);
 		return { reaction: ArticleReactionMapper.toDto(created) };
 	}

@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import type { Queue } from "bullmq";
-import type { DurableEventBus } from "../../application/events/durable-event-bus.interface";
 import type { AppEvent } from "../../domain/events/app-event";
 
 export const APP_EVENTS_QUEUE = "appEvents";
@@ -10,7 +9,7 @@ export const APP_EVENTS_QUEUE = "appEvents";
  * Publishes domain events as jobs to a BullMQ queue for async processing by workers.
  * Supports retry logic, dead-letter handling, and in-memory handler registration.
  */
-export class BullMQEventBus implements DurableEventBus {
+export class BullMQEventBus {
 	private _queue: Queue;
 	private _handlers = new Map<
 		string,

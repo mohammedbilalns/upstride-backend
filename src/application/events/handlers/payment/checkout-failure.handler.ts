@@ -9,7 +9,7 @@ export abstract class CheckoutFailureHandler {
 		protected readonly _paymentTransactionRepository: IPaymentTransactionRepository,
 	) {}
 
-	async handle(event: PaymentWebhookEvent): Promise<void> {
+	protected async handleFailure(event: PaymentWebhookEvent): Promise<void> {
 		await Promise.all([
 			this._paymentTransactionRepository.updateStatusByProviderPaymentIdAndOwner(
 				event.sessionId,

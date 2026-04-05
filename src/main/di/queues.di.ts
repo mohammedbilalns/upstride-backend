@@ -1,6 +1,7 @@
 import { Queue } from "bullmq";
 import type { Container } from "inversify";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
+import { AppEventBus } from "../../infrastructure/events/app-event-bus";
 import {
 	APP_EVENTS_QUEUE,
 	BullMQEventBus,
@@ -24,6 +25,10 @@ export const domainEventsQueue = new Queue(APP_EVENTS_QUEUE, {
 
 export const bullMQEventBus = new BullMQEventBus(domainEventsQueue);
 export const inMemoryEventBus = new InMemoryEventBus();
+export const orchestratedEventBus = new AppEventBus(
+	bullMQEventBus,
+	inMemoryEventBus,
+);
 
 /**
  * Registers BullMQ queue and event bus bindings to the Inversify container.
@@ -34,9 +39,6 @@ export const registerQueueBindings = (container: Container): void => {
 		.bind<Queue>(TYPES.Queues.AppEvents)
 		.toConstantValue(domainEventsQueue);
 	container
-		.bind(TYPES.Services.DurableEventBus)
-		.toConstantValue(bullMQEventBus);
-	container
-		.bind(TYPES.Services.RealtimeEventBus)
-		.toConstantValue(inMemoryEventBus);
+		.bind(TYPES.Services.AppEventBus)
+		.toConstantValue(orchestratedEventBus);
 };

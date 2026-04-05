@@ -18,14 +18,17 @@ import type { PlatformSettingsService } from "../../application/services/platfor
 import type { IWalletService } from "../../application/services/wallet.service.interface";
 import { WebSocketEventBridge } from "../../infrastructure/events/websocket-event-bridge";
 import { TYPES } from "../../shared/types/types";
-import { bullMQEventBus, inMemoryEventBus } from "./queues.di";
+import {
+	bullMQEventBus,
+	inMemoryEventBus,
+	orchestratedEventBus,
+} from "./queues.di";
 
 export const bootstrapEventHandlers = (container: Container): void => {
-	// Initialize WebSocket Bridge
 	const wsBridge = new WebSocketEventBridge(
 		container.get(TYPES.Services.WebSocketServer),
 	);
-	wsBridge.register(inMemoryEventBus);
+	orchestratedEventBus.setWebSocketBridge(wsBridge);
 
 	const walletService = container.get<IWalletService>(
 		TYPES.Services.WalletService,
@@ -146,14 +149,14 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	);
 	bullMQEventBus.registerHandler(
 		"checkout.completed",
-		checkoutCompletedHandler.handleEvent.bind(checkoutCompletedHandler),
+		checkoutCompletedHandler.handle.bind(checkoutCompletedHandler),
 	);
 	bullMQEventBus.registerHandler(
 		"checkout.expired",
-		checkoutExpiredHandler.handleEvent.bind(checkoutExpiredHandler),
+		checkoutExpiredHandler.handle.bind(checkoutExpiredHandler),
 	);
 	bullMQEventBus.registerHandler(
 		"checkout.failed",
-		checkoutFailedHandler.handleEvent.bind(checkoutFailedHandler),
+		checkoutFailedHandler.handle.bind(checkoutFailedHandler),
 	);
 };

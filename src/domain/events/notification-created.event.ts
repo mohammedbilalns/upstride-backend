@@ -27,6 +27,7 @@ export type NotificationPayload = {
 
 export class NotificationCreatedEvent extends AppEvent {
 	readonly eventName = "notification.created";
+	readonly meta = { realtime: true };
 
 	constructor(
 		public readonly payload: {

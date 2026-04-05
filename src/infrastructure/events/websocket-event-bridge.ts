@@ -1,10 +1,33 @@
 import { inject, injectable } from "inversify";
+import type { AppEvent } from "../../domain/events/app-event";
 import type { MessageSentEvent } from "../../domain/events/message-sent.event";
 import type { NotificationCreatedEvent } from "../../domain/events/notification-created.event";
 import type { WebSocketServer } from "../../presentation/websocket/socket-server";
 import logger from "../../shared/logging/logger";
 import { TYPES } from "../../shared/types/types";
-import type { InMemoryEventBus } from "./in-memory-event-bus";
+
+type WsEventConfig<TEvent> = {
+	wsEvent: string;
+	resolveTarget: (event: TEvent) => string;
+	buildPayload?: (event: TEvent) => unknown;
+};
+
+const MESSAGE_SENT_CONFIG: WsEventConfig<MessageSentEvent> = {
+	wsEvent: "chat:message",
+	resolveTarget: (event) => event.payload.receiverId,
+	buildPayload: (event) => ({
+		chatId: event.payload.chatId,
+		message: event.payload.message,
+	}),
+};
+
+const NOTIFICATION_CREATED_CONFIG: WsEventConfig<NotificationCreatedEvent> = {
+	wsEvent: "notification:new",
+	resolveTarget: (event) => event.payload.userId,
+	buildPayload: (event) => ({
+		notification: event.payload.notification,
+	}),
+};
 
 /**
  * Bridges domain events to WebSocket emissions.
@@ -17,34 +40,30 @@ export class WebSocketEventBridge {
 		private readonly _wsServer: WebSocketServer,
 	) {}
 
-	public register(inMemoryBus: InMemoryEventBus): void {
-		// Listen for Chat Messages
-		inMemoryBus.registerHandler<MessageSentEvent>(
-			"chat.message.sent",
-			(event) => {
-				logger.info(
-					`[WS BRIDGE] Bridging chat message for user ${event.payload.receiverId}`,
-				);
-				this._wsServer.emitToUser(event.payload.receiverId, "chat:message", {
-					chatId: event.payload.chatId,
-					message: event.payload.message,
-				});
-			},
-		);
+	public handle(event: AppEvent): void {
+		if (event.eventName === "chat.message.sent") {
+			const typedEvent = event as MessageSentEvent;
+			logger.info("[WS BRIDGE] Bridging chat.message.sent");
+			const target = MESSAGE_SENT_CONFIG.resolveTarget(typedEvent);
+			const payload = MESSAGE_SENT_CONFIG.buildPayload
+				? MESSAGE_SENT_CONFIG.buildPayload(typedEvent)
+				: typedEvent.payload;
+			this._wsServer.emitToUser(target, MESSAGE_SENT_CONFIG.wsEvent, payload);
+			return;
+		}
 
-		// Listen for New Notifications
-		inMemoryBus.registerHandler<NotificationCreatedEvent>(
-			"notification.created",
-			(event) => {
-				logger.info(
-					`[WS BRIDGE] Bridging notification for user ${event.payload.userId}`,
-				);
-				this._wsServer.emitToUser(event.payload.userId, "notification:new", {
-					notification: event.payload.notification,
-				});
-			},
-		);
-
-		logger.info("WebSocket Event Bridge registered");
+		if (event.eventName === "notification.created") {
+			const typedEvent = event as NotificationCreatedEvent;
+			logger.info("[WS BRIDGE] Bridging notification.created");
+			const target = NOTIFICATION_CREATED_CONFIG.resolveTarget(typedEvent);
+			const payload = NOTIFICATION_CREATED_CONFIG.buildPayload
+				? NOTIFICATION_CREATED_CONFIG.buildPayload(typedEvent)
+				: typedEvent.payload;
+			this._wsServer.emitToUser(
+				target,
+				NOTIFICATION_CREATED_CONFIG.wsEvent,
+				payload,
+			);
+		}
 	}
 }
