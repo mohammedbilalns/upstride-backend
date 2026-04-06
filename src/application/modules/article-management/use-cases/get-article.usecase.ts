@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import type { ArticleReactionType } from "../../../../domain/entities/article-reaction.entity";
 import type {
 	IArticleReactionRepository,
 	IArticleRepository,
@@ -44,7 +45,7 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 			throw new ArticleNotFoundError();
 		}
 
-		let userReaction: any;
+		let userReaction: ArticleReactionType | undefined;
 		let isReported = false;
 
 		if (input.viewerUserId) {
@@ -94,14 +95,11 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 		}
 
 		const dto = ArticleMapper.toDto(article);
-		if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
-			try {
-				dto.featuredImageUrl = this._storageService.getPublicUrl(
-					dto.featuredImageId,
-				);
-			} catch (err) {
-				console.error("Failed to sign article featured image URL:", err);
-			}
+
+		if (dto.featuredImageUrl) {
+			dto.featuredImageUrl = this._storageService.getPublicUrl(
+				dto.featuredImageId,
+			);
 		}
 
 		return {
