@@ -23,18 +23,11 @@ export interface IPaymentTransactionRepository
 		FindByIdRepository<PaymentTransaction>,
 		QueryableRepository<PaymentTransaction, PaymentTransactionQuery>,
 		PaginatableRepository<PaymentTransaction, PaymentTransactionQuery> {
-	findByProviderPaymentId(
-		providerPaymentId: string,
-	): Promise<PaymentTransaction | null>;
 	findByProviderPaymentIdAndOwner(
 		providerPaymentId: string,
 		transactionOwner: "platform" | "user" | "mentor",
 	): Promise<PaymentTransaction | null>;
 	findAllByUserId(userId: string): Promise<PaymentTransaction[]>;
-	updateStatusByProviderPaymentId(
-		providerPaymentId: string,
-		status: PaymentStatus,
-	): Promise<PaymentTransaction | null>;
 	updateStatusByProviderPaymentIdAndOwner(
 		providerPaymentId: string,
 		status: PaymentStatus,

@@ -177,53 +177,6 @@ export class MongoChatRepository
 		};
 	}
 
-	async paginateByUser(
-		userId: string,
-		filter: "read" | "unread" | "all",
-		page: number,
-		limit: number,
-	): Promise<{
-		items: Chat[];
-		total: number;
-		page: number;
-		limit: number;
-		totalPages: number;
-	}> {
-		const userFilter: QueryFilter<ChatDocument> = {
-			$or: [{ user1Id: userId }, { user2Id: userId }],
-		};
-
-		const unreadKey = `unreadCount.${userId}`;
-		const readFilter: QueryFilter<ChatDocument> =
-			filter === "unread"
-				? { [unreadKey]: { $gt: 0 } }
-				: filter === "read"
-					? {
-							$or: [{ [unreadKey]: { $exists: false } }, { [unreadKey]: 0 }],
-						}
-					: {};
-
-		const combinedFilter: QueryFilter<ChatDocument> = {
-			$and: [userFilter, readFilter],
-		};
-
-		const skip = (page - 1) * limit;
-
-		const [docs, total] = await Promise.all([
-			this.model
-				.find(combinedFilter)
-				.sort({ updatedAt: -1 })
-				.skip(skip)
-				.limit(limit)
-				.lean(),
-			this.model.countDocuments(combinedFilter),
-		]);
-
-		const items = docs.map((doc) => this.toDomain(doc as ChatDocument));
-
-		return this.buildPaginatedResult(items, total, page, limit);
-	}
-
 	async paginateByUserWithUsers(
 		userId: string,
 		filter: "read" | "unread" | "all",
