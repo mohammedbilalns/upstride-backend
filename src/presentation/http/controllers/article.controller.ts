@@ -29,6 +29,7 @@ import type {
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
+import { ArticleResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type { AppealArticleBody } from "../validators/article.validator";
 
@@ -125,7 +126,7 @@ export class ArticleController {
 			const article = result.items[0];
 			if (!article) {
 				return sendSuccess(res, HttpStatus.NOT_FOUND, {
-					message: "Article not found or not owned by user",
+					message: ArticleResponseMessages.ARTICLE_NOT_FOUND,
 				});
 			}
 			return sendSuccess(res, HttpStatus.OK, { data: { article } });
@@ -277,7 +278,7 @@ export class ArticleController {
 			});
 
 			return sendSuccess(res, HttpStatus.OK, {
-				message: "Appeal submitted successfully",
+				message: ArticleResponseMessages.APPEAL_SUBMITTED_SUCCESS,
 			});
 		},
 	);

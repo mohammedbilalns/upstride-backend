@@ -37,6 +37,11 @@ export const ProfileResponseMessages = {
 	CHANGE_PASSWORD_SUCCESS: "Password changed successfully",
 };
 
+export const ArticleResponseMessages = {
+	ARTICLE_NOT_FOUND: "Article not found",
+	APPEAL_SUBMITTED_SUCCESS: "Appeal submitted successfully",
+};
+
 export const ReportResponseMessages = {
 	REPORT_SUBMITTED_SUCCESS: "Report submitted successfully",
 	REPORTS_FETCHED_SUCCESS: "Reports fetched successfully",

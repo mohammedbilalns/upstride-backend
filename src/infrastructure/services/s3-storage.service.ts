@@ -12,7 +12,7 @@ import type {
 } from "../../application/services";
 import env from "../../shared/config/env";
 
-// Stores files in S3 and issues signed access/upload URLs.
+// Stores files in S3 and issues access URLs.
 @injectable()
 export class S3StorageService implements IStorageService {
 	private _s3: S3Client;
