@@ -1,5 +1,9 @@
 import { inject, injectable } from "inversify";
-import { Booking } from "../../../../domain/entities/booking.entity";
+import {
+	Booking,
+	type PaymentStatus,
+} from "../../../../domain/entities/booking.entity";
+import type { CoinTransactionType } from "../../../../domain/entities/coin-transactions.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
@@ -79,7 +83,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			throw new SlotNotAvailableError();
 		}
 
-		let paymentStatus: any = "PENDING";
+		let paymentStatus: PaymentStatus = "PENDING";
 		let paymentUrl: string | undefined;
 
 		if (input.paymentType === "COINS") {
@@ -87,7 +91,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			await this._walletService.debit(
 				input.menteeId,
 				totalAmountCoins,
-				"session_spend" as any,
+				"session_spend" as CoinTransactionType,
 				"Booking",
 				bookingId,
 			);

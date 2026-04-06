@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import type { QueryFilter } from "mongoose";
+import type { QueryFilter, Types } from "mongoose";
 import type { Report } from "../../../../domain/entities/report.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type { QueryParams } from "../../../../domain/repositories/capabilities";
@@ -8,9 +8,14 @@ import type {
 	IReportRepository,
 	ReportQuery,
 } from "../../../../domain/repositories/report.repository.interface";
-import { ReportMapper } from "../mappers/report.mapper";
+import {
+	type ReportDocumentWithRefs,
+	ReportMapper,
+} from "../mappers/report.mapper";
 import { type ReportDocument, ReportModel } from "../models/report.model";
 import { AbstractMongoRepository } from "./abstract.repository";
+
+type LeanReportDoc = ReportDocument & { _id: Types.ObjectId; __v: number };
 
 @injectable()
 export class MongoReportRepository
@@ -49,13 +54,15 @@ export class MongoReportRepository
 
 	async query({ query, sort }: QueryParams<ReportQuery>): Promise<Report[]> {
 		const filter = this._buildFilter(query);
-		let docs = await this.model
+		let docs = (await this.model
 			.find(filter)
 			.sort(sort ?? { createdAt: -1 })
-			.lean();
+			.lean()) as LeanReportDoc[];
 
 		docs = await this._populateDocs(docs);
-		return docs.map((doc) => this.toDomain(doc as any));
+		return docs.map((doc) =>
+			ReportMapper.toDomain(doc as ReportDocumentWithRefs),
+		);
 	}
 
 	async paginate({
@@ -77,9 +84,11 @@ export class MongoReportRepository
 			this.model.countDocuments(filter),
 		]);
 
-		docs = await this._populateDocs(docs);
+		docs = await this._populateDocs(docs as LeanReportDoc[]);
 
-		const items = docs.map((doc) => this.toDomain(doc as any));
+		const items = docs.map((doc) =>
+			ReportMapper.toDomain(doc as ReportDocumentWithRefs),
+		);
 		return this.buildPaginatedResult(items, total, page, limit);
 	}
 
@@ -108,7 +117,7 @@ export class MongoReportRepository
 		return filter;
 	}
 
-	private async _populateDocs(docs: any[]): Promise<any[]> {
+	private async _populateDocs(docs: LeanReportDoc[]): Promise<LeanReportDoc[]> {
 		if (!docs.length) return docs;
 
 		// Populate reporters unconditionally

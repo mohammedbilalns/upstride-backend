@@ -1,3 +1,4 @@
+import type { Types } from "mongoose";
 import type {
 	BookingStatus,
 	PaymentStatus,
@@ -8,13 +9,11 @@ import { toHHMM } from "../../../../shared/utilities/time.util";
 import type { BookingDocument } from "../models/booking.model";
 
 export class BookingMapper {
-	static toDomain(doc: BookingDocument): Booking {
-		const mentorDoc = doc.mentorId as
-			| { _id?: { toString(): string }; userId?: { name?: string } }
-			| undefined;
-		const mentorId =
-			mentorDoc?._id?.toString?.() ?? (doc.mentorId as any).toString();
-		const mentorName = mentorDoc?.userId?.name ?? null;
+	static toDomain(doc: BookingDocumentWithMentor): Booking {
+		const mentorId = getMentorIdString(doc.mentorId);
+		const mentorName = isPopulatedMentorRef(doc.mentorId)
+			? (doc.mentorId.userId?.name ?? null)
+			: null;
 
 		return new Booking(
 			doc._id.toString(),
@@ -76,3 +75,22 @@ export class BookingMapper {
 		};
 	}
 }
+
+type PopulatedMentorRef = {
+	_id: Types.ObjectId;
+	userId?: { name?: string };
+};
+
+type BookingDocumentWithMentor = Omit<BookingDocument, "mentorId"> & {
+	mentorId: Types.ObjectId | PopulatedMentorRef;
+};
+
+const isPopulatedMentorRef = (
+	mentorId: Types.ObjectId | PopulatedMentorRef,
+): mentorId is PopulatedMentorRef =>
+	typeof mentorId === "object" && mentorId !== null && "_id" in mentorId;
+
+const getMentorIdString = (
+	mentorId: Types.ObjectId | PopulatedMentorRef,
+): string =>
+	(isPopulatedMentorRef(mentorId) ? mentorId._id : mentorId).toString();

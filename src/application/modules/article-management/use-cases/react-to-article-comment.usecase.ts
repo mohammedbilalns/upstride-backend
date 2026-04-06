@@ -58,7 +58,7 @@ export class ReactToArticleCommentUseCase
 				likesCount: Math.max(0, currentLikes - 1),
 			});
 
-			return { reaction: null as any };
+			return { reaction: null };
 		}
 
 		// New like

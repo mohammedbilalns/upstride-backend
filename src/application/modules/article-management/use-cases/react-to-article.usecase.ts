@@ -42,8 +42,8 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			await this._reactionRepository.deleteById(current.id);
 			await this._articleRepository.updateById(article.id, {
 				likesCount: Math.max(0, (article.likesCount ?? 0) - 1),
-			} as any);
-			return { reaction: null as any };
+			});
+			return { reaction: null };
 		}
 
 		// New like

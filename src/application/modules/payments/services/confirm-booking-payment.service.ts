@@ -55,7 +55,7 @@ export class ConfirmBookingPaymentService
 			status: "CONFIRMED",
 			paymentStatus: "COMPLETED",
 			meetingLink,
-		} as any);
+		});
 
 		await Promise.all([
 			this._paymentTransactionRepository.create(
