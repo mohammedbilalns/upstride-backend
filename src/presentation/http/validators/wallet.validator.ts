@@ -13,8 +13,12 @@ export const CoinTransactionsQuerySchema = z.object({
 	...paginationSchema,
 	type: z.enum(CoinTransactionType).optional(),
 });
+export type CoinTransactionsQuery = z.infer<typeof CoinTransactionsQuerySchema>;
 
 export const PaymentTransactionsQuerySchema = z.object({
 	...paginationSchema,
 	status: z.enum(PaymentStatus).optional(),
 });
+export type PaymentTransactionsQuery = z.infer<
+	typeof PaymentTransactionsQuerySchema
+>;

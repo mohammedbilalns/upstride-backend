@@ -1,17 +1,6 @@
 import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
-	CreateArticleCommentInput,
-	DeleteArticleCommentInput,
-	DeleteArticleInput,
-	GetArticleCommentsInput,
-	GetArticleInput,
-	GetArticlesInput,
-	ReactToArticleCommentInput,
-	ReactToArticleInput,
-	UpdateArticleCommentInput,
-} from "../../../application/modules/article-management/dtos/article-input.dto";
-import type {
 	ICreateArticleCommentUseCase,
 	ICreateArticleUseCase,
 	IDeleteArticleCommentUseCase,
@@ -31,7 +20,20 @@ import type { AuthenticatedRequest } from "../../../shared/types/authenticated-r
 import { TYPES } from "../../../shared/types/types";
 import { ArticleResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
-import type { AppealArticleBody } from "../validators/article.validator";
+import type {
+	AppealArticleBody,
+	ArticleIdParam,
+	ArticleSlugParam,
+	ArticlesQuery,
+	CommentIdParam,
+	CommentsQuery,
+	CreateArticleBody,
+	CreateCommentBody,
+	MentorArticlesQuery,
+	ReactBody,
+	UpdateArticleBody,
+	UpdateCommentBody,
+} from "../validators/article.validator";
 
 @injectable()
 export class ArticleController {
@@ -73,7 +75,7 @@ export class ArticleController {
 
 	getArticles = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const query = req.validated?.query as GetArticlesInput;
+			const query = req.validated?.query as ArticlesQuery;
 			const isAdminView =
 				req.user?.role === "ADMIN" || req.user?.role === "SUPER_ADMIN";
 			const data = await this._getArticlesUseCase.execute({
@@ -87,7 +89,7 @@ export class ArticleController {
 
 	getMentorArticles = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const query = req.validated?.query as GetArticlesInput;
+			const query = req.validated?.query as MentorArticlesQuery;
 			const isAdminView =
 				req.user?.role === "ADMIN" || req.user?.role === "SUPER_ADMIN";
 			const data = await this._getArticlesUseCase.execute({
@@ -102,27 +104,27 @@ export class ArticleController {
 
 	getArticle = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { slug } = req.validated?.params as { slug: string };
+			const { slug } = req.validated?.params as ArticleSlugParam;
 			const isAdminView =
 				req.user?.role === "ADMIN" || req.user?.role === "SUPER_ADMIN";
 			const data = await this._getArticleUseCase.execute({
 				slug,
 				viewerUserId: req.user?.id,
 				isAdminView,
-			} as GetArticleInput);
+			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);
 
 	getArticleForEdit = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { articleId } = req.validated?.params as { articleId: string };
+			const { articleId } = req.validated?.params as ArticleIdParam;
 			const result = await this._getArticlesUseCase.execute({
 				page: 1,
 				isMentorView: true,
 				authorId: req.user.id,
 				ids: [articleId],
-			} as any);
+			});
 			const article = result.items[0];
 			if (!article) {
 				return sendSuccess(res, HttpStatus.NOT_FOUND, {
@@ -135,17 +137,12 @@ export class ArticleController {
 
 	createArticle = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const body = req.validated?.body as {
-				title: string;
-				description: string;
-				featuredImageUrl: string;
-				tags?: string[];
-			};
+			const body = req.validated?.body as CreateArticleBody;
 			const data = await this._createArticleUseCase.execute({
 				userId: req.user.id,
 				title: body.title,
 				description: body.description,
-				featuredImageUrl: body.featuredImageUrl,
+				featuredImageUrl: body.featuredImageUrl ?? "",
 				tags: body.tags,
 			});
 			return sendSuccess(res, HttpStatus.CREATED, { data });
@@ -154,14 +151,8 @@ export class ArticleController {
 
 	updateArticle = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { articleId } = req.validated?.params as { articleId: string };
-			const body = req.validated?.body as {
-				title?: string;
-				description?: string;
-				featuredImageUrl?: string;
-				tags?: string[];
-				isArchived?: boolean;
-			};
+			const { articleId } = req.validated?.params as ArticleIdParam;
+			const body = req.validated?.body as UpdateArticleBody;
 			const data = await this._updateArticleUseCase.execute({
 				userId: req.user.id,
 				articleId,
@@ -177,98 +168,95 @@ export class ArticleController {
 
 	deleteArticle = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { articleId } = req.validated?.params as { articleId: string };
+			const { articleId } = req.validated?.params as ArticleIdParam;
 			await this._deleteArticleUseCase.execute({
 				userId: req.user.id,
 				articleId,
-			} as DeleteArticleInput);
+			});
 			return sendSuccess(res, HttpStatus.OK);
 		},
 	);
 
 	createComment = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { articleId } = req.validated?.params as { articleId: string };
-			const body = req.validated?.body as {
-				content: string;
-				parentId?: string | null;
-			};
+			const { articleId } = req.validated?.params as ArticleIdParam;
+			const body = req.validated?.body as CreateCommentBody;
 			const data = await this._createArticleCommentUseCase.execute({
 				userId: req.user.id,
 				articleId,
 				content: body.content,
 				parentId: body.parentId ?? null,
-			} as CreateArticleCommentInput);
+			});
 			return sendSuccess(res, HttpStatus.CREATED, { data });
 		},
 	);
 
 	updateComment = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { commentId } = req.validated?.params as { commentId: string };
-			const body = req.validated?.body as UpdateArticleCommentInput;
+			const { commentId } = req.validated?.params as CommentIdParam;
+			const body = req.validated?.body as UpdateCommentBody;
 			const data = await this._updateArticleCommentUseCase.execute({
 				userId: req.user.id,
 				commentId,
 				content: body.content,
-			} as UpdateArticleCommentInput);
+			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);
 
 	deleteComment = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { commentId } = req.validated?.params as { commentId: string };
+			const { commentId } = req.validated?.params as CommentIdParam;
 			await this._deleteArticleCommentUseCase.execute({
 				userId: req.user.id,
 				commentId,
-			} as DeleteArticleCommentInput);
+			});
 			return sendSuccess(res, HttpStatus.OK);
 		},
 	);
 
 	getComments = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { articleId } = req.validated?.params as { articleId: string };
-			const query = req.validated?.query as GetArticleCommentsInput;
+			const { articleId } = req.validated?.params as ArticleIdParam;
+			const query = req.validated?.query as CommentsQuery;
 			const data = await this._getArticleCommentsUseCase.execute({
 				articleId,
 				page: query.page,
 				parentId: query.parentId,
-			} as GetArticleCommentsInput);
+			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);
 
 	reactToArticle = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { articleId } = req.validated?.params as { articleId: string };
-			const body = req.validated?.body as ReactToArticleInput;
+			const { articleId } = req.validated?.params as ArticleIdParam;
+			const body = req.validated?.body as ReactBody;
 			const data = await this._reactToArticleUseCase.execute({
 				articleId,
 				userId: req.user.id,
 				reactionType: body.reactionType,
-			} as ReactToArticleInput);
+			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);
 
 	reactToComment = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { commentId } = req.validated?.params as { commentId: string };
-			const body = req.validated?.body as ReactToArticleCommentInput;
+			const { commentId } = req.validated?.params as CommentIdParam;
+			const body = req.validated?.body as ReactBody;
 			const data = await this._reactToArticleCommentUseCase.execute({
 				commentId,
 				userId: req.user.id,
 				reactionType: body.reactionType,
-			} as ReactToArticleCommentInput);
+			});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);
 
 	submitAppeal = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { articleId } = req.validated?.params as { articleId: string };
+			const { articleId } = req.validated?.params as ArticleIdParam;
 			const { message } = req.validated?.body as AppealArticleBody;
 
 			await this._submitArticleAppealUseCase.execute({

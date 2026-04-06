@@ -1,11 +1,5 @@
 import { inject, injectable } from "inversify";
 import type {
-	UpdateContentSettingsInput,
-	UpdateEconomySettingsInput,
-	UpdateMentorSettingsInput,
-	UpdateSessionSettingsInput,
-} from "../../../application/modules/platform-settings/dtos";
-import type {
 	IFetchPlatformSettingsUseCase,
 	IUpdateContentSettingsUseCase,
 	IUpdateEconomySettingsUseCase,
@@ -16,6 +10,12 @@ import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { PlatformSettingsResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	UpdateContentSettingsBody,
+	UpdateEconomySettingsBody,
+	UpdateMentorSettingsBody,
+	UpdateSessionSettingsBody,
+} from "../validators/platform-settings/platform-settings.validator";
 
 @injectable()
 export class PlatformSettingsController {
@@ -43,7 +43,7 @@ export class PlatformSettingsController {
 
 	updateEconomy = asyncHandler(async (req, res) => {
 		const data = await this._updateEconomySettingsUseCase.execute(
-			req.validated?.body as UpdateEconomySettingsInput,
+			req.validated?.body as UpdateEconomySettingsBody,
 		);
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -54,7 +54,7 @@ export class PlatformSettingsController {
 
 	updateMentors = asyncHandler(async (req, res) => {
 		const data = await this._updateMentorSettingsUseCase.execute(
-			req.validated?.body as UpdateMentorSettingsInput,
+			req.validated?.body as UpdateMentorSettingsBody,
 		);
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -65,7 +65,7 @@ export class PlatformSettingsController {
 
 	updateContent = asyncHandler(async (req, res) => {
 		const data = await this._updateContentSettingsUseCase.execute(
-			req.validated?.body as UpdateContentSettingsInput,
+			req.validated?.body as UpdateContentSettingsBody,
 		);
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -76,7 +76,7 @@ export class PlatformSettingsController {
 
 	updateSessions = asyncHandler(async (req, res) => {
 		const data = await this._updateSessionSettingsUseCase.execute(
-			req.validated?.body as UpdateSessionSettingsInput,
+			req.validated?.body as UpdateSessionSettingsBody,
 		);
 
 		sendSuccess(res, HttpStatus.OK, {

@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import type { GetUsersInput } from "../../../application/modules/user-management/dtos/get-users.dto";
 import type {
 	IBlockUserUseCase,
 	IGetUsersUseCase,
@@ -9,6 +8,10 @@ import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { UserManagementResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	UserIdParam,
+	UsersQuery,
+} from "../validators/user-management.validator";
 
 @injectable()
 export class UserManagementController {
@@ -22,7 +25,7 @@ export class UserManagementController {
 	) {}
 
 	getUsers = asyncHandler(async (req, res) => {
-		const query = req.validated?.query as GetUsersInput;
+		const query = req.validated?.query as UsersQuery;
 
 		const data = await this._getUsersUseCase.execute({
 			page: query.page,
@@ -40,7 +43,7 @@ export class UserManagementController {
 	});
 
 	blockUser = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as { id: string };
+		const { id } = req.validated?.params as UserIdParam;
 		const { reportId } = (req.body ?? {}) as { reportId?: string };
 		await this._blockUserUseCase.execute({ userId: id, reportId });
 
@@ -50,7 +53,7 @@ export class UserManagementController {
 	});
 
 	unblockUser = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as { id: string };
+		const { id } = req.validated?.params as UserIdParam;
 		await this._unblockUserUseCase.execute({ userId: id });
 
 		sendSuccess(res, HttpStatus.OK, {

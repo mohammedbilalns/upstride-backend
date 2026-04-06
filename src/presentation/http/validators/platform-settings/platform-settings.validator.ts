@@ -62,6 +62,9 @@ export const updateEconomySettingsBodySchema = z
 			path: ["economy", "subscriptions"],
 		},
 	);
+export type UpdateEconomySettingsBody = z.infer<
+	typeof updateEconomySettingsBodySchema
+>;
 
 const mentorTierSchema = z.object({
 	level: z.number().int().min(1).max(3),
@@ -143,6 +146,9 @@ export const updateMentorSettingsBodySchema = z
 			path: ["mentors"],
 		},
 	);
+export type UpdateMentorSettingsBody = z.infer<
+	typeof updateMentorSettingsBodySchema
+>;
 
 export const updateContentSettingsBodySchema = z.object({
 	content: z.object({
@@ -176,6 +182,9 @@ export const updateContentSettingsBodySchema = z.object({
 		}),
 	}),
 });
+export type UpdateContentSettingsBody = z.infer<
+	typeof updateContentSettingsBodySchema
+>;
 
 export const updateSessionSettingsBodySchema = z.object({
 	sessions: z.object({
@@ -184,3 +193,6 @@ export const updateSessionSettingsBodySchema = z.object({
 		maxSessionsPerDayPerMentor: positiveIntSchema,
 	}),
 });
+export type UpdateSessionSettingsBody = z.infer<
+	typeof updateSessionSettingsBodySchema
+>;

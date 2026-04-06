@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import type { GetMentorsInput } from "../../../application/modules/mentor-discovery/dtos/get-mentors.dto";
 import type { IGetMentorsUseCase } from "../../../application/modules/mentor-discovery/use-cases";
 import type {
 	IApproveMentorUseCase,
@@ -77,7 +76,7 @@ export class MentorController {
 			maxExperience: query.maxExperience,
 			sort: query.sort,
 			isAdminView,
-		} as GetMentorsInput);
+		});
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.FETCH_DISCOVERY_SUCCESS,
