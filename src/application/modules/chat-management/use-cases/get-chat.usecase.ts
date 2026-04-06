@@ -12,6 +12,7 @@ import type {
 	GetChatInput,
 	GetChatOutput,
 } from "../dtos/chat.dto";
+import { ChatNotFoundError } from "../errors";
 import { ChatMapper } from "../mappers/chat.mapper";
 import { ChatMessageMapper } from "../mappers/chat-message.mapper";
 import type { IGetChatUseCase } from "./get-chat.usecase.interface";
@@ -37,6 +38,10 @@ export class GetChatUseCase implements IGetChatUseCase {
 				input.userId,
 				input.otherUserId,
 			);
+
+		if (!existing) {
+			throw new ChatNotFoundError();
+		}
 
 		const usersByIdRaw = new Map(users.map((user) => [user.id, user]));
 		const usersById = new Map<string, ChatUserDto>();
@@ -88,18 +93,6 @@ export class GetChatUseCase implements IGetChatUseCase {
 					profilePictureUrl: null,
 				});
 			}
-		}
-
-		if (!existing) {
-			return {
-				chat: null,
-				receiver: receiverDto,
-				messages: [],
-				total: 0,
-				page: 1,
-				limit: CHAT_MESSAGES_PAGE_SIZE,
-				totalPages: 0,
-			};
 		}
 
 		const result = await this._chatMessageRepository.paginate({
