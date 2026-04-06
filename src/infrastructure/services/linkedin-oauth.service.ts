@@ -85,7 +85,7 @@ export class LinkedInOAuthService implements IOAuthIdentityProvider {
 	): Promise<string> {
 		const clientId = env.LINKEDIN_CLIENT_ID;
 		const clientSecret = env.LINKEDIN_CLIENT_SECRET;
-		const configuredRedirectUri = env.LINKEDIN_REDIRECT_URL;
+		const configuredRedirectUri = `${env.CLIENT_URL}/linkedin`;
 
 		if (!clientId || !clientSecret) {
 			throw new AuthenticationError();

@@ -26,7 +26,6 @@ const envSchema = z.object({
 	GOOGLE_CLIENT_SECRET: z.string().min(1),
 	LINKEDIN_CLIENT_ID: z.string().min(1),
 	LINKEDIN_CLIENT_SECRET: z.string().min(1),
-	LINKEDIN_REDIRECT_URL: z.string().min(1),
 	STRIPE_SECRET_KEY: z.string(),
 	STRIPE_WEBHOOK_SECRET: z.string().min(1),
 	STRIPE_SUCCESS_URL: z.string().min(1),
