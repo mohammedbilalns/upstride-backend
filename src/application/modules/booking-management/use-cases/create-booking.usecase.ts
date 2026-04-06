@@ -130,8 +130,8 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 				coins: 0,
 				amount: Math.round(totalAmountCurrency * 100),
 				currency: "inr",
-				successUrl: `${frontendBaseUrl}/bookings/success?id=${createdBooking.id}`,
-				cancelUrl: `${frontendBaseUrl}/bookings/cancel?id=${createdBooking.id}`,
+				successUrl: `${frontendBaseUrl}/sessions?booking_success=true&booking_id=${createdBooking.id}`,
+				cancelUrl: `${frontendBaseUrl}/sessions`,
 				metadata: {
 					bookingId: createdBooking.id,
 					type: "BOOKING_PAYMENT",

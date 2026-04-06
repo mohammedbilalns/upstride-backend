@@ -12,6 +12,7 @@ import type {
 } from "../../../../domain/repositories/mentor.repository.types";
 import type { IMentorListReadRepository } from "../../../../domain/repositories/mentor-list-read.repository.interface";
 import { MentorMapper } from "../mappers/mentor.mapper";
+import { buildMentorDiscoveryDetails } from "../mappers/mentor-details.mapper";
 import { type MentorDocument, MentorModel } from "../models/mentor.model";
 import { UserModel } from "../models/user.model";
 import { AbstractMongoRepository } from "./abstract.repository";
@@ -63,7 +64,7 @@ export class MongoMentorListReadRepository
 				.sort(sort ?? { createdAt: -1 })
 				.skip(skip)
 				.limit(limit)
-				.populate("userId", "name email avatar")
+				.populate("userId", "name email profilePictureId")
 				.populate("currentRoleId", "name")
 				.populate("areasOfExpertise", "name")
 				.populate("toolsAndSkills.skillId", "name interestId")
@@ -78,7 +79,7 @@ export class MongoMentorListReadRepository
 				user: doc.userId as unknown as {
 					name: string;
 					email: string;
-					avatar?: string;
+					profilePictureId?: string;
 				},
 				currentRoleDetails: doc.currentRoleId as unknown as { name: string },
 				expertisesDetails: (doc.areasOfExpertise || []).map((e: unknown) => {
@@ -193,54 +194,9 @@ export class MongoMentorListReadRepository
 			this.model.countDocuments(filter),
 		]);
 
-		const items = docs.map((doc: MentorDocument) => {
-			const mentor = this.toDomain(doc);
-			return {
-				...mentor,
-				user: doc.userId as unknown as {
-					name: string;
-					profilePictureId?: string;
-				},
-				currentRoleDetails: doc.currentRoleId as unknown as { name: string },
-				categories: (doc.areasOfExpertise || []).map((item: unknown) => {
-					const category = item as {
-						_id?: { toString?: () => string };
-						id?: { toString?: () => string };
-						name?: string;
-						toString?: () => string;
-					};
-					return {
-						id:
-							category._id?.toString?.() ||
-							category.id?.toString?.() ||
-							category.toString?.() ||
-							"",
-						name: category.name,
-					};
-				}),
-				skills: (doc.toolsAndSkills || [])
-					.slice(0, 3)
-					.map((item: { skillId?: unknown }) => {
-						const skill = item.skillId as
-							| {
-									_id?: { toString?: () => string };
-									id?: { toString?: () => string };
-									name?: string;
-									toString?: () => string;
-							  }
-							| undefined;
-						return {
-							id:
-								skill?._id?.toString?.() ||
-								skill?.id?.toString?.() ||
-								skill?.toString?.() ||
-								"",
-							name: skill?.name,
-						};
-					})
-					.filter((skill) => skill.id),
-			};
-		});
+		const items = docs.map((doc: MentorDocument) =>
+			buildMentorDiscoveryDetails(doc),
+		);
 
 		return this.buildPaginatedResult(items, total, page, limit);
 	}

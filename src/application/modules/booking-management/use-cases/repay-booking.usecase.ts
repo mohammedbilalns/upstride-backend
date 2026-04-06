@@ -61,8 +61,8 @@ export class RepayBookingUseCase implements IRepayBookingUseCase {
 			coins: 0,
 			amount: Math.round(booking.totalAmount * 100),
 			currency: booking.currency,
-			successUrl: `${frontendBaseUrl}/bookings/success?id=${booking.id}`,
-			cancelUrl: `${frontendBaseUrl}/bookings/cancel?id=${booking.id}`,
+			successUrl: `${frontendBaseUrl}/sessions?booking_success=true&booking_id=${booking.id}`,
+			cancelUrl: `${frontendBaseUrl}/sessions`,
 			metadata: {
 				bookingId: booking.id,
 				type: "BOOKING_PAYMENT",

@@ -34,12 +34,13 @@ export class PaymentController {
 			const userId = req.user.id;
 
 			const baseUrl = getClientBaseUrl();
+			const hasQ = coinsBody.successPath?.includes("?");
 			const successUrl = coinsBody.successPath
-				? `${baseUrl}${coinsBody.successPath}`
-				: `${baseUrl}/payments/success`;
+				? `${baseUrl}${coinsBody.successPath}${hasQ ? "&" : "?"}payment_success=true`
+				: `${baseUrl}/coins?payment_success=true`;
 			const cancelUrl = coinsBody.cancelPath
 				? `${baseUrl}${coinsBody.cancelPath}`
-				: `${baseUrl}/payments/cancel`;
+				: `${baseUrl}/coins`;
 
 			const session = await this._createCheckoutSessionUseCase.execute({
 				userId,
