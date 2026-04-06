@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import type { QueryFilter } from "mongoose";
+import type { PipelineStage, QueryFilter } from "mongoose";
 import { Types } from "mongoose";
 import type { Mentor } from "../../../../domain/entities/mentor.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
@@ -13,7 +13,10 @@ import type {
 import type { IMentorListReadRepository } from "../../../../domain/repositories/mentor-list-read.repository.interface";
 import { MentorMapper } from "../mappers/mentor.mapper";
 import { buildMentorDiscoveryDetails } from "../mappers/mentor-details.mapper";
+import { InterestModel } from "../models/interests.model";
 import { type MentorDocument, MentorModel } from "../models/mentor.model";
+import { ProfessionModel } from "../models/profession.model";
+import { SkillModel } from "../models/skill.model";
 import { UserModel } from "../models/user.model";
 import { AbstractMongoRepository } from "./abstract.repository";
 
@@ -160,39 +163,112 @@ export class MongoMentorListReadRepository
 			filter.yearsOfExperience = experienceFilter;
 		}
 
+		const skip = (page - 1) * limit;
+		const userCollection = UserModel.collection.name;
+		const professionCollection = ProfessionModel.collection.name;
+		const interestCollection = InterestModel.collection.name;
+		const skillCollection = SkillModel.collection.name;
+
+		const pipeline: PipelineStage[] = [
+			{ $match: filter } as PipelineStage.Match,
+			{
+				$lookup: {
+					from: userCollection,
+					localField: "userId",
+					foreignField: "_id",
+					as: "user",
+				},
+			} as PipelineStage.Lookup,
+			{ $unwind: "$user" } as PipelineStage.Unwind,
+		];
+
 		if (query?.search) {
-			const users = await UserModel.find(
-				{ name: { $regex: query.search, $options: "i" } },
-				{ _id: 1 },
-			)
-				.lean()
-				.exec();
-			const ids = users.map((u) => u._id);
-			if (ids.length === 0) {
-				return this.buildPaginatedResult([], 0, page, limit);
-			}
-			filter.userId = {
-				$in: ids,
-				...(query.excludeUserId
-					? { $ne: new Types.ObjectId(query.excludeUserId) }
-					: {}),
-			};
+			pipeline.push({
+				$match: { "user.name": { $regex: query.search, $options: "i" } },
+			} as PipelineStage.Match);
 		}
 
-		const skip = (page - 1) * limit;
-		const [docs, total] = await Promise.all([
-			this.model
-				.find(filter)
-				.sort(sort ?? { avgRating: -1, createdAt: -1 })
-				.skip(skip)
-				.limit(limit)
-				.populate("userId", "name profilePictureId")
-				.populate("currentRoleId", "name")
-				.populate("areasOfExpertise", "name")
-				.populate("toolsAndSkills.skillId", "name")
-				.lean(),
-			this.model.countDocuments(filter),
+		pipeline.push(
+			{
+				$lookup: {
+					from: professionCollection,
+					localField: "currentRoleId",
+					foreignField: "_id",
+					as: "currentRole",
+				},
+			} as PipelineStage.Lookup,
+			{
+				$lookup: {
+					from: interestCollection,
+					localField: "areasOfExpertise",
+					foreignField: "_id",
+					as: "areasOfExpertise",
+				},
+			} as PipelineStage.Lookup,
+			{
+				$lookup: {
+					from: skillCollection,
+					let: { skillIds: "$toolsAndSkills.skillId" },
+					pipeline: [
+						{
+							$match: {
+								$expr: { $in: ["$_id", "$$skillIds"] },
+							},
+						},
+						{ $project: { name: 1 } },
+					],
+					as: "skills",
+				},
+			} as PipelineStage.Lookup,
+			{
+				$addFields: {
+					userId: "$user",
+					currentRoleId: { $arrayElemAt: ["$currentRole", 0] },
+					toolsAndSkills: {
+						$map: {
+							input: "$toolsAndSkills",
+							as: "ts",
+							in: {
+								skillId: {
+									$arrayElemAt: [
+										{
+											$filter: {
+												input: "$skills",
+												as: "skill",
+												cond: { $eq: ["$$skill._id", "$$ts.skillId"] },
+											},
+										},
+										0,
+									],
+								},
+								level: "$$ts.level",
+							},
+						},
+					},
+				},
+			} as PipelineStage.AddFields,
+			{
+				$project: {
+					user: 0,
+					currentRole: 0,
+					skills: 0,
+				},
+			} as PipelineStage.Project,
+		);
+
+		const [result] = await this.model.aggregate([
+			...pipeline,
+			{ $sort: sort ?? { avgRating: -1, createdAt: -1 } } as PipelineStage.Sort,
+			{
+				$facet: {
+					items: [{ $skip: skip }, { $limit: limit }],
+					total: [{ $count: "count" }],
+				},
+			} as PipelineStage.Facet,
 		]);
+
+		const docs = (result?.items ?? []) as MentorDocument[];
+		const total = (result?.total?.[0]?.count ?? 0) as number;
 
 		const items = docs.map((doc: MentorDocument) =>
 			buildMentorDiscoveryDetails(doc),
