@@ -1,4 +1,5 @@
 import type { Chat } from "../entities/chat.entity";
+import type { UserRole } from "../entities/user.entity";
 import type {
 	CreatableRepository,
 	FindByIdRepository,
@@ -9,6 +10,7 @@ export interface ChatUserSummary {
 	id: string;
 	name: string;
 	profilePictureId?: string | null;
+	role?: UserRole;
 }
 
 export interface IChatRepository

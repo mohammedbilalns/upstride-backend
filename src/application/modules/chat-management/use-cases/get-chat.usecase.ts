@@ -57,6 +57,7 @@ export class GetChatUseCase implements IGetChatUseCase {
 				id: receiverUser.id,
 				name: receiverUser.name,
 				profilePictureUrl,
+				role: receiverUser.role ?? "USER",
 			};
 			usersById.set(receiverUser.id, receiverDto);
 		} else {
@@ -69,6 +70,7 @@ export class GetChatUseCase implements IGetChatUseCase {
 					id: user.id,
 					name: user.name,
 					profilePictureUrl,
+					role: user.role ?? "USER",
 				};
 				usersById.set(user.id, receiverDto);
 			}
@@ -80,6 +82,7 @@ export class GetChatUseCase implements IGetChatUseCase {
 				id: senderUser.id,
 				name: senderUser.name,
 				profilePictureUrl: null,
+				role: senderUser.role ?? "USER",
 			});
 		} else {
 			const user = await this._userRepository.findById(input.userId);
@@ -88,6 +91,7 @@ export class GetChatUseCase implements IGetChatUseCase {
 					id: user.id,
 					name: user.name,
 					profilePictureUrl: null,
+					role: user.role ?? "USER",
 				});
 			}
 		}

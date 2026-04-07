@@ -13,6 +13,7 @@ type PopulatedUser = {
 	_id?: { toString?: () => string };
 	name?: string;
 	profilePictureId?: string | null;
+	role?: "USER" | "MENTOR" | "ADMIN" | "SUPER_ADMIN";
 	toString?: () => string;
 };
 
@@ -36,6 +37,7 @@ const toUserSummary = (value: PopulatedUser): ChatUserSummary => ({
 	id: value._id?.toString?.() || value.toString?.() || "",
 	name: value.name ?? "Unknown",
 	profilePictureId: value.profilePictureId ?? null,
+	role: value.role ?? "USER",
 });
 
 const collectUsersFromChats = (
@@ -165,8 +167,8 @@ export class MongoChatRepository
 
 		const doc = await this.model
 			.findOne(filter)
-			.populate("user1Id", "name profilePictureId")
-			.populate("user2Id", "name profilePictureId")
+			.populate("user1Id", "name profilePictureId role")
+			.populate("user2Id", "name profilePictureId role")
 			.lean<PopulatedChatDocument | null>();
 
 		if (!doc) return { chat: null, users: [] };
@@ -227,8 +229,8 @@ export class MongoChatRepository
 				.sort({ updatedAt: -1 })
 				.skip(skip)
 				.limit(limit)
-				.populate("user1Id", "name profilePictureId")
-				.populate("user2Id", "name profilePictureId")
+				.populate("user1Id", "name profilePictureId role")
+				.populate("user2Id", "name profilePictureId role")
 				.populate(
 					"lastMessageId",
 					"senderId messageType content mediaId createdAt",
