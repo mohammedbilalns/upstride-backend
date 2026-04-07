@@ -70,7 +70,7 @@ export class MentorController {
 			limit: 12,
 			excludeUserId: userId,
 			search: query.search,
-			categoryId: query.categoryId,
+			category: query.category,
 			tierName: query.tierName,
 			minExperience: query.minExperience,
 			maxExperience: query.maxExperience,

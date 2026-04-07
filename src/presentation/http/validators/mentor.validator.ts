@@ -156,7 +156,7 @@ export const MentorDiscoveryQuerySchema = z
 	.object({
 		page: pageSchema,
 		search: z.string().trim().min(1).optional(),
-		categoryId: z.string().min(1).optional(),
+		category: z.string().trim().min(1).optional(),
 		tierName: z.string().min(1).optional(),
 		minExperience: z.coerce.number().int().min(0).optional(),
 		maxExperience: z.coerce.number().int().min(0).optional(),

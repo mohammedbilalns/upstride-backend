@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import type {
+	IInterestRepository,
 	IMentorListReadRepository,
 	MentorDiscoveryQuery,
 } from "../../../../domain/repositories";
@@ -17,14 +18,33 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 	constructor(
 		@inject(TYPES.Repositories.MentorListReadRepository)
 		private readonly _mentorRepository: IMentorListReadRepository,
+		@inject(TYPES.Repositories.InterestRepository)
+		private readonly _interestRepository: IInterestRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: GetMentorsInput): Promise<GetMentorsResponse> {
+		let categoryId: string | undefined;
+		if (input.category) {
+			const interests = await this._interestRepository.query({
+				query: { name: input.category },
+			});
+			if (interests.length === 0) {
+				return {
+					items: [],
+					total: 0,
+					page: input.page,
+					limit: input.limit,
+					totalPages: 0,
+				};
+			}
+			categoryId = interests[0].id;
+		}
+
 		const query: MentorDiscoveryQuery = {
 			search: input.search,
-			categoryId: input.categoryId,
+			categoryId,
 			tierName: input.tierName,
 			excludeUserId: input.excludeUserId,
 			minExperience: input.minExperience,

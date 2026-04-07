@@ -3,7 +3,7 @@ export interface GetMentorsInput {
 	limit: number;
 	excludeUserId?: string;
 	search?: string;
-	categoryId?: string;
+	category?: string;
 	tierName?: string;
 	minExperience?: number;
 	maxExperience?: number;
