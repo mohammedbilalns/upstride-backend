@@ -14,6 +14,11 @@ const Day = z.enum([
 	"Sunday",
 ]);
 
+interface BreakTime {
+	startTime: string;
+	endTime: string;
+}
+
 const toMinutes = (time: string) => {
 	const [h, m] = time.split(":").map(Number);
 	return h * 60 + m;
@@ -86,8 +91,36 @@ const validateTimeRange = (
 	}
 };
 
+const validateBreakTotals = (
+	value: { startTime: string; endTime: string; breakTimes?: BreakTime[] },
+	ctx: z.RefinementCtx,
+) => {
+	const start = toMinutes(value.startTime);
+	const end = toMinutes(value.endTime);
+	if (end <= start) return;
+	const workingMinutes = end - start;
+	const breaks = value.breakTimes ?? [];
+	if (breaks.length === 0) return;
+	const totalBreakMinutes = breaks.reduce(
+		(sum, bt) =>
+			sum + Math.max(0, toMinutes(bt.endTime) - toMinutes(bt.startTime)),
+		0,
+	);
+	const maxBreakMinutes = workingMinutes * 0.7;
+	if (totalBreakMinutes > maxBreakMinutes) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: "Total break time cannot exceed 70% of the working window",
+			path: ["breakTimes"],
+		});
+	}
+};
+
 export const createAvailabilitySchema = {
-	body: availabilityBaseSchema.superRefine(validateTimeRange),
+	body: availabilityBaseSchema.superRefine((value, ctx) => {
+		validateTimeRange(value, ctx);
+		validateBreakTotals(value, ctx);
+	}),
 };
 
 export const updateAvailabilitySchema = {
@@ -100,6 +133,16 @@ export const updateAvailabilitySchema = {
 				{ startTime: value.startTime, endTime: value.endTime },
 				ctx,
 			);
+			if (value.breakTimes) {
+				validateBreakTotals(
+					{
+						startTime: value.startTime,
+						endTime: value.endTime,
+						breakTimes: value.breakTimes,
+					},
+					ctx,
+				);
+			}
 		}
 	}),
 };
