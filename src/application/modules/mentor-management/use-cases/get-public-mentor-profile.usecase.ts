@@ -38,7 +38,7 @@ export class GetPublicMentorProfileUseCase
 		let profile =
 			await this._mentorProfileReadRepository.findProfileById(mentorId);
 
-		if (!profile && isAdmin) {
+		if (!profile) {
 			profile =
 				await this._mentorProfileReadRepository.findProfileByUserId(mentorId);
 		}
