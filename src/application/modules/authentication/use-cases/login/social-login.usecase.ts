@@ -17,7 +17,6 @@ import { AuthenticationError, UserBlockedError } from "../../errors";
 import type { IAuthSessionService } from "../../services";
 import type { ISocialLoginUseCase } from "./social-login.usecase.interface";
 
-//FIX: responsible for both provider dispatch logic and the actual login workflow. Provider resolution should be extracted to an OAuthProviderRegistry service.
 @injectable()
 export class SocialLoginUseCase implements ISocialLoginUseCase {
 	private readonly _providers: Map<OAuthProvider, IOAuthIdentityProvider>;

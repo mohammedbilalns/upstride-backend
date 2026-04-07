@@ -20,7 +20,8 @@ export const AuthResponseMessages = {
 	ALL_OTHER_SESSIONS_REVOKED: "All other sessions revoked successfully",
 	FETCH_SESSIONS_SUCCESS: "Active sessions fetched successfully",
 	LOGIN_SUCCESS: "Login successful",
-	REGISTER_SUCCESS: "Registration successful",
+	REGISTER_SUCCESS:
+		"An OTP has been sent to your email address,verify it to complete registration",
 	OTP_SENT: "OTP sent successfully",
 	OTP_VERIFIED: "OTP verified successfully",
 	PASSWORD_RESET_SUCCESS: "Password reset successful",

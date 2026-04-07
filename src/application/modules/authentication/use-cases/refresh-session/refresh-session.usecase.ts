@@ -29,72 +29,62 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 			throw new UnauthorizedError();
 		}
 
-		try {
-			const payload = this._tokenService.verifyRefreshToken(input.refreshToken);
-			const { sid } = payload;
+		const payload = this._tokenService.verifyRefreshToken(input.refreshToken);
+		const { sid } = payload;
 
-			const session = await this._sessionRepository.findBySid(sid);
+		const session = await this._sessionRepository.findBySid(sid);
 
-			if (!session) throw new UnauthorizedError();
+		if (!session) throw new UnauthorizedError();
 
-			if (session.revoked) {
-				throw new UnauthorizedError();
-			}
-
-			const currentTokenHash = this._tokenService.hashToken(input.refreshToken);
-
-			if (session.refreshTokenHash !== currentTokenHash) {
-				await this._sessionRepository.updateBySid(sid, { revoked: true });
-				throw new UnauthorizedError();
-			}
-
-			if (session.expiresAt < new Date()) {
-				throw new UnauthorizedError();
-			}
-
-			const user = await this._userRepository.findById(session.userId);
-
-			if (!user) {
-				throw new AuthenticationError();
-			}
-
-			assertUserCanAuthenticate(user);
-
-			const accessTokenId = this._idGenerator.generate();
-			const refreshTokenId = this._idGenerator.generate();
-
-			const newRefreshToken = this._tokenService.generateRefreshToken({
-				sub: user.id,
-				jti: refreshTokenId,
-				sid: session.sid,
-			});
-
-			const newRefreshTokenHash = this._tokenService.hashToken(newRefreshToken);
-
-			await this._sessionRepository.updateBySid(session.sid, {
-				lastUsedAt: new Date(),
-				refreshTokenHash: newRefreshTokenHash,
-			});
-
-			const accessToken = this._tokenService.generateAccessToken({
-				sub: user.id,
-				role: user.role,
-				jti: accessTokenId,
-				sid: session.sid,
-			});
-
-			return {
-				accessToken,
-				refreshToken: newRefreshToken,
-			};
-		} catch (error) {
-			if (
-				error instanceof UnauthorizedError ||
-				error instanceof AuthenticationError
-			) {
-				throw error;
-			}
+		if (session.revoked) {
 			throw new UnauthorizedError();
 		}
+
+		const currentTokenHash = this._tokenService.hashToken(input.refreshToken);
+
+		if (session.refreshTokenHash !== currentTokenHash) {
+			await this._sessionRepository.updateBySid(sid, { revoked: true });
+			throw new UnauthorizedError();
+		}
+
+		if (session.expiresAt < new Date()) {
+			throw new UnauthorizedError();
+		}
+
+		const user = await this._userRepository.findById(session.userId);
+
+		if (!user) {
+			throw new AuthenticationError();
+		}
+
+		assertUserCanAuthenticate(user);
+
+		const accessTokenId = this._idGenerator.generate();
+		const refreshTokenId = this._idGenerator.generate();
+
+		const newRefreshToken = this._tokenService.generateRefreshToken({
+			sub: user.id,
+			jti: refreshTokenId,
+			sid: session.sid,
+		});
+
+		const newRefreshTokenHash = this._tokenService.hashToken(newRefreshToken);
+
+		await this._sessionRepository.updateBySid(session.sid, {
+			lastUsedAt: new Date(),
+			refreshTokenHash: newRefreshTokenHash,
+		});
+
+		const accessToken = this._tokenService.generateAccessToken({
+			sub: user.id,
+			role: user.role,
+			jti: accessTokenId,
+			sid: session.sid,
+		});
+
+		return {
+			accessToken,
+			refreshToken: newRefreshToken,
+		};
 	}
 }
