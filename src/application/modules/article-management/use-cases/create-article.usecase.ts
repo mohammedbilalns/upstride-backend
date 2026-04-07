@@ -78,22 +78,11 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 		const created = await this._articleRepository.create(article);
 		const resultDto = ArticleMapper.toDto(created);
 
-		if (
-			resultDto.featuredImageUrl &&
-			!resultDto.featuredImageUrl.startsWith("http")
-		) {
-			try {
-				resultDto.featuredImageUrl = this._storageService.getPublicUrl(
-					resultDto.featuredImageId,
-				);
-			} catch (err) {
-				console.error(
-					"Failed to sign created article featured image URL:",
-					err,
-				);
-			}
+		if (resultDto.featuredImageUrl) {
+			resultDto.featuredImageUrl = this._storageService.getPublicUrl(
+				resultDto.featuredImageId,
+			);
 		}
-
 		return { article: resultDto };
 	}
 }

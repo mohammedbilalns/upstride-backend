@@ -27,6 +27,7 @@ export class RefundService implements IRefundService {
 		bookingId,
 		userId,
 		refundAmount,
+		refundAmountMinor,
 	}: RefundParams): Promise<void> {
 		if (refundAmount <= 0) return;
 
@@ -51,6 +52,8 @@ export class RefundService implements IRefundService {
 			),
 		);
 
-		await this._platformWalletRepo.incrementBalance(-refundAmount);
+		if (refundAmountMinor > 0) {
+			await this._platformWalletRepo.incrementBalance(-refundAmountMinor);
+		}
 	}
 }

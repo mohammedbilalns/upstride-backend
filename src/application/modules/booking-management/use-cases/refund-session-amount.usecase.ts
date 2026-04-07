@@ -55,12 +55,12 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 		}
 
 		let baseCoins = 0;
+		await this._platformSettingsService.load();
+		const coinValue = this._platformSettingsService.economy.coinValue;
 		if (input.paymentStatus === "COMPLETED") {
 			if (input.paymentType === "COINS") {
 				baseCoins = input.totalAmount;
 			} else {
-				await this._platformSettingsService.load();
-				const coinValue = this._platformSettingsService.economy.coinValue;
 				if (Number.isFinite(coinValue) && coinValue > 0) {
 					baseCoins = input.totalAmount * coinValue;
 				}
@@ -68,12 +68,17 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 		}
 
 		const refundAmount = Math.round((baseCoins * refundPercentage) / 100);
+		const refundAmountMinor =
+			Number.isFinite(coinValue) && coinValue > 0
+				? Math.round((refundAmount / coinValue) * 100)
+				: 0;
 
 		if (refundAmount > 0) {
 			await this._refundService.processRefund({
 				bookingId: input.bookingId,
 				userId: input.userId,
 				refundAmount,
+				refundAmountMinor,
 				cancelledBy: input.cancelledBy,
 			});
 		}

@@ -41,7 +41,6 @@ export class MarkMessagesReadUseCase implements IMarkMessagesReadUseCase {
 			unreadCount: chat.unreadCount,
 		});
 
-		// TODO: Publish a "chat.messages.read" domain event for websocket sync.
 		return { updatedCount };
 	}
 }

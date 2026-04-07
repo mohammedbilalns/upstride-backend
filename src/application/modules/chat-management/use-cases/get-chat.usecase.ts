@@ -46,7 +46,6 @@ export class GetChatUseCase implements IGetChatUseCase {
 		const usersByIdRaw = new Map(users.map((user) => [user.id, user]));
 		const usersById = new Map<string, ChatUserDto>();
 
-		// Always ensure we have receiver info, even if chat doesn't exist yet
 		let receiverDto: ChatUserDto | null = null;
 		const receiverUser = usersByIdRaw.get(input.otherUserId);
 
@@ -61,7 +60,6 @@ export class GetChatUseCase implements IGetChatUseCase {
 			};
 			usersById.set(receiverUser.id, receiverDto);
 		} else {
-			// Fetch receiver independently if not returned by repo
 			const user = await this._userRepository.findById(input.otherUserId);
 			if (user) {
 				const profilePictureUrl = user.profilePictureId
@@ -76,7 +74,6 @@ export class GetChatUseCase implements IGetChatUseCase {
 			}
 		}
 
-		// Ensure sender info is also in usersById for mapping
 		const senderUser = usersByIdRaw.get(input.userId);
 		if (senderUser) {
 			usersById.set(senderUser.id, {

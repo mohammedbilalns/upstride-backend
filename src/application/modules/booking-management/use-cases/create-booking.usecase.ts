@@ -6,6 +6,7 @@ import {
 import type { CoinTransactionType } from "../../../../domain/entities/coin-transactions.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
+import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
@@ -27,6 +28,8 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		private readonly _bookingRepository: IBookingRepository,
 		@inject(TYPES.Repositories.MentorProfileReadRepository)
 		private readonly _mentorRepository: IMentorProfileReadRepository,
+		@inject(TYPES.Repositories.PlatformWalletRepository)
+		private readonly _platformWalletRepository: IPlatformWalletRepository,
 		@inject(TYPES.Services.WalletService)
 		private readonly _walletService: IWalletService,
 		@inject(TYPES.Services.PlatformSettings)
@@ -95,6 +98,12 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 				"Booking",
 				bookingId,
 			);
+			const platformAmountMinor = Math.round(totalAmountCurrency * 100);
+			if (platformAmountMinor > 0) {
+				await this._platformWalletRepository.incrementBalance(
+					platformAmountMinor,
+				);
+			}
 			paymentStatus = "COMPLETED";
 		}
 

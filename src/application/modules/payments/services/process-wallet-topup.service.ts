@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { CoinTransactionType } from "../../../../domain/entities/coin-transactions.entity";
 import { PaymentStatus } from "../../../../domain/entities/payment-transactions.entity";
 import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
+import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import type { IWalletService } from "../../../services/wallet.service.interface";
@@ -16,6 +17,8 @@ export class ProcessWalletTopupService implements IProcessWalletTopupService {
 	constructor(
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
 		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
+		@inject(TYPES.Repositories.PlatformWalletRepository)
+		private readonly _platformWalletRepository: IPlatformWalletRepository,
 		@inject(TYPES.Services.WalletService)
 		private readonly _walletService: IWalletService,
 		@inject(TYPES.Services.UpsertPaymentTransactionService)
@@ -77,6 +80,10 @@ export class ProcessWalletTopupService implements IProcessWalletTopupService {
 				owner: "platform",
 			}),
 		]);
+
+		if (Number.isFinite(amountMinor) && amountMinor > 0) {
+			await this._platformWalletRepository.incrementBalance(amountMinor);
+		}
 
 		await this._walletService.credit(
 			userId,

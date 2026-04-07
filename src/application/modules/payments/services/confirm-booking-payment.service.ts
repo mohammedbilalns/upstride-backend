@@ -6,6 +6,7 @@ import {
 } from "../../../../domain/entities/payment-transactions.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
+import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
@@ -24,6 +25,8 @@ export class ConfirmBookingPaymentService
 		private readonly _bookingRepository: IBookingRepository,
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
 		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
+		@inject(TYPES.Repositories.PlatformWalletRepository)
+		private readonly _platformWalletRepository: IPlatformWalletRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
 	) {}
@@ -91,6 +94,10 @@ export class ConfirmBookingPaymentService
 				),
 			),
 		]);
+
+		if (Number.isFinite(amountMinor) && amountMinor > 0) {
+			await this._platformWalletRepository.incrementBalance(amountMinor);
+		}
 
 		logger.info(
 			{ bookingId, sessionId },

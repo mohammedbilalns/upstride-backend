@@ -2,6 +2,7 @@ export interface RefundParams {
 	bookingId: string;
 	userId: string;
 	refundAmount: number;
+	refundAmountMinor: number;
 	cancelledBy: "user" | "mentor";
 }
 
