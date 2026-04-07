@@ -147,6 +147,9 @@ export class MongoArticleRepository
 			}),
 			...(query.isActive !== undefined && { isActive: query.isActive }),
 			...(query.isArchived !== undefined && { isArchived: query.isArchived }),
+			...(query.isBlockedByAdmin !== undefined && {
+				isBlockedByAdmin: query.isBlockedByAdmin,
+			}),
 			...(query.ids && {
 				_id: { $in: query.ids.map((id) => new Types.ObjectId(id)) },
 			}),

@@ -60,6 +60,11 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 				: !input.isAdminView
 					? { isActive: true, isArchived: false }
 					: {}),
+			...(input.status === "active"
+				? { isActive: true, isArchived: false }
+				: input.status === "blocked"
+					? { isBlockedByAdmin: true }
+					: {}),
 			...(input.search && { title: input.search }),
 			...(authorIds && { authorId: authorIds }),
 			...(!input.isMentorView &&

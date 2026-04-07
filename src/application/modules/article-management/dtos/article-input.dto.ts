@@ -61,6 +61,7 @@ export interface GetArticlesInput {
 	ids?: string[];
 	limit?: number;
 	isAdminView?: boolean;
+	status?: "active" | "blocked";
 }
 
 export interface GetArticlesOutput {

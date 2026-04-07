@@ -65,6 +65,7 @@ export type ArticlesQuery = z.infer<typeof ArticlesQuerySchema>;
 export const MentorArticlesQuerySchema = z.object({
 	page: pageSchema,
 	search: z.string().trim().min(1).optional(),
+	status: z.enum(["active", "blocked"]).optional(),
 });
 export type MentorArticlesQuery = z.infer<typeof MentorArticlesQuerySchema>;
 

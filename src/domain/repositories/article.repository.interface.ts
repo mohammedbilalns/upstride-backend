@@ -11,6 +11,7 @@ export interface ArticleQuery {
 	authorId?: string | string[];
 	isActive?: boolean;
 	isArchived?: boolean;
+	isBlockedByAdmin?: boolean;
 	tags?: string | string[];
 	title?: string;
 	slug?: string;
