@@ -3,6 +3,7 @@ import type { IAvailabilityRepository } from "../../../../domain/repositories/av
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { istDateStringTimeToUtcIso } from "../../../../shared/utilities/time.util";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
 import { AvailabilitySlotUtil } from "../../availability-management/utils/availability-slot.util";
 import type {
@@ -77,8 +78,8 @@ export class GetAvailableSlotsUseCase implements IGetAvailableSlotsUseCase {
 				mappedBookings,
 			);
 			for (const slot of slots) {
-				const startIso = `${dateStr}T${slot.startTime}:00.000Z`;
-				const endIso = `${dateStr}T${slot.endTime}:00.000Z`;
+				const startIso = istDateStringTimeToUtcIso(dateStr, slot.startTime);
+				const endIso = istDateStringTimeToUtcIso(dateStr, slot.endTime);
 				const start = new Date(startIso);
 				const end = new Date(endIso);
 				const durationMinutes = Math.round(

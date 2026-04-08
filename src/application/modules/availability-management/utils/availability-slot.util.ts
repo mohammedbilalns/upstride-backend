@@ -1,5 +1,8 @@
 import type { Availability } from "../../../../domain/entities/availability.entity";
-import { toMinutes } from "../../../../shared/utilities/time.util";
+import {
+	istDateStringTimeToUtcIso,
+	toMinutes,
+} from "../../../../shared/utilities/time.util";
 
 interface Slot {
 	startTime: string;
@@ -9,11 +12,10 @@ interface Slot {
 export class AvailabilitySlotUtil {
 	/**
 	 * Computes the available time slots for a specific date, given the mentor's existing bookings.
-	 * Returns slots in HH:MM format in UTC.
 	 */
 	static computeSlotsForDate(
 		availability: Availability,
-		date: Date, // UTC Date representing the day
+		date: Date,
 		existingBookings: { startTime: string; endTime: string }[],
 	): { startTime: string; endTime: string }[] {
 		if (!availability.status) return [];
@@ -39,12 +41,10 @@ export class AvailabilitySlotUtil {
 			const slotStartStr = toStr(slotStartMin);
 			const slotEndStr = toStr(slotEndMin);
 
-			// Compute exact ISO datetimes for overlap check
-			const slotStartIso = `${dateStr}T${slotStartStr}:00.000Z`;
-			const slotEndIso = `${dateStr}T${slotEndStr}:00.000Z`;
+			const slotStartIso = istDateStringTimeToUtcIso(dateStr, slotStartStr);
+			const slotEndIso = istDateStringTimeToUtcIso(dateStr, slotEndStr);
 			const slotStartMs = Date.parse(slotStartIso);
 
-			// Skip past slots (only relevant for today's date)
 			if (!Number.isNaN(slotStartMs) && slotStartMs <= now) {
 				currentMin += availability.slotDuration + availability.bufferTime;
 				continue;

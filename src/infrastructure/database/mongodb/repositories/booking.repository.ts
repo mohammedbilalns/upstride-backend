@@ -5,6 +5,7 @@ import type {
 	IBookingRepository,
 } from "../../../../domain/repositories/booking.repository.interface";
 import type { PaginatedResult } from "../../../../domain/repositories/capabilities";
+import { getUtcRangeForIstDate } from "../../../../shared/utilities/time.util";
 import { BookingMapper } from "../mappers/booking.mapper";
 import { BookingModel } from "../models/booking.model";
 
@@ -47,10 +48,7 @@ export class BookingRepository implements IBookingRepository {
 		mentorId: string,
 		date: Date,
 	): Promise<Booking[]> {
-		const startOfDay = new Date(date);
-		startOfDay.setUTCHours(0, 0, 0, 0);
-		const endOfDay = new Date(date);
-		endOfDay.setUTCHours(23, 59, 59, 999);
+		const { start: startOfDay, end: endOfDay } = getUtcRangeForIstDate(date);
 
 		const docs = await BookingModel.find({
 			mentorId,
