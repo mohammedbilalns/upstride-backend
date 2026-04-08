@@ -11,6 +11,7 @@ export const RESPONSE_MESSAGES = {
 		CONFIRMED: "Booking confirmed successfully",
 		CANCELLED: "Booking cancelled successfully",
 		CANCELLED_BY_MENTOR: "Booking cancelled dynamically by mentor",
+		PAYMENT_INITIATED: "Booking payment initiated.",
 	},
 };
 
@@ -48,6 +49,7 @@ export const ReportResponseMessages = {
 	REPORTS_FETCHED_SUCCESS: "Reports fetched successfully",
 	REPORT_STATUS_UPDATED_SUCCESS: "Report status updated successfully",
 	ARTICLE_BLOCKED_SUCCESS: "Article blocked successfully",
+	ARTICLE_UNBLOCKED_SUCCESS: "Article unblocked successfully",
 };
 
 export const UserManagementResponseMessages = {
@@ -60,6 +62,11 @@ export const WalletResponseMessages = {
 	COIN_BALANCE_FETCHED: "Coin balance fetched successfully",
 	COIN_TRANSACTIONS_FETCHED: "Coin transactions fetched successfully",
 	PAYMENT_TRANSACTIONS_FETCHED: "Payment transactions fetched successfully",
+	PLATFORM_WALLET_FETCHED: "Platform wallet fetched successfully",
+	PLATFORM_COIN_TRANSACTIONS_FETCHED:
+		"Platform coin transactions fetched successfully",
+	PLATFORM_PAYMENT_TRANSACTIONS_FETCHED:
+		"Platform payment transactions fetched successfully",
 };
 
 export const MentorResponseMessages = {
@@ -69,6 +76,9 @@ export const MentorResponseMessages = {
 	REJECT_APPLICATION_SUCCESS: "Mentor application rejected successfully",
 	FETCH_REGISTRATION_INFO_SUCCESS:
 		"Mentor registration info fetched successfully",
+	PROFILE_FETCHED_SUCCESS: "Mentor profile fetched successfully",
+	PUBLIC_PROFILE_FETCHED_SUCCESS: "Public mentor profile fetched successfully",
+	PROFILE_UPDATED_SUCCESS: "Mentor profile updated successfully",
 	REGISTRATION_SUBMITTED_SUCCESS: "Mentor registration submitted successfully",
 	REGISTRATION_RESUBMITTED_SUCCESS:
 		"Mentor registration resubmitted successfully",
@@ -76,6 +86,8 @@ export const MentorResponseMessages = {
 
 export const PaymentResponseMessages = {
 	CHECKOUT_SESSION_CREATED: "Checkout session created successfully",
+	MISSING_STRIPE_SIGNATURE: "Missing Stripe signature",
+	INVALID_WEBHOOK_PAYLOAD: "Invalid webhook payload",
 };
 
 export const PlatformSettingsResponseMessages = {

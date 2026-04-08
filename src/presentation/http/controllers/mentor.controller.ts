@@ -120,7 +120,7 @@ export class MentorController {
 		const data = await this._getMentorProfileUseCase.execute({ userId });
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Mentor profile fetched successfully",
+			message: MentorResponseMessages.PROFILE_FETCHED_SUCCESS,
 			data,
 		});
 	});
@@ -136,7 +136,7 @@ export class MentorController {
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Public mentor profile fetched successfully",
+			message: MentorResponseMessages.PUBLIC_PROFILE_FETCHED_SUCCESS,
 			data,
 		});
 	});
@@ -152,7 +152,7 @@ export class MentorController {
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Mentor profile updated successfully",
+			message: MentorResponseMessages.PROFILE_UPDATED_SUCCESS,
 			data,
 		});
 	});

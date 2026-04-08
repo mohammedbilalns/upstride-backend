@@ -90,7 +90,7 @@ export class WalletController {
 		const data = await this._getPlatformWalletUseCase.execute();
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: "Platform wallet fetched successfully",
+			message: WalletResponseMessages.PLATFORM_WALLET_FETCHED,
 			data,
 		});
 	});
@@ -107,7 +107,7 @@ export class WalletController {
 			});
 
 			sendSuccess(res, HttpStatus.OK, {
-				message: "Platform coin transactions fetched successfully",
+				message: WalletResponseMessages.PLATFORM_COIN_TRANSACTIONS_FETCHED,
 				data,
 			});
 		},
@@ -125,7 +125,7 @@ export class WalletController {
 			});
 
 			sendSuccess(res, HttpStatus.OK, {
-				message: "Platform payment transactions fetched successfully",
+				message: WalletResponseMessages.PLATFORM_PAYMENT_TRANSACTIONS_FETCHED,
 				data,
 			});
 		},

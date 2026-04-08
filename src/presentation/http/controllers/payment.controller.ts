@@ -61,7 +61,7 @@ export class PaymentController {
 		if (!signature || Array.isArray(signature)) {
 			res.status(HttpStatus.BAD_REQUEST).json({
 				success: false,
-				message: "Missing Stripe signature",
+				message: PaymentResponseMessages.MISSING_STRIPE_SIGNATURE,
 			});
 			return;
 		}
@@ -69,7 +69,7 @@ export class PaymentController {
 		if (!Buffer.isBuffer(req.body)) {
 			res.status(HttpStatus.BAD_REQUEST).json({
 				success: false,
-				message: "Invalid webhook payload",
+				message: PaymentResponseMessages.INVALID_WEBHOOK_PAYLOAD,
 			});
 			return;
 		}

@@ -144,7 +144,7 @@ export class BookingController {
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Booking payment initiated.",
+			message: RESPONSE_MESSAGES.BOOKING.PAYMENT_INITIATED,
 			data: result,
 		});
 	});

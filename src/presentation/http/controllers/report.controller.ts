@@ -143,7 +143,7 @@ export class ReportController {
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Article unblocked successfully",
+			message: ReportResponseMessages.ARTICLE_UNBLOCKED_SUCCESS,
 			data: result,
 		});
 	});
