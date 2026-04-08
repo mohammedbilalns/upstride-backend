@@ -150,6 +150,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			validationData.currency,
 			validationData.notes || null,
 			null,
+			null,
 			new Date(),
 			new Date(),
 		);

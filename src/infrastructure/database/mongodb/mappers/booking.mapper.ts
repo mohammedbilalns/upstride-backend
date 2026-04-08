@@ -9,10 +9,13 @@ import { toHHMM } from "../../../../shared/utilities/time.util";
 import type { BookingDocument } from "../models/booking.model";
 
 export class BookingMapper {
-	static toDomain(doc: BookingDocumentWithMentor): Booking {
+	static toDomain(doc: BookingDocumentWithMentorAndMentee): Booking {
 		const mentorId = getMentorIdString(doc.mentorId);
 		const mentorName = isPopulatedMentorRef(doc.mentorId)
 			? (doc.mentorId.userId?.name ?? null)
+			: null;
+		const menteeName = isPopulatedMenteeRef(doc.menteeId)
+			? (doc.menteeId.name ?? null)
 			: null;
 
 		return new Booking(
@@ -28,6 +31,7 @@ export class BookingMapper {
 			doc.totalAmount,
 			doc.currency,
 			doc.notes,
+			menteeName,
 			mentorName,
 			doc.createdAt,
 			doc.updatedAt,
@@ -81,14 +85,28 @@ type PopulatedMentorRef = {
 	userId?: { name?: string };
 };
 
-type BookingDocumentWithMentor = Omit<BookingDocument, "mentorId"> & {
+type PopulatedMenteeRef = {
+	_id: Types.ObjectId;
+	name?: string;
+};
+
+type BookingDocumentWithMentorAndMentee = Omit<
+	BookingDocument,
+	"mentorId" | "menteeId"
+> & {
 	mentorId: Types.ObjectId | PopulatedMentorRef;
+	menteeId: Types.ObjectId | PopulatedMenteeRef;
 };
 
 const isPopulatedMentorRef = (
 	mentorId: Types.ObjectId | PopulatedMentorRef,
 ): mentorId is PopulatedMentorRef =>
 	typeof mentorId === "object" && mentorId !== null && "_id" in mentorId;
+
+const isPopulatedMenteeRef = (
+	menteeId: Types.ObjectId | PopulatedMenteeRef,
+): menteeId is PopulatedMenteeRef =>
+	typeof menteeId === "object" && menteeId !== null && "_id" in menteeId;
 
 const getMentorIdString = (
 	mentorId: Types.ObjectId | PopulatedMentorRef,

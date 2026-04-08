@@ -47,6 +47,7 @@ export class Booking {
 		public readonly totalAmount: number,
 		public readonly currency: string,
 		public readonly notes: string | null,
+		public readonly menteeName: string | null,
 		public readonly mentorName: string | null,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,

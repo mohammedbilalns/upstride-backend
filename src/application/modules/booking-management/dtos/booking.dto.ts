@@ -130,6 +130,7 @@ export interface BookingDto {
 	currency: string;
 	meetingLink: string;
 	notes: string | null;
+	menteeName: string | null;
 	mentorName: string | null;
 	createdAt: string;
 	updatedAt: string;

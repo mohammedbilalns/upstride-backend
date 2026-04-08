@@ -26,6 +26,10 @@ export class BookingRepository implements IBookingRepository {
 				select: "userId",
 				populate: { path: "userId", select: "name" },
 			})
+			.populate({
+				path: "menteeId",
+				select: "name",
+			})
 			.lean();
 		return doc ? BookingMapper.toDomain(doc) : null;
 	}
@@ -133,6 +137,10 @@ export class BookingRepository implements IBookingRepository {
 					path: "mentorId",
 					select: "userId",
 					populate: { path: "userId", select: "name" },
+				})
+				.populate({
+					path: "menteeId",
+					select: "name",
 				})
 				.sort({ createdAt: -1 })
 				.skip(skip)
