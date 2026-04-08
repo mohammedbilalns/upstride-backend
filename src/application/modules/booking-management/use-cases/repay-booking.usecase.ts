@@ -1,10 +1,11 @@
 import { inject, injectable } from "inversify";
-import { EntityValidationError } from "../../../../domain/errors";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { IPaymentService } from "../../../services/payment.service.interface";
+import { ValidationError } from "../../../shared/errors";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
+import { UnauthorizedError } from "../../authentication/errors";
 import type {
 	RepayBookingInput,
 	RepayBookingResponse,
@@ -27,17 +28,11 @@ export class RepayBookingUseCase implements IRepayBookingUseCase {
 		}
 
 		if (booking.menteeId !== input.userId) {
-			throw new EntityValidationError(
-				"Booking",
-				"Unauthorized to repay this booking",
-			);
+			throw new UnauthorizedError("Unauthorized to repay this booking");
 		}
 
 		if (booking.paymentType !== "STRIPE") {
-			throw new EntityValidationError(
-				"Booking",
-				"Only Stripe payments can be repaid",
-			);
+			throw new ValidationError("Only Stripe payments can be repaid");
 		}
 
 		if (booking.paymentStatus === "COMPLETED") {
@@ -49,10 +44,7 @@ export class RepayBookingUseCase implements IRepayBookingUseCase {
 		}
 
 		if (booking.status.startsWith("CANCELLED")) {
-			throw new EntityValidationError(
-				"Booking",
-				"Cannot repay a cancelled booking",
-			);
+			throw new ValidationError("Cannot repay a cancelled booking");
 		}
 
 		const frontendBaseUrl = getClientBaseUrl();

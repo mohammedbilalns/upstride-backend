@@ -1,5 +1,6 @@
 import { IST_OFFSET_MINUTES } from "../constants/app.constants";
 
+export const DAY_MS = 24 * 60 * 60 * 1000;
 export function toMinutes(time: string): number {
 	const [h, m] = time.split(":").map(Number);
 	return h * 60 + m;

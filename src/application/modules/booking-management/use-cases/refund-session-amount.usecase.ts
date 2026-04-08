@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import { SessionRefundedEvent } from "../../../../domain/events/session-refunded.event";
 import { TYPES } from "../../../../shared/types/types";
+import { DAY_MS } from "../../../../shared/utilities/time.util";
 import type { IEventBus } from "../../../events/app-event-bus.interface";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
@@ -9,8 +10,6 @@ import type {
 	RefundSessionAmountResponse,
 } from "../dtos/booking.dto";
 import type { IRefundSessionAmountUseCase } from "./refund-session-amount.usecase.interface";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 @injectable()
 export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
