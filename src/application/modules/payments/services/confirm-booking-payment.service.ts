@@ -36,7 +36,6 @@ export class ConfirmBookingPaymentService
 		sessionId,
 		amountMinor,
 		currency,
-		userId,
 	}: ConfirmBookingPaymentParams): Promise<void> {
 		const booking = await this._bookingRepository.findById(bookingId);
 		if (!booking) {
@@ -46,6 +45,8 @@ export class ConfirmBookingPaymentService
 			);
 			return;
 		}
+
+		const payerId = booking.menteeId;
 
 		if (booking.paymentStatus === "COMPLETED") return;
 
@@ -64,7 +65,7 @@ export class ConfirmBookingPaymentService
 			this._paymentTransactionRepository.create(
 				new PaymentTransaction(
 					this._idGenerator.generate(),
-					userId,
+					payerId,
 					PaymentProvider.Stripe,
 					sessionId,
 					amountMinor,
@@ -80,7 +81,7 @@ export class ConfirmBookingPaymentService
 			this._paymentTransactionRepository.create(
 				new PaymentTransaction(
 					this._idGenerator.generate(),
-					userId,
+					payerId,
 					PaymentProvider.Stripe,
 					sessionId,
 					amountMinor,

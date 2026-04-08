@@ -7,6 +7,7 @@ export enum PaymentStatus {
 }
 export enum PaymentProvider {
 	Stripe = "stripe",
+	Internal = "internal",
 }
 
 export type PaymentTransactionOwner = "platform" | "user" | "mentor";

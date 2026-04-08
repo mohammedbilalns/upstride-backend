@@ -4,8 +4,14 @@ import {
 	type PaymentStatus,
 } from "../../../../domain/entities/booking.entity";
 import type { CoinTransactionType } from "../../../../domain/entities/coin-transactions.entity";
+import {
+	PaymentProvider,
+	PaymentTransaction,
+	PaymentStatus as PaymentTransactionStatus,
+} from "../../../../domain/entities/payment-transactions.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
+import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
 import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
@@ -28,6 +34,8 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		private readonly _bookingRepository: IBookingRepository,
 		@inject(TYPES.Repositories.MentorProfileReadRepository)
 		private readonly _mentorRepository: IMentorProfileReadRepository,
+		@inject(TYPES.Repositories.PaymentTransactionRepository)
+		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
 		@inject(TYPES.Repositories.PlatformWalletRepository)
 		private readonly _platformWalletRepository: IPlatformWalletRepository,
 		@inject(TYPES.Services.WalletService)
@@ -55,7 +63,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		const end = new Date(input.endTime);
 		const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
 		const totalAmountCoins = (durationMinutes / 30) * pricePer30Min;
-		await this._platformSettingsService.load();
+		//await this._platformSettingsService.load();
 		const coinValue = this._platformSettingsService.economy.coinValue;
 		if (!Number.isFinite(coinValue) || coinValue <= 0) {
 			throw new NotFoundError("Invalid coin value configuration");
@@ -102,6 +110,22 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			if (platformAmountMinor > 0) {
 				await this._platformWalletRepository.incrementBalance(
 					platformAmountMinor,
+				);
+				await this._paymentTransactionRepository.create(
+					new PaymentTransaction(
+						this._idGenerator.generate(),
+						input.menteeId,
+						PaymentProvider.Internal,
+						`coin_booking_${bookingId}`,
+						platformAmountMinor,
+						"inr",
+						PaymentTransactionStatus.Completed,
+						0,
+						"session",
+						"COINS",
+						undefined,
+						"platform",
+					),
 				);
 			}
 			paymentStatus = "COMPLETED";

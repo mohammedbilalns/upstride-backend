@@ -80,6 +80,7 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 				refundAmount,
 				refundAmountMinor,
 				cancelledBy: input.cancelledBy,
+				paymentType: input.paymentType,
 			});
 		}
 

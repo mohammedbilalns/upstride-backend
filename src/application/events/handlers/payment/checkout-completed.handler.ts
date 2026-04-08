@@ -33,7 +33,6 @@ export class CheckoutCompletedHandler
 				sessionId,
 				amountMinor,
 				currency,
-				userId: userId!,
 			});
 			return;
 		}

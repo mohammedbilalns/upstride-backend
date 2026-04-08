@@ -3,7 +3,6 @@ export interface ConfirmBookingPaymentParams {
 	sessionId: string;
 	amountMinor: number;
 	currency: string;
-	userId: string;
 }
 
 export interface IConfirmBookingPaymentService {
