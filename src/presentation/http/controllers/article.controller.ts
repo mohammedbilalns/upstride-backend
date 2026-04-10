@@ -117,6 +117,7 @@ export class ArticleController {
 		},
 	);
 
+	// FIX: Not following the rest of the pattern
 	getArticleForEdit = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const { articleId } = req.validated?.params as ArticleIdParam;

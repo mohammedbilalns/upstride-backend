@@ -40,11 +40,9 @@ export class ReportController {
 		private readonly _unblockArticleUseCase: IUnblockArticleUseCase,
 	) {}
 
-	reportArticle = asyncHandler(async (req, res) => {
-		const reporterId = (req as AuthenticatedRequest).user.id;
-
+	reportArticle = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._reportArticleUseCase.execute({
-			reporterId,
+			reporterId: req.user.id,
 			...(req.validated?.params as ReportArticleParam),
 			...(req.validated?.body as ReportBody),
 		});
@@ -55,11 +53,9 @@ export class ReportController {
 		});
 	});
 
-	reportUser = asyncHandler(async (req, res) => {
-		const reporterId = (req as AuthenticatedRequest).user.id;
-
+	reportUser = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._reportUserUseCase.execute({
-			reporterId,
+			reporterId: req.user.id,
 			targetUserId: (req.validated?.params as ReportUserParam).userId,
 			...(req.validated?.body as ReportBody),
 		});
@@ -70,11 +66,9 @@ export class ReportController {
 		});
 	});
 
-	getReports = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
-
+	getReports = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getReportsUseCase.execute({
-			adminId,
+			adminId: req.user.id,
 			...(req.validated?.query as GetReportsQuery),
 		});
 
@@ -84,11 +78,9 @@ export class ReportController {
 		});
 	});
 
-	updateStatus = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
-
+	updateStatus = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._updateReportStatusUseCase.execute({
-			adminId,
+			adminId: req.user.id,
 			...(req.validated?.params as ReportIdParam),
 			...(req.validated?.body as UpdateReportStatusBody),
 		});
@@ -99,13 +91,10 @@ export class ReportController {
 		});
 	});
 
-	//TODO: check role validation is there in these two controllers
-	blockArticle = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
-
+	blockArticle = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._blockArticleUseCase.execute({
 			...(req.validated?.params as BlockArticleParam),
-			adminId,
+			adminId: req.user.id,
 			...(req.validated?.body as BlockArticleBody),
 		});
 
@@ -115,11 +104,9 @@ export class ReportController {
 		});
 	});
 
-	unblockArticle = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
-
+	unblockArticle = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._unblockArticleUseCase.execute({
-			adminId,
+			adminId: req.user.id,
 			...(req.validated?.params as BlockArticleParam),
 		});
 

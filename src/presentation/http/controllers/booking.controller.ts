@@ -44,13 +44,11 @@ export class BookingController {
 		private readonly _repayBookingUseCase: IRepayBookingUseCase,
 	) {}
 
-	getAvailableSlots = asyncHandler(async (req, res) => {
-		const requesterUserId = (req as AuthenticatedRequest).user.id;
-
+	getAvailableSlots = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getAvailableSlotsUseCase.execute({
 			...(req.validated?.params as GetAvaialableSlotsParams),
 			...(req.validated?.query as GetAvailableSlotsQuery),
-			requesterUserId,
+			requesterUserId: req.user.id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -59,11 +57,9 @@ export class BookingController {
 		});
 	});
 
-	createBooking = asyncHandler(async (req, res) => {
-		const menteeId = (req as AuthenticatedRequest).user.id;
-
+	createBooking = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._createBookingUseCase.execute({
-			menteeId,
+			menteeId: req.user.id,
 			...(req.validated?.body as CreateBookingBody),
 		});
 
@@ -76,11 +72,9 @@ export class BookingController {
 		});
 	});
 
-	cancelBooking = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-
+	cancelBooking = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._cancelBookingUseCase.execute({
-			userId,
+			userId: req.user.id,
 			bookingId: (req.validated?.params as CancelBookingParams).id,
 			...(req.validated?.body as CancellBookingBody),
 		});
@@ -91,26 +85,24 @@ export class BookingController {
 		});
 	});
 
-	cancelBookingByMentor = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	cancelBookingByMentor = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			const result = await this._cancelBookingByMentorUseCase.execute({
+				userId: req.user.id,
+				bookingId: (req.validated?.params as CancelBookingParams).id,
+				...(req.validated?.body as CancellBookingBody),
+			});
 
-		const result = await this._cancelBookingByMentorUseCase.execute({
-			userId,
-			bookingId: (req.validated?.params as CancelBookingParams).id,
-			...(req.validated?.body as CancellBookingBody),
-		});
+			return sendSuccess(res, HttpStatus.OK, {
+				message: RESPONSE_MESSAGES.BOOKING.CANCELLED_BY_MENTOR,
+				data: result,
+			});
+		},
+	);
 
-		return sendSuccess(res, HttpStatus.OK, {
-			message: RESPONSE_MESSAGES.BOOKING.CANCELLED_BY_MENTOR,
-			data: result,
-		});
-	});
-
-	repayBooking = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-
+	repayBooking = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._repayBookingUseCase.execute({
-			userId,
+			userId: req.user.id,
 			bookingId: (req.validated?.params as RepayBookingParams).id,
 		});
 
@@ -120,11 +112,9 @@ export class BookingController {
 		});
 	});
 
-	getUserBookings = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-
+	getUserBookings = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getUserBookingsUseCase.execute({
-			userId,
+			userId: req.user.id,
 			...(req.validated?.query as BookingListQuery),
 		});
 
@@ -133,10 +123,9 @@ export class BookingController {
 		});
 	});
 
-	getMentorBookings = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	getMentorBookings = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getMentorBookingsUseCase.execute({
-			userId,
+			userId: req.user.id,
 			...(req.validated?.query as BookingListQuery),
 		});
 
@@ -145,10 +134,9 @@ export class BookingController {
 		});
 	});
 
-	getBookingDetails = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	getBookingDetails = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getBookingDetailsUseCase.execute({
-			userId,
+			userId: req.user.id,
 			bookingId: (req.validated?.params as BookingDetailsParams).id,
 		});
 

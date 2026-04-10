@@ -1,4 +1,3 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	IGetActiveSessionsUseCase,
@@ -27,7 +26,7 @@ export class LogoutController {
 		private _getActiveSessionsUseCase: IGetActiveSessionsUseCase,
 	) {}
 
-	logout = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+	logout = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		await this._logoutUseCase.execute({
 			sessionId: req.user.sid,
 		});
@@ -43,21 +42,19 @@ export class LogoutController {
 		});
 	});
 
-	revokeSession = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			await this._revokeSessionUseCase.execute({
-				requesterUserId: req.user.id,
-				...(req.validated?.body as RevokeSessionBody),
-			});
+	revokeSession = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		await this._revokeSessionUseCase.execute({
+			requesterUserId: req.user.id,
+			...(req.validated?.body as RevokeSessionBody),
+		});
 
-			sendSuccess(res, HttpStatus.OK, {
-				message: AuthResponseMessages.SESSION_REVOKED,
-			});
-		},
-	);
+		sendSuccess(res, HttpStatus.OK, {
+			message: AuthResponseMessages.SESSION_REVOKED,
+		});
+	});
 
 	revokeAllOtherSessions = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
+		async (req: AuthenticatedRequest, res) => {
 			const { id: requesterUserId, sid: requesterSessionId } = req.user;
 
 			await this._revokeAllOtherSessionsUseCase.execute({
@@ -71,19 +68,17 @@ export class LogoutController {
 		},
 	);
 
-	getActiveSessions = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const { id: userId, sid: currentSessionId } = req.user;
+	getActiveSessions = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const { id: userId, sid: currentSessionId } = req.user;
 
-			const data = await this._getActiveSessionsUseCase.execute(
-				{ userId },
-				currentSessionId,
-			);
+		const data = await this._getActiveSessionsUseCase.execute(
+			{ userId },
+			currentSessionId,
+		);
 
-			sendSuccess(res, HttpStatus.OK, {
-				message: AuthResponseMessages.FETCH_SESSIONS_SUCCESS,
-				data,
-			});
-		},
-	);
+		sendSuccess(res, HttpStatus.OK, {
+			message: AuthResponseMessages.FETCH_SESSIONS_SUCCESS,
+			data,
+		});
+	});
 }

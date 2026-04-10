@@ -9,6 +9,7 @@ import { TYPES } from "../../../shared/types/types";
 import { UserManagementResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
+	BlockUserBody,
 	UserIdParam,
 	UsersQuery,
 } from "../validators/user-management.validator";
@@ -36,12 +37,9 @@ export class UserManagementController {
 	});
 
 	blockUser = asyncHandler(async (req, res) => {
-		//TODO : validate the body using the validator in the route
-		const { reportId } = (req.body ?? {}) as { reportId?: string };
-
 		await this._blockUserUseCase.execute({
 			userId: (req.validated?.params as UserIdParam).id,
-			reportId,
+			...(req.validated?.body as BlockUserBody),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {

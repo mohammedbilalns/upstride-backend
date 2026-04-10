@@ -38,10 +38,9 @@ export class AvailabilityController {
 		private readonly _reenableAvailabilityUseCase: IReenableAvailabilityUseCase,
 	) {}
 
-	createAvailability = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	createAvailability = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._createAvailabilityUseCase.execute({
-			userId,
+			userId: req.user.id,
 			...(req.validated?.body as CreateAvailabilityBody),
 		});
 
@@ -51,33 +50,31 @@ export class AvailabilityController {
 		});
 	});
 
-	checkAndCreateAvailability = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	checkAndCreateAvailability = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			const result = await this._checkAndCreateAvailabilityUseCase.execute({
+				userId: req.user.id,
+				...(req.validated?.body as CreateAvailabilityBody),
+			});
 
-		const result = await this._checkAndCreateAvailabilityUseCase.execute({
-			userId,
-			...(req.validated?.body as CreateAvailabilityBody),
-		});
+			if (result.created) {
+				return sendSuccess(res, HttpStatus.CREATED, {
+					message: RESPONSE_MESSAGES.AVAILABILITY.CREATED,
+					data: result,
+				});
+			}
 
-		if (result.created) {
-			return sendSuccess(res, HttpStatus.CREATED, {
-				message: RESPONSE_MESSAGES.AVAILABILITY.CREATED,
+			return sendSuccess(res, HttpStatus.OK, {
+				message: RESPONSE_MESSAGES.AVAILABILITY.CONFLICT,
 				data: result,
 			});
-		}
+		},
+	);
 
-		return sendSuccess(res, HttpStatus.OK, {
-			message: RESPONSE_MESSAGES.AVAILABILITY.CONFLICT,
-			data: result,
-		});
-	});
-
-	updateAvailability = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-
+	updateAvailability = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._updateAvailabilityUseCase.execute({
 			availabilityId: (req.validated?.params as UpdateAvailabilityParams).id,
-			userId,
+			userId: req.user.id,
 			...(req.validated?.body as UpdateAvailabiltyBody),
 		});
 
@@ -87,12 +84,10 @@ export class AvailabilityController {
 		});
 	});
 
-	deleteAvailability = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-
+	deleteAvailability = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		await this._deleteAvailabilityUseCase.execute({
 			availabilityId: (req.validated?.params as AvailabilityIdParam).id,
-			userId,
+			userId: req.user.id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -100,51 +95,52 @@ export class AvailabilityController {
 		});
 	});
 
-	reenableAvailability = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-		await this._reenableAvailabilityUseCase.execute({
-			availabilityId: (req.validated?.params as AvailabilityIdParam).id,
-			userId,
-		});
+	reenableAvailability = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			await this._reenableAvailabilityUseCase.execute({
+				availabilityId: (req.validated?.params as AvailabilityIdParam).id,
+				userId: req.user.id,
+			});
 
-		return sendSuccess(res, HttpStatus.OK, {
-			message: RESPONSE_MESSAGES.AVAILABILITY.UPDATED,
-		});
-	});
-
-	checkAndReenableAvailability = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-
-		const result = await this._checkAndReenableAvailabilityUseCase.execute({
-			availabilityId: (req.validated?.params as AvailabilityIdParam).id,
-			userId,
-		});
-
-		if (result.enabled) {
 			return sendSuccess(res, HttpStatus.OK, {
 				message: RESPONSE_MESSAGES.AVAILABILITY.UPDATED,
+			});
+		},
+	);
+
+	checkAndReenableAvailability = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			const result = await this._checkAndReenableAvailabilityUseCase.execute({
+				availabilityId: (req.validated?.params as AvailabilityIdParam).id,
+				userId: req.user.id,
+			});
+
+			if (result.enabled) {
+				return sendSuccess(res, HttpStatus.OK, {
+					message: RESPONSE_MESSAGES.AVAILABILITY.UPDATED,
+					data: result,
+				});
+			}
+
+			return sendSuccess(res, HttpStatus.OK, {
+				message: RESPONSE_MESSAGES.AVAILABILITY.CONFLICT,
 				data: result,
 			});
-		}
+		},
+	);
 
-		return sendSuccess(res, HttpStatus.OK, {
-			message: RESPONSE_MESSAGES.AVAILABILITY.CONFLICT,
-			data: result,
-		});
-	});
+	getMentorAvailabilities = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			const result = await this._getMentorAvailabilitiesUseCase.execute({
+				userId: req.user.id,
+				...(req.validated?.query as GetMentorAvailabilitiesQuery),
+			});
 
-	getMentorAvailabilities = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-
-		const result = await this._getMentorAvailabilitiesUseCase.execute({
-			userId,
-			...(req.validated?.query as GetMentorAvailabilitiesQuery),
-		});
-
-		return sendSuccess(res, HttpStatus.OK, {
-			message: RESPONSE_MESSAGES.AVAILABILITY.RETRIEVED,
-			data: { availabilities: result.availabilities },
-			pagination: result.pagination,
-		});
-	});
+			return sendSuccess(res, HttpStatus.OK, {
+				message: RESPONSE_MESSAGES.AVAILABILITY.RETRIEVED,
+				data: { availabilities: result.availabilities },
+				pagination: result.pagination,
+			});
+		},
+	);
 }

@@ -1,4 +1,3 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	IGetChatsUseCase,
@@ -31,7 +30,7 @@ export class ChatController {
 		private readonly _markMessagesReadUseCase: IMarkMessagesReadUseCase,
 	) {}
 
-	getChats = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+	getChats = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getChatsUseCase.execute({
 			userId: req.user.id,
 			...(req.validated?.query as ChatQuery),
@@ -40,7 +39,7 @@ export class ChatController {
 		return sendSuccess(res, HttpStatus.OK, { data: result });
 	});
 
-	getChat = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+	getChat = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getChatUseCase.execute({
 			userId: req.user.id,
 			...(req.validated?.params as GetChatParams),
@@ -50,19 +49,17 @@ export class ChatController {
 		return sendSuccess(res, HttpStatus.OK, { data: result });
 	});
 
-	sendMessage = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const result = await this._sendMessageUseCase.execute({
-				...(req.validated?.params as ChatIdParams),
-				...(req.validated?.body as SendMessageBody),
-				senderId: req.user.id,
-			});
+	sendMessage = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const result = await this._sendMessageUseCase.execute({
+			...(req.validated?.params as ChatIdParams),
+			...(req.validated?.body as SendMessageBody),
+			senderId: req.user.id,
+		});
 
-			return sendSuccess(res, HttpStatus.CREATED, { data: result });
-		},
-	);
+		return sendSuccess(res, HttpStatus.CREATED, { data: result });
+	});
 
-	markRead = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+	markRead = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._markMessagesReadUseCase.execute({
 			...(req.validated?.params as ChatIdParams),
 			readerId: req.user.id,

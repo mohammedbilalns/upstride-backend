@@ -1,4 +1,3 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	IGetMeUseCase,
@@ -39,7 +38,7 @@ export class ProfileController {
 		private readonly _verifyChangePasswordOtpUseCase: IVerifyChangePasswordOtpUseCase,
 	) {}
 
-	getMe = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+	getMe = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const userId = req.user.id;
 		const data = await this._getMeUseCase.execute({ userId });
 
@@ -49,35 +48,31 @@ export class ProfileController {
 		});
 	});
 
-	getProfile = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const userId = req.user.id;
-			const result = await this._getProfileUseCase.execute({ userId });
+	getProfile = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const userId = req.user.id;
+		const result = await this._getProfileUseCase.execute({ userId });
 
-			return sendSuccess(res, HttpStatus.OK, {
-				message: ProfileResponseMessages.FETCH_PROFILE_SUCCESS,
-				data: result,
-			});
-		},
-	);
+		return sendSuccess(res, HttpStatus.OK, {
+			message: ProfileResponseMessages.FETCH_PROFILE_SUCCESS,
+			data: result,
+		});
+	});
 
-	updateProfile = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const userId = req.user.id;
-			const result = await this._updateProfileUseCase.execute({
-				...(req.validated?.body as UpdateProfileBody),
-				userId,
-			});
+	updateProfile = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const userId = req.user.id;
+		const result = await this._updateProfileUseCase.execute({
+			...(req.validated?.body as UpdateProfileBody),
+			userId,
+		});
 
-			return sendSuccess(res, HttpStatus.OK, {
-				message: ProfileResponseMessages.UPDATE_PROFILE_SUCCESS,
-				data: result,
-			});
-		},
-	);
+		return sendSuccess(res, HttpStatus.OK, {
+			message: ProfileResponseMessages.UPDATE_PROFILE_SUCCESS,
+			data: result,
+		});
+	});
 
 	requestChangePassword = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
+		async (req: AuthenticatedRequest, res) => {
 			const userId = req.user.id;
 
 			await this._requestChangePasswordUseCase.execute({
@@ -92,7 +87,7 @@ export class ProfileController {
 	);
 
 	verifyChangePasswordOtp = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
+		async (req: AuthenticatedRequest, res) => {
 			const userId = req.user.id;
 
 			const result = await this._verifyChangePasswordOtpUseCase.execute({
@@ -107,18 +102,16 @@ export class ProfileController {
 		},
 	);
 
-	changePassword = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const userId = req.user.id;
+	changePassword = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const userId = req.user.id;
 
-			await this._changePasswordUseCase.execute({
-				...(req.validated?.body as ChangePasswordBody),
-				userId,
-			});
+		await this._changePasswordUseCase.execute({
+			...(req.validated?.body as ChangePasswordBody),
+			userId,
+		});
 
-			return sendSuccess(res, HttpStatus.OK, {
-				message: ProfileResponseMessages.CHANGE_PASSWORD_SUCCESS,
-			});
-		},
-	);
+		return sendSuccess(res, HttpStatus.OK, {
+			message: ProfileResponseMessages.CHANGE_PASSWORD_SUCCESS,
+		});
+	});
 }

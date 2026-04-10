@@ -1,4 +1,3 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	ICreateCheckoutSessionUseCase,
@@ -28,7 +27,7 @@ export class PaymentController {
 
 	//TODO: validate the input datas properly
 	createCheckoutSession = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
+		async (req: AuthenticatedRequest, res) => {
 			const coinsBody = (req.validated?.body ??
 				req.body) as CreateCheckoutSessionBody;
 			const { coins } = coinsBody;

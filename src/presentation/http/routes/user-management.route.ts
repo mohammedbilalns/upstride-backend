@@ -4,6 +4,7 @@ import { ROUTES } from "../constants";
 import { UserManagementController } from "../controllers/user-management.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
+	BlockUserBodySchema,
 	UserIdParamSchema,
 	UsersQuerySchema,
 } from "../validators/user-management.validator";
@@ -21,7 +22,7 @@ router.get(
 
 router.patch(
 	"/:id/block",
-	validate({ params: UserIdParamSchema }),
+	validate({ params: UserIdParamSchema, body: BlockUserBodySchema }),
 	controller.blockUser,
 );
 router.patch(
