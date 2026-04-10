@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import type { z } from "zod";
 import type { ICancelBookingUseCase } from "../../../application/modules/booking-management/use-cases/cancel-booking.usecase.interface";
 import type { ICancelBookingByMentorUseCase } from "../../../application/modules/booking-management/use-cases/cancel-booking-by-mentor.usecase.interface";
 import type { ICreateBookingUseCase } from "../../../application/modules/booking-management/use-cases/create-booking.usecase.interface";
@@ -14,13 +13,15 @@ import { TYPES } from "../../../shared/types/types";
 import { RESPONSE_MESSAGES } from "../constants/response-messages";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
-	bookingDetailsSchema,
-	bookingListSchema,
-	cancelBookingSchema,
-	createBookingSchema,
-	getAvailableSlotsSchema,
-	repayBookingSchema,
-} from "../validators/booking.validator";
+	bookingDetailsParams,
+	bookingListQuery,
+	cancelBookingParams,
+	cancellBookingBody,
+	createBookingBody,
+	getAvaialableSlotsParams,
+	getAvailableSlotsQuery,
+	repayBookingParams,
+} from "../validators";
 
 @injectable()
 export class BookingController {
@@ -44,15 +45,11 @@ export class BookingController {
 	) {}
 
 	getAvailableSlots = asyncHandler(async (req, res) => {
-		const { params, query } = req.validated as {
-			params: z.infer<typeof getAvailableSlotsSchema.params>;
-			query: z.infer<typeof getAvailableSlotsSchema.query>;
-		};
 		const requesterUserId = (req as AuthenticatedRequest).user.id;
 
 		const result = await this._getAvailableSlotsUseCase.execute({
-			mentorId: params.mentorId,
-			date: query.date,
+			...(req.validated?.params as getAvaialableSlotsParams),
+			...(req.validated?.query as getAvailableSlotsQuery),
 			requesterUserId,
 		});
 
@@ -64,17 +61,10 @@ export class BookingController {
 
 	createBooking = asyncHandler(async (req, res) => {
 		const menteeId = (req as AuthenticatedRequest).user.id;
-		const { body } = req.validated as {
-			body: z.infer<typeof createBookingSchema.body>;
-		};
 
 		const result = await this._createBookingUseCase.execute({
 			menteeId,
-			mentorId: body.mentorId,
-			startTime: body.startTime.toISOString(),
-			endTime: body.endTime.toISOString(),
-			paymentType: body.paymentType,
-			notes: body.notes,
+			...(req.validated?.body as createBookingBody),
 		});
 
 		return sendSuccess(res, HttpStatus.CREATED, {
@@ -88,15 +78,11 @@ export class BookingController {
 
 	cancelBooking = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
-		const { params, body } = req.validated as {
-			params: z.infer<typeof cancelBookingSchema.params>;
-			body: z.infer<typeof cancelBookingSchema.body>;
-		};
 
 		const result = await this._cancelBookingUseCase.execute({
 			userId,
-			bookingId: params.id,
-			reason: body.reason,
+			bookingId: (req.validated?.params as cancelBookingParams).id,
+			...(req.validated?.body as cancellBookingBody),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -107,15 +93,11 @@ export class BookingController {
 
 	cancelBookingByMentor = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
-		const { params, body } = req.validated as {
-			params: z.infer<typeof cancelBookingSchema.params>;
-			body: z.infer<typeof cancelBookingSchema.body>;
-		};
 
 		const result = await this._cancelBookingByMentorUseCase.execute({
 			userId,
-			bookingId: params.id,
-			reason: body.reason,
+			bookingId: (req.validated?.params as cancelBookingParams).id,
+			...(req.validated?.body as cancellBookingBody),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -126,13 +108,10 @@ export class BookingController {
 
 	repayBooking = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
-		const { params } = req.validated as {
-			params: z.infer<typeof repayBookingSchema.params>;
-		};
 
 		const result = await this._repayBookingUseCase.execute({
 			userId,
-			bookingId: params.id,
+			bookingId: (req.validated?.params as repayBookingParams).id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -143,15 +122,10 @@ export class BookingController {
 
 	getUserBookings = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
-		const { query } = req.validated as {
-			query: z.infer<typeof bookingListSchema.query>;
-		};
 
 		const result = await this._getUserBookingsUseCase.execute({
 			userId,
-			filter: query.filter,
-			page: query.page,
-			limit: query.limit,
+			...(req.validated?.query as bookingListQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -161,15 +135,9 @@ export class BookingController {
 
 	getMentorBookings = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
-		const { query } = req.validated as {
-			query: z.infer<typeof bookingListSchema.query>;
-		};
-
 		const result = await this._getMentorBookingsUseCase.execute({
 			userId,
-			filter: query.filter,
-			page: query.page,
-			limit: query.limit,
+			...(req.validated?.query as bookingListQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -179,13 +147,9 @@ export class BookingController {
 
 	getBookingDetails = asyncHandler(async (req, res) => {
 		const userId = (req as AuthenticatedRequest).user.id;
-		const { params } = req.validated as {
-			params: z.infer<typeof bookingDetailsSchema.params>;
-		};
-
 		const result = await this._getBookingDetailsUseCase.execute({
 			userId,
-			bookingId: params.id,
+			bookingId: (req.validated?.params as bookingDetailsParams).id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
