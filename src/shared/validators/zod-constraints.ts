@@ -1,6 +1,21 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 
+const parseDateString = <T>(message: string, map: (date: Date) => T) =>
+	z.string().transform((val, ctx) => {
+		const date = new Date(val);
+		if (Number.isNaN(date.getTime())) {
+			ctx.addIssue({
+				code: "custom",
+				message,
+			});
+			return z.NEVER;
+		}
+		return map(date);
+	});
+
+const pageNumberSchema = z.coerce.number().int().positive();
+
 export const percentageSchema = z
 	.number()
 	.min(0, "Percentage must be at least 0")
@@ -22,7 +37,11 @@ export const objectIdSchema = z
 		message: "Invalid Id",
 	});
 
-export const pageSchema = z.coerce.number().int().positive().default(1);
+export const buildObjectIdParamSchema = <K extends string>(key: K) =>
+	z.object({ [key]: objectIdSchema } as Record<K, typeof objectIdSchema>);
+
+export const pageSchema = pageNumberSchema.default(1);
+export const optionalPageSchema = pageNumberSchema.optional();
 export const limitSchema = z.coerce
 	.number()
 	.int()
@@ -30,6 +49,20 @@ export const limitSchema = z.coerce
 		message: "Limit must be 10, 20, or 50",
 	})
 	.default(10);
+export const optionalLimitSchema = z.coerce
+	.number()
+	.int()
+	.min(1)
+	.max(50)
+	.optional();
+
+export const isoDateSchema = (
+	message: string = "Invalid date format provided for date parameter.",
+) => parseDateString(message, (date) => date);
+
+export const isoDateTimeStringSchema = (
+	message: string = "Must be a valid ISO 8601 datetime string",
+) => parseDateString(message, (date) => date.toISOString());
 
 export const otpSchema = z.string().min(6, "OTP must be at least 6 characters");
 

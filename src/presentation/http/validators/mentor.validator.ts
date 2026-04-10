@@ -6,8 +6,8 @@ import {
 } from "../../../domain/entities/mentor.entity";
 import { SkillLevelValues } from "../../../domain/entities/user.entity";
 import {
+	buildObjectIdParamSchema,
 	limitSchema,
-	objectIdSchema,
 	pageSchema,
 } from "../../../shared/validators";
 
@@ -74,11 +74,7 @@ export const RegisterMentorSchema = z.object({
 	yearsOfExperience: z
 		.number()
 		.min(0, "Years of experience must be at least 0"),
-	personalWebsite: z
-		.string()
-		.url("Invalid website URL")
-		.or(z.literal(""))
-		.nullish(),
+	personalWebsite: z.url("Invalid website URL").or(z.literal("")).nullish(),
 	resumeId: z.string().min(1, "Resume is required"),
 	educationalQualifications: z
 		.array(z.string().min(1))
@@ -110,11 +106,7 @@ export const ResubmitMentorSchema = z.object({
 		.number()
 		.min(0, "Years of experience must be at least 0")
 		.optional(),
-	personalWebsite: z
-		.string()
-		.url("Invalid website URL")
-		.or(z.literal(""))
-		.nullish(),
+	personalWebsite: z.url("Invalid website URL").or(z.literal("")).nullish(),
 	resumeId: z.string().min(1, "Resume is required").optional(),
 	educationalQualifications: z
 		.array(z.string().min(1))
@@ -142,7 +134,7 @@ export const ResubmitMentorSchema = z.object({
 export type ResubmitMentorBody = z.infer<typeof ResubmitMentorSchema>;
 
 export const MentorApplicationsQuerySchema = z.object({
-	page: z.coerce.number().int().positive().default(1),
+	page: pageSchema,
 	limit: limitSchema,
 	status: z.enum(["approved", "rejected", "pending"]).optional(),
 	sort: z.enum(["recent", "old", "status"]).optional().default("recent"),
@@ -175,9 +167,7 @@ export const MentorDiscoveryQuerySchema = z
 
 export type MentorDiscoveryQuery = z.infer<typeof MentorDiscoveryQuerySchema>;
 
-export const MentorIdParamSchema = z.object({
-	id: objectIdSchema,
-});
+export const MentorIdParamSchema = buildObjectIdParamSchema("id");
 
 export type MentorIdParam = z.infer<typeof MentorIdParamSchema>;
 

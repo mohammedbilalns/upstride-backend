@@ -1,28 +1,23 @@
 import { z } from "zod";
-import { objectIdSchema } from "../../../shared/validators";
+import {
+	buildObjectIdParamSchema,
+	isoDateSchema,
+	isoDateTimeStringSchema,
+	objectIdSchema,
+	pageSchema,
+} from "../../../shared/validators";
 
 const BookingIdSchema = z.string().min(1, "Booking ID is required");
 
-export const GetAvaialableSlotsParamsSchema = z.object({
-	mentorId: objectIdSchema,
-});
+export const GetAvaialableSlotsParamsSchema =
+	buildObjectIdParamSchema("mentorId");
 
 export type GetAvaialableSlotsParams = z.infer<
 	typeof GetAvaialableSlotsParamsSchema
 >;
 
 export const GetAvailableSlotsQuerySchema = z.object({
-	date: z.string().transform((val, ctx) => {
-		const date = new Date(val);
-		if (isNaN(date.getTime())) {
-			ctx.addIssue({
-				code: "custom",
-				message: "Invalid date format provided for date parameter.",
-			});
-			return z.NEVER;
-		}
-		return date;
-	}),
+	date: isoDateSchema(),
 });
 
 export type GetAvailableSlotsQuery = z.infer<
@@ -31,28 +26,8 @@ export type GetAvailableSlotsQuery = z.infer<
 
 export const CreateBookingBodySchema = z.object({
 	mentorId: objectIdSchema,
-	startTime: z.string().transform((val, ctx) => {
-		const date = new Date(val);
-		if (isNaN(date.getTime())) {
-			ctx.addIssue({
-				code: "custom",
-				message: "Must be a valid ISO 8601 datetime string",
-			});
-			return z.NEVER;
-		}
-		return date.toISOString();
-	}),
-	endTime: z.string().transform((val, ctx) => {
-		const date = new Date(val);
-		if (isNaN(date.getTime())) {
-			ctx.addIssue({
-				code: "custom",
-				message: "Must be a valid ISO 8601 datetime string",
-			});
-			return z.NEVER;
-		}
-		return date.toISOString();
-	}),
+	startTime: isoDateTimeStringSchema(),
+	endTime: isoDateTimeStringSchema(),
 	paymentType: z.enum(["COINS", "STRIPE"]),
 	notes: z.string().optional(),
 });
@@ -87,7 +62,7 @@ export const BookingDetailsParamsSchema = z.object({
 export type BookingDetailsParams = z.infer<typeof BookingDetailsParamsSchema>;
 
 export const BookingListQuerySchema = z.object({
-	page: z.coerce.number().int().positive().default(1),
+	page: pageSchema,
 	limit: z.coerce
 		.number()
 		.int()

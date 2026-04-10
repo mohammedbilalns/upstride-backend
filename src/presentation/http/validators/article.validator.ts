@@ -1,20 +1,20 @@
 import { z } from "zod";
 import { ArticleReactionTypeValues } from "../../../domain/entities/article-reaction.entity";
-import { objectIdSchema, pageSchema } from "../../../shared/validators";
+import {
+	buildObjectIdParamSchema,
+	objectIdSchema,
+	pageSchema,
+} from "../../../shared/validators";
 
 export const GetArticleParamSchema = z.object({
 	slug: z.string().trim().min(1, "Slug is required"),
 });
 export type GetArticleParam = z.infer<typeof GetArticleParamSchema>;
 
-export const ArticleIdParamSchema = z.object({
-	articleId: objectIdSchema,
-});
+export const ArticleIdParamSchema = buildObjectIdParamSchema("articleId");
 export type ArticleIdParam = z.infer<typeof ArticleIdParamSchema>;
 
-export const CommentIdParamSchema = z.object({
-	commentId: objectIdSchema,
-});
+export const CommentIdParamSchema = buildObjectIdParamSchema("commentId");
 export type CommentIdParam = z.infer<typeof CommentIdParamSchema>;
 
 export const CreateArticleBodySchema = z.object({

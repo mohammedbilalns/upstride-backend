@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
+	buildObjectIdParamSchema,
 	limitSchema,
 	pageSchema,
-	useridSchema,
 } from "../../../shared/validators";
 
 export const UsersQuerySchema = z.object({
@@ -15,9 +15,7 @@ export const UsersQuerySchema = z.object({
 });
 export type UsersQuery = z.infer<typeof UsersQuerySchema>;
 
-export const UserIdParamSchema = z.object({
-	id: useridSchema,
-});
+export const UserIdParamSchema = buildObjectIdParamSchema("id");
 
 export type UserIdParam = z.infer<typeof UserIdParamSchema>;
 

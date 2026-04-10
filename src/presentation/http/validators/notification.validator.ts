@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { objectIdSchema, pageSchema } from "../../../shared/validators";
+import {
+	buildObjectIdParamSchema,
+	pageSchema,
+} from "../../../shared/validators";
 
 export const NotificationsQuerySchema = z.object({
 	page: pageSchema,
@@ -8,8 +11,7 @@ export const NotificationsQuerySchema = z.object({
 
 export type NotificationsQuery = z.infer<typeof NotificationsQuerySchema>;
 
-export const NotificationIdParamSchema = z.object({
-	notificationId: objectIdSchema,
-});
+export const NotificationIdParamSchema =
+	buildObjectIdParamSchema("notificationId");
 
 export type NotificationIdParam = z.infer<typeof NotificationIdParamSchema>;

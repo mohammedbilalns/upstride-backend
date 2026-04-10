@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { objectIdSchema, pageSchema } from "../../../shared/validators";
+import {
+	buildObjectIdParamSchema,
+	objectIdSchema,
+	pageSchema,
+} from "../../../shared/validators";
 
 export const ChatQuerySchema = z.object({
 	page: pageSchema,
@@ -14,15 +18,11 @@ export const GetChatQuerySchema = z.object({
 
 export type GetChatQuery = z.infer<typeof GetChatQuerySchema>;
 
-export const GetChatParamsSchema = z.object({
-	otherUserId: objectIdSchema,
-});
+export const GetChatParamsSchema = buildObjectIdParamSchema("otherUserId");
 
 export type GetChatParams = z.infer<typeof GetChatParamsSchema>;
 
-export const ChatIdParamSchema = z.object({
-	chatId: objectIdSchema,
-});
+export const ChatIdParamSchema = buildObjectIdParamSchema("chatId");
 
 export type ChatIdParams = z.infer<typeof ChatIdParamSchema>;
 

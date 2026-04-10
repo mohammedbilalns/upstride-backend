@@ -4,6 +4,7 @@ import {
 	ReportTargetTypeValues,
 } from "../../../domain/entities/report.entity";
 import {
+	buildObjectIdParamSchema,
 	limitSchema,
 	objectIdSchema,
 	pageSchema,
@@ -26,27 +27,19 @@ export const ReportBodySchema = z.object({
 
 export type ReportBody = z.infer<typeof ReportBodySchema>;
 
-export const ReportArticleParamSchema = z.object({
-	articleId: objectIdSchema,
-});
+export const ReportArticleParamSchema = buildObjectIdParamSchema("articleId");
 
 export type ReportArticleParam = z.infer<typeof ReportArticleParamSchema>;
 
-export const ReportUserParamSchema = z.object({
-	userId: objectIdSchema,
-});
+export const ReportUserParamSchema = buildObjectIdParamSchema("userId");
 
 export type ReportUserParam = z.infer<typeof ReportUserParamSchema>;
 
-export const ReportIdParamSchema = z.object({
-	reportId: objectIdSchema,
-});
+export const ReportIdParamSchema = buildObjectIdParamSchema("reportId");
 
 export type ReportIdParam = z.infer<typeof ReportIdParamSchema>;
 
-export const BlockArticleParamSchema = z.object({
-	articleId: objectIdSchema,
-});
+export const BlockArticleParamSchema = buildObjectIdParamSchema("articleId");
 
 export type BlockArticleParam = z.infer<typeof BlockArticleParamSchema>;
 

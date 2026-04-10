@@ -1,8 +1,9 @@
 import { z } from "zod";
-
-const ObjectIdSchema = z
-	.string()
-	.regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");
+import {
+	buildObjectIdParamSchema,
+	optionalLimitSchema,
+	optionalPageSchema,
+} from "../../../shared/validators";
 
 const Day = z.enum([
 	"Monday",
@@ -24,9 +25,7 @@ const toMinutes = (time: string) => {
 	return h * 60 + m;
 };
 
-export const AvailabilityIdParamSchema = z.object({
-	id: ObjectIdSchema,
-});
+export const AvailabilityIdParamSchema = buildObjectIdParamSchema("id");
 
 export type AvailabilityIdParam = z.infer<typeof AvailabilityIdParamSchema>;
 
@@ -76,7 +75,7 @@ const validateTimeRange = (
 	const end = toMinutes(value.endTime);
 	if (end <= start) {
 		ctx.addIssue({
-			code: z.ZodIssueCode.custom,
+			code: "custom",
 			message: "End time must be after start time",
 			path: ["endTime"],
 		});
@@ -84,7 +83,7 @@ const validateTimeRange = (
 	}
 	if (end - start < 60) {
 		ctx.addIssue({
-			code: z.ZodIssueCode.custom,
+			code: "custom",
 			message: "Availability must be at least 1 hour",
 			path: ["endTime"],
 		});
@@ -109,7 +108,7 @@ const validateBreakTotals = (
 	const maxBreakMinutes = workingMinutes * 0.7;
 	if (totalBreakMinutes > maxBreakMinutes) {
 		ctx.addIssue({
-			code: z.ZodIssueCode.custom,
+			code: "custom",
 			message: "Total break time cannot exceed 70% of the working window",
 			path: ["breakTimes"],
 		});
@@ -127,9 +126,7 @@ export type CreateAvailabilityBody = z.infer<
 	typeof CreateAvailabilityBodySchema
 >;
 
-export const UpdateAvailabilityParamsSchema = z.object({
-	id: ObjectIdSchema,
-});
+export const UpdateAvailabilityParamsSchema = buildObjectIdParamSchema("id");
 
 export type UpdateAvailabilityParams = z.infer<
 	typeof UpdateAvailabilityParamsSchema
@@ -164,8 +161,8 @@ export const GetMentorAvailabilitiesQuerySchema = z.object({
 		.optional()
 		.transform((val) => val === "true"),
 	status: z.enum(["active", "disabled"]).optional(),
-	page: z.coerce.number().int().min(1).optional(),
-	limit: z.coerce.number().int().min(1).max(50).optional(),
+	page: optionalPageSchema,
+	limit: optionalLimitSchema,
 });
 
 export type GetMentorAvailabilitiesQuery = z.infer<

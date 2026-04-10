@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { passwordSchema } from "../../../shared/validators";
 
 export const RequestChangePasswordBodySchema = z.object({
-	oldPassword: z.string().min(1, "Old password is required"),
+	oldPassword: passwordSchema,
 });
 
 export type RequestChangePasswordBody = z.infer<
