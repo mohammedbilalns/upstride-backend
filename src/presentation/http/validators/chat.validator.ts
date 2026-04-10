@@ -6,17 +6,25 @@ export const ChatQuerySchema = z.object({
 	filter: z.enum(["read", "unread", "all"]).default("all"),
 });
 
-export const ChatMessagesQuerySchema = z.object({
+export type ChatQuery = z.infer<typeof ChatQuerySchema>;
+
+export const GetChatQuerySchema = z.object({
 	page: pageSchema,
 });
 
-export const OtherUserParamSchema = z.object({
+export type GetChatQuery = z.infer<typeof GetChatQuerySchema>;
+
+export const GetChatParamsSchema = z.object({
 	otherUserId: objectIdSchema,
 });
+
+export type GetChatParams = z.infer<typeof GetChatParamsSchema>;
 
 export const ChatIdParamSchema = z.object({
 	chatId: objectIdSchema,
 });
+
+export type ChatIdParams = z.infer<typeof ChatIdParamSchema>;
 
 export const SendMessageBodySchema = z
 	.object({
@@ -28,3 +36,5 @@ export const SendMessageBodySchema = z
 	.refine((data) => data.content || data.mediaId, {
 		message: "Message content or media is required",
 	});
+
+export type SendMessageBody = z.infer<typeof SendMessageBodySchema>;

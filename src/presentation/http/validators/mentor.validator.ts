@@ -193,3 +193,7 @@ export const UpdateMentorProfileBodySchema = z.object({
 	addSkills: z.array(SkillItemSchema).optional(),
 	addEducationalQualifications: z.array(z.string().min(1)).optional(),
 });
+
+export type UpdateMentorProfileBody = z.infer<
+	typeof UpdateMentorProfileBodySchema
+>;

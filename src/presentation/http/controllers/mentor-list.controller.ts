@@ -15,8 +15,8 @@ import { asyncHandler, sendSuccess } from "../helpers";
 import type {
 	AddMentorToListBody,
 	CreateMentorListBody,
-	MentorIdParam,
 	MentorListIdParam,
+	RemoveMentorFromListParams,
 } from "../validators/mentor-list.validator";
 
 @injectable()
@@ -45,10 +45,9 @@ export class MentorListController {
 	});
 
 	getList = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const { listId } = req.validated?.params as MentorListIdParam;
 		const data = await this._getMentorListUseCase.execute({
 			userId: req.user.id,
-			listId,
+			...(req.validated?.params as MentorListIdParam),
 		});
 
 		sendSuccess(res, HttpStatus.OK, { data });
@@ -56,11 +55,9 @@ export class MentorListController {
 
 	createList = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const body = req.validated?.body as CreateMentorListBody;
 			const data = await this._createMentorListUseCase.execute({
 				userId: req.user.id,
-				name: body.name,
-				description: body.description,
+				...(req.validated?.body as CreateMentorListBody),
 			});
 
 			sendSuccess(res, HttpStatus.CREATED, { data });
@@ -68,12 +65,10 @@ export class MentorListController {
 	);
 
 	addMentor = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const { listId } = req.validated?.params as MentorListIdParam;
-		const body = req.validated?.body as AddMentorToListBody;
 		await this._addMentorToListUseCase.execute({
 			userId: req.user.id,
-			listId,
-			mentorId: body.mentorId,
+			...(req.validated?.params as MentorListIdParam),
+			...(req.validated?.body as AddMentorToListBody),
 		});
 
 		sendSuccess(res, HttpStatus.OK);
@@ -81,12 +76,9 @@ export class MentorListController {
 
 	removeMentor = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { listId, mentorId } = req.validated?.params as MentorListIdParam &
-				MentorIdParam;
 			await this._removeMentorFromListUseCase.execute({
 				userId: req.user.id,
-				listId,
-				mentorId,
+				...(req.validated?.params as RemoveMentorFromListParams),
 			});
 
 			sendSuccess(res, HttpStatus.OK);
@@ -95,10 +87,9 @@ export class MentorListController {
 
 	deleteList = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { listId } = req.validated?.params as MentorListIdParam;
 			await this._deleteMentorListUseCase.execute({
 				userId: req.user.id,
-				listId,
+				...(req.validated?.params as MentorListIdParam),
 			});
 
 			sendSuccess(res, HttpStatus.OK);

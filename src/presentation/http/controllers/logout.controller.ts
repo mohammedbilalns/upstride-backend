@@ -1,3 +1,4 @@
+import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	IGetActiveSessionsUseCase,
@@ -26,10 +27,10 @@ export class LogoutController {
 		private _getActiveSessionsUseCase: IGetActiveSessionsUseCase,
 	) {}
 
-	logout = asyncHandler(async (req, res) => {
-		const sessionId = (req as AuthenticatedRequest).user.sid;
-
-		await this._logoutUseCase.execute({ sessionId });
+	logout = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+		await this._logoutUseCase.execute({
+			sessionId: req.user.sid,
+		});
 
 		res.clearCookie("refreshToken", {
 			httpOnly: true,
@@ -42,46 +43,47 @@ export class LogoutController {
 		});
 	});
 
-	revokeSession = asyncHandler(async (req, res) => {
-		const requesterUserId = (req as AuthenticatedRequest).user.id;
+	revokeSession = asyncHandler(
+		async (req: AuthenticatedRequest, res: Response) => {
+			await this._revokeSessionUseCase.execute({
+				requesterUserId: req.user.id,
+				...(req.validated?.body as RevokeSessionBody),
+			});
 
-		await this._revokeSessionUseCase.execute({
-			requesterUserId,
-			...(req.validated?.body as RevokeSessionBody),
-		});
+			sendSuccess(res, HttpStatus.OK, {
+				message: AuthResponseMessages.SESSION_REVOKED,
+			});
+		},
+	);
 
-		sendSuccess(res, HttpStatus.OK, {
-			message: AuthResponseMessages.SESSION_REVOKED,
-		});
-	});
+	revokeAllOtherSessions = asyncHandler(
+		async (req: AuthenticatedRequest, res: Response) => {
+			const { id: requesterUserId, sid: requesterSessionId } = req.user;
 
-	revokeAllOtherSessions = asyncHandler(async (req, res) => {
-		const { id: requesterUserId, sid: requesterSessionId } = (
-			req as AuthenticatedRequest
-		).user;
+			await this._revokeAllOtherSessionsUseCase.execute({
+				requesterUserId,
+				requesterSessionId,
+			});
 
-		await this._revokeAllOtherSessionsUseCase.execute({
-			requesterUserId,
-			requesterSessionId,
-		});
+			sendSuccess(res, HttpStatus.OK, {
+				message: AuthResponseMessages.ALL_OTHER_SESSIONS_REVOKED,
+			});
+		},
+	);
 
-		sendSuccess(res, HttpStatus.OK, {
-			message: AuthResponseMessages.ALL_OTHER_SESSIONS_REVOKED,
-		});
-	});
+	getActiveSessions = asyncHandler(
+		async (req: AuthenticatedRequest, res: Response) => {
+			const { id: userId, sid: currentSessionId } = req.user;
 
-	getActiveSessions = asyncHandler(async (req, res) => {
-		const { id: userId, sid: currentSessionId } = (req as AuthenticatedRequest)
-			.user;
+			const data = await this._getActiveSessionsUseCase.execute(
+				{ userId },
+				currentSessionId,
+			);
 
-		const data = await this._getActiveSessionsUseCase.execute(
-			{ userId },
-			currentSessionId,
-		);
-
-		sendSuccess(res, HttpStatus.OK, {
-			message: AuthResponseMessages.FETCH_SESSIONS_SUCCESS,
-			data,
-		});
-	});
+			sendSuccess(res, HttpStatus.OK, {
+				message: AuthResponseMessages.FETCH_SESSIONS_SUCCESS,
+				data,
+			});
+		},
+	);
 }

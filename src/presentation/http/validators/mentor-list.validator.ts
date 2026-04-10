@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { objectIdSchema } from "../../../shared/validators";
 
 export const MentorListIdParamSchema = z.object({
 	listId: z.string().min(1, "List ID is required"),
@@ -29,3 +30,12 @@ export const AddMentorToListBodySchema = z.object({
 	mentorId: z.string().min(1, "Mentor ID is required"),
 });
 export type AddMentorToListBody = z.infer<typeof AddMentorToListBodySchema>;
+
+export const RemoveMentorFromListParamsSchema = z.object({
+	listId: objectIdSchema,
+	mentorId: objectIdSchema,
+});
+
+export type RemoveMentorFromListParams = z.infer<
+	typeof RemoveMentorFromListParamsSchema
+>;
