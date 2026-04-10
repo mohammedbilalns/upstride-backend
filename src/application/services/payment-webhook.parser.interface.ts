@@ -1,19 +1,7 @@
-import type { PaymentProvider } from "../../domain/entities/payment-transactions.entity";
-
-export type PaymentWebhookEventType =
-	| "checkout.session.completed"
-	| "checkout.session.expired"
-	| "checkout.session.async_payment_failed";
-
-export interface PaymentWebhookEvent {
-	type: PaymentWebhookEventType;
-	provider: PaymentProvider;
-	sessionId: string;
-	userId?: string;
-	coins: number;
-	amountMinor: number;
-	currency: string;
-}
+import type {
+	PaymentEventPayload,
+	PaymentEventType,
+} from "../../domain/events/payment-event-payload";
 
 export interface PaymentWebhookParseInput {
 	signature: string;
@@ -21,5 +9,8 @@ export interface PaymentWebhookParseInput {
 }
 
 export interface IPaymentWebhookParser {
-	parse(input: PaymentWebhookParseInput): Promise<PaymentWebhookEvent | null>;
+	parse(input: PaymentWebhookParseInput): Promise<PaymentEventPayload | null>;
 }
+
+export type PaymentWebhookEvent = PaymentEventPayload;
+export type PaymentWebhookEventType = PaymentEventType;

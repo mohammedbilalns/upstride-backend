@@ -1,4 +1,3 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	IGetChatsUseCase,
@@ -10,6 +9,13 @@ import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	ChatIdParams,
+	ChatQuery,
+	GetChatParams,
+	GetChatQuery,
+	SendMessageBody,
+} from "../validators";
 
 @injectable()
 export class ChatController {
@@ -24,52 +30,38 @@ export class ChatController {
 		private readonly _markMessagesReadUseCase: IMarkMessagesReadUseCase,
 	) {}
 
-	getChats = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const query = (req.validated?.query ?? {}) as Record<string, unknown>;
+	getChats = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getChatsUseCase.execute({
 			userId: req.user.id,
-			...query,
+			...(req.validated?.query as ChatQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, { data: result });
 	});
 
-	getChat = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const { otherUserId } = req.validated?.params as { otherUserId: string };
-		const query = (req.validated?.query ?? {}) as Record<string, unknown>;
+	getChat = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getChatUseCase.execute({
 			userId: req.user.id,
-			otherUserId,
-			...query,
+			...(req.validated?.params as GetChatParams),
+			...(req.validated?.query as GetChatQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, { data: result });
 	});
 
-	sendMessage = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const { chatId } = req.validated?.params as { chatId: string };
-			const body = (req.validated?.body ?? {}) as Record<string, unknown>;
+	sendMessage = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const result = await this._sendMessageUseCase.execute({
+			...(req.validated?.params as ChatIdParams),
+			...(req.validated?.body as SendMessageBody),
+			senderId: req.user.id,
+		});
 
-			const result = await this._sendMessageUseCase.execute({
-				chatId,
-				senderId: req.user.id,
-				content: (body.content as string | undefined) ?? null,
-				mediaId: (body.mediaId as string | undefined) ?? null,
-				messageType:
-					(body.messageType as "TEXT" | "IMAGE" | "FILE" | undefined) ??
-					undefined,
-				repliedTo: (body.repliedTo as string | undefined) ?? null,
-			});
+		return sendSuccess(res, HttpStatus.CREATED, { data: result });
+	});
 
-			return sendSuccess(res, HttpStatus.CREATED, { data: result });
-		},
-	);
-
-	markRead = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const { chatId } = req.validated?.params as { chatId: string };
+	markRead = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._markMessagesReadUseCase.execute({
-			chatId,
+			...(req.validated?.params as ChatIdParams),
 			readerId: req.user.id,
 		});
 

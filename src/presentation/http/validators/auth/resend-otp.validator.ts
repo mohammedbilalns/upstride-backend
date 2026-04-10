@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const resendOtpBodySchema = z.object({
+export const ResendOtpBodySchema = z.object({
 	email: z.email(),
 });
 
-export type ResendOtpBody = z.infer<typeof resendOtpBodySchema>;
+export type ResendOtpBody = z.infer<typeof ResendOtpBodySchema>;

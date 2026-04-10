@@ -12,6 +12,7 @@ import type {
 	GetChatInput,
 	GetChatOutput,
 } from "../dtos/chat.dto";
+import { ChatNotFoundError } from "../errors";
 import { ChatMapper } from "../mappers/chat.mapper";
 import { ChatMessageMapper } from "../mappers/chat-message.mapper";
 import type { IGetChatUseCase } from "./get-chat.usecase.interface";
@@ -38,10 +39,13 @@ export class GetChatUseCase implements IGetChatUseCase {
 				input.otherUserId,
 			);
 
+		if (!existing) {
+			throw new ChatNotFoundError();
+		}
+
 		const usersByIdRaw = new Map(users.map((user) => [user.id, user]));
 		const usersById = new Map<string, ChatUserDto>();
 
-		// Always ensure we have receiver info, even if chat doesn't exist yet
 		let receiverDto: ChatUserDto | null = null;
 		const receiverUser = usersByIdRaw.get(input.otherUserId);
 
@@ -53,10 +57,10 @@ export class GetChatUseCase implements IGetChatUseCase {
 				id: receiverUser.id,
 				name: receiverUser.name,
 				profilePictureUrl,
+				role: receiverUser.role ?? "USER",
 			};
 			usersById.set(receiverUser.id, receiverDto);
 		} else {
-			// Fetch receiver independently if not returned by repo
 			const user = await this._userRepository.findById(input.otherUserId);
 			if (user) {
 				const profilePictureUrl = user.profilePictureId
@@ -66,18 +70,19 @@ export class GetChatUseCase implements IGetChatUseCase {
 					id: user.id,
 					name: user.name,
 					profilePictureUrl,
+					role: user.role ?? "USER",
 				};
 				usersById.set(user.id, receiverDto);
 			}
 		}
 
-		// Ensure sender info is also in usersById for mapping
 		const senderUser = usersByIdRaw.get(input.userId);
 		if (senderUser) {
 			usersById.set(senderUser.id, {
 				id: senderUser.id,
 				name: senderUser.name,
 				profilePictureUrl: null,
+				role: senderUser.role ?? "USER",
 			});
 		} else {
 			const user = await this._userRepository.findById(input.userId);
@@ -86,20 +91,9 @@ export class GetChatUseCase implements IGetChatUseCase {
 					id: user.id,
 					name: user.name,
 					profilePictureUrl: null,
+					role: user.role ?? "USER",
 				});
 			}
-		}
-
-		if (!existing) {
-			return {
-				chat: null,
-				receiver: receiverDto,
-				messages: [],
-				total: 0,
-				page: 1,
-				limit: CHAT_MESSAGES_PAGE_SIZE,
-				totalPages: 0,
-			};
 		}
 
 		const result = await this._chatMessageRepository.paginate({

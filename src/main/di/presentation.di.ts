@@ -14,13 +14,11 @@ import {
 	PaymentController,
 	PlatformSettingsController,
 	ProfileController,
-	RecurringRuleController,
 	ReportController,
-	SessionBookingController,
-	SessionSlotController,
 	UserManagementController,
 	WalletController,
 } from "../../presentation/http/controllers";
+
 import { WebSocketServer } from "../../presentation/websocket/socket-server";
 import { TYPES } from "../../shared/types/types";
 
@@ -51,12 +49,6 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(TYPES.Controllers.MentorList).to(MentorListController);
 	container.bind(NotificationController).to(NotificationController);
 	container.bind(TYPES.Controllers.Notification).to(NotificationController);
-	container.bind(RecurringRuleController).to(RecurringRuleController);
-	container.bind(TYPES.Controllers.RecurringRule).to(RecurringRuleController);
-	container.bind(SessionBookingController).to(SessionBookingController);
-	container.bind(TYPES.Controllers.SessionBooking).to(SessionBookingController);
-	container.bind(SessionSlotController).to(SessionSlotController);
-	container.bind(TYPES.Controllers.SessionSlot).to(SessionSlotController);
 	container.bind(PaymentController).to(PaymentController);
 	container.bind(TYPES.Controllers.Payment).to(PaymentController);
 	container.bind(PlatformSettingsController).to(PlatformSettingsController);

@@ -26,32 +26,8 @@ export class MongoSessionRepository
 		return this.createDocument(session);
 	}
 
-	async findByOwnerId(ownerId: string): Promise<Session | null> {
-		const doc = await this.model.findOne({ userId: ownerId }).lean();
-		return doc ? this.toDomain(doc as SessionDocument) : null;
-	}
-
 	async findBySid(sid: string): Promise<Session | null> {
 		const doc = await this.model.findOne({ sid }).lean();
-		return doc ? this.toDomain(doc as SessionDocument) : null;
-	}
-
-	async updateByOwnerId(
-		ownerId: string,
-		update: Partial<Session>,
-	): Promise<Session | null> {
-		const doc = await this.model
-			.findOneAndUpdate({ userId: ownerId }, update, {
-				returnDocument: "after",
-			})
-			.lean();
-		return doc ? this.toDomain(doc as SessionDocument) : null;
-	}
-
-	async findByTokenHash(tokenHash: string): Promise<Session | null> {
-		const doc = await this.model
-			.findOne({ refreshTokenHash: tokenHash })
-			.lean();
 		return doc ? this.toDomain(doc as SessionDocument) : null;
 	}
 

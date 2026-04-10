@@ -2,7 +2,7 @@ import { injectable } from "inversify";
 import type { SavedMentor } from "../../../../domain/entities/saved-mentor.entity";
 import type { MentorDiscoveryDetails } from "../../../../domain/repositories/mentor.repository.types";
 import type { ISavedMentorRepository } from "../../../../domain/repositories/saved-mentor.repository.interface";
-import { MentorMapper } from "../mappers/mentor.mapper";
+import { buildMentorDiscoveryDetails } from "../mappers/mentor-details.mapper";
 import { SavedMentorMapper } from "../mappers/saved-mentor.mapper";
 import type { MentorDocument } from "../models/mentor.model";
 import {
@@ -63,56 +63,7 @@ export class MongoSavedMentorRepository
 			.map((doc) => doc.mentorId as unknown as MentorDocument | undefined)
 			.filter((mentorDoc): mentorDoc is MentorDocument => Boolean(mentorDoc));
 
-		return mentors.map((mentorDoc) => {
-			const mentor = MentorMapper.toDomain(mentorDoc);
-			return {
-				...mentor,
-				user: mentorDoc.userId as unknown as {
-					name: string;
-					profilePictureId?: string;
-				},
-				currentRoleDetails: mentorDoc.currentRoleId as unknown as {
-					name: string;
-				},
-				categories: (mentorDoc.areasOfExpertise || []).map((item: unknown) => {
-					const category = item as {
-						_id?: { toString?: () => string };
-						id?: { toString?: () => string };
-						name?: string;
-						toString?: () => string;
-					};
-					return {
-						id:
-							category._id?.toString?.() ||
-							category.id?.toString?.() ||
-							category.toString?.() ||
-							"",
-						name: category.name,
-					};
-				}),
-				skills: (mentorDoc.toolsAndSkills || [])
-					.slice(0, 3)
-					.map((item: { skillId?: unknown }) => {
-						const skill = item.skillId as
-							| {
-									_id?: { toString?: () => string };
-									id?: { toString?: () => string };
-									name?: string;
-									toString?: () => string;
-							  }
-							| undefined;
-						return {
-							id:
-								skill?._id?.toString?.() ||
-								skill?.id?.toString?.() ||
-								skill?.toString?.() ||
-								"",
-							name: skill?.name,
-						};
-					})
-					.filter((skill) => skill.id),
-			} as MentorDiscoveryDetails;
-		});
+		return mentors.map((mentorDoc) => buildMentorDiscoveryDetails(mentorDoc));
 	}
 
 	async countByListId(listId: string): Promise<number> {

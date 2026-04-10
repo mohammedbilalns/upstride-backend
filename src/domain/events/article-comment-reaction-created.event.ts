@@ -1,18 +1,21 @@
 import type { ArticleReactionType } from "../entities/article-reaction.entity";
-import type { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
 
-export class ArticleCommentReactionCreatedEvent implements AppEvent {
+export class ArticleCommentReactionCreatedEvent extends AppEvent {
 	readonly eventName = "article.comment.reaction.created";
-	readonly occurredAt = new Date();
 
 	constructor(
-		public readonly articleId: string,
-		public readonly articleSlug: string,
-		public readonly articleAuthorId: string,
-		public readonly commentId: string,
-		public readonly reactionType: ArticleReactionType,
-		public readonly actorId: string,
-		public readonly actorName: string,
-		public readonly count: number,
-	) {}
+		public readonly payload: {
+			articleId: string;
+			articleSlug: string;
+			articleAuthorId: string;
+			commentId: string;
+			reactionType: ArticleReactionType;
+			actorId: string;
+			actorName: string;
+			count: number;
+		},
+	) {
+		super();
+	}
 }

@@ -61,6 +61,7 @@ export interface GetArticlesInput {
 	ids?: string[];
 	limit?: number;
 	isAdminView?: boolean;
+	status?: "active" | "blocked";
 }
 
 export interface GetArticlesOutput {
@@ -127,7 +128,7 @@ export interface ReactToArticleInput {
 }
 
 export interface ReactToArticleOutput {
-	reaction: ArticleReactionDto;
+	reaction: ArticleReactionDto | null;
 }
 
 export interface ReactToArticleCommentInput {
@@ -137,5 +138,5 @@ export interface ReactToArticleCommentInput {
 }
 
 export interface ReactToArticleCommentOutput {
-	reaction: ArticleReactionDto;
+	reaction: ArticleReactionDto | null;
 }

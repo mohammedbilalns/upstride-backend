@@ -70,7 +70,10 @@ export class MongoArticleRepository
 		limit: number = 10,
 		excludeAuthorId?: string,
 	): Promise<{ tag: string; count: number }[]> {
-		const match: any = { isActive: true, isArchived: false };
+		const match: Record<string, unknown> = {
+			isActive: true,
+			isArchived: false,
+		};
 		if (excludeAuthorId) {
 			match.authorId = { $ne: new Types.ObjectId(excludeAuthorId) };
 		}
@@ -144,6 +147,9 @@ export class MongoArticleRepository
 			}),
 			...(query.isActive !== undefined && { isActive: query.isActive }),
 			...(query.isArchived !== undefined && { isArchived: query.isArchived }),
+			...(query.isBlockedByAdmin !== undefined && {
+				isBlockedByAdmin: query.isBlockedByAdmin,
+			}),
 			...(query.ids && {
 				_id: { $in: query.ids.map((id) => new Types.ObjectId(id)) },
 			}),

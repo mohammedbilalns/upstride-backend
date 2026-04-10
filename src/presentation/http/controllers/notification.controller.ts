@@ -1,4 +1,3 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	IGetNotificationsUseCase,
@@ -10,6 +9,7 @@ import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type { NotificationIdParam, NotificationsQuery } from "../validators";
 
 @injectable()
 export class NotificationController {
@@ -24,47 +24,37 @@ export class NotificationController {
 		private readonly _getUnreadNotificationCountUseCase: IGetUnreadNotificationCountUseCase,
 	) {}
 
-	getNotifications = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const query = (req.validated?.query ?? {}) as Record<string, unknown>;
-			const result = await this._getNotificationsUseCase.execute({
-				userId: req.user.id,
-				...query,
-			});
-
-			return sendSuccess(res, HttpStatus.OK, { data: result });
-		},
-	);
-
-	markRead = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const { notificationId } = req.validated?.params as {
-			notificationId: string;
-		};
-		const result = await this._markNotificationReadUseCase.execute({
+	getNotifications = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const result = await this._getNotificationsUseCase.execute({
 			userId: req.user.id,
-			notificationId,
+			...(req.validated?.query as NotificationsQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, { data: result });
 	});
 
-	markAllRead = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const result = await this._markAllNotificationsReadUseCase.execute({
-				userId: req.user.id,
-			});
+	markRead = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const result = await this._markNotificationReadUseCase.execute({
+			userId: req.user.id,
+			...(req.validated?.params as NotificationIdParam),
+		});
 
-			return sendSuccess(res, HttpStatus.OK, { data: result });
-		},
-	);
+		return sendSuccess(res, HttpStatus.OK, { data: result });
+	});
 
-	getUnreadCount = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const result = await this._getUnreadNotificationCountUseCase.execute({
-				userId: req.user.id,
-			});
+	markAllRead = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const result = await this._markAllNotificationsReadUseCase.execute({
+			userId: req.user.id,
+		});
 
-			return sendSuccess(res, HttpStatus.OK, { data: result });
-		},
-	);
+		return sendSuccess(res, HttpStatus.OK, { data: result });
+	});
+
+	getUnreadCount = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const result = await this._getUnreadNotificationCountUseCase.execute({
+			userId: req.user.id,
+		});
+
+		return sendSuccess(res, HttpStatus.OK, { data: result });
+	});
 }

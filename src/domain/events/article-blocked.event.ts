@@ -1,10 +1,14 @@
-import { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
 
 export class ArticleBlockedEvent extends AppEvent {
+	readonly eventName = "article.blocked";
+
 	constructor(
-		public readonly articleId: string,
-		public readonly authorId: string,
-		public readonly reason: string,
+		public readonly payload: {
+			articleId: string;
+			authorId: string;
+			reason: string;
+		},
 	) {
 		super();
 	}

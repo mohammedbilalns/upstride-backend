@@ -3,7 +3,7 @@ import type { User } from "../../../../../domain/entities/user.entity";
 import { UserRegisteredEvent } from "../../../../../domain/events/user-registered.event";
 import type { IUserRepository } from "../../../../../domain/repositories";
 import { TYPES } from "../../../../../shared/types/types";
-import type { EventBus } from "../../../../events/event-bus.interface";
+import type { IEventBus } from "../../../../events/app-event-bus.interface";
 import type {
 	IOAuthIdentityProvider,
 	ITokenService,
@@ -17,7 +17,6 @@ import { AuthenticationError, UserBlockedError } from "../../errors";
 import type { IAuthSessionService } from "../../services";
 import type { ISocialLoginUseCase } from "./social-login.usecase.interface";
 
-//FIX: responsible for both provider dispatch logic and the actual login workflow. Provider resolution should be extracted to an OAuthProviderRegistry service.
 @injectable()
 export class SocialLoginUseCase implements ISocialLoginUseCase {
 	private readonly _providers: Map<OAuthProvider, IOAuthIdentityProvider>;
@@ -33,8 +32,8 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 		private readonly _tokenService: ITokenService,
 		@inject(TYPES.Services.AuthSession)
 		private readonly _authSessionService: IAuthSessionService,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.AppEventBus)
+		private readonly _eventBus: IEventBus,
 	) {
 		this._providers = new Map([
 			[googleOAuthProvider.provider, googleOAuthProvider],
@@ -121,7 +120,10 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 			isVerified: identity.isVerified,
 		} as User);
 
-		await this._eventBus.publish(new UserRegisteredEvent(user.id, user.email));
+		await this._eventBus.publish(
+			new UserRegisteredEvent({ userId: user.id, email: user.email }),
+			{ durable: true },
+		);
 
 		return {
 			setupToken: this._tokenService.generateSetupToken({

@@ -5,6 +5,7 @@ import { ArticleCommentReactionCreatedHandler } from "../../application/events/h
 import { ArticleReactionCreatedHandler } from "../../application/events/handlers/article/article-reaction-created.handler";
 import { ArticleUnblockedHandler } from "../../application/events/handlers/article/article-unblocked.handler";
 import { ArticleUserStatusChangedHandler } from "../../application/events/handlers/article/user-status-changed.handler";
+import { SessionRefundedHandler } from "../../application/events/handlers/booking/session-refunded.handler";
 import { MessageSentHandler } from "../../application/events/handlers/chat/message-sent.handler";
 import { MentorUserStatusChangedHandler } from "../../application/events/handlers/mentor/user-status-changed.handler";
 import type { CheckoutCompletedHandler } from "../../application/events/handlers/payment/checkout-completed.handler";
@@ -17,14 +18,13 @@ import type { PlatformSettingsService } from "../../application/services/platfor
 import type { IWalletService } from "../../application/services/wallet.service.interface";
 import { WebSocketEventBridge } from "../../infrastructure/events/websocket-event-bridge";
 import { TYPES } from "../../shared/types/types";
-import { bullMQEventBus, inMemoryEventBus } from "./queues.di";
+import { appEventBus } from "./queues.di";
 
 export const bootstrapEventHandlers = (container: Container): void => {
-	// Initialize WebSocket Bridge
 	const wsBridge = new WebSocketEventBridge(
 		container.get(TYPES.Services.WebSocketServer),
 	);
-	wsBridge.register(inMemoryEventBus);
+	appEventBus.setWebSocketBridge(wsBridge);
 
 	const walletService = container.get<IWalletService>(
 		TYPES.Services.WalletService,
@@ -78,6 +78,11 @@ export const bootstrapEventHandlers = (container: Container): void => {
 			TYPES.UseCases.CreateNotification,
 		),
 	);
+	const sessionRefundedHandler = new SessionRefundedHandler(
+		container.get<ICreateNotificationUseCase>(
+			TYPES.UseCases.CreateNotification,
+		),
+	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -90,60 +95,64 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	);
 
 	// Durable (BullMQ) Bus Registrations -
-	bullMQEventBus.registerHandler(
-		"UserRegisteredEvent",
+	appEventBus.registerDurableHandler(
+		"user.registered",
 		signupHandler.handle.bind(signupHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerRealtimeHandler(
 		"chat.message.sent",
 		messageSentHandler.handle.bind(messageSentHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.comment.created",
 		articleCommentCreatedHandler.handle.bind(articleCommentCreatedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.reaction.created",
 		articleReactionCreatedHandler.handle.bind(articleReactionCreatedHandler),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"article.comment.reaction.created",
 		articleCommentReactionCreatedHandler.handle.bind(
 			articleCommentReactionCreatedHandler,
 		),
 	);
-	bullMQEventBus.registerHandler(
+	appEventBus.registerDurableHandler(
 		"profile.updated",
 		profileUpdatedHandler.handle.bind(profileUpdatedHandler),
 	);
-	bullMQEventBus.registerHandler(
-		"UserStatusChangedEvent",
+	appEventBus.registerDurableHandler(
+		"user.status.changed",
 		articleUserStatusChangedHandler.handle.bind(
 			articleUserStatusChangedHandler,
 		),
 	);
-	bullMQEventBus.registerHandler(
-		"UserStatusChangedEvent",
+	appEventBus.registerDurableHandler(
+		"user.status.changed",
 		mentorUserStatusChangedHandler.handle.bind(mentorUserStatusChangedHandler),
 	);
-	bullMQEventBus.registerHandler(
-		"ArticleBlockedEvent",
+	appEventBus.registerDurableHandler(
+		"article.blocked",
 		articleBlockedHandler.handle.bind(articleBlockedHandler),
 	);
-	bullMQEventBus.registerHandler(
-		"ArticleUnblockedEvent",
+	appEventBus.registerDurableHandler(
+		"article.unblocked",
 		articleUnblockedHandler.handle.bind(articleUnblockedHandler),
 	);
-	bullMQEventBus.registerHandler(
-		"CheckoutCompletedEvent",
-		checkoutCompletedHandler.handleEvent.bind(checkoutCompletedHandler),
+	appEventBus.registerDurableHandler(
+		"session.refunded",
+		sessionRefundedHandler.handle.bind(sessionRefundedHandler),
 	);
-	bullMQEventBus.registerHandler(
-		"CheckoutExpiredEvent",
-		checkoutExpiredHandler.handleEvent.bind(checkoutExpiredHandler),
+	appEventBus.registerDurableHandler(
+		"checkout.completed",
+		checkoutCompletedHandler.handle.bind(checkoutCompletedHandler),
 	);
-	bullMQEventBus.registerHandler(
-		"CheckoutFailedEvent",
-		checkoutFailedHandler.handleEvent.bind(checkoutFailedHandler),
+	appEventBus.registerDurableHandler(
+		"checkout.expired",
+		checkoutExpiredHandler.handle.bind(checkoutExpiredHandler),
+	);
+	appEventBus.registerDurableHandler(
+		"checkout.failed",
+		checkoutFailedHandler.handle.bind(checkoutFailedHandler),
 	);
 };

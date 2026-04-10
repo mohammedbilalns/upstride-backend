@@ -4,6 +4,8 @@ import type {
 	IArticleReactionRepository,
 	IArticleRepository,
 	IArticleViewRepository,
+	IAvailabilityRepository,
+	IBookingRepository,
 	IChatMessageRepository,
 	IChatRepository,
 	IMentorListReadRepository,
@@ -16,7 +18,10 @@ import type {
 	IReportRepository,
 	ISavedMentorRepository,
 } from "../../domain/repositories";
+
 import {
+	AvailabilityRepository,
+	BookingRepository,
 	MongoArticleCommentRepository,
 	MongoArticleReactionRepository,
 	MongoArticleRepository,
@@ -35,13 +40,11 @@ import {
 	MongoPlatformWalletRepository,
 	MongoReportRepository,
 	MongoSavedMentorRepository,
-	MongoSessionAvailabilityRepository,
-	MongoSessionBookingRepository,
 	MongoSessionRepository,
-	MongoSessionSlotRepository,
 	MongoSkillRepository,
 	MongoUserRepository,
 } from "../../infrastructure/database/mongodb/repositories";
+
 import { MongoProfessionRepository } from "../../infrastructure/database/mongodb/repositories/profession.repository";
 import { RedisOtpRepository } from "../../infrastructure/database/redis/repositories/otp.repository";
 import { RedisTokenRevocationRepository } from "../../infrastructure/database/redis/repositories/token-revocation.repository";
@@ -76,6 +79,7 @@ export const registerRepositoryBindings = (container: Container): void => {
 		.bind(TYPES.Repositories.TokenRevocationRepository)
 		.to(RedisTokenRevocationRepository)
 		.inSingletonScope();
+
 	container
 		.bind<IPlatformSettingsRepository>(
 			TYPES.Repositories.PlatformSettingsRepository,
@@ -94,6 +98,7 @@ export const registerRepositoryBindings = (container: Container): void => {
 		.bind<IProfessionRepository>(TYPES.Repositories.ProfessionRepository)
 		.to(MongoProfessionRepository)
 		.inSingletonScope();
+
 	container
 		.bind<IMentorWriteRepository>(TYPES.Repositories.MentorWriteRepository)
 		.to(MongoMentorWriteRepository)
@@ -155,15 +160,11 @@ export const registerRepositoryBindings = (container: Container): void => {
 		.to(MongoSavedMentorRepository)
 		.inSingletonScope();
 	container
-		.bind(TYPES.Repositories.SessionAvailabilityRepository)
-		.to(MongoSessionAvailabilityRepository)
+		.bind<IAvailabilityRepository>(TYPES.Repositories.AvailabilityRepository)
+		.to(AvailabilityRepository)
 		.inSingletonScope();
 	container
-		.bind(TYPES.Repositories.SessionSlotRepository)
-		.to(MongoSessionSlotRepository)
-		.inSingletonScope();
-	container
-		.bind(TYPES.Repositories.SessionBookingRepository)
-		.to(MongoSessionBookingRepository)
+		.bind<IBookingRepository>(TYPES.Repositories.BookingRepository)
+		.to(BookingRepository)
 		.inSingletonScope();
 };

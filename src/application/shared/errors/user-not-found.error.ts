@@ -1,8 +1,7 @@
-import { HttpStatus } from "../../../shared/constants";
-import { ApplicationError } from "./app-error";
+import { NotFoundError } from "./not-found-error";
 
-export class UserNotFoundError extends ApplicationError {
+export class UserNotFoundError extends NotFoundError {
 	constructor(message: string = "User not found") {
-		super(message, HttpStatus.NOT_FOUND);
+		super(message);
 	}
 }

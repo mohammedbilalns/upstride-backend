@@ -3,6 +3,8 @@ import {
 	registerAdminManagementBindings,
 	registerArticleBindings,
 	registerAuthenticationBindings,
+	registerAvailabilityBindings,
+	registerBookingBindings,
 	registerCatalogBindings,
 	registerChatBindings,
 	registerInfrastructureServiceBindings,
@@ -15,11 +17,8 @@ import {
 	registerPresentationBindings,
 	registerProfileBindings,
 	registerQueueBindings,
-	registerRecurringRuleBindings,
 	registerReportBindings,
 	registerRepositoryBindings,
-	registerSessionBookingBindings,
-	registerSessionSlotBindings,
 	registerStorageBindings,
 	registerUserManagementBindings,
 	registerWalletBindings,
@@ -39,11 +38,11 @@ registerMentorBindings(container);
 registerMentorDiscoveryBindings(container);
 registerMentorListsBindings(container);
 registerNotificationBindings(container);
-registerRecurringRuleBindings(container);
 registerReportBindings(container);
-registerSessionBookingBindings(container);
-registerSessionSlotBindings(container);
+registerAvailabilityBindings(container);
+registerBookingBindings(container);
 registerPaymentsBindings(container);
+
 registerPlatformSettingsBindings(container);
 registerProfileBindings(container);
 registerStorageBindings(container);

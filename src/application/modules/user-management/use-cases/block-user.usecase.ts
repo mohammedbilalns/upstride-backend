@@ -8,7 +8,7 @@ import type {
 } from "../../../../domain/repositories";
 import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revocation.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { IEventBus } from "../../../events/app-event-bus.interface";
 import { REFRESH_TOKEN_EXPIRES_IN } from "../../../services";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { BlockUserInput } from "../dtos/block-user.dto";
@@ -25,8 +25,8 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		private _tokenRevocationRepository: ITokenRevocationRepository,
 		@inject(TYPES.Repositories.ReportRepository)
 		private _reportRepository: IReportRepository,
-		@inject(TYPES.Services.EventBus)
-		private _eventBus: EventBus,
+		@inject(TYPES.Services.AppEventBus)
+		private _eventBus: IEventBus,
 	) {}
 
 	async execute(input: BlockUserInput): Promise<void> {
@@ -42,13 +42,13 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		);
 		const sids = sessions
 			.filter((s: Session) => !s.revoked)
-			.map((s: Session) => s.sid);
+			.map((s: Session) => s.sid as string);
 
 		if (sids.length > 0) {
 			await Promise.all([
 				this._sessionRepository.revokeMultiple(sids),
 				this._tokenRevocationRepository.revokeMultiple(
-					sids.map((sid) => ({
+					sids.map((sid: string) => ({
 						sessionId: sid,
 						ttl: REFRESH_TOKEN_EXPIRES_IN,
 					})),
@@ -57,7 +57,8 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		}
 
 		await this._eventBus.publish(
-			new UserStatusChangedEvent(input.userId, true),
+			new UserStatusChangedEvent({ userId: input.userId, isBlocked: true }),
+			{ durable: true },
 		);
 
 		if (input.reportId) {

@@ -21,7 +21,7 @@ export interface MentorApplicationDetails extends Mentor {
 	user: {
 		name: string;
 		email: string;
-		avatar?: string;
+		profilePictureId?: string;
 	};
 	currentRoleDetails: {
 		name: string;

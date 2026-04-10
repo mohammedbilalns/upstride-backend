@@ -13,6 +13,6 @@ export class GetPlatformWalletUseCase implements IGetPlatformWalletUseCase {
 
 	async execute(): Promise<GetPlatformWalletOutput> {
 		const wallet = await this._platformWalletRepository.getOrCreate();
-		return { balance: wallet.balance };
+		return { balance: wallet.balance / 100 };
 	}
 }

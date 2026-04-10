@@ -26,10 +26,10 @@ export class LogoutController {
 		private _getActiveSessionsUseCase: IGetActiveSessionsUseCase,
 	) {}
 
-	logout = asyncHandler(async (req, res) => {
-		const sessionId = (req as AuthenticatedRequest).user.sid;
-
-		await this._logoutUseCase.execute({ sessionId });
+	logout = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		await this._logoutUseCase.execute({
+			sessionId: req.user.sid,
+		});
 
 		res.clearCookie("refreshToken", {
 			httpOnly: true,
@@ -42,13 +42,10 @@ export class LogoutController {
 		});
 	});
 
-	revokeSession = asyncHandler(async (req, res) => {
-		const requesterUserId = (req as AuthenticatedRequest).user.id;
-		const { targetSessionId } = req.body as RevokeSessionBody;
-
+	revokeSession = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		await this._revokeSessionUseCase.execute({
-			requesterUserId,
-			targetSessionId,
+			requesterUserId: req.user.id,
+			...(req.validated?.body as RevokeSessionBody),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -56,23 +53,23 @@ export class LogoutController {
 		});
 	});
 
-	revokeAllOtherSessions = asyncHandler(async (req, res) => {
-		const requesterUserId = (req as AuthenticatedRequest).user.id;
-		const requesterSessionId = (req as AuthenticatedRequest).user.sid;
+	revokeAllOtherSessions = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			const { id: requesterUserId, sid: requesterSessionId } = req.user;
 
-		await this._revokeAllOtherSessionsUseCase.execute({
-			requesterUserId,
-			requesterSessionId,
-		});
+			await this._revokeAllOtherSessionsUseCase.execute({
+				requesterUserId,
+				requesterSessionId,
+			});
 
-		sendSuccess(res, HttpStatus.OK, {
-			message: AuthResponseMessages.ALL_OTHER_SESSIONS_REVOKED,
-		});
-	});
+			sendSuccess(res, HttpStatus.OK, {
+				message: AuthResponseMessages.ALL_OTHER_SESSIONS_REVOKED,
+			});
+		},
+	);
 
-	getActiveSessions = asyncHandler(async (req, res) => {
-		const { id: userId, sid: currentSessionId } = (req as AuthenticatedRequest)
-			.user;
+	getActiveSessions = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const { id: userId, sid: currentSessionId } = req.user;
 
 		const data = await this._getActiveSessionsUseCase.execute(
 			{ userId },

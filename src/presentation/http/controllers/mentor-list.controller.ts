@@ -1,13 +1,4 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
-import type {
-	AddMentorToListInput,
-	CreateMentorListInput,
-	DeleteMentorListInput,
-	GetMentorListInput,
-	GetMentorListsInput,
-	RemoveMentorFromListInput,
-} from "../../../application/modules/mentor-lists/dtos/mentor-list.dto";
 import type {
 	IAddMentorToListUseCase,
 	ICreateMentorListUseCase,
@@ -20,6 +11,12 @@ import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	AddMentorToListBody,
+	CreateMentorListBody,
+	MentorListIdParam,
+	RemoveMentorFromListParams,
+} from "../validators/mentor-list.validator";
 
 @injectable()
 export class MentorListController {
@@ -38,74 +35,57 @@ export class MentorListController {
 		private readonly _deleteMentorListUseCase: IDeleteMentorListUseCase,
 	) {}
 
-	getLists = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+	getLists = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const data = await this._getMentorListsUseCase.execute({
 			userId: req.user.id,
-		} as GetMentorListsInput);
+		});
 
 		sendSuccess(res, HttpStatus.OK, { data });
 	});
 
-	getList = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const { listId } = req.validated?.params as { listId: string };
+	getList = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const data = await this._getMentorListUseCase.execute({
 			userId: req.user.id,
-			listId,
-		} as GetMentorListInput);
+			...(req.validated?.params as MentorListIdParam),
+		});
 
 		sendSuccess(res, HttpStatus.OK, { data });
 	});
 
-	createList = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const body = req.validated?.body as CreateMentorListInput;
-			const data = await this._createMentorListUseCase.execute({
-				userId: req.user.id,
-				name: body.name,
-				description: body.description,
-			});
+	createList = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const data = await this._createMentorListUseCase.execute({
+			userId: req.user.id,
+			...(req.validated?.body as CreateMentorListBody),
+		});
 
-			sendSuccess(res, HttpStatus.CREATED, { data });
-		},
-	);
+		sendSuccess(res, HttpStatus.CREATED, { data });
+	});
 
-	addMentor = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-		const { listId } = req.validated?.params as { listId: string };
-		const body = req.validated?.body as { mentorId: string };
+	addMentor = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		await this._addMentorToListUseCase.execute({
 			userId: req.user.id,
-			listId,
-			mentorId: body.mentorId,
-		} as AddMentorToListInput);
+			...(req.validated?.params as MentorListIdParam),
+			...(req.validated?.body as AddMentorToListBody),
+		});
 
 		sendSuccess(res, HttpStatus.OK);
 	});
 
-	removeMentor = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const { listId, mentorId } = req.validated?.params as {
-				listId: string;
-				mentorId: string;
-			};
-			await this._removeMentorFromListUseCase.execute({
-				userId: req.user.id,
-				listId,
-				mentorId,
-			} as RemoveMentorFromListInput);
+	removeMentor = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		await this._removeMentorFromListUseCase.execute({
+			userId: req.user.id,
+			...(req.validated?.params as RemoveMentorFromListParams),
+		});
 
-			sendSuccess(res, HttpStatus.OK);
-		},
-	);
+		sendSuccess(res, HttpStatus.OK);
+	});
 
-	deleteList = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const { listId } = req.validated?.params as { listId: string };
-			await this._deleteMentorListUseCase.execute({
-				userId: req.user.id,
-				listId,
-			} as DeleteMentorListInput);
+	deleteList = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		await this._deleteMentorListUseCase.execute({
+			userId: req.user.id,
+			...(req.validated?.params as MentorListIdParam),
+		});
 
-			sendSuccess(res, HttpStatus.OK);
-		},
-	);
+		sendSuccess(res, HttpStatus.OK);
+	});
 }

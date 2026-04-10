@@ -3,9 +3,10 @@ import type { MessageSentEvent } from "../../../../domain/events/message-sent.ev
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.usecase.interface";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class MessageSentHandler {
+export class MessageSentHandler implements EventHandler<MessageSentEvent> {
 	constructor(
 		@inject(TYPES.UseCases.CreateNotification)
 		private readonly _createNotificationUseCase: ICreateNotificationUseCase,
@@ -13,23 +14,23 @@ export class MessageSentHandler {
 
 	async handle(event: MessageSentEvent): Promise<void> {
 		logger.info(
-			`Handling MessageSentEvent for notification creation: ${event.message.id}`,
+			`Handling MessageSentEvent for notification creation: ${event.payload.message.id}`,
 		);
 
 		try {
 			await this._createNotificationUseCase.execute({
-				userId: event.receiverId,
+				userId: event.payload.receiverId,
 				title: "New Message",
-				description: `You have received a message from ${event.senderName}`,
+				description: `You have received a message from ${event.payload.senderName}`,
 				type: "CHAT",
 				event: "MESSAGE_RECEIVED",
-				actorId: event.message.senderId,
-				relatedEntityId: event.message.senderId,
+				actorId: event.payload.message.senderId,
+				relatedEntityId: event.payload.message.senderId,
 				metadata: {
-					chatId: event.chatId,
-					messageId: event.message.id,
-					senderName: event.senderName,
-					receiverName: event.receiverName,
+					chatId: event.payload.chatId,
+					messageId: event.payload.message.id,
+					senderName: event.payload.senderName,
+					receiverName: event.payload.receiverName,
 				},
 			});
 		} catch (error) {

@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import type { GetMentorsInput } from "../../../application/modules/mentor-discovery/dtos/get-mentors.dto";
 import type { IGetMentorsUseCase } from "../../../application/modules/mentor-discovery/use-cases";
 import type {
 	IApproveMentorUseCase,
@@ -17,6 +16,7 @@ import type {
 	MentorDiscoveryQuery,
 	MentorIdParam,
 	RejectMentorBody,
+	UpdateMentorProfileBody,
 } from "../../../presentation/http/validators/mentor.validator";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
@@ -49,7 +49,7 @@ export class MentorController {
 		private readonly _rejectMentorUseCase: IRejectMentorUseCase,
 	) {}
 
-	getApplications = asyncHandler(async (req, res) => {
+	getApplications = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const query = req.validated?.query as MentorApplicationsQuery;
 
 		const result = await this._getMentorApplicationsUseCase.execute(query);
@@ -60,24 +60,16 @@ export class MentorController {
 		});
 	});
 
-	getDiscovery = asyncHandler(async (req, res) => {
-		const query = req.validated?.query as MentorDiscoveryQuery;
-		const user = (req as AuthenticatedRequest).user;
-		const userId = user.id;
-		const isAdminView = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
+	getDiscovery = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const isAdminView =
+			req.user.role === "ADMIN" || req.user.role === "SUPER_ADMIN";
 
 		const result = await this._getMentorsDiscoveryUseCase.execute({
-			page: query.page,
 			limit: 12,
-			excludeUserId: userId,
-			search: query.search,
-			categoryId: query.categoryId,
-			tierName: query.tierName,
-			minExperience: query.minExperience,
-			maxExperience: query.maxExperience,
-			sort: query.sort,
+			...(req.validated?.query as MentorDiscoveryQuery),
+			excludeUserId: req.user.id,
 			isAdminView,
-		} as GetMentorsInput);
+		});
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.FETCH_DISCOVERY_SUCCESS,
@@ -85,6 +77,7 @@ export class MentorController {
 		});
 	});
 
+	//TODO: use dto here
 	approveApplication = asyncHandler(async (req, res) => {
 		const id = req.params.id as string;
 		await this._approveMentorUseCase.execute(id);
@@ -95,19 +88,19 @@ export class MentorController {
 	});
 
 	rejectApplication = asyncHandler(async (req, res) => {
-		const id = req.params.id as string;
-		const { reason } = req.validated?.body as RejectMentorBody;
-		await this._rejectMentorUseCase.execute({ mentorId: id, reason });
+		await this._rejectMentorUseCase.execute({
+			mentorId: (req.validated?.params as MentorIdParam).id,
+			...(req.validated?.body as RejectMentorBody),
+		});
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.REJECT_APPLICATION_SUCCESS,
 		});
 	});
 
-	getRegistrationInfo = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	getRegistrationInfo = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getMentorRegistrationInfoUseCase.execute({
-			userId,
+			userId: req.user.id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -116,53 +109,48 @@ export class MentorController {
 		});
 	});
 
-	getProfile = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-		const data = await this._getMentorProfileUseCase.execute({ userId });
+	getProfile = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const data = await this._getMentorProfileUseCase.execute({
+			userId: req.user.id,
+		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Mentor profile fetched successfully",
+			message: MentorResponseMessages.PROFILE_FETCHED_SUCCESS,
 			data,
 		});
 	});
 
-	getPublicProfile = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
-		const role = (req as AuthenticatedRequest).user.role;
-		const { id: mentorId } = req.validated?.params as MentorIdParam;
+	getPublicProfile = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const { id: userId, role } = req.user;
+
 		const data = await this._getPublicMentorProfileUseCase.execute({
-			mentorId,
+			mentorId: (req.validated?.params as MentorIdParam).id,
 			requesterUserId: userId,
 			requesterRole: role,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Public mentor profile fetched successfully",
+			message: MentorResponseMessages.PUBLIC_PROFILE_FETCHED_SUCCESS,
 			data,
 		});
 	});
 
-	updateProfile = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	updateProfile = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const data = await this._updateMentorProfileUseCase.execute({
-			userId,
-			...(req.validated?.body as Omit<
-				Parameters<IUpdateMentorProfileUseCase["execute"]>[0],
-				"userId"
-			>),
+			userId: req.user.id,
+			...(req.validated?.body as UpdateMentorProfileBody),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Mentor profile updated successfully",
+			message: MentorResponseMessages.PROFILE_UPDATED_SUCCESS,
 			data,
 		});
 	});
 
-	register = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	register = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		await this._registerMentorUseCase.execute({
 			...req.body,
-			userId,
+			userId: req.user.id,
 		});
 
 		return sendSuccess(res, HttpStatus.CREATED, {
@@ -170,11 +158,10 @@ export class MentorController {
 		});
 	});
 
-	resubmit = asyncHandler(async (req, res) => {
-		const userId = (req as AuthenticatedRequest).user.id;
+	resubmit = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		await this._resubmitMentorUseCase.execute({
 			...req.body,
-			userId,
+			userId: req.user.id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {

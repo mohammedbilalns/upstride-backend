@@ -100,13 +100,6 @@ export class MongoPaymentTransactionRepository
 		return this.findByIdDocument(id);
 	}
 
-	async findByProviderPaymentId(
-		providerPaymentId: string,
-	): Promise<PaymentTransaction | null> {
-		const doc = await this.model.findOne({ providerPaymentId }).lean();
-		return doc ? this.toDomain(doc as PaymentTransactionDocument) : null;
-	}
-
 	async findByProviderPaymentIdAndOwner(
 		providerPaymentId: string,
 		transactionOwner: "platform" | "user" | "mentor",
@@ -124,21 +117,6 @@ export class MongoPaymentTransactionRepository
 			.lean();
 
 		return docs.map((doc) => this.toDomain(doc as PaymentTransactionDocument));
-	}
-
-	async updateStatusByProviderPaymentId(
-		providerPaymentId: string,
-		status: PaymentStatus,
-	): Promise<PaymentTransaction | null> {
-		const doc = await this.model
-			.findOneAndUpdate(
-				{ providerPaymentId },
-				{ $set: { status } },
-				{ new: true },
-			)
-			.lean();
-
-		return doc ? this.toDomain(doc as PaymentTransactionDocument) : null;
 	}
 
 	async updateStatusByProviderPaymentIdAndOwner(

@@ -13,6 +13,7 @@ type PopulatedUser = {
 	_id?: { toString?: () => string };
 	name?: string;
 	profilePictureId?: string | null;
+	role?: "USER" | "MENTOR" | "ADMIN" | "SUPER_ADMIN";
 	toString?: () => string;
 };
 
@@ -36,6 +37,7 @@ const toUserSummary = (value: PopulatedUser): ChatUserSummary => ({
 	id: value._id?.toString?.() || value.toString?.() || "",
 	name: value.name ?? "Unknown",
 	profilePictureId: value.profilePictureId ?? null,
+	role: value.role ?? "USER",
 });
 
 const collectUsersFromChats = (
@@ -165,8 +167,8 @@ export class MongoChatRepository
 
 		const doc = await this.model
 			.findOne(filter)
-			.populate("user1Id", "name profilePictureId")
-			.populate("user2Id", "name profilePictureId")
+			.populate("user1Id", "name profilePictureId role")
+			.populate("user2Id", "name profilePictureId role")
 			.lean<PopulatedChatDocument | null>();
 
 		if (!doc) return { chat: null, users: [] };
@@ -175,53 +177,6 @@ export class MongoChatRepository
 			chat: this.toDomain(doc as ChatDocument),
 			users: collectUsersFromChats([doc]),
 		};
-	}
-
-	async paginateByUser(
-		userId: string,
-		filter: "read" | "unread" | "all",
-		page: number,
-		limit: number,
-	): Promise<{
-		items: Chat[];
-		total: number;
-		page: number;
-		limit: number;
-		totalPages: number;
-	}> {
-		const userFilter: QueryFilter<ChatDocument> = {
-			$or: [{ user1Id: userId }, { user2Id: userId }],
-		};
-
-		const unreadKey = `unreadCount.${userId}`;
-		const readFilter: QueryFilter<ChatDocument> =
-			filter === "unread"
-				? { [unreadKey]: { $gt: 0 } }
-				: filter === "read"
-					? {
-							$or: [{ [unreadKey]: { $exists: false } }, { [unreadKey]: 0 }],
-						}
-					: {};
-
-		const combinedFilter: QueryFilter<ChatDocument> = {
-			$and: [userFilter, readFilter],
-		};
-
-		const skip = (page - 1) * limit;
-
-		const [docs, total] = await Promise.all([
-			this.model
-				.find(combinedFilter)
-				.sort({ updatedAt: -1 })
-				.skip(skip)
-				.limit(limit)
-				.lean(),
-			this.model.countDocuments(combinedFilter),
-		]);
-
-		const items = docs.map((doc) => this.toDomain(doc as ChatDocument));
-
-		return this.buildPaginatedResult(items, total, page, limit);
 	}
 
 	async paginateByUserWithUsers(
@@ -274,8 +229,8 @@ export class MongoChatRepository
 				.sort({ updatedAt: -1 })
 				.skip(skip)
 				.limit(limit)
-				.populate("user1Id", "name profilePictureId")
-				.populate("user2Id", "name profilePictureId")
+				.populate("user1Id", "name profilePictureId role")
+				.populate("user2Id", "name profilePictureId role")
 				.populate(
 					"lastMessageId",
 					"senderId messageType content mediaId createdAt",

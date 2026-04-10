@@ -6,7 +6,10 @@ import type {
 	IArticleReactionRepository,
 } from "../../../../domain/repositories/article-reaction.repository.interface";
 import type { QueryParams } from "../../../../domain/repositories/capabilities";
-import { ArticleReactionMapper } from "../mappers/article-reaction.mapper";
+import {
+	type ArticleReactionDocumentWithUser,
+	ArticleReactionMapper,
+} from "../mappers/article-reaction.mapper";
 import {
 	type ArticleReactionDocument,
 	ArticleReactionModel,
@@ -35,7 +38,9 @@ export class MongoArticleReactionRepository
 	async create(reaction: ArticleReaction): Promise<ArticleReaction> {
 		const doc = await this.model.create(this.toDocument(reaction));
 		const populated = await doc.populate("userId", "name");
-		return this.toDomain(populated as any);
+		return ArticleReactionMapper.toDomain(
+			populated.toObject() as ArticleReactionDocumentWithUser,
+		);
 	}
 
 	async findById(id: string): Promise<ArticleReaction | null> {

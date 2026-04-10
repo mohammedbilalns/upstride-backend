@@ -6,7 +6,7 @@ import type {
 	IArticleRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { IEventBus } from "../../../events/app-event-bus.interface";
 import type {
 	ReactToArticleInput,
 	ReactToArticleOutput,
@@ -22,8 +22,8 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ArticleReactionRepository)
 		private readonly _reactionRepository: IArticleReactionRepository,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.AppEventBus)
+		private readonly _eventBus: IEventBus,
 	) {}
 
 	async execute(input: ReactToArticleInput): Promise<ReactToArticleOutput> {
@@ -42,8 +42,8 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			await this._reactionRepository.deleteById(current.id);
 			await this._articleRepository.updateById(article.id, {
 				likesCount: Math.max(0, (article.likesCount ?? 0) - 1),
-			} as any);
-			return { reaction: null as any };
+			});
+			return { reaction: null };
 		}
 
 		// New like
@@ -61,15 +61,16 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		});
 
 		await this._eventBus.publish(
-			new ArticleReactionCreatedEvent(
-				article.id,
-				article.slug,
-				article.authorId,
-				"LIKE",
-				input.userId,
-				created.actorName || "",
-				(article.likesCount ?? 0) + 1,
-			),
+			new ArticleReactionCreatedEvent({
+				articleId: article.id,
+				articleSlug: article.slug,
+				articleAuthorId: article.authorId,
+				reactionType: "LIKE",
+				actorId: input.userId,
+				actorName: created.actorName || "",
+				count: (article.likesCount ?? 0) + 1,
+			}),
+			{ durable: true },
 		);
 
 		return { reaction: ArticleReactionMapper.toDto(created) };

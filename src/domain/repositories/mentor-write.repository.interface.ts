@@ -10,11 +10,6 @@ export interface IMentorWriteRepository
 		CreatableRepository<Mentor>,
 		UpdatableByIdRepository<Mentor> {
 	findByUserId(userId: string): Promise<Mentor | null>;
-	updateStatus(
-		id: string,
-		isApproved: boolean,
-		rejectionReason?: string | null,
-	): Promise<Mentor | null>;
 	updateIsUserBlockedStatusByUserId(
 		userId: string,
 		isUserBlocked: boolean,

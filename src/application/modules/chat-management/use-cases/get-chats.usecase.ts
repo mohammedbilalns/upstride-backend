@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import type { UserRole } from "../../../../domain/entities/user.entity";
 import type { IChatRepository } from "../../../../domain/repositories/chat.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
@@ -27,7 +28,12 @@ export class GetChatsUseCase implements IGetChatsUseCase {
 
 		const usersById = new Map<
 			string,
-			{ id: string; name: string; profilePictureUrl: string | null }
+			{
+				id: string;
+				name: string;
+				profilePictureUrl: string | null;
+				role?: UserRole;
+			}
 		>();
 		const usersByIdRaw = new Map(result.users.map((user) => [user.id, user]));
 
@@ -37,6 +43,7 @@ export class GetChatsUseCase implements IGetChatsUseCase {
 				id: senderUser.id,
 				name: senderUser.name,
 				profilePictureUrl: null,
+				role: senderUser.role ?? "USER",
 			});
 		}
 
@@ -53,6 +60,7 @@ export class GetChatsUseCase implements IGetChatsUseCase {
 						id: receiverUser.id,
 						name: receiverUser.name,
 						profilePictureUrl: receiverUrlCache.get(receiverId) ?? null,
+						role: receiverUser.role ?? "USER",
 					});
 					return;
 				}
@@ -64,6 +72,7 @@ export class GetChatsUseCase implements IGetChatsUseCase {
 					id: receiverUser.id,
 					name: receiverUser.name,
 					profilePictureUrl,
+					role: receiverUser.role ?? "USER",
 				});
 			}),
 		);

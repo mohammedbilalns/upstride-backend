@@ -3,18 +3,22 @@ import { CoinTransactionType } from "../../../domain/entities/coin-transactions.
 import { PaymentStatus } from "../../../domain/entities/payment-transactions.entity";
 import { limitSchema, pageSchema } from "../../../shared/validators";
 
-const paginationSchema = {
+const PaginationSchema = {
 	page: pageSchema,
 	limit: limitSchema,
 	sort: z.enum(["recent", "old"]).default("recent"),
 };
 
 export const CoinTransactionsQuerySchema = z.object({
-	...paginationSchema,
+	...PaginationSchema,
 	type: z.enum(CoinTransactionType).optional(),
 });
+export type CoinTransactionsQuery = z.infer<typeof CoinTransactionsQuerySchema>;
 
 export const PaymentTransactionsQuerySchema = z.object({
-	...paginationSchema,
+	...PaginationSchema,
 	status: z.enum(PaymentStatus).optional(),
 });
+export type PaymentTransactionsQuery = z.infer<
+	typeof PaymentTransactionsQuerySchema
+>;

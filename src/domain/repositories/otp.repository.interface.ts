@@ -21,7 +21,6 @@ export interface IOtpRepository {
 	): Promise<number>;
 
 	getAttempts(identifier: string, purpose: string): Promise<number>;
-	getResends(identifier: string, purpose: string): Promise<number>;
 
 	resetAttempts(identifier: string, purpose: string): Promise<void>;
 

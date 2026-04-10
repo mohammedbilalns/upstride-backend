@@ -1,4 +1,5 @@
 import type { Chat } from "../entities/chat.entity";
+import type { UserRole } from "../entities/user.entity";
 import type {
 	CreatableRepository,
 	FindByIdRepository,
@@ -9,6 +10,7 @@ export interface ChatUserSummary {
 	id: string;
 	name: string;
 	profilePictureId?: string | null;
+	role?: UserRole;
 }
 
 export interface IChatRepository
@@ -21,18 +23,6 @@ export interface IChatRepository
 		user1Id: string,
 		user2Id: string,
 	): Promise<{ chat: Chat | null; users: ChatUserSummary[] }>;
-	paginateByUser(
-		userId: string,
-		filter: "read" | "unread" | "all",
-		page: number,
-		limit: number,
-	): Promise<{
-		items: Chat[];
-		total: number;
-		page: number;
-		limit: number;
-		totalPages: number;
-	}>;
 	paginateByUserWithUsers(
 		userId: string,
 		filter: "read" | "unread" | "all",

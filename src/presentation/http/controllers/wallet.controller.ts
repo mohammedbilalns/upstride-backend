@@ -1,9 +1,4 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
-import type { GetCoinTransactionsInput } from "../../../application/modules/wallet/dtos/get-coin-transactions.dto";
-import type { GetPaymentTransactionsInput } from "../../../application/modules/wallet/dtos/get-payment-transactions.dto";
-import type { GetPlatformCoinTransactionsInput } from "../../../application/modules/wallet/dtos/get-platform-coin-transactions.dto";
-import type { GetPlatformPaymentTransactionsInput } from "../../../application/modules/wallet/dtos/get-platform-payment-transactions.dto";
 import type {
 	IGetCoinBalanceUseCase,
 	IGetCoinTransactionsUseCase,
@@ -17,6 +12,10 @@ import type { AuthenticatedRequest } from "../../../shared/types/authenticated-r
 import { TYPES } from "../../../shared/types/types";
 import { WalletResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	CoinTransactionsQuery,
+	PaymentTransactionsQuery,
+} from "../validators/wallet.validator";
 
 @injectable()
 export class WalletController {
@@ -35,48 +34,34 @@ export class WalletController {
 		private readonly _getPlatformPaymentTransactionsUseCase: IGetPlatformPaymentTransactionsUseCase,
 	) {}
 
-	getCoinBalance = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const data = await this._getCoinBalanceUseCase.execute({
-				userId: req.user.id,
-			});
+	getCoinBalance = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const data = await this._getCoinBalanceUseCase.execute({
+			userId: req.user.id,
+		});
 
-			sendSuccess(res, HttpStatus.OK, {
-				message: WalletResponseMessages.COIN_BALANCE_FETCHED,
-				data,
-			});
-		},
-	);
+		sendSuccess(res, HttpStatus.OK, {
+			message: WalletResponseMessages.COIN_BALANCE_FETCHED,
+			data,
+		});
+	});
 
-	getCoinTransactions = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const query = req.validated?.query as GetCoinTransactionsInput;
+	getCoinTransactions = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const data = await this._getCoinTransactionsUseCase.execute({
+			userId: req.user.id,
+			...(req.validated?.query as CoinTransactionsQuery),
+		});
 
-			const data = await this._getCoinTransactionsUseCase.execute({
-				userId: req.user.id,
-				page: query.page,
-				limit: query.limit,
-				sort: query.sort,
-				type: query.type,
-			});
-
-			sendSuccess(res, HttpStatus.OK, {
-				message: WalletResponseMessages.COIN_TRANSACTIONS_FETCHED,
-				data,
-			});
-		},
-	);
+		sendSuccess(res, HttpStatus.OK, {
+			message: WalletResponseMessages.COIN_TRANSACTIONS_FETCHED,
+			data,
+		});
+	});
 
 	getPaymentTransactions = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const query = req.validated?.query as GetPaymentTransactionsInput;
-
+		async (req: AuthenticatedRequest, res) => {
 			const data = await this._getPaymentTransactionsUseCase.execute({
 				userId: req.user.id,
-				page: query.page,
-				limit: query.limit,
-				sort: query.sort,
-				status: query.status,
+				...(req.validated?.query as PaymentTransactionsQuery),
 			});
 
 			sendSuccess(res, HttpStatus.OK, {
@@ -90,42 +75,32 @@ export class WalletController {
 		const data = await this._getPlatformWalletUseCase.execute();
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: "Platform wallet fetched successfully",
+			message: WalletResponseMessages.PLATFORM_WALLET_FETCHED,
 			data,
 		});
 	});
 
 	getPlatformCoinTransactions = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const query = req.validated?.query as GetPlatformCoinTransactionsInput;
-
+		async (req: AuthenticatedRequest, res) => {
 			const data = await this._getPlatformCoinTransactionsUseCase.execute({
-				page: query.page,
-				limit: query.limit,
-				sort: query.sort,
-				type: query.type,
+				...(req.validated?.query as CoinTransactionsQuery),
 			});
 
 			sendSuccess(res, HttpStatus.OK, {
-				message: "Platform coin transactions fetched successfully",
+				message: WalletResponseMessages.PLATFORM_COIN_TRANSACTIONS_FETCHED,
 				data,
 			});
 		},
 	);
 
 	getPlatformPaymentTransactions = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const query = req.validated?.query as GetPlatformPaymentTransactionsInput;
-
+		async (req: AuthenticatedRequest, res) => {
 			const data = await this._getPlatformPaymentTransactionsUseCase.execute({
-				page: query.page,
-				limit: query.limit,
-				sort: query.sort,
-				status: query.status,
+				...(req.validated?.query as PaymentTransactionsQuery),
 			});
 
 			sendSuccess(res, HttpStatus.OK, {
-				message: "Platform payment transactions fetched successfully",
+				message: WalletResponseMessages.PLATFORM_PAYMENT_TRANSACTIONS_FETCHED,
 				data,
 			});
 		},

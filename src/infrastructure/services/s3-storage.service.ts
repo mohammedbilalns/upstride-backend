@@ -1,31 +1,24 @@
 import {
 	DeleteObjectCommand,
 	GetObjectCommand,
-	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import type {
-	File,
-	IIdGenerator,
 	IStorageService,
 	PresignedPostResponse,
 } from "../../application/services";
 import env from "../../shared/config/env";
-import { TYPES } from "../../shared/types/types";
 
-// Stores files in S3 and issues signed access/upload URLs.
+// Stores files in S3 and issues access URLs.
 @injectable()
 export class S3StorageService implements IStorageService {
 	private _s3: S3Client;
 	private _bucket: string;
 
-	constructor(
-		@inject(TYPES.Services.IdGenerator)
-		private readonly _idGenerator: IIdGenerator,
-	) {
+	constructor() {
 		this._bucket = env.AWS_BUCKET_NAME;
 		this._s3 = new S3Client({
 			region: env.AWS_REGION,
@@ -34,24 +27,6 @@ export class S3StorageService implements IStorageService {
 				secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 			},
 		});
-	}
-
-	async upload(file: File, folder?: string): Promise<string> {
-		const fileExtension = file.originalname.split(".").pop();
-		const key = folder
-			? `${folder}/${this._idGenerator.generate()}.${fileExtension}`
-			: `${this._idGenerator.generate()}.${fileExtension}`;
-
-		const command = new PutObjectCommand({
-			Bucket: this._bucket,
-			Key: key,
-			Body: file.buffer,
-			ContentType: file.mimetype,
-		});
-
-		await this._s3.send(command);
-
-		return key;
 	}
 
 	async delete(objectKey: string): Promise<void> {
@@ -78,20 +53,6 @@ export class S3StorageService implements IStorageService {
 			.map((segment) => encodeURIComponent(segment))
 			.join("/");
 		return `https://${this._bucket}.s3.${env.AWS_REGION}.amazonaws.com/${safeKey}`;
-	}
-
-	async getSignedUploadUrl(
-		objectKey: string,
-		mimetype: string,
-		expiresIn = 300,
-	): Promise<string> {
-		const command = new PutObjectCommand({
-			Bucket: this._bucket,
-			Key: objectKey,
-			ContentType: mimetype,
-		});
-
-		return getSignedUrl(this._s3, command, { expiresIn });
 	}
 
 	async getPresignedPost(

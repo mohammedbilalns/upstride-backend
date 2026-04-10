@@ -1,6 +1,4 @@
 import { inject, injectable } from "inversify";
-import type { CreateAdminInput } from "../../../application/modules/admin-management/dtos/create-admin.dto";
-import type { GetAdminsInput } from "../../../application/modules/admin-management/dtos/get-admins.dto";
 import type {
 	IBlockAdminUseCase,
 	ICreateAdminUseCase,
@@ -11,6 +9,11 @@ import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { AdminManagementResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	AdminIdParam,
+	AdminsQuery,
+	CreateAdminBody,
+} from "../validators/admin-management.validator";
 
 @injectable()
 export class AdminManagementController {
@@ -26,14 +29,8 @@ export class AdminManagementController {
 	) {}
 
 	getAdmins = asyncHandler(async (req, res) => {
-		const query = req.validated?.query as GetAdminsInput;
-
 		const data = await this._getAdminsUseCase.execute({
-			page: query.page,
-			limit: query.limit,
-			search: query.search,
-			status: query.status,
-			sort: query.sort,
+			...(req.validated?.query as AdminsQuery),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -43,11 +40,8 @@ export class AdminManagementController {
 	});
 
 	createAdmin = asyncHandler(async (req, res) => {
-		const body = req.validated?.body as CreateAdminInput;
-
 		await this._createAdminUseCase.execute({
-			email: body.email,
-			password: body.password,
+			...(req.validated?.body as CreateAdminBody),
 		});
 
 		sendSuccess(res, HttpStatus.CREATED, {
@@ -56,8 +50,9 @@ export class AdminManagementController {
 	});
 
 	blockAdmin = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as { id: string };
-		await this._blockAdminUseCase.execute({ adminId: id });
+		await this._blockAdminUseCase.execute({
+			adminId: (req.validated?.params as AdminIdParam).id,
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AdminManagementResponseMessages.ADMIN_BLOCKED_SUCCESS,
@@ -65,8 +60,9 @@ export class AdminManagementController {
 	});
 
 	unblockAdmin = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as { id: string };
-		await this._unblockAdminUseCase.execute({ adminId: id });
+		await this._unblockAdminUseCase.execute({
+			adminId: (req.validated?.params as AdminIdParam).id,
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AdminManagementResponseMessages.ADMIN_UNBLOCKED_SUCCESS,

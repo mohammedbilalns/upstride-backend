@@ -13,7 +13,16 @@ export const UsersQuerySchema = z.object({
 	status: z.enum(["active", "blocked"]).optional(),
 	sort: z.enum(["recent", "old"]).default("recent"),
 });
+export type UsersQuery = z.infer<typeof UsersQuerySchema>;
 
 export const UserIdParamSchema = z.object({
 	id: useridSchema,
 });
+
+export type UserIdParam = z.infer<typeof UserIdParamSchema>;
+
+export const BlockUserBodySchema = z.object({
+	reportId: z.string().optional(),
+});
+
+export type BlockUserBody = z.infer<typeof BlockUserBodySchema>;

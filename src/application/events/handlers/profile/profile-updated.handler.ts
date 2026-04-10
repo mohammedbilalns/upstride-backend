@@ -3,9 +3,12 @@ import type { ProfileUpdatedEvent } from "../../../../domain/events/profile-upda
 import type { IArticleRepository } from "../../../../domain/repositories";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
+import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()
-export class ProfileUpdatedHandler {
+export class ProfileUpdatedHandler
+	implements EventHandler<ProfileUpdatedEvent>
+{
 	constructor(
 		@inject(TYPES.Repositories.ArticleRepository)
 		private readonly _articleRepository: IArticleRepository,
@@ -13,20 +16,25 @@ export class ProfileUpdatedHandler {
 
 	async handle(event: ProfileUpdatedEvent): Promise<void> {
 		logger.info(
-			`Handling ProfileUpdatedEvent for articles by user: ${event.userId}`,
+			`Handling ProfileUpdatedEvent for articles by user: ${event.payload.userId}`,
 		);
 
-		if (event.name === undefined && event.avatarUrl === undefined) {
+		if (
+			event.payload.name === undefined &&
+			event.payload.avatarUrl === undefined
+		) {
 			return;
 		}
 
 		try {
 			await this._articleRepository.updateAuthorSnapshotByAuthorId(
-				event.userId,
+				event.payload.userId,
 				{
-					...(event.name !== undefined && { name: event.name }),
-					...(event.avatarUrl !== undefined && {
-						avatarUrl: event.avatarUrl,
+					...(event.payload.name !== undefined && {
+						name: event.payload.name,
+					}),
+					...(event.payload.avatarUrl !== undefined && {
+						avatarUrl: event.payload.avatarUrl,
 					}),
 				},
 			);

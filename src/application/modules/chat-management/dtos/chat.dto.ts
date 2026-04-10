@@ -2,6 +2,7 @@ import type {
 	MessageStatus,
 	MessageType,
 } from "../../../../domain/entities/chat-message.entity";
+import type { UserRole } from "../../../../domain/entities/user.entity";
 
 export interface ChatDto {
 	id: string;
@@ -20,6 +21,7 @@ export interface ChatUserDto {
 	id: string;
 	name: string;
 	profilePictureUrl?: string | null;
+	role?: UserRole;
 }
 
 export interface ChatLastMessageDto {

@@ -1,12 +1,15 @@
 import { inject, injectable } from "inversify";
 import { Chatmessage } from "../../../../domain/entities/chat-message.entity";
-import { MessageSentEvent } from "../../../../domain/events/message-sent.event";
+import {
+	type ChatMessagePayload,
+	MessageSentEvent,
+} from "../../../../domain/events/message-sent.event";
 import type {
 	IChatMessageRepository,
 	IChatRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { EventBus } from "../../../events/event-bus.interface";
+import type { IEventBus } from "../../../events/app-event-bus.interface";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { SendMessageInput, SendMessageOutput } from "../dtos/chat.dto";
 import {
@@ -29,8 +32,8 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.UseCases.CreateChat)
 		private readonly _createChatUseCase: ICreateChatUseCase,
-		@inject(TYPES.Services.EventBus)
-		private readonly _eventBus: EventBus,
+		@inject(TYPES.Services.AppEventBus)
+		private readonly _eventBus: IEventBus,
 	) {}
 
 	async execute(input: SendMessageInput): Promise<SendMessageOutput> {
@@ -99,14 +102,29 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		const receiverName = usersById.get(receiverId)?.name ?? "someone";
 
 		// Publish event
+		const messagePayload: ChatMessagePayload = {
+			id: messageDto.id,
+			chatId: messageDto.chatId,
+			senderId: messageDto.senderId,
+			messageType: messageDto.messageType,
+			content: messageDto.content,
+			attachementId: messageDto.attachementId,
+			mediaUrl: messageDto.mediaUrl,
+			repliedTo: messageDto.repliedTo,
+			status: messageDto.status,
+			createdAt: messageDto.createdAt,
+			updatedAt: messageDto.updatedAt,
+		};
+
 		await this._eventBus.publish(
-			new MessageSentEvent(
-				chat.id,
+			new MessageSentEvent({
+				chatId: chat.id,
 				receiverId,
-				messageDto,
+				message: messagePayload,
 				senderName,
 				receiverName,
-			),
+			}),
+			{ realtime: true },
 		);
 
 		return { message: messageDto };

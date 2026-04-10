@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import type { GetUsersInput } from "../../../application/modules/user-management/dtos/get-users.dto";
 import type {
 	IBlockUserUseCase,
 	IGetUsersUseCase,
@@ -9,6 +8,11 @@ import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { UserManagementResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	BlockUserBody,
+	UserIdParam,
+	UsersQuery,
+} from "../validators/user-management.validator";
 
 @injectable()
 export class UserManagementController {
@@ -22,15 +26,8 @@ export class UserManagementController {
 	) {}
 
 	getUsers = asyncHandler(async (req, res) => {
-		const query = req.validated?.query as GetUsersInput;
-
 		const data = await this._getUsersUseCase.execute({
-			page: query.page,
-			limit: query.limit,
-			search: query.search,
-			role: query.role,
-			status: query.status,
-			sort: query.sort,
+			...(req.validated?.query as UsersQuery),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -40,9 +37,10 @@ export class UserManagementController {
 	});
 
 	blockUser = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as { id: string };
-		const { reportId } = (req.body ?? {}) as { reportId?: string };
-		await this._blockUserUseCase.execute({ userId: id, reportId });
+		await this._blockUserUseCase.execute({
+			userId: (req.validated?.params as UserIdParam).id,
+			...(req.validated?.body as BlockUserBody),
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: UserManagementResponseMessages.USER_BLOCKED_SUCCESS,
@@ -50,8 +48,9 @@ export class UserManagementController {
 	});
 
 	unblockUser = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as { id: string };
-		await this._unblockUserUseCase.execute({ userId: id });
+		await this._unblockUserUseCase.execute({
+			userId: (req.validated?.params as UserIdParam).id,
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: UserManagementResponseMessages.USER_UNBLOCKED_SUCCESS,

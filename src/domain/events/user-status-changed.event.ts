@@ -1,8 +1,12 @@
-import { AppEvent } from "./domain-event";
+import { AppEvent } from "./app-event";
 export class UserStatusChangedEvent extends AppEvent {
+	readonly eventName = "user.status.changed";
+
 	constructor(
-		public readonly userId: string,
-		public readonly isBlocked: boolean,
+		public readonly payload: {
+			userId: string;
+			isBlocked: boolean;
+		},
 	) {
 		super();
 	}

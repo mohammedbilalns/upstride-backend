@@ -12,6 +12,7 @@ export type NotificationType = (typeof NotificationTypeValues)[number];
 export const NotificationEventValues = [
 	"MESSAGE_RECEIVED",
 	"SESSION_BOOKED",
+	"SESSION_REFUNDED",
 	"ARTICLE_LIKED",
 	"ARTICLE_COMMENTED",
 	"ARTICLE_REACTED",

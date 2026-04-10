@@ -40,16 +40,11 @@ export class ReportController {
 		private readonly _unblockArticleUseCase: IUnblockArticleUseCase,
 	) {}
 
-	reportArticle = asyncHandler(async (req, res) => {
-		const { articleId } = req.validated?.params as ReportArticleParam;
-		const { reason, description } = req.validated?.body as ReportBody;
-		const reporterId = (req as AuthenticatedRequest).user.id;
-
+	reportArticle = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._reportArticleUseCase.execute({
-			reporterId,
-			articleId,
-			reason,
-			description,
+			reporterId: req.user.id,
+			...(req.validated?.params as ReportArticleParam),
+			...(req.validated?.body as ReportBody),
 		});
 
 		return sendSuccess(res, HttpStatus.CREATED, {
@@ -58,16 +53,11 @@ export class ReportController {
 		});
 	});
 
-	reportUser = asyncHandler(async (req, res) => {
-		const { userId: targetUserId } = req.validated?.params as ReportUserParam;
-		const { reason, description } = req.validated?.body as ReportBody;
-		const reporterId = (req as AuthenticatedRequest).user.id;
-
+	reportUser = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._reportUserUseCase.execute({
-			reporterId,
-			targetUserId,
-			reason,
-			description,
+			reporterId: req.user.id,
+			targetUserId: (req.validated?.params as ReportUserParam).userId,
+			...(req.validated?.body as ReportBody),
 		});
 
 		return sendSuccess(res, HttpStatus.CREATED, {
@@ -76,18 +66,10 @@ export class ReportController {
 		});
 	});
 
-	getReports = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
-		const query = req.validated?.query as GetReportsQuery;
-
+	getReports = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getReportsUseCase.execute({
-			adminId,
-			page: query.page,
-			limit: query.limit,
-			status: query.status,
-			targetType: query.targetType,
-			targetId: query.targetId,
-			reporterId: query.reporterId,
+			adminId: req.user.id,
+			...(req.validated?.query as GetReportsQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -96,17 +78,11 @@ export class ReportController {
 		});
 	});
 
-	updateStatus = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
-		const { reportId } = req.validated?.params as ReportIdParam;
-		const { status, actionTaken } = req.validated
-			?.body as UpdateReportStatusBody;
-
+	updateStatus = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._updateReportStatusUseCase.execute({
-			adminId,
-			reportId,
-			status,
-			actionTaken,
+			adminId: req.user.id,
+			...(req.validated?.params as ReportIdParam),
+			...(req.validated?.body as UpdateReportStatusBody),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -115,16 +91,11 @@ export class ReportController {
 		});
 	});
 
-	blockArticle = asyncHandler(async (req, res) => {
-		const { articleId } = req.validated?.params as BlockArticleParam;
-		const { reason, reportId } = req.validated?.body as BlockArticleBody;
-		const adminId = (req as AuthenticatedRequest).user.id;
-
+	blockArticle = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._blockArticleUseCase.execute({
-			adminId,
-			articleId,
-			reason,
-			reportId,
+			...(req.validated?.params as BlockArticleParam),
+			adminId: req.user.id,
+			...(req.validated?.body as BlockArticleBody),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -133,17 +104,14 @@ export class ReportController {
 		});
 	});
 
-	unblockArticle = asyncHandler(async (req, res) => {
-		const adminId = (req as AuthenticatedRequest).user.id;
-		const { articleId } = req.validated?.params as BlockArticleParam;
-
+	unblockArticle = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._unblockArticleUseCase.execute({
-			adminId,
-			articleId,
+			adminId: req.user.id,
+			...(req.validated?.params as BlockArticleParam),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
-			message: "Article unblocked successfully",
+			message: ReportResponseMessages.ARTICLE_UNBLOCKED_SUCCESS,
 			data: result,
 		});
 	});

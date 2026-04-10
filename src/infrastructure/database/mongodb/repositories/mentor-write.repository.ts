@@ -46,23 +46,6 @@ export class MongoMentorWriteRepository
 		return doc ? this.toDomain(doc as MentorDocument) : null;
 	}
 
-	async updateStatus(
-		id: string,
-		isApproved: boolean,
-		rejectionReason?: string | null,
-	): Promise<Mentor | null> {
-		const update: Record<string, unknown> = { isApproved };
-		if (rejectionReason !== undefined) {
-			update.rejectionReason = rejectionReason;
-		}
-
-		const doc = await this.model
-			.findByIdAndUpdate(id, update, { returnDocument: "after" })
-			.lean();
-
-		return doc ? this.toDomain(doc as MentorDocument) : null;
-	}
-
 	async updateIsUserBlockedStatusByUserId(
 		userId: string,
 		isUserBlocked: boolean,

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { UserPreferencesLimits } from "../../../../shared/constants/app.constants";
 
-export const saveInterestsBodySchema = z.object({
+export const SaveInterestsBodySchema = z.object({
 	setupToken: z.string().min(1, "Setup token is required"),
 	interests: z
 		.array(z.string().min(1, "Interest name is required"))
@@ -33,4 +33,4 @@ export const saveInterestsBodySchema = z.object({
 		),
 });
 
-export type SaveInterestsBody = z.infer<typeof saveInterestsBodySchema>;
+export type SaveInterestsBody = z.infer<typeof SaveInterestsBodySchema>;

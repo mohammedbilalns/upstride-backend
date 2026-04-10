@@ -1,18 +1,19 @@
-import type { Response } from "express";
 import { inject, injectable } from "inversify";
 import type {
 	ICreateCheckoutSessionUseCase,
 	IHandlePaymentWebhookUseCase,
 } from "../../../application/modules/payments/use-cases";
-import env from "../../../shared/config/env";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
+import { getClientBaseUrl } from "../../../shared/utilities/url.util";
 import { PaymentResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 
 interface CreateCheckoutSessionBody {
 	coins: number;
+	successPath?: string;
+	cancelPath?: string;
 }
 
 @injectable()
@@ -24,17 +25,28 @@ export class PaymentController {
 		private readonly _handleStripeWebhookUseCase: IHandlePaymentWebhookUseCase,
 	) {}
 
+	//TODO: validate the input datas properly
 	createCheckoutSession = asyncHandler(
-		async (req: AuthenticatedRequest, res: Response) => {
-			const { coins } = (req.validated?.body ??
+		async (req: AuthenticatedRequest, res) => {
+			const coinsBody = (req.validated?.body ??
 				req.body) as CreateCheckoutSessionBody;
+			const { coins } = coinsBody;
 			const userId = req.user.id;
+
+			const baseUrl = getClientBaseUrl();
+			const hasQ = coinsBody.successPath?.includes("?");
+			const successUrl = coinsBody.successPath
+				? `${baseUrl}${coinsBody.successPath}${hasQ ? "&" : "?"}payment_success=true`
+				: `${baseUrl}/coins?payment_success=true`;
+			const cancelUrl = coinsBody.cancelPath
+				? `${baseUrl}${coinsBody.cancelPath}`
+				: `${baseUrl}/coins`;
 
 			const session = await this._createCheckoutSessionUseCase.execute({
 				userId,
 				coins,
-				successUrl: env.STRIPE_SUCCESS_URL,
-				cancelUrl: env.STRIPE_CANCEL_URL,
+				successUrl,
+				cancelUrl,
 			});
 
 			return sendSuccess(res, HttpStatus.OK, {
@@ -49,7 +61,7 @@ export class PaymentController {
 		if (!signature || Array.isArray(signature)) {
 			res.status(HttpStatus.BAD_REQUEST).json({
 				success: false,
-				message: "Missing Stripe signature",
+				message: PaymentResponseMessages.MISSING_STRIPE_SIGNATURE,
 			});
 			return;
 		}
@@ -57,7 +69,7 @@ export class PaymentController {
 		if (!Buffer.isBuffer(req.body)) {
 			res.status(HttpStatus.BAD_REQUEST).json({
 				success: false,
-				message: "Invalid webhook payload",
+				message: PaymentResponseMessages.INVALID_WEBHOOK_PAYLOAD,
 			});
 			return;
 		}

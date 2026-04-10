@@ -1,4 +1,4 @@
 export interface VerifyChangePasswordOtpInput {
-	email: string;
+	userId: string;
 	otp: string;
 }
