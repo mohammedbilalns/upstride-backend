@@ -1,12 +1,11 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type {
 	GetBookingsInput,
 	GetBookingsResponse,
 } from "../dtos/booking.dto";
-import { BookingUsecaseMapper } from "../mappers/booking-usecase.mapper";
+import { buildBookingListResponse } from "../utils/booking-list.util";
 import type { IGetUserBookingsUseCase } from "./get-user-bookings.usecase.interface";
 
 @injectable()
@@ -27,39 +26,6 @@ export class GetUserBookingsUseCase implements IGetUserBookingsUseCase {
 			page,
 			limit,
 		);
-
-		const clientBaseUrl = getClientBaseUrl();
-		const needsMeetingLink = result.items.filter(
-			(booking) =>
-				booking.paymentStatus === "COMPLETED" &&
-				(!booking.meetingLink || booking.meetingLink === "Pending"),
-		);
-
-		if (needsMeetingLink.length > 0) {
-			await Promise.all(
-				needsMeetingLink.map((booking) =>
-					this._bookingRepository.updateById(booking.id, {
-						meetingLink: `${clientBaseUrl}/sessions/${booking.id}`,
-					}),
-				),
-			);
-		}
-
-		return {
-			items: result.items.map((b) => {
-				const dto = BookingUsecaseMapper.toDto(b);
-				if (
-					b.paymentStatus === "COMPLETED" &&
-					(!b.meetingLink || b.meetingLink === "Pending")
-				) {
-					dto.meetingLink = `${clientBaseUrl}/sessions/${b.id}`;
-				}
-				return dto;
-			}),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		return buildBookingListResponse(this._bookingRepository, result);
 	}
 }
