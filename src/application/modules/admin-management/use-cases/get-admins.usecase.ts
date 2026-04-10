@@ -1,9 +1,7 @@
 import { inject, injectable } from "inversify";
-import type {
-	IUserRepository,
-	UserQuery,
-} from "../../../../domain/repositories";
+import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import { buildUserListQuery } from "../../../shared/utilities/user-list.util";
 import type { GetAdminsInput, GetAdminsResponse } from "../dtos/get-admins.dto";
 import { AdminListMapper } from "../mappers/admin-list.mapper";
 import type { IGetAdminsUseCase } from "./get-admins.usecase.interface";
@@ -16,19 +14,12 @@ export class GetAdminsUseCase implements IGetAdminsUseCase {
 	) {}
 
 	async execute(input: GetAdminsInput): Promise<GetAdminsResponse> {
-		const query: UserQuery = {
+		const { query, sort } = buildUserListQuery({
 			search: input.search,
-			role: "ADMIN",
-			isBlocked:
-				input.status === "blocked"
-					? true
-					: input.status === "active"
-						? false
-						: undefined,
-		};
-
-		const sort: Record<string, 1 | -1> =
-			input.sort === "old" ? { createdAt: 1 } : { createdAt: -1 };
+			status: input.status,
+			sort: input.sort,
+			defaultRole: "ADMIN",
+		});
 
 		const result = await this._userRepository.paginate({
 			page: input.page,

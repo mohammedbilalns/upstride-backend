@@ -3,15 +3,10 @@ import type {
 	MentorProfileDetails,
 } from "../../../../domain/repositories/mentor.repository.types";
 import type { MentorDocument } from "../models/mentor.model";
+import { toIdString } from "../utils/id.util";
 import { MentorMapper } from "./mentor.mapper";
 
 type IdLike = { toString?: () => string } | string | null | undefined;
-
-const toIdString = (value: IdLike): string => {
-	if (!value) return "";
-	if (typeof value === "string") return value;
-	return value.toString?.() ?? "";
-};
 
 const resolveId = (...candidates: IdLike[]): string => {
 	for (const candidate of candidates) {
