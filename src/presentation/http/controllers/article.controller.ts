@@ -66,6 +66,7 @@ export class ArticleController {
 		private readonly _submitArticleAppealUseCase: ISubmitArticleAppealUseCase,
 	) {}
 
+	//TODO: use validated types here
 	getTopTags = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const data = await this._getTopTagsUseCase.execute(req.user?.id);

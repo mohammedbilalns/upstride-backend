@@ -26,6 +26,7 @@ export class PaymentController {
 		private readonly _handleStripeWebhookUseCase: IHandlePaymentWebhookUseCase,
 	) {}
 
+	//TODO: validate the input datas properly
 	createCheckoutSession = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
 			const coinsBody = (req.validated?.body ??

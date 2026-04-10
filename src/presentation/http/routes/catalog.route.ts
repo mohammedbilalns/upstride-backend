@@ -21,6 +21,7 @@ router.post(
 	validate({ body: addInterestBodySchema }),
 	catalogController.addInterest,
 );
+//TODO: validate ids
 router.patch(
 	ROUTES.CATALOG.DISABLE_INTEREST(":id"),
 	catalogController.disableInterest,

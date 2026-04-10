@@ -35,3 +35,5 @@ export const updateProfileBodySchema = z.object({
 		)
 		.optional(),
 });
+
+export type updateProfileBody = z.infer<typeof updateProfileBodySchema>;

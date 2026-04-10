@@ -25,15 +25,8 @@ export class UserManagementController {
 	) {}
 
 	getUsers = asyncHandler(async (req, res) => {
-		const query = req.validated?.query as UsersQuery;
-
 		const data = await this._getUsersUseCase.execute({
-			page: query.page,
-			limit: query.limit,
-			search: query.search,
-			role: query.role,
-			status: query.status,
-			sort: query.sort,
+			...(req.validated?.query as UsersQuery),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -43,9 +36,13 @@ export class UserManagementController {
 	});
 
 	blockUser = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as UserIdParam;
+		//TODO : validate the body using the validator in the route
 		const { reportId } = (req.body ?? {}) as { reportId?: string };
-		await this._blockUserUseCase.execute({ userId: id, reportId });
+
+		await this._blockUserUseCase.execute({
+			userId: (req.validated?.params as UserIdParam).id,
+			reportId,
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: UserManagementResponseMessages.USER_BLOCKED_SUCCESS,
@@ -53,8 +50,9 @@ export class UserManagementController {
 	});
 
 	unblockUser = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as UserIdParam;
-		await this._unblockUserUseCase.execute({ userId: id });
+		await this._unblockUserUseCase.execute({
+			userId: (req.validated?.params as UserIdParam).id,
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: UserManagementResponseMessages.USER_UNBLOCKED_SUCCESS,

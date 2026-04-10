@@ -15,6 +15,12 @@ import type { AuthenticatedRequest } from "../../../shared/types/authenticated-r
 import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages, ProfileResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	changePasswordBody,
+	RequestChangePasswordBody,
+	updateProfileBody,
+	VerifyProfileOtpBody,
+} from "../validators";
 
 @injectable()
 export class ProfileController {
@@ -59,7 +65,7 @@ export class ProfileController {
 		async (req: AuthenticatedRequest, res: Response) => {
 			const userId = req.user.id;
 			const result = await this._updateProfileUseCase.execute({
-				...req.body,
+				...(req.validated?.body as updateProfileBody),
 				userId,
 			});
 
@@ -75,7 +81,7 @@ export class ProfileController {
 			const userId = req.user.id;
 
 			await this._requestChangePasswordUseCase.execute({
-				...req.body,
+				...(req.validated?.body as RequestChangePasswordBody),
 				userId,
 			});
 
@@ -87,12 +93,11 @@ export class ProfileController {
 
 	verifyChangePasswordOtp = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
-			const { otp } = req.body;
 			const userId = req.user.id;
 
 			const result = await this._verifyChangePasswordOtpUseCase.execute({
 				userId,
-				otp,
+				...(req.validated?.body as VerifyProfileOtpBody),
 			});
 
 			return sendSuccess(res, HttpStatus.OK, {
@@ -107,7 +112,7 @@ export class ProfileController {
 			const userId = req.user.id;
 
 			await this._changePasswordUseCase.execute({
-				...req.body,
+				...(req.validated?.body as changePasswordBody),
 				userId,
 			});
 
