@@ -7,6 +7,7 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type {
 	ChatUserDto,
 	GetChatInput,
@@ -135,10 +136,8 @@ export class GetChatUseCase implements IGetChatUseCase {
 			}),
 		);
 
-		return {
-			chat: ChatMapper.toDtoForUser(chatForResponse, input.userId, usersById),
-			receiver: receiverDto,
-			messages: result.items.map((item) =>
+		const { items, ...meta } = mapPaginatedResult(result, (items) =>
+			items.map((item) =>
 				ChatMessageMapper.toDto(
 					item,
 					item.attachementId
@@ -146,10 +145,12 @@ export class GetChatUseCase implements IGetChatUseCase {
 						: null,
 				),
 			),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
+		);
+		return {
+			...meta,
+			chat: ChatMapper.toDtoForUser(chatForResponse, input.userId, usersById),
+			receiver: receiverDto,
+			messages: items,
 		};
 	}
 }

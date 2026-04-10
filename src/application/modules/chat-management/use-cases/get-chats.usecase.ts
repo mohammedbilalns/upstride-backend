@@ -3,6 +3,7 @@ import type { UserRole } from "../../../../domain/entities/user.entity";
 import type { IChatRepository } from "../../../../domain/repositories/chat.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type { GetChatsInput, GetChatsOutput } from "../dtos/chat.dto";
 import { ChatMapper } from "../mappers/chat.mapper";
 import type { IGetChatsUseCase } from "./get-chats.usecase.interface";
@@ -77,17 +78,14 @@ export class GetChatsUseCase implements IGetChatsUseCase {
 			}),
 		);
 
-		return {
-			chats: ChatMapper.toDtosForUser(
-				result.items,
+		const { items, ...meta } = mapPaginatedResult(result, (items) =>
+			ChatMapper.toDtosForUser(
+				items,
 				input.userId,
 				usersById,
 				result.lastMessages,
 			),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		);
+		return { ...meta, chats: items };
 	}
 }

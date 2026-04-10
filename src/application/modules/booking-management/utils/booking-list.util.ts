@@ -2,6 +2,7 @@ import type { Booking } from "../../../../domain/entities/booking.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { PaginatedResult } from "../../../../domain/repositories/capabilities";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type { GetBookingsResponse } from "../dtos/booking.dto";
 import { BookingUsecaseMapper } from "../mappers/booking-usecase.mapper";
 
@@ -26,8 +27,8 @@ export const buildBookingListResponse = async (
 		);
 	}
 
-	return {
-		items: result.items.map((booking) => {
+	return mapPaginatedResult(result, (items) =>
+		items.map((booking) => {
 			const dto = BookingUsecaseMapper.toDto(booking);
 			if (
 				booking.paymentStatus === "COMPLETED" &&
@@ -37,9 +38,5 @@ export const buildBookingListResponse = async (
 			}
 			return dto;
 		}),
-		total: result.total,
-		page: result.page,
-		limit: result.limit,
-		totalPages: result.totalPages,
-	};
+	);
 };

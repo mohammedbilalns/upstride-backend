@@ -5,6 +5,7 @@ import type {
 	PaymentTransactionQuery,
 } from "../../../../domain/repositories/payment-transactions.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type {
 	GetPaymentTransactionsInput,
 	GetPaymentTransactionsOutput,
@@ -40,12 +41,6 @@ export class GetPaymentTransactionsUseCase
 			sort,
 		});
 
-		return {
-			items: PaymentTransactionDtoMapper.toDTOs(result.items),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		return mapPaginatedResult(result, PaymentTransactionDtoMapper.toDTOs);
 	}
 }

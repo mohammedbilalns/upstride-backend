@@ -6,6 +6,10 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
+import {
+	emptyPaginatedResult,
+	mapPaginatedResult,
+} from "../../../shared/utilities/pagination.util";
 import type {
 	GetMentorsInput,
 	GetMentorsResponse,
@@ -31,13 +35,10 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 				query: { name: input.category },
 			});
 			if (interests.length === 0) {
-				return {
-					items: [],
-					total: 0,
-					page: input.page,
-					limit: input.limit,
-					totalPages: 0,
-				};
+				return mapPaginatedResult(
+					emptyPaginatedResult(input.page, input.limit),
+					() => [],
+				);
 			}
 			categoryId = interests[0].id;
 		}
@@ -75,12 +76,6 @@ export class GetMentorsUseCase implements IGetMentorsUseCase {
 			}),
 		);
 
-		return {
-			items,
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		return mapPaginatedResult(result, () => items);
 	}
 }

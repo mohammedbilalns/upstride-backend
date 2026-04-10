@@ -3,6 +3,7 @@ import type { IAvailabilityRepository } from "../../../../domain/repositories/av
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
+import { buildPaginationMeta } from "../../../shared/utilities/pagination.util";
 import type {
 	GetMentorAvailabilitiesInput,
 	GetMentorAvailabilitiesResponse,
@@ -73,13 +74,7 @@ export class GetMentorAvailabilitiesUseCase
 				mentorIdToQuery,
 				{ status, expired: input.expired },
 			);
-			const totalPages = Math.max(1, Math.ceil(totalCount / limit));
-			pagination = {
-				page,
-				limit,
-				totalPages,
-				totalCount,
-			};
+			pagination = buildPaginationMeta(page, limit, totalCount, 1);
 		}
 
 		return {

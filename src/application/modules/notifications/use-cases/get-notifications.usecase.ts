@@ -4,6 +4,7 @@ import type {
 	NotificationQuery,
 } from "../../../../domain/repositories/notification.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type {
 	GetNotificationsInput,
 	GetNotificationsOutput,
@@ -38,12 +39,10 @@ export class GetNotificationsUseCase implements IGetNotificationsUseCase {
 			sort: { createdAt: -1 },
 		});
 
-		return {
-			notifications: NotificationMapper.toDtos(result.items),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		const { items, ...meta } = mapPaginatedResult(
+			result,
+			NotificationMapper.toDtos,
+		);
+		return { ...meta, notifications: items };
 	}
 }

@@ -4,6 +4,7 @@ import type {
 	ICoinTransactionRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type {
 	GetPlatformCoinTransactionsInput,
 	GetPlatformCoinTransactionsOutput,
@@ -38,12 +39,6 @@ export class GetPlatformCoinTransactionsUseCase
 			sort,
 		});
 
-		return {
-			items: CoinTransactionDtoMapper.toDTOs(result.items),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		return mapPaginatedResult(result, CoinTransactionDtoMapper.toDTOs);
 	}
 }

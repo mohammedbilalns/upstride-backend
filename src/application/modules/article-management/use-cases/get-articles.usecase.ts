@@ -7,6 +7,10 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
+import {
+	emptyPaginatedResult,
+	mapPaginatedResult,
+} from "../../../shared/utilities/pagination.util";
 import type {
 	GetArticlesInput,
 	GetArticlesOutput,
@@ -44,13 +48,10 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 					interests[0].id,
 				);
 			} else {
-				return {
-					items: [],
-					total: 0,
-					page: input.page,
-					limit: input.limit ?? DEFAULT_PAGE_SIZE,
-					totalPages: 0,
-				};
+				return mapPaginatedResult(
+					emptyPaginatedResult(input.page, input.limit ?? DEFAULT_PAGE_SIZE),
+					() => [],
+				);
 			}
 		}
 
@@ -98,12 +99,6 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 			}),
 		);
 
-		return {
-			items,
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		return mapPaginatedResult(result, () => items);
 	}
 }

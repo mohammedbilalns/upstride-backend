@@ -5,6 +5,7 @@ import type {
 	ReportQuery,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { GetReportsInput, GetReportsOutput } from "../dtos/report.dto";
 import { AdminOnlyReportActionError } from "../errors";
@@ -49,12 +50,7 @@ export class GetReportsUseCase implements IGetReportsUseCase {
 			sort: { createdAt: -1 },
 		});
 
-		return {
-			reports: ReportMapper.toDtos(result.items),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		const { items, ...meta } = mapPaginatedResult(result, ReportMapper.toDtos);
+		return { ...meta, reports: items };
 	}
 }

@@ -6,6 +6,7 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type {
 	GetArticleCommentsInput,
 	GetArticleCommentsOutput,
@@ -55,12 +56,6 @@ export class GetArticleCommentsUseCase implements IGetArticleCommentsUseCase {
 			}),
 		);
 
-		return {
-			items,
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		return mapPaginatedResult(result, () => items);
 	}
 }

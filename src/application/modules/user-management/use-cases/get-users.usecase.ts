@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import { buildUserListQuery } from "../../../shared/utilities/user-list.util";
 import type { GetUsersInput, GetUsersResponse } from "../dtos/get-users.dto";
 import { UserListMapper } from "../mappers/user-list.mapper";
@@ -29,12 +30,10 @@ export class GetUsersUseCase implements IGetUsersUseCase {
 			sort,
 		});
 
-		return {
-			users: UserListMapper.toDTOs(result.items),
-			total: result.total,
-			page: result.page,
-			limit: result.limit,
-			totalPages: result.totalPages,
-		};
+		const { items, ...meta } = mapPaginatedResult(
+			result,
+			UserListMapper.toDTOs,
+		);
+		return { ...meta, users: items };
 	}
 }
