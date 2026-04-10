@@ -1,7 +1,9 @@
 import { inject, injectable } from "inversify";
 import { Booking } from "../../../../domain/entities/booking.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
@@ -21,18 +23,24 @@ export class CancelBookingByMentorUseCase
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorWriteRepository: IMentorWriteRepository,
 		@inject(TYPES.UseCases.RefundSessionAmount)
 		private readonly _refundSessionAmountUseCase: IRefundSessionAmountUseCase,
 	) {}
 
 	async execute(input: CancelBookingInput): Promise<CancelBookingResponse> {
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorWriteRepository,
+			input.userId,
+		);
 		const booking = await this._bookingRepository.findById(input.bookingId);
 
 		if (!booking) {
 			throw new BookingNotFoundError();
 		}
 
-		if (booking.mentorId !== input.userId) {
+		if (booking.mentorId !== mentor.id) {
 			throw new UnauthorizedBookingActionError();
 		}
 

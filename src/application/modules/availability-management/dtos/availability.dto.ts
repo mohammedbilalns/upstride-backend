@@ -7,7 +7,7 @@ import type {
 // Create
 // ──────────────────────────────────────────────
 export interface CreateAvailabilityInput {
-	mentorId: string;
+	userId: string;
 	name: string;
 	description: string;
 	days: Day[];
@@ -45,7 +45,7 @@ export interface ConflictAvailabilitySummary {
 // Update
 // ──────────────────────────────────────────────
 export interface UpdateAvailabilityInput {
-	mentorId: string;
+	userId: string;
 	availabilityId: string;
 	name?: string;
 	description?: string;
@@ -68,12 +68,12 @@ export interface UpdateAvailabilityResponse {
 // Delete
 // ──────────────────────────────────────────────
 export interface DeleteAvailabilityInput {
-	mentorId: string;
+	userId: string;
 	availabilityId: string;
 }
 
 export interface ReenableAvailabilityInput {
-	mentorId: string;
+	userId: string;
 	availabilityId: string;
 }
 
@@ -86,7 +86,7 @@ export interface CheckAndReenableAvailabilityResponse {
 // Get
 // ──────────────────────────────────────────────
 export interface GetMentorAvailabilitiesInput {
-	mentorId: string;
+	userId: string;
 	expired?: boolean;
 	status?: "active" | "disabled";
 	page?: number;

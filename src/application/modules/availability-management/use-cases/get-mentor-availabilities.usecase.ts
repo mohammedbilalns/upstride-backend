@@ -1,6 +1,8 @@
 import { inject, injectable } from "inversify";
 import type { IAvailabilityRepository } from "../../../../domain/repositories/availability.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	GetMentorAvailabilitiesInput,
 	GetMentorAvailabilitiesResponse,
@@ -15,11 +17,17 @@ export class GetMentorAvailabilitiesUseCase
 	constructor(
 		@inject(TYPES.Repositories.AvailabilityRepository)
 		private readonly _availabilityRepository: IAvailabilityRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorWriteRepository: IMentorWriteRepository,
 	) {}
 
 	async execute(
 		input: GetMentorAvailabilitiesInput,
 	): Promise<GetMentorAvailabilitiesResponse> {
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorWriteRepository,
+			input.userId,
+		);
 		const status =
 			input.status === "active"
 				? true
@@ -29,8 +37,9 @@ export class GetMentorAvailabilitiesUseCase
 		const page = input.page ?? 1;
 		const limit = input.limit ?? 0;
 
-		const availabilities = await this._availabilityRepository.findByMentorId(
-			input.mentorId,
+		let mentorIdToQuery = mentor.id;
+		let availabilities = await this._availabilityRepository.findByMentorId(
+			mentorIdToQuery,
 			{
 				status,
 				expired: input.expired,
@@ -39,10 +48,29 @@ export class GetMentorAvailabilitiesUseCase
 			},
 		);
 
+		if (
+			availabilities.length === 0 &&
+			mentor.userId &&
+			mentor.userId !== mentor.id
+		) {
+			const legacyAvailabilities =
+				await this._availabilityRepository.findByMentorId(mentor.userId, {
+					status,
+					expired: input.expired,
+					page,
+					limit,
+				});
+
+			if (legacyAvailabilities.length > 0) {
+				mentorIdToQuery = mentor.userId;
+				availabilities = legacyAvailabilities;
+			}
+		}
+
 		let pagination: GetMentorAvailabilitiesResponse["pagination"] | undefined;
 		if (limit > 0) {
 			const totalCount = await this._availabilityRepository.countByMentorId(
-				input.mentorId,
+				mentorIdToQuery,
 				{ status, expired: input.expired },
 			);
 			const totalPages = Math.max(1, Math.ceil(totalCount / limit));

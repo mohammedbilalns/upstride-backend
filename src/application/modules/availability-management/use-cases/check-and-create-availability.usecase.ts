@@ -1,7 +1,9 @@
 import { inject, injectable } from "inversify";
 import { Availability } from "../../../../domain/entities/availability.entity";
 import type { IAvailabilityRepository } from "../../../../domain/repositories/availability.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
 	CheckAndCreateAvailabilityResponse,
 	CreateAvailabilityInput,
@@ -18,6 +20,8 @@ export class CheckAndCreateAvailabilityUseCase
 	constructor(
 		@inject(TYPES.Repositories.AvailabilityRepository)
 		private readonly _availabilityRepository: IAvailabilityRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorWriteRepository: IMentorWriteRepository,
 		@inject(TYPES.UseCases.CreateAvailability)
 		private readonly _createAvailabilityUseCase: ICreateAvailabilityUseCase,
 	) {}
@@ -25,8 +29,12 @@ export class CheckAndCreateAvailabilityUseCase
 	async execute(
 		input: CreateAvailabilityInput,
 	): Promise<CheckAndCreateAvailabilityResponse> {
+		const mentor = await getMentorByUserIdOrThrow(
+			this._mentorWriteRepository,
+			input.userId,
+		);
 		const candidate = Availability.create({
-			mentorId: input.mentorId,
+			mentorId: mentor.id,
 			name: input.name,
 			description: input.description,
 			days: new Set(input.days),
@@ -41,7 +49,7 @@ export class CheckAndCreateAvailabilityUseCase
 		});
 
 		const existing = await this._availabilityRepository.findByMentorId(
-			input.mentorId,
+			mentor.id,
 			{ status: true },
 		);
 

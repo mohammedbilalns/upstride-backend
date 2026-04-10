@@ -27,7 +27,7 @@ export class VerifyChangePasswordOtpUseCase
 	async execute(
 		input: VerifyChangePasswordOtpInput,
 	): Promise<VerifyOtpResponse> {
-		const user = await this._userRepository.findByEmail(input.email);
+		const user = await this._userRepository.findById(input.userId);
 		if (!user) throw new UserNotFoundError();
 
 		const policy = new ChangePasswordOtpPolicy();

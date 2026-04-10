@@ -17,11 +17,12 @@ export class BookingMapper {
 		const menteeName = isPopulatedMenteeRef(doc.menteeId)
 			? (doc.menteeId.name ?? null)
 			: null;
+		const menteeId = getMenteeIdString(doc.menteeId);
 
 		return new Booking(
 			doc._id.toString(),
 			mentorId,
-			doc.menteeId.toString(),
+			menteeId,
 			doc.startTime.toISOString(),
 			doc.endTime.toISOString(),
 			doc.status as BookingStatus,
@@ -112,3 +113,8 @@ const getMentorIdString = (
 	mentorId: Types.ObjectId | PopulatedMentorRef,
 ): string =>
 	(isPopulatedMentorRef(mentorId) ? mentorId._id : mentorId).toString();
+
+const getMenteeIdString = (
+	menteeId: Types.ObjectId | PopulatedMenteeRef,
+): string =>
+	(isPopulatedMenteeRef(menteeId) ? menteeId._id : menteeId).toString();

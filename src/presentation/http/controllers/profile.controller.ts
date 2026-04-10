@@ -10,7 +10,6 @@ import type {
 	IRequestChangePasswordUseCase,
 	IUpdateProfileUseCase,
 } from "../../../application/modules/profile-management/use-cases";
-import type { IUserRepository } from "../../../domain/repositories";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
@@ -32,8 +31,6 @@ export class ProfileController {
 		private readonly _requestChangePasswordUseCase: IRequestChangePasswordUseCase,
 		@inject(TYPES.UseCases.VerifyChangePasswordOtp)
 		private readonly _verifyChangePasswordOtpUseCase: IVerifyChangePasswordOtpUseCase,
-		@inject(TYPES.Repositories.UserRepository)
-		private readonly _userRepository: IUserRepository,
 	) {}
 
 	getMe = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
@@ -93,13 +90,8 @@ export class ProfileController {
 			const { otp } = req.body;
 			const userId = req.user.id;
 
-			const user = await this._userRepository.findById(userId);
-			if (!user) {
-				throw new Error("User not found");
-			}
-
 			const result = await this._verifyChangePasswordOtpUseCase.execute({
-				email: user.email,
+				userId,
 				otp,
 			});
 

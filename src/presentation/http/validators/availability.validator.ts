@@ -24,11 +24,11 @@ const toMinutes = (time: string) => {
 	return h * 60 + m;
 };
 
-export const availabilityIdParamSchema = {
-	params: z.object({
-		id: objectIdSchema,
-	}),
-};
+export const availabilityIdParamSchema = z.object({
+	id: objectIdSchema,
+});
+
+export type availabilityIdParam = z.infer<typeof availabilityIdParamSchema>;
 
 const availabilityBaseSchema = z.object({
 	name: z
@@ -116,18 +116,27 @@ const validateBreakTotals = (
 	}
 };
 
-export const createAvailabilitySchema = {
-	body: availabilityBaseSchema.superRefine((value, ctx) => {
+export const createAvailabilityBodySchema = availabilityBaseSchema.superRefine(
+	(value, ctx) => {
 		validateTimeRange(value, ctx);
 		validateBreakTotals(value, ctx);
-	}),
-};
+	},
+);
 
-export const updateAvailabilitySchema = {
-	params: z.object({
-		id: objectIdSchema,
-	}),
-	body: availabilityBaseSchema.partial().superRefine((value, ctx) => {
+export type createAvailabilityBody = z.infer<
+	typeof createAvailabilityBodySchema
+>;
+
+export const updateAvailabilityParamsSchema = z.object({
+	id: objectIdSchema,
+});
+
+export type updateAvailabilityParams = z.infer<
+	typeof updateAvailabilityParamsSchema
+>;
+export const updateAvailabilityBodySchema = availabilityBaseSchema
+	.partial()
+	.superRefine((value, ctx) => {
 		if (value.startTime && value.endTime) {
 			validateTimeRange(
 				{ startTime: value.startTime, endTime: value.endTime },
@@ -144,17 +153,22 @@ export const updateAvailabilitySchema = {
 				);
 			}
 		}
-	}),
-};
+	});
 
-export const getMentorAvailabilitiesSchema = {
-	query: z.object({
-		expired: z
-			.enum(["true", "false"])
-			.optional()
-			.transform((val) => val === "true"),
-		status: z.enum(["active", "disabled"]).optional(),
-		page: z.coerce.number().int().min(1).optional(),
-		limit: z.coerce.number().int().min(1).max(50).optional(),
-	}),
-};
+export type updateAvailabiltyBody = z.infer<
+	typeof updateAvailabilityBodySchema
+>;
+
+export const getMentorAvailabilitiesQuerySchema = z.object({
+	expired: z
+		.enum(["true", "false"])
+		.optional()
+		.transform((val) => val === "true"),
+	status: z.enum(["active", "disabled"]).optional(),
+	page: z.coerce.number().int().min(1).optional(),
+	limit: z.coerce.number().int().min(1).max(50).optional(),
+});
+
+export type getMentorAvailabilitiesQuery = z.infer<
+	typeof getMentorAvailabilitiesQuerySchema
+>;

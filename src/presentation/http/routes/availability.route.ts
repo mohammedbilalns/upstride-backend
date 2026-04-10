@@ -6,9 +6,10 @@ import type { AvailabilityController } from "../controllers/availability.control
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	availabilityIdParamSchema,
-	createAvailabilitySchema,
-	getMentorAvailabilitiesSchema,
-	updateAvailabilitySchema,
+	createAvailabilityBodySchema,
+	getMentorAvailabilitiesQuerySchema,
+	updateAvailabilityBodySchema,
+	updateAvailabilityParamsSchema,
 } from "../validators/availability.validator";
 
 const availabilityRouter = Router();
@@ -20,7 +21,7 @@ availabilityRouter.post(
 	ROUTES.AVAILABILITY.ROOT,
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(createAvailabilitySchema),
+	validate({ body: createAvailabilityBodySchema }),
 	availabilityController.createAvailability,
 );
 
@@ -28,7 +29,7 @@ availabilityRouter.post(
 	ROUTES.AVAILABILITY.CHECK_CREATE,
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(createAvailabilitySchema),
+	validate({ body: createAvailabilityBodySchema }),
 	availabilityController.checkAndCreateAvailability,
 );
 
@@ -36,7 +37,7 @@ availabilityRouter.get(
 	ROUTES.AVAILABILITY.MENTOR,
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(getMentorAvailabilitiesSchema),
+	validate({ query: getMentorAvailabilitiesQuerySchema }),
 	availabilityController.getMentorAvailabilities,
 );
 
@@ -44,7 +45,10 @@ availabilityRouter.put(
 	ROUTES.AVAILABILITY.BY_ID(":id"),
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(updateAvailabilitySchema),
+	validate({
+		params: updateAvailabilityParamsSchema,
+		body: updateAvailabilityBodySchema,
+	}),
 	availabilityController.updateAvailability,
 );
 
@@ -52,7 +56,7 @@ availabilityRouter.put(
 	"/reenable/:id",
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(availabilityIdParamSchema),
+	validate({ params: availabilityIdParamSchema }),
 	availabilityController.reenableAvailability,
 );
 
@@ -60,7 +64,7 @@ availabilityRouter.patch(
 	ROUTES.AVAILABILITY.REENABLE(":id"),
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(availabilityIdParamSchema),
+	validate({ params: availabilityIdParamSchema }),
 	availabilityController.reenableAvailability,
 );
 
@@ -68,7 +72,7 @@ availabilityRouter.patch(
 	ROUTES.AVAILABILITY.CHECK_REENABLE(":id"),
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(availabilityIdParamSchema),
+	validate({ params: availabilityIdParamSchema }),
 	availabilityController.checkAndReenableAvailability,
 );
 
@@ -76,7 +80,7 @@ availabilityRouter.delete(
 	ROUTES.AVAILABILITY.BY_ID(":id"),
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate(availabilityIdParamSchema),
+	validate({ params: availabilityIdParamSchema }),
 	availabilityController.deleteAvailability,
 );
 
