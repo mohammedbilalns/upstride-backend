@@ -13,14 +13,14 @@ import { TYPES } from "../../../shared/types/types";
 import { RESPONSE_MESSAGES } from "../constants/response-messages";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
-	bookingDetailsParams,
-	bookingListQuery,
-	cancelBookingParams,
-	cancellBookingBody,
-	createBookingBody,
-	getAvaialableSlotsParams,
-	getAvailableSlotsQuery,
-	repayBookingParams,
+	BookingDetailsParams,
+	BookingListQuery,
+	CancelBookingParams,
+	CancellBookingBody,
+	CreateBookingBody,
+	GetAvaialableSlotsParams,
+	GetAvailableSlotsQuery,
+	RepayBookingParams,
 } from "../validators";
 
 @injectable()
@@ -48,8 +48,8 @@ export class BookingController {
 		const requesterUserId = (req as AuthenticatedRequest).user.id;
 
 		const result = await this._getAvailableSlotsUseCase.execute({
-			...(req.validated?.params as getAvaialableSlotsParams),
-			...(req.validated?.query as getAvailableSlotsQuery),
+			...(req.validated?.params as GetAvaialableSlotsParams),
+			...(req.validated?.query as GetAvailableSlotsQuery),
 			requesterUserId,
 		});
 
@@ -64,7 +64,7 @@ export class BookingController {
 
 		const result = await this._createBookingUseCase.execute({
 			menteeId,
-			...(req.validated?.body as createBookingBody),
+			...(req.validated?.body as CreateBookingBody),
 		});
 
 		return sendSuccess(res, HttpStatus.CREATED, {
@@ -81,8 +81,8 @@ export class BookingController {
 
 		const result = await this._cancelBookingUseCase.execute({
 			userId,
-			bookingId: (req.validated?.params as cancelBookingParams).id,
-			...(req.validated?.body as cancellBookingBody),
+			bookingId: (req.validated?.params as CancelBookingParams).id,
+			...(req.validated?.body as CancellBookingBody),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -96,8 +96,8 @@ export class BookingController {
 
 		const result = await this._cancelBookingByMentorUseCase.execute({
 			userId,
-			bookingId: (req.validated?.params as cancelBookingParams).id,
-			...(req.validated?.body as cancellBookingBody),
+			bookingId: (req.validated?.params as CancelBookingParams).id,
+			...(req.validated?.body as CancellBookingBody),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -111,7 +111,7 @@ export class BookingController {
 
 		const result = await this._repayBookingUseCase.execute({
 			userId,
-			bookingId: (req.validated?.params as repayBookingParams).id,
+			bookingId: (req.validated?.params as RepayBookingParams).id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -125,7 +125,7 @@ export class BookingController {
 
 		const result = await this._getUserBookingsUseCase.execute({
 			userId,
-			...(req.validated?.query as bookingListQuery),
+			...(req.validated?.query as BookingListQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -137,7 +137,7 @@ export class BookingController {
 		const userId = (req as AuthenticatedRequest).user.id;
 		const result = await this._getMentorBookingsUseCase.execute({
 			userId,
-			...(req.validated?.query as bookingListQuery),
+			...(req.validated?.query as BookingListQuery),
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {
@@ -149,7 +149,7 @@ export class BookingController {
 		const userId = (req as AuthenticatedRequest).user.id;
 		const result = await this._getBookingDetailsUseCase.execute({
 			userId,
-			bookingId: (req.validated?.params as bookingDetailsParams).id,
+			bookingId: (req.validated?.params as BookingDetailsParams).id,
 		});
 
 		return sendSuccess(res, HttpStatus.OK, {

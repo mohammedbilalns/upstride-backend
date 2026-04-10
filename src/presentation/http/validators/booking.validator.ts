@@ -1,17 +1,17 @@
 import { z } from "zod";
 import { objectIdSchema } from "../../../shared/validators";
 
-const bookingIdSchema = z.string().min(1, "Booking ID is required");
+const BookingIdSchema = z.string().min(1, "Booking ID is required");
 
-export const getAvaialableSlotsParamsSchema = z.object({
+export const GetAvaialableSlotsParamsSchema = z.object({
 	mentorId: objectIdSchema,
 });
 
-export type getAvaialableSlotsParams = z.infer<
-	typeof getAvaialableSlotsParamsSchema
+export type GetAvaialableSlotsParams = z.infer<
+	typeof GetAvaialableSlotsParamsSchema
 >;
 
-export const getAvailableSlotsQuerySchema = z.object({
+export const GetAvailableSlotsQuerySchema = z.object({
 	date: z.string().transform((val, ctx) => {
 		const date = new Date(val);
 		if (isNaN(date.getTime())) {
@@ -25,11 +25,11 @@ export const getAvailableSlotsQuerySchema = z.object({
 	}),
 });
 
-export type getAvailableSlotsQuery = z.infer<
-	typeof getAvailableSlotsQuerySchema
+export type GetAvailableSlotsQuery = z.infer<
+	typeof GetAvailableSlotsQuerySchema
 >;
 
-export const createBookingBodySchema = z.object({
+export const CreateBookingBodySchema = z.object({
 	mentorId: objectIdSchema,
 	startTime: z.string().transform((val, ctx) => {
 		const date = new Date(val);
@@ -57,36 +57,36 @@ export const createBookingBodySchema = z.object({
 	notes: z.string().optional(),
 });
 
-export type createBookingBody = z.infer<typeof createBookingBodySchema>;
+export type CreateBookingBody = z.infer<typeof CreateBookingBodySchema>;
 
-export const cancellBookingBodySchema = z.object({
+export const CancellBookingBodySchema = z.object({
 	reason: z
 		.string()
 		.min(5, "Cancellation reason must be at least 5 characters")
 		.optional(),
 });
 
-export type cancellBookingBody = z.infer<typeof cancellBookingBodySchema>;
+export type CancellBookingBody = z.infer<typeof CancellBookingBodySchema>;
 
-export const cancelBookingParamsSchema = z.object({
-	id: bookingIdSchema,
+export const CancelBookingParamsSchema = z.object({
+	id: BookingIdSchema,
 });
 
-export type cancelBookingParams = z.infer<typeof cancelBookingParamsSchema>;
+export type CancelBookingParams = z.infer<typeof CancelBookingParamsSchema>;
 
-export const repayBookingParamsSchema = z.object({
-	id: bookingIdSchema,
+export const RepayBookingParamsSchema = z.object({
+	id: BookingIdSchema,
 });
 
-export type repayBookingParams = z.infer<typeof repayBookingParamsSchema>;
+export type RepayBookingParams = z.infer<typeof RepayBookingParamsSchema>;
 
-export const bookingDetailsParamsSchema = z.object({
-	id: bookingIdSchema,
+export const BookingDetailsParamsSchema = z.object({
+	id: BookingIdSchema,
 });
 
-export type bookingDetailsParams = z.infer<typeof bookingDetailsParamsSchema>;
+export type BookingDetailsParams = z.infer<typeof BookingDetailsParamsSchema>;
 
-export const bookingListQuerySchema = z.object({
+export const BookingListQuerySchema = z.object({
 	page: z.coerce.number().int().positive().default(1),
 	limit: z.coerce
 		.number()
@@ -100,4 +100,4 @@ export const bookingListQuerySchema = z.object({
 		.default("all"),
 });
 
-export type bookingListQuery = z.infer<typeof bookingListQuerySchema>;
+export type BookingListQuery = z.infer<typeof BookingListQuerySchema>;

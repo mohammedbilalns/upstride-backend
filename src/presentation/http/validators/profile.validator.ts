@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { UserPreferencesLimits } from "../../../shared/constants/app.constants";
 
-export const updateProfileBodySchema = z.object({
+export const UpdateProfileBodySchema = z.object({
 	name: z.string().min(2, "Name must be at least 2 characters").optional(),
 	profilePictureId: z.string().optional(),
 	interests: z
@@ -36,4 +36,4 @@ export const updateProfileBodySchema = z.object({
 		.optional(),
 });
 
-export type updateProfileBody = z.infer<typeof updateProfileBodySchema>;
+export type UpdateProfileBody = z.infer<typeof UpdateProfileBodySchema>;

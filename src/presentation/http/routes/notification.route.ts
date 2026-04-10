@@ -4,8 +4,8 @@ import { ROUTES } from "../constants";
 import { NotificationController } from "../controllers";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
-	notificationIdParamSchema,
-	notificationsQuerySchema,
+	NotificationIdParamSchema,
+	NotificationsQuerySchema,
 } from "../validators";
 
 const router = Router();
@@ -16,13 +16,13 @@ router.use(authorizeRoles(["USER", "MENTOR"]));
 
 router.get(
 	ROUTES.NOTIFICATIONS.ROOT,
-	validate({ query: notificationsQuerySchema }),
+	validate({ query: NotificationsQuerySchema }),
 	notificationController.getNotifications,
 );
 
 router.patch(
 	ROUTES.NOTIFICATIONS.MARK_READ,
-	validate({ params: notificationIdParamSchema }),
+	validate({ params: NotificationIdParamSchema }),
 	notificationController.markRead,
 );
 

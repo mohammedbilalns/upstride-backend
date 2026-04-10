@@ -4,10 +4,10 @@ import { ROUTES } from "../constants";
 import { ProfileController } from "../controllers";
 import { validate, verifySession } from "../middlewares";
 import {
-	changePasswordBodySchema,
-	requestChangePasswordBodySchema,
-	updateProfileBodySchema,
-	verifyProfileOtpBodySchema,
+	ChangePasswordBodySchema,
+	RequestChangePasswordBodySchema,
+	UpdateProfileBodySchema,
+	VerifyProfileOtpBodySchema,
 } from "../validators/index";
 
 const router = Router();
@@ -19,25 +19,25 @@ router.get(ROUTES.PROFILE.ME, profileController.getMe);
 router.get(ROUTES.PROFILE.ROOT, profileController.getProfile);
 router.put(
 	ROUTES.PROFILE.ROOT,
-	validate({ body: updateProfileBodySchema }),
+	validate({ body: UpdateProfileBodySchema }),
 	profileController.updateProfile,
 );
 
 router.post(
 	ROUTES.PROFILE.REQUEST_CHANGE_PASSWORD,
-	validate({ body: requestChangePasswordBodySchema }),
+	validate({ body: RequestChangePasswordBodySchema }),
 	profileController.requestChangePassword,
 );
 
 router.post(
 	ROUTES.PROFILE.VERIFY_OTP,
-	validate({ body: verifyProfileOtpBodySchema }),
+	validate({ body: VerifyProfileOtpBodySchema }),
 	profileController.verifyChangePasswordOtp,
 );
 
 router.put(
 	ROUTES.PROFILE.CHANGE_PASSWORD,
-	validate({ body: changePasswordBodySchema }),
+	validate({ body: ChangePasswordBodySchema }),
 	profileController.changePassword,
 );
 

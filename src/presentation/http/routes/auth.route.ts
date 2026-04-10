@@ -13,17 +13,17 @@ import {
 	verifySession,
 } from "../middlewares";
 import {
-	googleLoginBodySchema,
-	linkedinLoginBodySchema,
-	loginBodySchema,
-	passwordResetBodySchema,
-	registerBodySchema,
-	resendOtpBodySchema,
-	saveInterestsBodySchema,
-	updatePasswordBodySchema,
-	verifyOtpBodySchema,
+	GoogleLoginBodySchema,
+	LinkedInLoginBodySchema,
+	LoginBodySchema,
+	PasswordResetBodySchema,
+	RegisterBodySchema,
+	ResendOtpBodySchema,
+	SaveInterestsBodySchema,
+	UpdatePasswordBodySchema,
+	VerifyOtpBodySchema,
 } from "../validators/auth";
-import { revokeSessionBodySchema } from "../validators/auth/revocation.validator";
+import { RevokeSessionBodySchema } from "../validators/auth/revocation.validator";
 
 const router = Router();
 const authController = container.get(AuthController);
@@ -33,39 +33,39 @@ const logoutController = container.get(LogoutController);
 router.post(
 	ROUTES.AUTH.LOGIN,
 	ensureCsrfSessionId,
-	validate({ body: loginBodySchema }),
+	validate({ body: LoginBodySchema }),
 	authController.login,
 );
 
 router.post(
 	ROUTES.AUTH.GOOGLE,
 	ensureCsrfSessionId,
-	validate({ body: googleLoginBodySchema }),
+	validate({ body: GoogleLoginBodySchema }),
 	authController.loginWithGoogle,
 );
 
 router.post(
 	ROUTES.AUTH.LINKEDIN,
 	ensureCsrfSessionId,
-	validate({ body: linkedinLoginBodySchema }),
+	validate({ body: LinkedInLoginBodySchema }),
 	authController.loginWithLinkedIn,
 );
 
 router.post(
 	ROUTES.AUTH.REGISTER,
-	validate({ body: registerBodySchema }),
+	validate({ body: RegisterBodySchema }),
 	authController.register,
 );
 
 router.post(
 	ROUTES.AUTH.VERIFY_REGISTER_OTP,
-	validate({ body: verifyOtpBodySchema }),
+	validate({ body: VerifyOtpBodySchema }),
 	authController.verifyRegisterOtp,
 );
 
 router.post(
 	ROUTES.AUTH.RESEND_REGISTER_OTP,
-	validate({ body: resendOtpBodySchema }),
+	validate({ body: ResendOtpBodySchema }),
 	authController.resendRegisterOtp,
 );
 
@@ -76,31 +76,31 @@ router.post(ROUTES.AUTH.REFRESH, csrfProtection, authController.refreshSession);
 router.post(
 	ROUTES.AUTH.SAVE_INTERESTS,
 	ensureCsrfSessionId,
-	validate({ body: saveInterestsBodySchema }),
+	validate({ body: SaveInterestsBodySchema }),
 	authController.saveInterests,
 );
 
 router.post(
 	ROUTES.AUTH.REQUEST_PASSWORD_RESET,
-	validate({ body: passwordResetBodySchema }),
+	validate({ body: PasswordResetBodySchema }),
 	passwordResetController.requestPasswordReset,
 );
 
 router.post(
 	ROUTES.AUTH.VERIFY_RESET_PASSWORD_OTP,
-	validate({ body: verifyOtpBodySchema }),
+	validate({ body: VerifyOtpBodySchema }),
 	passwordResetController.verifyResetPasswordOtp,
 );
 
 router.post(
 	ROUTES.AUTH.RESEND_RESET_PASSWORD_OTP,
-	validate({ body: resendOtpBodySchema }),
+	validate({ body: ResendOtpBodySchema }),
 	passwordResetController.resendResetPasswordOtp,
 );
 
 router.post(
 	ROUTES.AUTH.UPDATE_PASSWORD,
-	validate({ body: updatePasswordBodySchema }),
+	validate({ body: UpdatePasswordBodySchema }),
 	passwordResetController.updatePassword,
 );
 
@@ -112,7 +112,7 @@ router.post(ROUTES.AUTH.LOGOUT, logoutController.logout);
 
 router.post(
 	ROUTES.AUTH.REVOKE_SESSION,
-	validate({ body: revokeSessionBodySchema }),
+	validate({ body: RevokeSessionBodySchema }),
 	logoutController.revokeSession,
 );
 

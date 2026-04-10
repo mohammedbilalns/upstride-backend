@@ -16,9 +16,9 @@ import { TYPES } from "../../../shared/types/types";
 import { AuthResponseMessages, ProfileResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
-	changePasswordBody,
+	ChangePasswordBody,
 	RequestChangePasswordBody,
-	updateProfileBody,
+	UpdateProfileBody,
 	VerifyProfileOtpBody,
 } from "../validators";
 
@@ -65,7 +65,7 @@ export class ProfileController {
 		async (req: AuthenticatedRequest, res: Response) => {
 			const userId = req.user.id;
 			const result = await this._updateProfileUseCase.execute({
-				...(req.validated?.body as updateProfileBody),
+				...(req.validated?.body as UpdateProfileBody),
 				userId,
 			});
 
@@ -112,7 +112,7 @@ export class ProfileController {
 			const userId = req.user.id;
 
 			await this._changePasswordUseCase.execute({
-				...(req.validated?.body as changePasswordBody),
+				...(req.validated?.body as ChangePasswordBody),
 				userId,
 			});
 

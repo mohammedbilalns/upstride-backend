@@ -44,11 +44,10 @@ export class LogoutController {
 
 	revokeSession = asyncHandler(async (req, res) => {
 		const requesterUserId = (req as AuthenticatedRequest).user.id;
-		const { targetSessionId } = req.body as RevokeSessionBody;
 
 		await this._revokeSessionUseCase.execute({
 			requesterUserId,
-			targetSessionId,
+			...(req.validated?.body as RevokeSessionBody),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -57,8 +56,9 @@ export class LogoutController {
 	});
 
 	revokeAllOtherSessions = asyncHandler(async (req, res) => {
-		const requesterUserId = (req as AuthenticatedRequest).user.id;
-		const requesterSessionId = (req as AuthenticatedRequest).user.sid;
+		const { id: requesterUserId, sid: requesterSessionId } = (
+			req as AuthenticatedRequest
+		).user;
 
 		await this._revokeAllOtherSessionsUseCase.execute({
 			requesterUserId,

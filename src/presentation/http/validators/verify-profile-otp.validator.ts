@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { otpSchema } from "../../../shared/validators";
 
-export const verifyProfileOtpBodySchema = z.object({
+export const VerifyProfileOtpBodySchema = z.object({
 	otp: otpSchema,
 });
 
-export type VerifyProfileOtpBody = z.infer<typeof verifyProfileOtpBodySchema>;
+export type VerifyProfileOtpBody = z.infer<typeof VerifyProfileOtpBodySchema>;

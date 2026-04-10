@@ -2,10 +2,10 @@ import { z } from "zod";
 import { ArticleReactionTypeValues } from "../../../domain/entities/article-reaction.entity";
 import { objectIdSchema, pageSchema } from "../../../shared/validators";
 
-export const ArticleSlugParamSchema = z.object({
+export const GetArticleParamSchema = z.object({
 	slug: z.string().trim().min(1, "Slug is required"),
 });
-export type ArticleSlugParam = z.infer<typeof ArticleSlugParamSchema>;
+export type GetArticleParam = z.infer<typeof GetArticleParamSchema>;
 
 export const ArticleIdParamSchema = z.object({
 	articleId: objectIdSchema,

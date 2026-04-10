@@ -5,14 +5,14 @@ import { ROUTES } from "../constants";
 import type { BookingController } from "../controllers/booking.controller";
 import { authorizeRoles, verifySession } from "../middlewares";
 import {
-	bookingDetailsParamsSchema,
-	bookingListQuerySchema,
-	cancelBookingParamsSchema,
-	cancellBookingBodySchema,
-	createBookingBodySchema,
-	getAvaialableSlotsParamsSchema,
-	getAvailableSlotsQuerySchema,
-	repayBookingParamsSchema,
+	BookingDetailsParamsSchema,
+	BookingListQuerySchema,
+	CancelBookingParamsSchema,
+	CancellBookingBodySchema,
+	CreateBookingBodySchema,
+	GetAvaialableSlotsParamsSchema,
+	GetAvailableSlotsQuerySchema,
+	RepayBookingParamsSchema,
 } from "../validators/booking.validator";
 
 const bookingRouter = Router();
@@ -26,8 +26,8 @@ bookingRouter.get(
 	ROUTES.BOOKINGS.SLOTS(":mentorId"),
 	verifySession,
 	validate({
-		params: getAvaialableSlotsParamsSchema,
-		query: getAvailableSlotsQuerySchema,
+		params: GetAvaialableSlotsParamsSchema,
+		query: GetAvailableSlotsQuerySchema,
 	}),
 	bookingController.getAvailableSlots,
 );
@@ -35,7 +35,7 @@ bookingRouter.get(
 bookingRouter.post(
 	ROUTES.BOOKINGS.ROOT,
 	verifySession,
-	validate({ body: createBookingBodySchema }),
+	validate({ body: CreateBookingBodySchema }),
 	bookingController.createBooking,
 );
 
@@ -43,8 +43,8 @@ bookingRouter.put(
 	ROUTES.BOOKINGS.CANCEL(":id"),
 	verifySession,
 	validate({
-		params: cancelBookingParamsSchema,
-		body: cancellBookingBodySchema,
+		params: CancelBookingParamsSchema,
+		body: CancellBookingBodySchema,
 	}),
 	bookingController.cancelBooking,
 );
@@ -54,8 +54,8 @@ bookingRouter.put(
 	verifySession,
 	authorizeRoles(["MENTOR"]),
 	validate({
-		params: cancelBookingParamsSchema,
-		body: cancellBookingBodySchema,
+		params: CancelBookingParamsSchema,
+		body: CancellBookingBodySchema,
 	}),
 	bookingController.cancelBookingByMentor,
 );
@@ -63,21 +63,21 @@ bookingRouter.put(
 bookingRouter.post(
 	ROUTES.BOOKINGS.REPAY(":id"),
 	verifySession,
-	validate({ params: repayBookingParamsSchema }),
+	validate({ params: RepayBookingParamsSchema }),
 	bookingController.repayBooking,
 );
 
 bookingRouter.get(
 	ROUTES.BOOKINGS.USER,
 	verifySession,
-	validate({ query: bookingListQuerySchema }),
+	validate({ query: BookingListQuerySchema }),
 	bookingController.getUserBookings,
 );
 
 bookingRouter.get(
 	ROUTES.BOOKINGS.BY_ID(":id"),
 	verifySession,
-	validate({ params: bookingDetailsParamsSchema }),
+	validate({ params: BookingDetailsParamsSchema }),
 	bookingController.getBookingDetails,
 );
 
@@ -85,7 +85,7 @@ bookingRouter.get(
 	ROUTES.BOOKINGS.MENTOR,
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate({ query: bookingListQuerySchema }),
+	validate({ query: BookingListQuerySchema }),
 	bookingController.getMentorBookings,
 );
 

@@ -1,24 +1,24 @@
 import { z } from "zod";
 import { objectIdSchema, pageSchema } from "../../../shared/validators";
 
-export const chatQuerySchema = z.object({
+export const ChatQuerySchema = z.object({
 	page: pageSchema,
 	filter: z.enum(["read", "unread", "all"]).default("all"),
 });
 
-export const chatMessagesQuerySchema = z.object({
+export const ChatMessagesQuerySchema = z.object({
 	page: pageSchema,
 });
 
-export const otherUserParamSchema = z.object({
+export const OtherUserParamSchema = z.object({
 	otherUserId: objectIdSchema,
 });
 
-export const chatIdParamSchema = z.object({
+export const ChatIdParamSchema = z.object({
 	chatId: objectIdSchema,
 });
 
-export const sendMessageBodySchema = z
+export const SendMessageBodySchema = z
 	.object({
 		content: z.string().trim().min(1).optional(),
 		mediaId: z.string().trim().min(1).optional(),

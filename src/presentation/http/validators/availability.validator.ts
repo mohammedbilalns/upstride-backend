@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const objectIdSchema = z
+const ObjectIdSchema = z
 	.string()
 	.regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");
 
@@ -24,13 +24,13 @@ const toMinutes = (time: string) => {
 	return h * 60 + m;
 };
 
-export const availabilityIdParamSchema = z.object({
-	id: objectIdSchema,
+export const AvailabilityIdParamSchema = z.object({
+	id: ObjectIdSchema,
 });
 
-export type availabilityIdParam = z.infer<typeof availabilityIdParamSchema>;
+export type AvailabilityIdParam = z.infer<typeof AvailabilityIdParamSchema>;
 
-const availabilityBaseSchema = z.object({
+const AvailabilityBaseSchema = z.object({
 	name: z
 		.string()
 		.trim()
@@ -116,27 +116,26 @@ const validateBreakTotals = (
 	}
 };
 
-export const createAvailabilityBodySchema = availabilityBaseSchema.superRefine(
+export const CreateAvailabilityBodySchema = AvailabilityBaseSchema.superRefine(
 	(value, ctx) => {
 		validateTimeRange(value, ctx);
 		validateBreakTotals(value, ctx);
 	},
 );
 
-export type createAvailabilityBody = z.infer<
-	typeof createAvailabilityBodySchema
+export type CreateAvailabilityBody = z.infer<
+	typeof CreateAvailabilityBodySchema
 >;
 
-export const updateAvailabilityParamsSchema = z.object({
-	id: objectIdSchema,
+export const UpdateAvailabilityParamsSchema = z.object({
+	id: ObjectIdSchema,
 });
 
-export type updateAvailabilityParams = z.infer<
-	typeof updateAvailabilityParamsSchema
+export type UpdateAvailabilityParams = z.infer<
+	typeof UpdateAvailabilityParamsSchema
 >;
-export const updateAvailabilityBodySchema = availabilityBaseSchema
-	.partial()
-	.superRefine((value, ctx) => {
+export const UpdateAvailabilityBodySchema =
+	AvailabilityBaseSchema.partial().superRefine((value, ctx) => {
 		if (value.startTime && value.endTime) {
 			validateTimeRange(
 				{ startTime: value.startTime, endTime: value.endTime },
@@ -155,11 +154,11 @@ export const updateAvailabilityBodySchema = availabilityBaseSchema
 		}
 	});
 
-export type updateAvailabiltyBody = z.infer<
-	typeof updateAvailabilityBodySchema
+export type UpdateAvailabiltyBody = z.infer<
+	typeof UpdateAvailabilityBodySchema
 >;
 
-export const getMentorAvailabilitiesQuerySchema = z.object({
+export const GetMentorAvailabilitiesQuerySchema = z.object({
 	expired: z
 		.enum(["true", "false"])
 		.optional()
@@ -169,6 +168,6 @@ export const getMentorAvailabilitiesQuerySchema = z.object({
 	limit: z.coerce.number().int().min(1).max(50).optional(),
 });
 
-export type getMentorAvailabilitiesQuery = z.infer<
-	typeof getMentorAvailabilitiesQuerySchema
+export type GetMentorAvailabilitiesQuery = z.infer<
+	typeof GetMentorAvailabilitiesQuerySchema
 >;

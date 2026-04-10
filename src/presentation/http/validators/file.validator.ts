@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const getPreSignedUploadUrlBodySchema = z.object({
+export const GetPreSignedUploadUrlBodySchema = z.object({
 	fileName: z.string().min(1),
 	mimetype: z.string().min(1),
 	category: z.enum([
@@ -12,11 +12,11 @@ export const getPreSignedUploadUrlBodySchema = z.object({
 });
 
 export type GetPreSignedUploadUrlBody = z.infer<
-	typeof getPreSignedUploadUrlBodySchema
+	typeof GetPreSignedUploadUrlBodySchema
 >;
 
-export const deleteFileBodySchema = z.object({
+export const DeleteFileBodySchema = z.object({
 	key: z.string().min(1),
 });
 
-export type DeleteFileBodyPayload = z.infer<typeof deleteFileBodySchema>;
+export type DeleteFileBodyPayload = z.infer<typeof DeleteFileBodySchema>;

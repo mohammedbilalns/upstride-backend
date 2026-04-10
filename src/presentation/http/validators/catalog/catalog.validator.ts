@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const addInterestBodySchema = z.object({
+export const AddInterestBodySchema = z.object({
 	name: z
 		.string()
 		.trim()
@@ -8,7 +8,7 @@ export const addInterestBodySchema = z.object({
 		.max(50, "Name must be at most 50 characters"),
 });
 
-export const addSkillBodySchema = z.object({
+export const AddSkillBodySchema = z.object({
 	name: z
 		.string()
 		.trim()
@@ -17,7 +17,7 @@ export const addSkillBodySchema = z.object({
 	interestId: z.string("Invalid interest ID"),
 });
 
-export const addProfessionBodySchema = z.object({
+export const AddProfessionBodySchema = z.object({
 	name: z
 		.string()
 		.trim()

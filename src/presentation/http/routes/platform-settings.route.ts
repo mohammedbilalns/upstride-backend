@@ -5,10 +5,10 @@ import { ROUTES } from "../constants";
 import type { PlatformSettingsController } from "../controllers/platform-settings.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
-	updateContentSettingsBodySchema,
-	updateEconomySettingsBodySchema,
-	updateMentorSettingsBodySchema,
-	updateSessionSettingsBodySchema,
+	UpdateContentSettingsBodySchema,
+	UpdateEconomySettingsBodySchema,
+	UpdateMentorSettingsBodySchema,
+	UpdateSessionSettingsBodySchema,
 } from "../validators/platform-settings";
 
 const router = Router();
@@ -25,25 +25,25 @@ router.get(
 
 router.patch(
 	ROUTES.PLATFORM_SETTINGS.ECONOMY,
-	validate({ body: updateEconomySettingsBodySchema }),
+	validate({ body: UpdateEconomySettingsBodySchema }),
 	controller.updateEconomy.bind(controller),
 );
 
 router.patch(
 	ROUTES.PLATFORM_SETTINGS.MENTORS,
-	validate({ body: updateMentorSettingsBodySchema }),
+	validate({ body: UpdateMentorSettingsBodySchema }),
 	controller.updateMentors.bind(controller),
 );
 
 router.patch(
 	ROUTES.PLATFORM_SETTINGS.CONTENT,
-	validate({ body: updateContentSettingsBodySchema }),
+	validate({ body: UpdateContentSettingsBodySchema }),
 	controller.updateContent.bind(controller),
 );
 
 router.patch(
 	ROUTES.PLATFORM_SETTINGS.SESSIONS,
-	validate({ body: updateSessionSettingsBodySchema }),
+	validate({ body: UpdateSessionSettingsBodySchema }),
 	controller.updateSessions.bind(controller),
 );
 

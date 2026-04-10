@@ -11,12 +11,12 @@ import {
 	pageSchema,
 } from "../../../shared/validators";
 
-const skillItemSchema = z.object({
+const SkillItemSchema = z.object({
 	skillId: z.string().min(1),
 	level: z.enum(SkillLevelValues),
 });
 
-const experienceItemSchema = z.object({
+const ExperienceItemSchema = z.object({
 	company: z.string().min(1, "Company name is required"),
 	role: z.string().min(1, "Role is required"),
 	description: z.string().min(1, "Description is required"),
@@ -24,9 +24,9 @@ const experienceItemSchema = z.object({
 	to: z.coerce.date({ message: "Invalid to date" }).nullable(),
 });
 
-const buildExperienceSchema = () =>
+const BuildExperienceSchema = () =>
 	z
-		.array(experienceItemSchema)
+		.array(ExperienceItemSchema)
 		.min(1, "At least one experience item is required")
 		.max(
 			MAX_MENTOR_EXPERIENCE_ITEMS,
@@ -67,7 +67,7 @@ const buildExperienceSchema = () =>
 			}
 		});
 
-export const registerMentorSchema = z.object({
+export const RegisterMentorSchema = z.object({
 	bio: z.string().min(10, "Bio must be at least 10 characters long"),
 	currentRoleId: z.string().min(1, "Current role is required"),
 	organization: z.string().min(1, "Organization is required"),
@@ -95,14 +95,14 @@ export const registerMentorSchema = z.object({
 			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of expertise allowed`,
 		),
 	toolsAndSkills: z
-		.array(skillItemSchema)
+		.array(SkillItemSchema)
 		.min(1, "At least one skill is required"),
-	experience: buildExperienceSchema(),
+	experience: BuildExperienceSchema(),
 });
 
-export type RegisterMentorBody = z.infer<typeof registerMentorSchema>;
+export type RegisterMentorBody = z.infer<typeof RegisterMentorSchema>;
 
-export const resubmitMentorSchema = z.object({
+export const ResubmitMentorSchema = z.object({
 	bio: z.string().min(10, "Bio must be at least 10 characters long").optional(),
 	currentRoleId: z.string().min(1, "Current role is required").optional(),
 	organization: z.string().min(1, "Organization is required").optional(),
@@ -133,13 +133,13 @@ export const resubmitMentorSchema = z.object({
 		)
 		.optional(),
 	toolsAndSkills: z
-		.array(skillItemSchema)
+		.array(SkillItemSchema)
 		.min(1, "At least one skill is required")
 		.optional(),
-	experience: buildExperienceSchema().optional(),
+	experience: BuildExperienceSchema().optional(),
 });
 
-export type ResubmitMentorBody = z.infer<typeof resubmitMentorSchema>;
+export type ResubmitMentorBody = z.infer<typeof ResubmitMentorSchema>;
 
 export const MentorApplicationsQuerySchema = z.object({
 	page: z.coerce.number().int().positive().default(1),
@@ -181,15 +181,15 @@ export const MentorIdParamSchema = z.object({
 
 export type MentorIdParam = z.infer<typeof MentorIdParamSchema>;
 
-export const rejectMentorBodySchema = z.object({
+export const RejectMentorBodySchema = z.object({
 	reason: z.string().min(10, "Rejection reason must be at least 10 characters"),
 });
 
-export type RejectMentorBody = z.infer<typeof rejectMentorBodySchema>;
+export type RejectMentorBody = z.infer<typeof RejectMentorBodySchema>;
 
-export const updateMentorProfileBodySchema = z.object({
+export const UpdateMentorProfileBodySchema = z.object({
 	currentPricePer30Min: z.number().int().min(100).max(10000).optional(),
 	bio: z.string().min(10).optional(),
-	addSkills: z.array(skillItemSchema).optional(),
+	addSkills: z.array(SkillItemSchema).optional(),
 	addEducationalQualifications: z.array(z.string().min(1)).optional(),
 });

@@ -6,12 +6,12 @@ import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	AppealArticleBodySchema,
 	ArticleIdParamSchema,
-	ArticleSlugParamSchema,
 	ArticlesQuerySchema,
 	CommentIdParamSchema,
 	CommentsQuerySchema,
 	CreateArticleBodySchema,
 	CreateCommentBodySchema,
+	GetArticleParamSchema,
 	MentorArticlesQuerySchema,
 	ReactBodySchema,
 	UpdateArticleBodySchema,
@@ -25,13 +25,13 @@ router.use(verifySession);
 
 router.get(
 	ROUTES.ARTICLES.TOP_TAGS,
-	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
+	authorizeRoles(["USER", "MENTOR"]),
 	controller.getTopTags,
 );
 
 router.get(
 	ROUTES.ARTICLES.ROOT,
-	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
+	authorizeRoles(["USER", "MENTOR"]),
 	validate({ query: ArticlesQuerySchema }),
 	controller.getArticles,
 );
@@ -46,7 +46,7 @@ router.get(
 router.get(
 	ROUTES.ARTICLES.BY_SLUG,
 	authorizeRoles(["USER", "MENTOR", "ADMIN", "SUPER_ADMIN"]),
-	validate({ params: ArticleSlugParamSchema }),
+	validate({ params: GetArticleParamSchema }),
 	controller.getArticle,
 );
 

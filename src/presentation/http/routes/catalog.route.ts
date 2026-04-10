@@ -4,9 +4,9 @@ import { ROUTES } from "../constants";
 import { CatalogController } from "../controllers";
 import { validate } from "../middlewares";
 import {
-	addInterestBodySchema,
-	addProfessionBodySchema,
-	addSkillBodySchema,
+	AddInterestBodySchema,
+	AddProfessionBodySchema,
+	AddSkillBodySchema,
 } from "../validators/catalog";
 
 const router = Router();
@@ -18,7 +18,7 @@ router.get(ROUTES.CATALOG.PROFESSIONS, catalogController.getProfessions);
 
 router.post(
 	ROUTES.CATALOG.ADD_INTEREST,
-	validate({ body: addInterestBodySchema }),
+	validate({ body: AddInterestBodySchema }),
 	catalogController.addInterest,
 );
 //TODO: validate ids
@@ -33,7 +33,7 @@ router.patch(
 
 router.post(
 	ROUTES.CATALOG.ADD_SKILL,
-	validate({ body: addSkillBodySchema }),
+	validate({ body: AddSkillBodySchema }),
 	catalogController.addSkill,
 );
 router.patch(
@@ -44,7 +44,7 @@ router.patch(ROUTES.CATALOG.ENABLE_SKILL(":id"), catalogController.enableSkill);
 
 router.post(
 	ROUTES.CATALOG.ADD_PROFESSION,
-	validate({ body: addProfessionBodySchema }),
+	validate({ body: AddProfessionBodySchema }),
 	catalogController.addProfession,
 );
 router.patch(

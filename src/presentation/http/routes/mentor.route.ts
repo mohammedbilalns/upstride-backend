@@ -8,10 +8,10 @@ import {
 	MentorApplicationsQuerySchema,
 	MentorDiscoveryQuerySchema,
 	MentorIdParamSchema,
-	registerMentorSchema,
-	rejectMentorBodySchema,
-	resubmitMentorSchema,
-	updateMentorProfileBodySchema,
+	RegisterMentorSchema,
+	RejectMentorBodySchema,
+	ResubmitMentorSchema,
+	UpdateMentorProfileBodySchema,
 } from "../validators/mentor.validator";
 
 const mentorRouter = Router();
@@ -45,7 +45,7 @@ mentorRouter.patch(
 	ROUTES.MENTOR.PROFILE,
 	verifySession,
 	authorizeRoles(["MENTOR"]),
-	validate({ body: updateMentorProfileBodySchema }),
+	validate({ body: UpdateMentorProfileBodySchema }),
 	mentorController.updateProfile,
 );
 
@@ -53,7 +53,7 @@ mentorRouter.post(
 	ROUTES.MENTOR.REGISTER,
 	verifySession,
 	authorizeRoles(["USER"]),
-	validate({ body: registerMentorSchema }),
+	validate({ body: RegisterMentorSchema }),
 	mentorController.register,
 );
 
@@ -61,7 +61,7 @@ mentorRouter.patch(
 	ROUTES.MENTOR.RESUBMIT,
 	verifySession,
 	authorizeRoles(["USER"]),
-	validate({ body: resubmitMentorSchema }),
+	validate({ body: ResubmitMentorSchema }),
 	mentorController.resubmit,
 );
 
@@ -93,7 +93,7 @@ mentorRouter.patch(
 	ROUTES.MENTOR.REJECT(":id"),
 	verifySession,
 	authorizeRoles(["ADMIN", "SUPER_ADMIN"]),
-	validate({ params: MentorIdParamSchema, body: rejectMentorBodySchema }),
+	validate({ params: MentorIdParamSchema, body: RejectMentorBodySchema }),
 	mentorController.rejectApplication,
 );
 

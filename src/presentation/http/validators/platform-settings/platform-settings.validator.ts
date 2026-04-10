@@ -5,27 +5,27 @@ import {
 	positiveIntSchema,
 } from "../../../../shared/validators";
 
-const positiveNumberSchema = z
+const PositiveNumberSchema = z
 	.number()
 	.positive("Value must be greater than 0");
 
-const platformCommissionsSchema = z.object({
+const PlatformCommissionsSchema = z.object({
 	sessionPercentage: percentageSchema,
 	userTipRewardPercentage: percentageSchema,
 });
 
-const subscriptionPlanSchema = z.object({
+const SubscriptionPlanSchema = z.object({
 	id: z.string().min(1, "Subscription id is required"),
 	coinsCost: positiveIntSchema,
 	type: z.enum(["monthly", "quarterly", "yearly"]),
 });
 
-export const updateEconomySettingsBodySchema = z
+export const UpdateEconomySettingsBodySchema = z
 	.object({
 		economy: z.object({
-			coinValue: positiveNumberSchema,
-			platformCommissions: platformCommissionsSchema,
-			subscriptions: z.array(subscriptionPlanSchema).min(1),
+			coinValue: PositiveNumberSchema,
+			platformCommissions: PlatformCommissionsSchema,
+			subscriptions: z.array(SubscriptionPlanSchema).min(1),
 			userJoinRewardCoinCount: nonNegativeIntSchema,
 			maxCoinsEarnablePerDay: nonNegativeIntSchema,
 			maxCoinsFromReadingPerDay: nonNegativeIntSchema,
@@ -63,10 +63,10 @@ export const updateEconomySettingsBodySchema = z
 		},
 	);
 export type UpdateEconomySettingsBody = z.infer<
-	typeof updateEconomySettingsBodySchema
+	typeof UpdateEconomySettingsBodySchema
 >;
 
-const mentorTierSchema = z.object({
+const MentorTierSchema = z.object({
 	level: z.number().int().min(1).max(3),
 	name: z.string().trim().min(1, "Tier name is required"),
 	minScore: nonNegativeIntSchema.max(100, "min score must be at most 100"),
@@ -76,12 +76,12 @@ const mentorTierSchema = z.object({
 		.max(10000, "max price per 30 min must be at most 10000"),
 });
 
-export const updateMentorSettingsBodySchema = z
+export const UpdateMentorSettingsBodySchema = z
 	.object({
 		mentors: z.object({
-			starter: mentorTierSchema,
-			rising: mentorTierSchema,
-			expert: mentorTierSchema,
+			starter: MentorTierSchema,
+			rising: MentorTierSchema,
+			expert: MentorTierSchema,
 		}),
 	})
 	.refine(
@@ -147,10 +147,10 @@ export const updateMentorSettingsBodySchema = z
 		},
 	);
 export type UpdateMentorSettingsBody = z.infer<
-	typeof updateMentorSettingsBodySchema
+	typeof UpdateMentorSettingsBodySchema
 >;
 
-export const updateContentSettingsBodySchema = z.object({
+export const UpdateContentSettingsBodySchema = z.object({
 	content: z.object({
 		premiumArticleRequirement: z.object({
 			minFreeArticlesNewUserShouldHave: nonNegativeIntSchema.max(
@@ -183,10 +183,10 @@ export const updateContentSettingsBodySchema = z.object({
 	}),
 });
 export type UpdateContentSettingsBody = z.infer<
-	typeof updateContentSettingsBodySchema
+	typeof UpdateContentSettingsBodySchema
 >;
 
-export const updateSessionSettingsBodySchema = z.object({
+export const UpdateSessionSettingsBodySchema = z.object({
 	sessions: z.object({
 		cancellationWindowHours: nonNegativeIntSchema,
 		rescheduleWindowHours: nonNegativeIntSchema,
@@ -194,5 +194,5 @@ export const updateSessionSettingsBodySchema = z.object({
 	}),
 });
 export type UpdateSessionSettingsBody = z.infer<
-	typeof updateSessionSettingsBodySchema
+	typeof UpdateSessionSettingsBodySchema
 >;

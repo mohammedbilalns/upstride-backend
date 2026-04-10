@@ -4,11 +4,11 @@ import { ROUTES } from "../constants";
 import { ChatController } from "../controllers";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
-	chatIdParamSchema,
-	chatMessagesQuerySchema,
-	chatQuerySchema,
-	otherUserParamSchema,
-	sendMessageBodySchema,
+	ChatIdParamSchema,
+	ChatMessagesQuerySchema,
+	ChatQuerySchema,
+	OtherUserParamSchema,
+	SendMessageBodySchema,
 } from "../validators";
 
 const router = Router();
@@ -19,25 +19,25 @@ router.use(authorizeRoles(["USER", "MENTOR"]));
 
 router.get(
 	ROUTES.CHATS.ROOT,
-	validate({ query: chatQuerySchema }),
+	validate({ query: ChatQuerySchema }),
 	chatController.getChats,
 );
 
 router.get(
 	ROUTES.CHATS.BY_USER,
-	validate({ params: otherUserParamSchema, query: chatMessagesQuerySchema }),
+	validate({ params: OtherUserParamSchema, query: ChatMessagesQuerySchema }),
 	chatController.getChat,
 );
 
 router.post(
 	ROUTES.CHATS.MESSAGES,
-	validate({ params: chatIdParamSchema, body: sendMessageBodySchema }),
+	validate({ params: ChatIdParamSchema, body: SendMessageBodySchema }),
 	chatController.sendMessage,
 );
 
 router.patch(
 	ROUTES.CHATS.READ,
-	validate({ params: chatIdParamSchema }),
+	validate({ params: ChatIdParamSchema }),
 	chatController.markRead,
 );
 

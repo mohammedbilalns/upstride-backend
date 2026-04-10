@@ -29,14 +29,8 @@ export class AdminManagementController {
 	) {}
 
 	getAdmins = asyncHandler(async (req, res) => {
-		const query = req.validated?.query as AdminsQuery;
-
 		const data = await this._getAdminsUseCase.execute({
-			page: query.page,
-			limit: query.limit,
-			search: query.search,
-			status: query.status,
-			sort: query.sort,
+			...(req.validated?.query as AdminsQuery),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -46,11 +40,8 @@ export class AdminManagementController {
 	});
 
 	createAdmin = asyncHandler(async (req, res) => {
-		const body = req.validated?.body as CreateAdminBody;
-
 		await this._createAdminUseCase.execute({
-			email: body.email,
-			password: body.password,
+			...(req.validated?.body as CreateAdminBody),
 		});
 
 		sendSuccess(res, HttpStatus.CREATED, {
@@ -59,8 +50,9 @@ export class AdminManagementController {
 	});
 
 	blockAdmin = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as AdminIdParam;
-		await this._blockAdminUseCase.execute({ adminId: id });
+		await this._blockAdminUseCase.execute({
+			adminId: (req.validated?.params as AdminIdParam).id,
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AdminManagementResponseMessages.ADMIN_BLOCKED_SUCCESS,
@@ -68,8 +60,9 @@ export class AdminManagementController {
 	});
 
 	unblockAdmin = asyncHandler(async (req, res) => {
-		const { id } = req.validated?.params as AdminIdParam;
-		await this._unblockAdminUseCase.execute({ adminId: id });
+		await this._unblockAdminUseCase.execute({
+			adminId: (req.validated?.params as AdminIdParam).id,
+		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: AdminManagementResponseMessages.ADMIN_UNBLOCKED_SUCCESS,
