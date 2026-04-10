@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
 	limitSchema,
+	objectIdSchema,
 	pageSchema,
 	passwordSchema,
 } from "../../../shared/validators";
@@ -15,7 +16,7 @@ export const AdminsQuerySchema = z.object({
 export type AdminsQuery = z.infer<typeof AdminsQuerySchema>;
 
 export const AdminIdParamSchema = z.object({
-	id: z.string().min(1, "Admin ID is required"),
+	id: objectIdSchema,
 });
 export type AdminIdParam = z.infer<typeof AdminIdParamSchema>;
 
