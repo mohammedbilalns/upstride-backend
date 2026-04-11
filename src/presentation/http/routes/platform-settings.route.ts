@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { TYPES } from "../../../shared/types/types";
 import { ROUTES } from "../constants";
 import type { PlatformSettingsController } from "../controllers/platform-settings.controller";
@@ -12,7 +12,7 @@ import {
 } from "../validators/platform-settings";
 
 const router = Router();
-const controller = container.get<PlatformSettingsController>(
+const controller = apiContainer.get<PlatformSettingsController>(
 	TYPES.Controllers.PlatformSettings,
 );
 

@@ -3,7 +3,7 @@ import type { NotificationCreatedEvent } from "../../../../domain/events/notific
 import { TYPES } from "../../../../shared/types/types";
 import type { NotificationPort } from "../../../ports/notification.port";
 import type { EventHandler } from "../../event-handler.interface";
-import { mapNotificationCreatedToRealtime } from "../../mappers/notifications/notification-created.mapper";
+import { mapNotificationCreatedToRealtime } from "../../notifications/mappers/notification-created-to-realtime.mapper";
 
 @injectable()
 export class EmitNotificationToUserHandler

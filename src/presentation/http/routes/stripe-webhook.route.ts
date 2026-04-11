@@ -1,9 +1,9 @@
 import { Router, raw } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { PaymentController } from "../controllers";
 
 const router = Router();
-const paymentController = container.get(PaymentController);
+const paymentController = apiContainer.get(PaymentController);
 
 router.post(
 	"/",

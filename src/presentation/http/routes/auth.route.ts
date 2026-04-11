@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import {
 	AuthController,
@@ -26,9 +26,9 @@ import {
 import { RevokeSessionBodySchema } from "../validators/auth/revocation.validator";
 
 const router = Router();
-const authController = container.get(AuthController);
-const passwordResetController = container.get(PasswordResetController);
-const logoutController = container.get(LogoutController);
+const authController = apiContainer.get(AuthController);
+const passwordResetController = apiContainer.get(PasswordResetController);
+const logoutController = apiContainer.get(LogoutController);
 
 router.post(
 	ROUTES.AUTH.LOGIN,

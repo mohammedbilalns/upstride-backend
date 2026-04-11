@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import { NotificationController } from "../controllers";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
@@ -9,7 +9,7 @@ import {
 } from "../validators";
 
 const router = Router();
-const notificationController = container.get(NotificationController);
+const notificationController = apiContainer.get(NotificationController);
 
 router.use(verifySession);
 router.use(authorizeRoles(["USER", "MENTOR"]));

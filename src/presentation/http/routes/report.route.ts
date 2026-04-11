@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { TYPES } from "../../../shared/types/types";
 import { ROUTES } from "../constants";
 import type { ReportController } from "../controllers/report.controller";
@@ -16,7 +16,7 @@ import {
 } from "../validators/report.validator";
 
 const router = Router();
-const controller = container.get<ReportController>(TYPES.Controllers.Report);
+const controller = apiContainer.get<ReportController>(TYPES.Controllers.Report);
 
 router.use(verifySession);
 

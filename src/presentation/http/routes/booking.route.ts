@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { TYPES } from "../../../shared/types/types";
 import { ROUTES } from "../constants";
 import type { BookingController } from "../controllers/booking.controller";
@@ -16,7 +16,7 @@ import {
 } from "../validators/booking.validator";
 
 const bookingRouter = Router();
-const bookingController = container.get<BookingController>(
+const bookingController = apiContainer.get<BookingController>(
 	TYPES.Controllers.Booking,
 );
 

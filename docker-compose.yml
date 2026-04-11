@@ -25,6 +25,21 @@ services:
       - loki
     restart: unless-stopped
 
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upstride-backend-worker
+    env_file:
+      - .env
+    environment:
+      - LOKI_HOST=http://loki:3100
+    command: pnpm run start:worker
+    depends_on:
+      - redis
+      - loki
+    restart: unless-stopped
+
   loki:
     image: grafana/loki:latest
     container_name: upstride-loki-prod

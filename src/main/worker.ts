@@ -1,4 +1,5 @@
-import type { PlatformSettingsService } from "../application/services";
+import type { Worker } from "bullmq";
+import type { IMailService } from "../application/services";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -7,56 +8,48 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import env from "../shared/config/env";
+import { createMailWorker } from "../infrastructure/queue/workers/mail.worker";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
-import { apiContainer } from "./api.container";
-import App from "./app";
-import { bootstrapEventHandlers, mailQueue } from "./di";
+import { mailQueue } from "./di";
+import { workerContainer } from "./worker.container";
 
-let isShuttingDown = false; // flag to prevent multiple shutdowns
-let appInstance: App;
+let isShuttingDown = false;
+let mailWorker: Worker;
 
 async function start() {
-	logger.info("Starting...");
+	logger.info("Starting worker...");
 
 	await Promise.all([connectToMongo(), redisClient.ping()]);
 
-	const platformSettingsService = apiContainer.get<PlatformSettingsService>(
-		TYPES.Services.PlatformSettings,
+	const mailService = workerContainer.get<IMailService>(
+		TYPES.Services.MailService,
 	);
-	await platformSettingsService.load();
-
-	// Initialize event handlers
-	bootstrapEventHandlers(apiContainer);
-
-	// initialize http server
-	appInstance = new App();
-	appInstance.listen(env.PORT);
+	mailWorker = createMailWorker(redisClient, mailService);
 }
 
 async function shutdown(signal: string) {
 	if (isShuttingDown) return;
 
 	isShuttingDown = true;
-	logger.info(`Received ${signal}, shutting down...`);
+	logger.info(`Received ${signal}, shutting down worker...`);
 
 	const forceExitTimeout = setTimeout(() => {
-		logger.error(`Force exiting...`);
+		logger.error("Force exiting worker...");
 		process.exit(1);
 	}, 10000);
 
 	try {
-		if (appInstance) await appInstance.close();
 		await Promise.allSettled([
 			disconnectFromMongo(),
+			mailWorker?.close(),
 			mailQueue.close(),
 			disconnectRedis(),
 		]);
 		clearTimeout(forceExitTimeout);
 	} catch (error) {
 		clearTimeout(forceExitTimeout);
-		logger.error(`Error shutting down: ${error}`);
+		logger.error(`Error shutting down worker: ${error}`);
 		process.exit(1);
 	}
 }

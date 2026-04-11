@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import { CatalogController } from "../controllers";
 import { validate } from "../middlewares";
@@ -10,7 +10,7 @@ import {
 } from "../validators/catalog";
 
 const router = Router();
-const catalogController = container.get(CatalogController);
+const catalogController = apiContainer.get(CatalogController);
 
 router.get(ROUTES.CATALOG.FETCH, catalogController.fetchCatalog);
 router.get(ROUTES.CATALOG.ONBOARDING, catalogController.getOnboardingCatalog);

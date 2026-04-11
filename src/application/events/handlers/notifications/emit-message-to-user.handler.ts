@@ -3,7 +3,7 @@ import type { MessageSentEvent } from "../../../../domain/events/message-sent.ev
 import { TYPES } from "../../../../shared/types/types";
 import type { NotificationPort } from "../../../ports/notification.port";
 import type { EventHandler } from "../../event-handler.interface";
-import { mapMessageSentToRealtime } from "../../mappers/notifications/message-sent.mapper";
+import { mapMessageSentToRealtime } from "../../notifications/mappers/message-sent-to-realtime.mapper";
 
 @injectable()
 export class EmitMessageToUserHandler

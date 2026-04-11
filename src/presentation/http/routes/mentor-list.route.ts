@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import { MentorListController } from "../controllers/mentor-list.controller";
 import { validate, verifySession } from "../middlewares";
@@ -11,7 +11,7 @@ import {
 } from "../validators";
 
 const router = Router();
-const controller = container.get(MentorListController);
+const controller = apiContainer.get(MentorListController);
 
 router.use(verifySession);
 

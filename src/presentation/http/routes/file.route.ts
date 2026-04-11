@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { TYPES } from "../../../shared/types/types";
 import { ROUTES } from "../constants";
 import type { FileController } from "../controllers/file.controller";
@@ -10,7 +10,7 @@ import {
 } from "../validators/file.validator";
 
 const fileRouter = Router();
-const fileController = container.get<FileController>(TYPES.Controllers.File);
+const fileController = apiContainer.get<FileController>(TYPES.Controllers.File);
 
 fileRouter.post(
 	ROUTES.STORAGE.GET_PRESIGNED_URL,

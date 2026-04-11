@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { TYPES } from "../../../shared/types/types";
 import { ROUTES } from "../constants";
 import type { WalletController } from "../controllers/wallet.controller";
@@ -10,7 +10,7 @@ import {
 } from "../validators";
 
 const router = Router();
-const controller = container.get<WalletController>(TYPES.Controllers.Wallet);
+const controller = apiContainer.get<WalletController>(TYPES.Controllers.Wallet);
 
 router.use(verifySession);
 

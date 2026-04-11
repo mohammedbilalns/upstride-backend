@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { TYPES } from "../../../shared/types/types";
 import { ROUTES } from "../constants";
 import type { AvailabilityController } from "../controllers/availability.controller";
@@ -13,7 +13,7 @@ import {
 } from "../validators/availability.validator";
 
 const availabilityRouter = Router();
-const availabilityController = container.get<AvailabilityController>(
+const availabilityController = apiContainer.get<AvailabilityController>(
 	TYPES.Controllers.Availability,
 );
 

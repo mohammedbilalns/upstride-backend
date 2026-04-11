@@ -13,7 +13,7 @@ import type { WebSocketServer } from "../presentation/websocket/socket-server";
 import { HttpStatus } from "../shared/constants";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
-import { container } from "./container";
+import { apiContainer } from "./api.container";
 
 /**
  * Core application bootstrapper.
@@ -39,7 +39,7 @@ class App {
 	}
 
 	private _setupWebSocket() {
-		this._wsServer = container.get<WebSocketServer>(
+		this._wsServer = apiContainer.get<WebSocketServer>(
 			TYPES.Services.WebSocketServer,
 		);
 		this._wsServer.initialize(this._server);

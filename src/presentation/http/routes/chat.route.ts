@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import { ChatController } from "../controllers";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
@@ -12,7 +12,7 @@ import {
 } from "../validators";
 
 const router = Router();
-const chatController = container.get(ChatController);
+const chatController = apiContainer.get(ChatController);
 
 router.use(verifySession);
 router.use(authorizeRoles(["USER", "MENTOR"]));

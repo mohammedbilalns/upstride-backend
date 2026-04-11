@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import { ProfileController } from "../controllers";
 import { validate, verifySession } from "../middlewares";
@@ -11,7 +11,7 @@ import {
 } from "../validators/index";
 
 const router = Router();
-const profileController = container.get(ProfileController);
+const profileController = apiContainer.get(ProfileController);
 
 router.use(verifySession);
 

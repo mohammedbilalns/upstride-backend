@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import { PaymentController } from "../controllers";
 import { validate, verifySession } from "../middlewares";
 import { CreateCheckoutSessionBodySchema } from "../validators";
 
 const router = Router();
-const paymentController = container.get(PaymentController);
+const paymentController = apiContainer.get(PaymentController);
 
 router.use(verifySession);
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import { ROUTES } from "../constants";
 import { UserManagementController } from "../controllers/user-management.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
@@ -10,7 +10,7 @@ import {
 } from "../validators/user-management.validator";
 
 const router = Router();
-const controller = container.get(UserManagementController);
+const controller = apiContainer.get(UserManagementController);
 
 router.use(verifySession, authorizeRoles(["ADMIN", "SUPER_ADMIN"]));
 

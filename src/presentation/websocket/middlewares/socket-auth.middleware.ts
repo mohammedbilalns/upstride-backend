@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 import type { ITokenService } from "../../../application/services";
 import type { ITokenRevocationRepository } from "../../../domain/repositories/token-revocation.repository.interface";
-import { container } from "../../../main/container";
+import { apiContainer } from "../../../main/api.container";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";
 
@@ -33,12 +33,13 @@ export const socketAuthMiddleware = async (
 			return next(new Error("Authentication error: Token missing"));
 		}
 
-		const tokenService = container.get<ITokenService>(
+		const tokenService = apiContainer.get<ITokenService>(
 			TYPES.Services.TokenService,
 		);
-		const tokenRevocationRepository = container.get<ITokenRevocationRepository>(
-			TYPES.Repositories.TokenRevocationRepository,
-		);
+		const tokenRevocationRepository =
+			apiContainer.get<ITokenRevocationRepository>(
+				TYPES.Repositories.TokenRevocationRepository,
+			);
 
 		const payload = tokenService.verifyAccessToken(token);
 		const isRevoked = await tokenRevocationRepository.isSessionRevoked(
