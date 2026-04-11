@@ -15,7 +15,7 @@ import { TYPES } from "../../../shared/types/types";
 import { extractDeviceInfo } from "../../../shared/utilities/extract-device-info.util";
 import { AuthResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
-import { generateCsrfToken } from "../middlewares";
+import { generateCsrfToken } from "../middlewares/csrf.middleware";
 import type {
 	GoogleLoginBody,
 	LinkedInLoginBody,

@@ -93,12 +93,12 @@ class App {
 		});
 	}
 
-	public async close() {
+	public async close(): Promise<void> {
 		if (this._wsServer) await this._wsServer.close();
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			this._server.close((err) => {
 				if (err) reject(err);
-				resolve(null);
+				resolve();
 			});
 		});
 	}

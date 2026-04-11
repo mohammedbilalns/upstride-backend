@@ -13,8 +13,8 @@ import { TYPES } from "../shared/types/types";
 import { apiContainer } from "./api.container";
 import App from "./app";
 import { bootstrapEventHandlers, mailQueue } from "./di";
+import { setupGracefulShutdown } from "./lifecyle/graceful-shutdown";
 
-let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;
 
 async function start() {
@@ -35,49 +35,14 @@ async function start() {
 	appInstance.listen(env.PORT);
 }
 
-async function shutdown(signal: string) {
-	if (isShuttingDown) return;
-
-	isShuttingDown = true;
-	logger.info(`Received ${signal}, shutting down...`);
-
-	const forceExitTimeout = setTimeout(() => {
-		logger.error(`Force exiting...`);
-		process.exit(1);
-	}, 10000);
-
-	try {
-		if (appInstance) await appInstance.close();
-		await Promise.allSettled([
-			disconnectFromMongo(),
-			mailQueue.close(),
-			disconnectRedis(),
-		]);
-		clearTimeout(forceExitTimeout);
-	} catch (error) {
-		clearTimeout(forceExitTimeout);
-		logger.error(`Error shutting down: ${error}`);
-		process.exit(1);
-	}
-}
-
-["SIGINT", "SIGTERM", "SIGHUP"].forEach((signal) => {
-	process.on(signal, shutdown);
+setupGracefulShutdown({
+	name: "API",
+	tasks: [
+		() => appInstance?.close(),
+		() => disconnectFromMongo(),
+		() => mailQueue.close(),
+		() => disconnectRedis(),
+	],
 });
-
-process.on("uncaughtException", (error: Error) => {
-	logger.error(`Caught exception: ${error}`);
-	shutdown("uncaughtException");
-});
-
-process.on(
-	"unhandledRejection",
-	(reason: unknown, promise: Promise<unknown>) => {
-		logger.error(
-			`Caught unhandled rejection at: ${promise}, with reason: ${reason}`,
-		);
-		shutdown("unhandledRejection");
-	},
-);
 
 start();
