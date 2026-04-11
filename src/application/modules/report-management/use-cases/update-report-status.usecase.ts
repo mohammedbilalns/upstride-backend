@@ -42,12 +42,12 @@ export class UpdateReportStatusUseCase implements IUpdateReportStatusUseCase {
 			throw new ReportNotFoundError();
 		}
 
+		const updatePayload = existing.updateStatus(
+			input.status,
+			input.actionTaken,
+		);
 		const updated = await this._reportRepository.updateById(input.reportId, {
-			status: input.status,
-			actionTakenAt: new Date(),
-			...(input.actionTaken !== undefined && {
-				actionTaken: input.actionTaken,
-			}),
+			...updatePayload,
 		});
 
 		if (!updated) {

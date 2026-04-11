@@ -40,9 +40,10 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 			// Already liked – toggle off
 			const current = existing[0];
 			await this._reactionRepository.deleteById(current.id);
-			await this._articleRepository.updateById(article.id, {
-				likesCount: Math.max(0, (article.likesCount ?? 0) - 1),
-			});
+			await this._articleRepository.updateById(
+				article.id,
+				article.decrementLikes(),
+			);
 			return { reaction: null };
 		}
 
@@ -56,9 +57,11 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 		);
 
 		const created = await this._reactionRepository.create(reaction);
-		await this._articleRepository.updateById(article.id, {
-			likesCount: (article.likesCount ?? 0) + 1,
-		});
+		const likeUpdate = article.incrementLikes();
+		await this._articleRepository.updateById(article.id, likeUpdate);
+		const nextLikeCount =
+			(likeUpdate.likesCount as number | undefined) ??
+			(article.likesCount ?? 0) + 1;
 
 		await this._eventBus.publish(
 			new ArticleReactionCreatedEvent({
@@ -68,7 +71,7 @@ export class ReactToArticleUseCase implements IReactToArticleUseCase {
 				reactionType: "LIKE",
 				actorId: input.userId,
 				actorName: created.actorName || "",
-				count: (article.likesCount ?? 0) + 1,
+				count: nextLikeCount,
 			}),
 		);
 

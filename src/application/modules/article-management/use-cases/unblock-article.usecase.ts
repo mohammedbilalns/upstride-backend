@@ -37,14 +37,10 @@ export class UnblockArticleUseCase implements IUnblockArticleUseCase {
 			);
 		}
 
-		const updated = await this._articleRepository.updateById(input.articleId, {
-			isActive: true,
-			isArchived: false,
-			isBlockedByAdmin: false,
-			blockingReason: null,
-			blockedAt: null,
-			blockedByReportId: null,
-		});
+		const updated = await this._articleRepository.updateById(
+			input.articleId,
+			article.unblock(),
+		);
 
 		if (updated) {
 			await this._eventBus.publish(

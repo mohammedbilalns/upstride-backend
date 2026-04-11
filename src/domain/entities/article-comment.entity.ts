@@ -11,4 +11,14 @@ export class ArticleComment {
 		public readonly createdAt: Date | null,
 		public readonly updatedAt: Date | null,
 	) {}
+
+	incrementLikes(): Partial<ArticleComment> {
+		const current = this.likesCount ?? 0;
+		return { likesCount: current + 1 } as Partial<ArticleComment>;
+	}
+
+	decrementLikes(): Partial<ArticleComment> {
+		const current = this.likesCount ?? 0;
+		return { likesCount: Math.max(0, current - 1) } as Partial<ArticleComment>;
+	}
 }

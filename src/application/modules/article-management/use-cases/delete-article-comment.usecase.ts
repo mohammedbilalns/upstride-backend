@@ -41,12 +41,10 @@ export class DeleteArticleCommentUseCase
 			isActive: false,
 		});
 
-		// Sync comments count
 		const article = await this._articleRepository.findById(comment.articleId);
 		if (article) {
-			const currentComments = article.commentsCount ?? 0;
 			await this._articleRepository.updateById(article.id, {
-				commentsCount: Math.max(0, currentComments - 1),
+				...article.decrementComments(),
 			});
 		}
 

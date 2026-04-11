@@ -53,10 +53,10 @@ export class ReactToArticleCommentUseCase
 			const current = existing[0];
 			await this._reactionRepository.deleteById(current.id);
 
-			const currentLikes = comment.likesCount ?? 0;
-			await this._commentRepository.updateById(comment.id, {
-				likesCount: Math.max(0, currentLikes - 1),
-			});
+			await this._commentRepository.updateById(
+				comment.id,
+				comment.decrementLikes(),
+			);
 
 			return { reaction: null };
 		}
@@ -71,10 +71,11 @@ export class ReactToArticleCommentUseCase
 		);
 
 		const created = await this._reactionRepository.create(reaction);
-		const currentLikes = comment.likesCount ?? 0;
-		await this._commentRepository.updateById(comment.id, {
-			likesCount: currentLikes + 1,
-		});
+		const likeUpdate = comment.incrementLikes();
+		await this._commentRepository.updateById(comment.id, likeUpdate);
+		const nextLikeCount =
+			(likeUpdate.likesCount as number | undefined) ??
+			(comment.likesCount ?? 0) + 1;
 
 		await this._eventBus.publish(
 			new ArticleCommentReactionCreatedEvent({
@@ -85,7 +86,7 @@ export class ReactToArticleCommentUseCase
 				reactionType: "LIKE",
 				actorId: input.userId,
 				actorName: created.actorName || "",
-				count: currentLikes + 1,
+				count: nextLikeCount,
 			}),
 		);
 		return { reaction: ArticleReactionMapper.toDto(created) };

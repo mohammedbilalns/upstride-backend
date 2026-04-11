@@ -72,9 +72,6 @@ export class Article {
 		}
 	}
 
-	/**
-	 * Returns a partial update payload representing a blocked state.
-	 */
 	block(reason: string, reportId: string | null): Partial<Article> {
 		return {
 			isActive: false,
@@ -84,5 +81,31 @@ export class Article {
 			blockedAt: new Date(),
 			blockedByReportId: reportId,
 		} as Partial<Article>;
+	}
+
+	unblock(): Partial<Article> {
+		return {
+			isActive: true,
+			isArchived: false,
+			isBlockedByAdmin: false,
+			blockingReason: null,
+			blockedAt: null,
+			blockedByReportId: null,
+		} as Partial<Article>;
+	}
+
+	incrementLikes(): Partial<Article> {
+		const current = this.likesCount ?? 0;
+		return { likesCount: current + 1 } as Partial<Article>;
+	}
+
+	decrementLikes(): Partial<Article> {
+		const current = this.likesCount ?? 0;
+		return { likesCount: Math.max(0, current - 1) } as Partial<Article>;
+	}
+
+	decrementComments(): Partial<Article> {
+		const current = this.commentsCount ?? 0;
+		return { commentsCount: Math.max(0, current - 1) } as Partial<Article>;
 	}
 }

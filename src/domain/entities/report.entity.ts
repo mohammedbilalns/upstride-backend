@@ -55,4 +55,15 @@ export class Report {
 			throw new EntityValidationError("Report", "You cannot report yourself.");
 		}
 	}
+
+	updateStatus(status: ReportStatus, actionTaken?: string): Partial<Report> {
+		if (!ReportStatusValues.includes(status)) {
+			throw new EntityValidationError("Report", "Invalid report status.");
+		}
+		return {
+			status,
+			actionTakenAt: new Date(),
+			...(actionTaken !== undefined && { actionTaken }),
+		} as Partial<Report>;
+	}
 }
