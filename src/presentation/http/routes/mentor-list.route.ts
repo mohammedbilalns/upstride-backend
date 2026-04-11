@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { apiContainer } from "../../../main/api.container";
+import { apiContainer } from "../../../main/di/api.container";
 import { ROUTES } from "../constants";
 import { MentorListController } from "../controllers/mentor-list.controller";
 import { validate, verifySession } from "../middlewares";

@@ -1,5 +1,5 @@
 import { Router, raw } from "express";
-import { apiContainer } from "../../../main/api.container";
+import { apiContainer } from "../../../main/di/api.container";
 import { PaymentController } from "../controllers";
 
 const router = Router();

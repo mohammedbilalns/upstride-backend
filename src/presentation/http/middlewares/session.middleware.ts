@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { UnauthorizedError } from "../../../application/modules/authentication/errors";
 import type { ITokenService } from "../../../application/services";
 import type { ITokenRevocationRepository } from "../../../domain/repositories/token-revocation.repository.interface";
-import { apiContainer } from "../../../main/api.container";
+import { apiContainer } from "../../../main/di/api.container";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";
 

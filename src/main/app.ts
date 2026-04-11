@@ -13,7 +13,7 @@ import type { WebSocketServer } from "../presentation/websocket/socket-server";
 import { HttpStatus } from "../shared/constants";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
-import { apiContainer } from "./api.container";
+import { apiContainer } from "./di/api.container";
 
 /**
  * Core application bootstrapper.

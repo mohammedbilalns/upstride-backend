@@ -22,7 +22,7 @@ import {
 	registerStorageBindings,
 	registerUserManagementBindings,
 	registerWalletBindings,
-} from "./di";
+} from ".";
 
 const apiContainer = new Container();
 

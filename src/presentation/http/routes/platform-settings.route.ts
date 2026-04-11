@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { apiContainer } from "../../../main/api.container";
+import { apiContainer } from "../../../main/di/api.container";
 import { TYPES } from "../../../shared/types/types";
 import { ROUTES } from "../constants";
 import type { PlatformSettingsController } from "../controllers/platform-settings.controller";

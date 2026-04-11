@@ -10,9 +10,9 @@ import {
 import env from "../shared/config/env";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
-import { apiContainer } from "./api.container";
 import App from "./app";
 import { bootstrapEventHandlers, mailQueue } from "./di";
+import { apiContainer } from "./di/api.container";
 import { setupGracefulShutdown } from "./lifecyle/graceful-shutdown";
 
 let appInstance: App;

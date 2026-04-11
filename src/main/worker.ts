@@ -12,8 +12,8 @@ import { createMailWorker } from "../infrastructure/queue/workers/mail.worker";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
 import { mailQueue } from "./di/queues.di";
+import { workerContainer } from "./di/worker.container";
 import { setupGracefulShutdown } from "./lifecyle/graceful-shutdown";
-import { workerContainer } from "./worker.container";
 
 let mailWorker: Worker;
 

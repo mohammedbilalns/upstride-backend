@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { apiContainer } from "../../../main/api.container";
+import { apiContainer } from "../../../main/di/api.container";
 import { ROUTES } from "../constants";
 import { AdminManagementController } from "../controllers/admin-management.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
