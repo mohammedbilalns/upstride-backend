@@ -1,11 +1,10 @@
 import { inject, injectable } from "inversify";
-import { ResetPasswordMailTemplate } from "../../../../../domain/mail/reset-otp-mail.template";
 import { ResetPasswordOtpPolicy } from "../../../../../domain/policies/reset-password-otp.policy";
 import type { IUserRepository } from "../../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../../shared/types/types";
+import type { JobQueuePort } from "../../../../ports/job-queue.port";
 import type { IOtpGenerator } from "../../../../services";
-import type { IMailService } from "../../../../services/mail.service.interface";
 import type { RequestPasswordResetInput } from "../../dtos";
 import { assertUserCanAuthenticate } from "../helpers/assert-user-can-authenticate";
 import type { IRequestPasswordResetUseCase } from ".";
@@ -21,8 +20,8 @@ export class RequestPasswordResetUseCase
 		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.OtpGenerator)
 		private readonly _otpGeneratorService: IOtpGenerator,
-		@inject(TYPES.Services.MailService)
-		private readonly _mailService: IMailService,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
 	) {}
 
 	async execute(input: RequestPasswordResetInput): Promise<void> {
@@ -41,8 +40,9 @@ export class RequestPasswordResetUseCase
 
 			await Promise.all([
 				this._otpRepository.saveCode(user.id, policy.purpose, otp, policy.ttl),
-				this._mailService.send(email, new ResetPasswordMailTemplate(), {
-					code: otp,
+				this._jobQueue.enqueue("send-reset-password-otp-email", {
+					to: email,
+					otp,
 				}),
 			]);
 		}

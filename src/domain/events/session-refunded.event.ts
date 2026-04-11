@@ -1,5 +1,5 @@
 import type { PaymentStatus, PaymentType } from "../entities/booking.entity";
-import { AppEvent } from "./app-event";
+import { DomainEvent } from "./domain-event";
 
 export type SessionRefundedPayload = {
 	bookingId: string;
@@ -11,7 +11,7 @@ export type SessionRefundedPayload = {
 	paymentStatus: PaymentStatus;
 };
 
-export class SessionRefundedEvent extends AppEvent {
+export class SessionRefundedEvent extends DomainEvent {
 	readonly eventName = "session.refunded";
 
 	constructor(public readonly payload: SessionRefundedPayload) {

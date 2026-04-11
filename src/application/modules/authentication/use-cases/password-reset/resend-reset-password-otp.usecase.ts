@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import { ResetPasswordMailTemplate } from "../../../../../domain/mail/reset-otp-mail.template";
 import { ResetPasswordOtpPolicy } from "../../../../../domain/policies/reset-password-otp.policy";
 import type { IUserRepository } from "../../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../../shared/types/types";
-import type { IMailService, IOtpGenerator } from "../../../../services";
+import type { JobQueuePort } from "../../../../ports/job-queue.port";
+import type { IOtpGenerator } from "../../../../services";
 import type { ResendResetPasswordOtpInput } from "../../dtos/otp/resend-reset-password-otp.dto";
 import { UserNotFoundError } from "../../errors";
 import { MaxResendsExceededError } from "../../errors/max-resend-exceeded.error";
@@ -21,8 +21,8 @@ export class ResendResetPasswordOtpUseCase
 		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.OtpGenerator)
 		private readonly _otpGeneratorService: IOtpGenerator,
-		@inject(TYPES.Services.MailService)
-		private readonly _mailService: IMailService,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
 	) {}
 
 	async execute(input: ResendResetPasswordOtpInput): Promise<void> {
@@ -46,8 +46,9 @@ export class ResendResetPasswordOtpUseCase
 
 		await Promise.all([
 			this._otpRepository.saveCode(user.id, policy.purpose, otp, policy.ttl),
-			this._mailService.send(user.email, new ResetPasswordMailTemplate(), {
-				code: otp,
+			this._jobQueue.enqueue("send-reset-password-otp-email", {
+				to: user.email,
+				otp,
 			}),
 		]);
 	}

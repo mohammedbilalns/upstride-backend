@@ -1,4 +1,4 @@
-import { MailRenderer } from "../../infrastructure/mail/mail-renderer";
+import { MailRenderer } from "../mail-renderer";
 import type { IMailTemplate } from "./mail.template";
 
 export class ChangePasswordOtpMailTemplate implements IMailTemplate {

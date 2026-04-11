@@ -9,7 +9,7 @@ import type {
 	IChatRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { IEventBus } from "../../../events/app-event-bus.interface";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { SendMessageInput, SendMessageOutput } from "../dtos/chat.dto";
 import {
@@ -32,8 +32,8 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.UseCases.CreateChat)
 		private readonly _createChatUseCase: ICreateChatUseCase,
-		@inject(TYPES.Services.AppEventBus)
-		private readonly _eventBus: IEventBus,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: SendMessageInput): Promise<SendMessageOutput> {
@@ -124,7 +124,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 				senderName,
 				receiverName,
 			}),
-			{ realtime: true },
 		);
 
 		return { message: messageDto };

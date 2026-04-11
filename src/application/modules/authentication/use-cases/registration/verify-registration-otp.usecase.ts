@@ -4,7 +4,7 @@ import { RegisterOtpPolicy } from "../../../../../domain/policies/register-otp.p
 import type { IUserRepository } from "../../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../../shared/types/types";
-import type { IEventBus } from "../../../../events/app-event-bus.interface";
+import type { EventBus } from "../../../../events/event-bus.interface";
 import type { ITokenService } from "../../../../services";
 import type { VerifyOtpResponse } from "../../dtos";
 import type { VerifyRegistrationOtpInput } from "../../dtos/otp/verify-registration-otp.dto";
@@ -24,8 +24,8 @@ export class VerifyRegistrationOtpUseCase
 		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.TokenService)
 		private readonly _tokenService: ITokenService,
-		@inject(TYPES.Services.AppEventBus)
-		private readonly _eventBus: IEventBus,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: VerifyRegistrationOtpInput): Promise<VerifyOtpResponse> {
@@ -74,7 +74,6 @@ export class VerifyRegistrationOtpUseCase
 				userId: finalUser.id,
 				email: finalUser.email,
 			}),
-			{ durable: true },
 		);
 
 		const setupToken = this._tokenService.generateSetupToken({

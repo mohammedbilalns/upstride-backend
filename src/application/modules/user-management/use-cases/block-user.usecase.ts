@@ -8,7 +8,7 @@ import type {
 } from "../../../../domain/repositories";
 import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revocation.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import type { IEventBus } from "../../../events/app-event-bus.interface";
+import type { EventBus } from "../../../events/event-bus.interface";
 import { REFRESH_TOKEN_EXPIRES_IN } from "../../../services";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { BlockUserInput } from "../dtos/block-user.dto";
@@ -25,8 +25,8 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		private _tokenRevocationRepository: ITokenRevocationRepository,
 		@inject(TYPES.Repositories.ReportRepository)
 		private _reportRepository: IReportRepository,
-		@inject(TYPES.Services.AppEventBus)
-		private _eventBus: IEventBus,
+		@inject(TYPES.Services.EventBus)
+		private _eventBus: EventBus,
 	) {}
 
 	async execute(input: BlockUserInput): Promise<void> {
@@ -58,7 +58,6 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 
 		await this._eventBus.publish(
 			new UserStatusChangedEvent({ userId: input.userId, isBlocked: true }),
-			{ durable: true },
 		);
 
 		if (input.reportId) {

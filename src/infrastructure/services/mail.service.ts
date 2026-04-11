@@ -1,28 +1,26 @@
-import type { Queue } from "bullmq";
-import { inject, injectable } from "inversify";
-import type { IMailService } from "../../application/services";
-import type { IMailTemplate } from "../../domain/mail";
-import { TYPES } from "../../shared/types/types";
+import { injectable } from "inversify";
+import type { IMailService, MailMessage } from "../../application/services";
+import env from "../../shared/config/env";
+import logger from "../../shared/logging/logger";
+import { mailTransporter } from "../mail/nodemailer.transport";
 
 @injectable()
-// Enqueues outgoing mail jobs.
 export class MailService implements IMailService {
-	constructor(
-		@inject(TYPES.Queues.MailQueue) private readonly _mailQueue: Queue,
-	) {}
+	async send(message: MailMessage): Promise<void> {
+		const { to, subject, html, text } = message;
 
-	async send(
-		to: string,
-		template: IMailTemplate,
-		data: unknown,
-	): Promise<void> {
-		const { html, text } = template.render(data);
-
-		await this._mailQueue.add("send_mail", {
-			to,
-			subject: template.subject,
-			html,
-			text,
-		});
+		try {
+			await mailTransporter.sendMail({
+				from: env.SMTP_USER,
+				to,
+				subject,
+				html,
+				text,
+			});
+			logger.info(`Mail sent successfully to ${to} `);
+		} catch (error) {
+			logger.error(`Failed to send mail to ${to}: ${error} `);
+			throw error;
+		}
 	}
 }

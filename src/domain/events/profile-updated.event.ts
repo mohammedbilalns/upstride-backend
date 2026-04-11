@@ -1,6 +1,6 @@
-import { AppEvent } from "./app-event";
+import { DomainEvent } from "./domain-event";
 
-export class ProfileUpdatedEvent extends AppEvent {
+export class ProfileUpdatedEvent extends DomainEvent {
 	readonly eventName = "profile.updated";
 
 	constructor(

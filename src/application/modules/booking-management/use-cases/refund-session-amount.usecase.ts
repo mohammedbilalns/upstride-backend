@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { SessionRefundedEvent } from "../../../../domain/events/session-refunded.event";
 import { TYPES } from "../../../../shared/types/types";
 import { DAY_MS } from "../../../../shared/utilities/time.util";
-import type { IEventBus } from "../../../events/app-event-bus.interface";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
 import type {
@@ -18,8 +18,8 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 		private readonly _refundService: IRefundService,
 		@inject(TYPES.Services.PlatformSettings)
 		private readonly _platformSettingsService: PlatformSettingsService,
-		@inject(TYPES.Services.AppEventBus)
-		private readonly _eventBus: IEventBus,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(
@@ -93,7 +93,6 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 				paymentType: input.paymentType,
 				paymentStatus: input.paymentStatus,
 			}),
-			{ durable: true },
 		);
 
 		return {

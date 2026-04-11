@@ -2,7 +2,7 @@ import type { Queue } from "bullmq";
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import { redisClient } from "../../../infrastructure/database/redis/redis.connection";
-import { domainEventsQueue, mailQueue } from "../../../main/di/queues.di";
+import { mailQueue } from "../../../main/di/queues.di";
 import { HttpStatus } from "../../../shared/constants";
 
 type HealthStatus = "up" | "down";
@@ -17,7 +17,6 @@ const HEALTH_CHECK_TIMEOUT_MS = 2000;
 
 /**
  * Wraps a promise with a timeout to prevent hanging health checks.
- * If the promise doesn't resolve within timeoutMs, it rejects with an error.
  */
 const withTimeout = async <T>(
 	promise: Promise<T>,
@@ -26,6 +25,7 @@ const withTimeout = async <T>(
 	let timeoutId: NodeJS.Timeout | undefined;
 	const timeoutPromise = new Promise<never>((_, reject) => {
 		timeoutId = setTimeout(() => {
+			// Reject if promise doesn't resolve within timeoutMs.
 			reject(new Error(`Timed out after ${timeoutMs}ms`));
 		}, timeoutMs);
 	});
@@ -38,9 +38,7 @@ const withTimeout = async <T>(
 };
 
 /**
- * Checks MongoDB connection health by verifying:
- * - Connection is in ready state
- * - Database is accessible via ping command
+ * Checks MongoDB connection health
  */
 const checkMongo = async (): Promise<HealthCheckResult> => {
 	const start = Date.now();
@@ -65,7 +63,7 @@ const checkMongo = async (): Promise<HealthCheckResult> => {
 };
 
 /**
- * Checks Redis connection health by sending a ping command.
+ * Checks Redis connection health .
  */
 const checkRedis = async (): Promise<HealthCheckResult> => {
 	const start = Date.now();
@@ -82,7 +80,7 @@ const checkRedis = async (): Promise<HealthCheckResult> => {
 };
 
 /**
- * Checks a BullMQ queue health by verifying the queue's Redis client connectivity.
+ * Checks a BullMQ queue health .
  */
 const checkQueue = async (
 	name: string,
@@ -107,20 +105,14 @@ const checkQueue = async (
 
 /**
  * Main health check endpoint handler.
- * Checks all core dependencies (MongoDB, Redis) and services (queues).
- * Returns overall status based on whether all checks passed.
  */
 export const healthCheckHandler = async (_req: Request, res: Response) => {
-	// Execute all health checks in parallel
-	const [mongo, redis, mailQueueHealth, domainEventsQueueHealth] =
-		await Promise.all([
-			checkMongo(),
-			checkRedis(),
-			checkQueue("mailQueue", mailQueue),
-			checkQueue("domainEventsQueue", domainEventsQueue),
-		]);
+	const [mongo, redis, mailQueueHealth] = await Promise.all([
+		checkMongo(),
+		checkRedis(),
+		checkQueue("mailQueue", mailQueue),
+	]);
 
-	// Core infrastructure dependencies
 	const dependencies = {
 		mongo,
 		redis,
@@ -129,7 +121,6 @@ export const healthCheckHandler = async (_req: Request, res: Response) => {
 	// Background job services
 	const services = {
 		mailQueue: mailQueueHealth,
-		domainEventsQueue: domainEventsQueueHealth,
 	};
 
 	// Aggregate all checks to determine overall health

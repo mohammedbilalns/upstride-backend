@@ -3,6 +3,7 @@ export const TYPES = {
 		Password: Symbol.for("Password"),
 		TokenService: Symbol.for("TokenService"),
 		MailService: Symbol.for("MailService"),
+		JobQueue: Symbol.for("JobQueuePort"),
 		OtpGenerator: Symbol.for("OtpGenerator"),
 		GoogleOAuth: Symbol.for("GoogleOAuth"),
 		LinkedInOAuth: Symbol.for("LinkedInOAuth"),
@@ -10,7 +11,8 @@ export const TYPES = {
 		PlatformSettings: Symbol.for("PlatformSettings"),
 		Storage: Symbol.for("Storage"),
 		WalletService: Symbol.for("WalletService"),
-		AppEventBus: Symbol.for("AppEventBus"),
+		EventBus: Symbol.for("EventBus"),
+		NotificationPort: Symbol.for("NotificationPort"),
 		PaymentService: Symbol.for("PaymentService"),
 		PaymentWebhookParser: Symbol.for("PaymentWebhookParser"),
 		IdGenerator: Symbol.for("IdGenerator"),
@@ -27,7 +29,6 @@ export const TYPES = {
 	},
 	Queues: {
 		MailQueue: Symbol.for("MailQueue"),
-		AppEvents: Symbol.for("AppEventsQueue"),
 	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),

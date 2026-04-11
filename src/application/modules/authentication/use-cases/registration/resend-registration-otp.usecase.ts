@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import { RegisterOtpMailTemplate } from "../../../../../domain/mail/register-otp-mail.template";
 import { RegisterOtpPolicy } from "../../../../../domain/policies/register-otp.policy";
 import type { IUserRepository } from "../../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../../shared/types/types";
-import type { IMailService, IOtpGenerator } from "../../../../services";
+import type { JobQueuePort } from "../../../../ports/job-queue.port";
+import type { IOtpGenerator } from "../../../../services";
 import type { ResendRegistrationOtpInput } from "../../dtos/otp/resend-registration-otp.dto";
 import { UserNotFoundError } from "../../errors";
 import { MaxResendsExceededError } from "../../errors/max-resend-exceeded.error";
@@ -21,8 +21,8 @@ export class ResendRegistrationOtpUseCase
 		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.OtpGenerator)
 		private readonly _otpGeneratorService: IOtpGenerator,
-		@inject(TYPES.Services.MailService)
-		private readonly _mailService: IMailService,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
 	) {}
 
 	async execute(input: ResendRegistrationOtpInput): Promise<void> {
@@ -46,7 +46,8 @@ export class ResendRegistrationOtpUseCase
 
 		await Promise.all([
 			this._otpRepository.saveCode(user.id, policy.purpose, otp, policy.ttl),
-			this._mailService.send(user.email, new RegisterOtpMailTemplate(), {
+			this._jobQueue.enqueue("send-register-otp-email", {
+				to: user.email,
 				name: user.name,
 				otp,
 			}),

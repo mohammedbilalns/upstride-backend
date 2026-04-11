@@ -8,24 +8,20 @@ import { ArticleUserStatusChangedHandler } from "../../application/events/handle
 import { SessionRefundedHandler } from "../../application/events/handlers/booking/session-refunded.handler";
 import { MessageSentHandler } from "../../application/events/handlers/chat/message-sent.handler";
 import { MentorUserStatusChangedHandler } from "../../application/events/handlers/mentor/user-status-changed.handler";
+import { EmitMessageToUserHandler } from "../../application/events/handlers/notifications/emit-message-to-user.handler";
+import { EmitNotificationToUserHandler } from "../../application/events/handlers/notifications/emit-notification-to-user.handler";
 import type { CheckoutCompletedHandler } from "../../application/events/handlers/payment/checkout-completed.handler";
 import type { CheckoutExpiredHandler } from "../../application/events/handlers/payment/checkout-expired.handler";
 import type { CheckoutFailedHandler } from "../../application/events/handlers/payment/checkout-failed.handler";
 import { ProfileUpdatedHandler } from "../../application/events/handlers/profile/profile-updated.handler";
-import { SignupRewardHandler } from "../../application/events/handlers/signup-reward.handler";
+import { UserRegisteredHandler } from "../../application/events/handlers/user-registered.handler";
 import type { ICreateNotificationUseCase } from "../../application/modules/notifications/use-cases/create-notification.usecase.interface";
 import type { PlatformSettingsService } from "../../application/services/platform-settings.service";
 import type { IWalletService } from "../../application/services/wallet.service.interface";
-import { WebSocketEventBridge } from "../../infrastructure/events/websocket-event-bridge";
 import { TYPES } from "../../shared/types/types";
 import { appEventBus } from "./queues.di";
 
 export const bootstrapEventHandlers = (container: Container): void => {
-	const wsBridge = new WebSocketEventBridge(
-		container.get(TYPES.Services.WebSocketServer),
-	);
-	appEventBus.setWebSocketBridge(wsBridge);
-
 	const walletService = container.get<IWalletService>(
 		TYPES.Services.WalletService,
 	);
@@ -33,7 +29,7 @@ export const bootstrapEventHandlers = (container: Container): void => {
 		TYPES.Services.PlatformSettings,
 	);
 
-	const signupHandler = new SignupRewardHandler(
+	const userRegisteredHandler = new UserRegisteredHandler(
 		walletService,
 		platformSettings,
 	);
@@ -42,6 +38,9 @@ export const bootstrapEventHandlers = (container: Container): void => {
 		container.get<ICreateNotificationUseCase>(
 			TYPES.UseCases.CreateNotification,
 		),
+	);
+	const messageSentRealtimeHandler = new EmitMessageToUserHandler(
+		container.get(TYPES.Services.NotificationPort),
 	);
 	const articleCommentCreatedHandler = new ArticleCommentCreatedHandler(
 		container.get<ICreateNotificationUseCase>(
@@ -83,6 +82,9 @@ export const bootstrapEventHandlers = (container: Container): void => {
 			TYPES.UseCases.CreateNotification,
 		),
 	);
+	const notificationCreatedRealtimeHandler = new EmitNotificationToUserHandler(
+		container.get(TYPES.Services.NotificationPort),
+	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(
 		TYPES.PaymentHandlers.CheckoutCompleted,
@@ -94,65 +96,76 @@ export const bootstrapEventHandlers = (container: Container): void => {
 		TYPES.PaymentHandlers.CheckoutFailed,
 	);
 
-	// Durable (BullMQ) Bus Registrations -
-	appEventBus.registerDurableHandler(
+	// Event Bus Registrations
+	appEventBus.registerHandler(
 		"user.registered",
-		signupHandler.handle.bind(signupHandler),
+		userRegisteredHandler.handle.bind(userRegisteredHandler),
 	);
-	appEventBus.registerRealtimeHandler(
+	appEventBus.registerHandler(
 		"chat.message.sent",
 		messageSentHandler.handle.bind(messageSentHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"article.comment.created",
 		articleCommentCreatedHandler.handle.bind(articleCommentCreatedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"article.reaction.created",
 		articleReactionCreatedHandler.handle.bind(articleReactionCreatedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"article.comment.reaction.created",
 		articleCommentReactionCreatedHandler.handle.bind(
 			articleCommentReactionCreatedHandler,
 		),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"profile.updated",
 		profileUpdatedHandler.handle.bind(profileUpdatedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"user.status.changed",
 		articleUserStatusChangedHandler.handle.bind(
 			articleUserStatusChangedHandler,
 		),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"user.status.changed",
 		mentorUserStatusChangedHandler.handle.bind(mentorUserStatusChangedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"article.blocked",
 		articleBlockedHandler.handle.bind(articleBlockedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"article.unblocked",
 		articleUnblockedHandler.handle.bind(articleUnblockedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"session.refunded",
 		sessionRefundedHandler.handle.bind(sessionRefundedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"checkout.completed",
 		checkoutCompletedHandler.handle.bind(checkoutCompletedHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"checkout.expired",
 		checkoutExpiredHandler.handle.bind(checkoutExpiredHandler),
 	);
-	appEventBus.registerDurableHandler(
+	appEventBus.registerHandler(
 		"checkout.failed",
 		checkoutFailedHandler.handle.bind(checkoutFailedHandler),
+	);
+
+	appEventBus.registerHandler(
+		"chat.message.sent",
+		messageSentRealtimeHandler.handle.bind(messageSentRealtimeHandler),
+	);
+	appEventBus.registerHandler(
+		"notification.created",
+		notificationCreatedRealtimeHandler.handle.bind(
+			notificationCreatedRealtimeHandler,
+		),
 	);
 };

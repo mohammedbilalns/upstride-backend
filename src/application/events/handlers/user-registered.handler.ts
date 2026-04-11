@@ -6,7 +6,9 @@ import type { IWalletService } from "../../services/wallet.service.interface";
 import type { EventHandler } from "../event-handler.interface";
 
 @injectable()
-export class SignupRewardHandler implements EventHandler<UserRegisteredEvent> {
+export class UserRegisteredHandler
+	implements EventHandler<UserRegisteredEvent>
+{
 	constructor(
 		private _walletService: IWalletService,
 		private _platformSettings: PlatformSettingsService,

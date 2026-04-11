@@ -1,5 +1,5 @@
-import type { AppEvent } from "../../domain/events/app-event";
+import type { DomainEvent } from "../../domain/events/domain-event";
 
-export interface EventHandler<TEvent extends AppEvent> {
+export interface EventHandler<TEvent extends DomainEvent> {
 	handle(event: TEvent): Promise<void>;
 }

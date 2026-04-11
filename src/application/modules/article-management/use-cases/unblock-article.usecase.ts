@@ -5,7 +5,7 @@ import type {
 	IReportRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { IEventBus } from "../../../events/app-event-bus.interface";
+import type { EventBus } from "../../../events/event-bus.interface";
 import { ArticleNotBlockedError, ArticleNotFoundError } from "../errors";
 import { ArticleMapper } from "../mappers/article.mapper";
 import type {
@@ -21,8 +21,8 @@ export class UnblockArticleUseCase implements IUnblockArticleUseCase {
 		private readonly _articleRepository: IArticleRepository,
 		@inject(TYPES.Repositories.ReportRepository)
 		private readonly _reportRepository: IReportRepository,
-		@inject(TYPES.Services.AppEventBus)
-		private readonly _eventBus: IEventBus,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: UnblockArticleInput): Promise<UnblockArticleOutput> {
@@ -52,7 +52,6 @@ export class UnblockArticleUseCase implements IUnblockArticleUseCase {
 					articleId: updated.id,
 					authorId: updated.authorId,
 				}),
-				{ durable: true },
 			);
 
 			if (article.blockedByReportId) {

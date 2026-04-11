@@ -1,12 +1,9 @@
 import { Queue } from "bullmq";
 import type { Container } from "inversify";
+import type { JobQueuePort } from "../../application/ports/job-queue.port";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
-import { AppEventBus } from "../../infrastructure/events/app-event-bus";
-import {
-	APP_EVENTS_QUEUE,
-	BullMQEventBus,
-} from "../../infrastructure/events/bullmq-event-bus";
 import { InMemoryEventBus } from "../../infrastructure/events/in-memory-event-bus";
+import { JobQueueAdapter } from "../../infrastructure/queue/job-queue.adapter";
 import { TYPES } from "../../shared/types/types";
 
 /**
@@ -15,25 +12,14 @@ import { TYPES } from "../../shared/types/types";
  */
 export const mailQueue = new Queue("mailQueue", { connection: redisClient });
 
-/**
- * Queue for application events
- * Enables async event processing and loose coupling between services.
- */
-export const domainEventsQueue = new Queue(APP_EVENTS_QUEUE, {
-	connection: redisClient,
-});
-
-const bullMQEventBus = new BullMQEventBus(domainEventsQueue);
 const inMemoryEventBus = new InMemoryEventBus();
-export const appEventBus = new AppEventBus(bullMQEventBus, inMemoryEventBus);
+export const appEventBus = inMemoryEventBus;
 
 /**
- * Registers BullMQ queue and event bus bindings to the Inversify container.
+ * Registers queue and event bus bindings to the Inversify container.
  */
 export const registerQueueBindings = (container: Container): void => {
 	container.bind<Queue>(TYPES.Queues.MailQueue).toConstantValue(mailQueue);
-	container
-		.bind<Queue>(TYPES.Queues.AppEvents)
-		.toConstantValue(domainEventsQueue);
-	container.bind(TYPES.Services.AppEventBus).toConstantValue(appEventBus);
+	container.bind<JobQueuePort>(TYPES.Services.JobQueue).to(JobQueueAdapter);
+	container.bind(TYPES.Services.EventBus).toConstantValue(appEventBus);
 };

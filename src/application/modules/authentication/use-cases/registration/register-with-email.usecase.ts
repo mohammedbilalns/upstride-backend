@@ -4,13 +4,12 @@ import {
 	type User,
 	UserRoleValues,
 } from "../../../../../domain/entities/user.entity";
-import { RegisterOtpMailTemplate } from "../../../../../domain/mail/register-otp-mail.template";
 import { RegisterOtpPolicy } from "../../../../../domain/policies/register-otp.policy";
 import type { IUserRepository } from "../../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../../shared/types/types";
+import type { JobQueuePort } from "../../../../ports/job-queue.port";
 import type { IOtpGenerator } from "../../../../services";
-import type { IMailService } from "../../../../services/mail.service.interface";
 import type { IPasswordService } from "../../../../services/password.service.interface";
 import type { RegisterWithEmailInput } from "../../dtos";
 import { UserAlreadyExistsError } from "../../errors/user-already-exists.error";
@@ -27,8 +26,8 @@ export class RegisterWithEmailUseCase implements IRegisterWithEmailUseCase {
 		private _passwordService: IPasswordService,
 		@inject(TYPES.Services.OtpGenerator)
 		private _otpGeneratorService: IOtpGenerator,
-		@inject(TYPES.Services.MailService)
-		private _mailService: IMailService,
+		@inject(TYPES.Services.JobQueue)
+		private _jobQueue: JobQueuePort,
 	) {}
 
 	async execute(input: RegisterWithEmailInput): Promise<void> {
@@ -69,7 +68,8 @@ export class RegisterWithEmailUseCase implements IRegisterWithEmailUseCase {
 				otp,
 				policy.ttl,
 			),
-			this._mailService.send(createdUser.email, new RegisterOtpMailTemplate(), {
+			this._jobQueue.enqueue("send-register-otp-email", {
+				to: createdUser.email,
 				name: createdUser.name,
 				otp,
 			}),

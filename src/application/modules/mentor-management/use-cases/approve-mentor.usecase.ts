@@ -1,9 +1,8 @@
 import { inject, injectable } from "inversify";
-import { MentorApprovalMailTemplate } from "../../../../domain/mail/mentor-approval-mail.template";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { IUserRepository } from "../../../../domain/repositories/user.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import type { IMailService } from "../../../services/mail.service.interface";
+import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import { MentorApplicationNotFoundError } from "../errors/mentor-application-not-found.error";
 import type { IApproveMentorUseCase } from "./approve-mentor.usecase.interface";
@@ -15,8 +14,8 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
-		@inject(TYPES.Services.MailService)
-		private readonly _mailService: IMailService,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
 		@inject(TYPES.Services.PlatformSettings)
 		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
@@ -46,7 +45,8 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 			this._userRepository.updateById(mentor.userId, { role: "MENTOR" }),
 		]);
 
-		await this._mailService.send(user.email, new MentorApprovalMailTemplate(), {
+		await this._jobQueue.enqueue("send-mentor-approval-email", {
+			to: user.email,
 			name: user.name,
 		});
 	}

@@ -6,7 +6,7 @@ import {
 } from "../../../../domain/events/notification-created.event";
 import type { INotificationRepository } from "../../../../domain/repositories/notification.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
-import type { IEventBus } from "../../../events/app-event-bus.interface";
+import type { EventBus } from "../../../events/event-bus.interface";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type {
 	CreateNotificationInput,
@@ -22,8 +22,8 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 		private readonly _notificationRepository: INotificationRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
-		@inject(TYPES.Services.AppEventBus)
-		private readonly _eventBus: IEventBus,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(
@@ -70,7 +70,6 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 				userId: input.userId,
 				notification: notificationPayload,
 			}),
-			{ realtime: true },
 		);
 
 		return {

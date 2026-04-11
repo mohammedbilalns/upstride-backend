@@ -2,7 +2,7 @@ import type {
 	NotificationEvent,
 	NotificationType,
 } from "../entities/notification.entity";
-import { AppEvent } from "./app-event";
+import { DomainEvent } from "./domain-event";
 
 export type NotificationPayload = {
 	id: string;
@@ -25,9 +25,8 @@ export type NotificationPayload = {
 	updatedAt?: Date;
 };
 
-export class NotificationCreatedEvent extends AppEvent {
+export class NotificationCreatedEvent extends DomainEvent {
 	readonly eventName = "notification.created";
-	readonly meta = { realtime: true };
 
 	constructor(
 		public readonly payload: {

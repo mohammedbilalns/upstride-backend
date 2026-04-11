@@ -1,11 +1,10 @@
 import { inject, injectable } from "inversify";
-import { ChangePasswordOtpMailTemplate } from "../../../../domain/mail/change-password-otp-mail.template";
 import { ChangePasswordOtpPolicy } from "../../../../domain/policies/change-password-otp.policy";
 import type { IUserRepository } from "../../../../domain/repositories";
 import type { IOtpRepository } from "../../../../domain/repositories/otp.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { IOtpGenerator } from "../../../services";
-import type { IMailService } from "../../../services/mail.service.interface";
 import type { IPasswordService } from "../../../services/password.service.interface";
 import type { RequestChangePasswordInput } from "../../authentication/dtos";
 import {
@@ -26,8 +25,8 @@ export class RequestChangePasswordUseCase
 		private readonly _otpRepository: IOtpRepository,
 		@inject(TYPES.Services.OtpGenerator)
 		private readonly _otpGeneratorService: IOtpGenerator,
-		@inject(TYPES.Services.MailService)
-		private readonly _mailService: IMailService,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
 		@inject(TYPES.Services.Password)
 		private readonly _passwordService: IPasswordService,
 	) {}
@@ -65,7 +64,8 @@ export class RequestChangePasswordUseCase
 
 		await Promise.all([
 			this._otpRepository.saveCode(user.id, policy.purpose, otp, policy.ttl),
-			this._mailService.send(user.email, new ChangePasswordOtpMailTemplate(), {
+			this._jobQueue.enqueue("send-change-password-otp-email", {
+				to: user.email,
 				name: user.name,
 				otp,
 			}),

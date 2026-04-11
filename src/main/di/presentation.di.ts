@@ -1,4 +1,5 @@
 import type { Container } from "inversify";
+import { WebSocketNotificationPort } from "../../infrastructure/notifications/websocket-notification.port";
 import {
 	AdminManagementController,
 	ArticleController,
@@ -18,7 +19,6 @@ import {
 	UserManagementController,
 	WalletController,
 } from "../../presentation/http/controllers";
-
 import { WebSocketServer } from "../../presentation/websocket/socket-server";
 import { TYPES } from "../../shared/types/types";
 
@@ -26,6 +26,10 @@ export const registerPresentationBindings = (container: Container): void => {
 	container
 		.bind<WebSocketServer>(TYPES.Services.WebSocketServer)
 		.to(WebSocketServer)
+		.inSingletonScope();
+	container
+		.bind(TYPES.Services.NotificationPort)
+		.to(WebSocketNotificationPort)
 		.inSingletonScope();
 	container.bind(AuthController).to(AuthController);
 	container.bind(PasswordResetController).to(PasswordResetController);

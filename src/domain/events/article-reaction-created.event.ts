@@ -1,7 +1,7 @@
 import type { ArticleReactionType } from "../entities/article-reaction.entity";
-import { AppEvent } from "./app-event";
+import { DomainEvent } from "./domain-event";
 
-export class ArticleReactionCreatedEvent extends AppEvent {
+export class ArticleReactionCreatedEvent extends DomainEvent {
 	readonly eventName = "article.reaction.created";
 
 	constructor(

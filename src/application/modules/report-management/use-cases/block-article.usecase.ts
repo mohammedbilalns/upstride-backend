@@ -6,7 +6,7 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { IEventBus } from "../../../events/app-event-bus.interface";
+import type { EventBus } from "../../../events/event-bus.interface";
 import { ArticleNotFoundError } from "../../article-management/errors";
 import { ArticleMapper } from "../../article-management/mappers/article.mapper";
 import { UserNotFoundError } from "../../authentication/errors";
@@ -23,8 +23,8 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Repositories.ReportRepository)
 		private readonly _reportRepository: IReportRepository,
-		@inject(TYPES.Services.AppEventBus)
-		private readonly _eventBus: IEventBus,
+		@inject(TYPES.Services.EventBus)
+		private readonly _eventBus: EventBus,
 	) {}
 
 	async execute(input: BlockArticleInput): Promise<BlockArticleOutput> {
@@ -59,7 +59,6 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 				authorId: updated.authorId,
 				reason: input.reason,
 			}),
-			{ durable: true },
 		);
 
 		if (input.reportId) {

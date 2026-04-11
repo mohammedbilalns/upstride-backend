@@ -1,6 +1,6 @@
-import { AppEvent } from "./app-event";
+import { DomainEvent } from "./domain-event";
 
-export class ArticleUnblockedEvent extends AppEvent {
+export class ArticleUnblockedEvent extends DomainEvent {
 	readonly eventName = "article.unblocked";
 
 	constructor(

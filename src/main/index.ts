@@ -1,5 +1,8 @@
 import type { Worker } from "bullmq";
-import type { PlatformSettingsService } from "../application/services";
+import type {
+	IMailService,
+	PlatformSettingsService,
+} from "../application/services";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -14,17 +17,11 @@ import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
 import App from "./app";
 import { container } from "./container";
-import {
-	appEventBus,
-	bootstrapEventHandlers,
-	domainEventsQueue,
-	mailQueue,
-} from "./di";
+import { bootstrapEventHandlers, mailQueue } from "./di";
 
 let isShuttingDown = false; // flag to prevent multiple shutdowns
 let appInstance: App;
 let mailWorker: Worker;
-let appEventWorker: Worker;
 
 async function start() {
 	logger.info("Starting...");
@@ -40,8 +37,8 @@ async function start() {
 	bootstrapEventHandlers(container);
 
 	//workers for background jobs
-	mailWorker = createMailWorker(redisClient);
-	appEventWorker = appEventBus.createDurableWorker(redisClient);
+	const mailService = container.get<IMailService>(TYPES.Services.MailService);
+	mailWorker = createMailWorker(redisClient, mailService);
 
 	// initialize http server
 	appInstance = new App();
@@ -64,9 +61,7 @@ async function shutdown(signal: string) {
 		await Promise.allSettled([
 			disconnectFromMongo(),
 			mailWorker?.close(),
-			appEventWorker?.close(),
 			mailQueue.close(),
-			domainEventsQueue.close(),
 			disconnectRedis(),
 		]);
 		clearTimeout(forceExitTimeout);

@@ -2,7 +2,7 @@ import type {
 	MessageStatus,
 	MessageType,
 } from "../entities/chat-message.entity";
-import { AppEvent } from "./app-event";
+import { DomainEvent } from "./domain-event";
 
 export type ChatMessagePayload = {
 	id: string;
@@ -18,9 +18,8 @@ export type ChatMessagePayload = {
 	updatedAt: Date;
 };
 
-export class MessageSentEvent extends AppEvent {
+export class MessageSentEvent extends DomainEvent {
 	readonly eventName = "chat.message.sent";
-	readonly meta = { realtime: true };
 
 	constructor(
 		public readonly payload: {

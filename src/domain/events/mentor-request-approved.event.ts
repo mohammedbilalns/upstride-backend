@@ -1,6 +1,6 @@
-import { AppEvent } from "./app-event";
+import { DomainEvent } from "./domain-event";
 
-export class MentorRequestApprovedEvent extends AppEvent {
+export class MentorRequestApprovedEvent extends DomainEvent {
 	readonly eventName = "mentor.request.approved";
 
 	constructor(
