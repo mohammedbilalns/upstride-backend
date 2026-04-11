@@ -77,10 +77,10 @@ export class MentorController {
 		});
 	});
 
-	//TODO: use dto here
 	approveApplication = asyncHandler(async (req, res) => {
-		const id = req.params.id as string;
-		await this._approveMentorUseCase.execute(id);
+		await this._approveMentorUseCase.execute({
+			mentorId: (req.validated?.params as MentorIdParam)?.id,
+		});
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.APPROVE_APPLICATION_SUCCESS,

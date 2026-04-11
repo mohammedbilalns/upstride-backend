@@ -4,6 +4,7 @@ import type { IUserRepository } from "../../../../domain/repositories/user.repos
 import { TYPES } from "../../../../shared/types/types";
 import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { PlatformSettingsService } from "../../../services/platform-settings.service";
+import type { ApproveMentorInput } from "../dtos/approve-mentor.dto";
 import { MentorApplicationNotFoundError } from "../errors/mentor-application-not-found.error";
 import type { IApproveMentorUseCase } from "./approve-mentor.usecase.interface";
 
@@ -20,8 +21,8 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
-	async execute(mentorId: string): Promise<void> {
-		const mentor = await this._mentorRepository.findById(mentorId);
+	async execute(input: ApproveMentorInput): Promise<void> {
+		const mentor = await this._mentorRepository.findById(input.mentorId);
 		if (!mentor) {
 			throw new MentorApplicationNotFoundError();
 		}
@@ -33,7 +34,7 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 
 		const starterTier = this._platformSettingsService.mentors.starter;
 		await Promise.all([
-			this._mentorRepository.updateById(mentorId, {
+			this._mentorRepository.updateById(input.mentorId, {
 				isApproved: true,
 				isRejected: false,
 				rejectionReason: null,

@@ -1,3 +1,5 @@
+import type { ApproveMentorInput } from "../dtos/approve-mentor.dto";
+
 export interface IApproveMentorUseCase {
-	execute(mentorId: string): Promise<void>;
+	execute(input: ApproveMentorInput): Promise<void>;
 }
