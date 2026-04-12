@@ -15,10 +15,6 @@ export class ProfileUpdatedHandler
 	) {}
 
 	async handle(event: ProfileUpdatedEvent): Promise<void> {
-		logger.info(
-			`Handling ProfileUpdatedEvent for articles by user: ${event.payload.userId}`,
-		);
-
 		if (
 			event.payload.name === undefined &&
 			event.payload.avatarUrl === undefined

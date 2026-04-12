@@ -113,7 +113,7 @@ export const CatalogResponseMessages = {
 
 export const AdminManagementResponseMessages = {
 	ADMINS_FETCHED_SUCCESS: "Admins fetched successfully",
-	ADMIN_CREATED_SUCCESS: "Admin created successfully",
+	ADMIN_CREATED_SUCCESS: "Created admin successfully",
 	ADMIN_BLOCKED_SUCCESS: "Admin blocked successfully",
 	ADMIN_UNBLOCKED_SUCCESS: "Admin unblocked successfully",
 };

@@ -12,7 +12,6 @@ interface SuccessResponse<T> {
 	success: true;
 	message?: string;
 	data?: T;
-	pagination?: PaginationData;
 }
 
 /**
@@ -25,7 +24,7 @@ export const sendSuccess = <T>(
 	statusCode: HttpStatus,
 	options: { message?: string; data?: T; pagination?: PaginationData } = {},
 ): Response => {
-	const { message, data, pagination } = options;
+	const { message, data } = options;
 
 	// Handle 204 No Content
 	if (statusCode === 204) {
@@ -37,7 +36,6 @@ export const sendSuccess = <T>(
 		success: true,
 		...(message && { message }),
 		...(data !== undefined && { data }),
-		...(pagination && { pagination }),
 	};
 
 	//Send response

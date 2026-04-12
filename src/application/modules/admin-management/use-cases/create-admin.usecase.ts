@@ -9,7 +9,10 @@ import { TYPES } from "../../../../shared/types/types";
 import { parseNameFromEmail } from "../../../../shared/utilities/parse-name-from-email.util";
 import type { IPasswordService } from "../../../services/password.service.interface";
 import { UserAlreadyExistsError } from "../../authentication/errors/user-already-exists.error";
-import type { CreateAdminInput } from "../dtos/create-admin.dto";
+import type {
+	CreateAdminInput,
+	CreateAdminOutput,
+} from "../dtos/create-admin.dto";
 import type { ICreateAdminUseCase } from "./create-admin.usecase.interface";
 
 @injectable()
@@ -21,7 +24,7 @@ export class CreateAdminUseCase implements ICreateAdminUseCase {
 		private _passwordService: IPasswordService,
 	) {}
 
-	async execute(input: CreateAdminInput): Promise<void> {
+	async execute(input: CreateAdminInput): Promise<CreateAdminOutput> {
 		const existingUser = await this._userRepository.findByEmail(input.email);
 
 		if (existingUser?.isVerified) throw new UserAlreadyExistsError();
@@ -47,6 +50,7 @@ export class CreateAdminUseCase implements ICreateAdminUseCase {
 			isVerified: true,
 		} as User;
 
-		await this._userRepository.create(newUser);
+		const newAdmin = await this._userRepository.create(newUser);
+		return { newAdminId: newAdmin.id };
 	}
 }

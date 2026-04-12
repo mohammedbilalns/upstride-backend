@@ -40,12 +40,13 @@ export class AdminManagementController {
 	});
 
 	createAdmin = asyncHandler(async (req, res) => {
-		await this._createAdminUseCase.execute({
+		const result = await this._createAdminUseCase.execute({
 			...(req.validated?.body as CreateAdminBody),
 		});
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: AdminManagementResponseMessages.ADMIN_CREATED_SUCCESS,
+			data: result,
 		});
 	});
 
