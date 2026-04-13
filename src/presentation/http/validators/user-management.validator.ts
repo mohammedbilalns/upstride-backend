@@ -19,8 +19,11 @@ export const UserIdParamSchema = buildObjectIdParamSchema("id");
 
 export type UserIdParam = z.infer<typeof UserIdParamSchema>;
 
-export const BlockUserBodySchema = z.object({
-	reportId: z.string().optional(),
-});
+export const BlockUserBodySchema = z
+	.object({
+		reportId: z.string().optional(),
+		reason: z.string().optional(),
+	})
+	.default({});
 
 export type BlockUserBody = z.infer<typeof BlockUserBodySchema>;
