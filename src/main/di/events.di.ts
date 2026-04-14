@@ -15,68 +15,86 @@ import type { CheckoutExpiredHandler } from "../../application/events/handlers/p
 import type { CheckoutFailedHandler } from "../../application/events/handlers/payment/checkout-failed.handler";
 import { ProfileUpdatedHandler } from "../../application/events/handlers/profile/profile-updated.handler";
 import { UserRegisteredHandler } from "../../application/events/handlers/user-registered.handler";
-import type { ICreateNotificationUseCase } from "../../application/modules/notifications/use-cases/create-notification.usecase.interface";
-import type { IWalletService } from "../../application/services/wallet.service.interface";
 import { TYPES } from "../../shared/types/types";
 import { appEventBus } from "./queues.di";
 
+export const registerEventHandlersBindings = (container: Container): void => {
+	container
+		.bind(UserRegisteredHandler)
+		.to(UserRegisteredHandler)
+		.inSingletonScope();
+	container.bind(MessageSentHandler).to(MessageSentHandler).inSingletonScope();
+	container
+		.bind(EmitMessageToUserHandler)
+		.to(EmitMessageToUserHandler)
+		.inSingletonScope();
+	container
+		.bind(ArticleCommentCreatedHandler)
+		.to(ArticleCommentCreatedHandler)
+		.inSingletonScope();
+	container
+		.bind(ArticleReactionCreatedHandler)
+		.to(ArticleReactionCreatedHandler)
+		.inSingletonScope();
+	container
+		.bind(ArticleCommentReactionCreatedHandler)
+		.to(ArticleCommentReactionCreatedHandler)
+		.inSingletonScope();
+	container
+		.bind(ProfileUpdatedHandler)
+		.to(ProfileUpdatedHandler)
+		.inSingletonScope();
+	container
+		.bind(ArticleUserStatusChangedHandler)
+		.to(ArticleUserStatusChangedHandler)
+		.inSingletonScope();
+	container
+		.bind(MentorUserStatusChangedHandler)
+		.to(MentorUserStatusChangedHandler)
+		.inSingletonScope();
+	container
+		.bind(ArticleBlockedHandler)
+		.to(ArticleBlockedHandler)
+		.inSingletonScope();
+	container
+		.bind(ArticleUnblockedHandler)
+		.to(ArticleUnblockedHandler)
+		.inSingletonScope();
+	container
+		.bind(SessionRefundedHandler)
+		.to(SessionRefundedHandler)
+		.inSingletonScope();
+	container
+		.bind(EmitNotificationToUserHandler)
+		.to(EmitNotificationToUserHandler)
+		.inSingletonScope();
+};
+
 export const bootstrapEventHandlers = (container: Container): void => {
-	const walletService = container.get<IWalletService>(
-		TYPES.Services.WalletService,
+	const userRegisteredHandler = container.get(UserRegisteredHandler);
+	const messageSentHandler = container.get(MessageSentHandler);
+	const messageSentRealtimeHandler = container.get(EmitMessageToUserHandler);
+	const articleCommentCreatedHandler = container.get(
+		ArticleCommentCreatedHandler,
 	);
-
-	const userRegisteredHandler = new UserRegisteredHandler(walletService);
-
-	const messageSentHandler = new MessageSentHandler(
-		container.get<ICreateNotificationUseCase>(
-			TYPES.UseCases.CreateNotification,
-		),
+	const articleReactionCreatedHandler = container.get(
+		ArticleReactionCreatedHandler,
 	);
-	const messageSentRealtimeHandler = new EmitMessageToUserHandler(
-		container.get(TYPES.Services.NotificationPort),
+	const articleCommentReactionCreatedHandler = container.get(
+		ArticleCommentReactionCreatedHandler,
 	);
-	const articleCommentCreatedHandler = new ArticleCommentCreatedHandler(
-		container.get<ICreateNotificationUseCase>(
-			TYPES.UseCases.CreateNotification,
-		),
+	const profileUpdatedHandler = container.get(ProfileUpdatedHandler);
+	const articleUserStatusChangedHandler = container.get(
+		ArticleUserStatusChangedHandler,
 	);
-	const articleReactionCreatedHandler = new ArticleReactionCreatedHandler(
-		container.get<ICreateNotificationUseCase>(
-			TYPES.UseCases.CreateNotification,
-		),
+	const mentorUserStatusChangedHandler = container.get(
+		MentorUserStatusChangedHandler,
 	);
-	const articleCommentReactionCreatedHandler =
-		new ArticleCommentReactionCreatedHandler(
-			container.get<ICreateNotificationUseCase>(
-				TYPES.UseCases.CreateNotification,
-			),
-		);
-	const profileUpdatedHandler = new ProfileUpdatedHandler(
-		container.get(TYPES.Repositories.ArticleRepository),
-	);
-	const articleUserStatusChangedHandler = new ArticleUserStatusChangedHandler(
-		container.get(TYPES.Repositories.ArticleRepository),
-	);
-	const mentorUserStatusChangedHandler = new MentorUserStatusChangedHandler(
-		container.get(TYPES.Repositories.MentorWriteRepository),
-	);
-	const articleBlockedHandler = new ArticleBlockedHandler(
-		container.get<ICreateNotificationUseCase>(
-			TYPES.UseCases.CreateNotification,
-		),
-	);
-	const articleUnblockedHandler = new ArticleUnblockedHandler(
-		container.get<ICreateNotificationUseCase>(
-			TYPES.UseCases.CreateNotification,
-		),
-	);
-	const sessionRefundedHandler = new SessionRefundedHandler(
-		container.get<ICreateNotificationUseCase>(
-			TYPES.UseCases.CreateNotification,
-		),
-	);
-	const notificationCreatedRealtimeHandler = new EmitNotificationToUserHandler(
-		container.get(TYPES.Services.NotificationPort),
+	const articleBlockedHandler = container.get(ArticleBlockedHandler);
+	const articleUnblockedHandler = container.get(ArticleUnblockedHandler);
+	const sessionRefundedHandler = container.get(SessionRefundedHandler);
+	const notificationCreatedRealtimeHandler = container.get(
+		EmitNotificationToUserHandler,
 	);
 
 	const checkoutCompletedHandler = container.get<CheckoutCompletedHandler>(

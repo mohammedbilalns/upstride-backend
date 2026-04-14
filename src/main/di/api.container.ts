@@ -7,6 +7,7 @@ import {
 	registerBookingBindings,
 	registerCatalogBindings,
 	registerChatBindings,
+	registerEventHandlersBindings,
 	registerInfrastructureServiceBindings,
 	registerMentorBindings,
 	registerMentorDiscoveryBindings,
@@ -41,6 +42,7 @@ registerReportBindings(apiContainer);
 registerAvailabilityBindings(apiContainer);
 registerBookingBindings(apiContainer);
 registerPaymentsBindings(apiContainer);
+registerEventHandlersBindings(apiContainer);
 registerProfileBindings(apiContainer);
 registerStorageBindings(apiContainer);
 registerUserManagementBindings(apiContainer);
