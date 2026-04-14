@@ -135,12 +135,10 @@ export class AvailabilityController {
 				userId: req.user.id,
 				...(req.validated?.query as GetMentorAvailabilitiesQuery),
 			});
-			// TODO: add pagination data in the data ??
 
 			return sendSuccess(res, HttpStatus.OK, {
 				message: RESPONSE_MESSAGES.AVAILABILITY.RETRIEVED,
-				data: { availabilities: result.availabilities },
-				pagination: result.pagination,
+				data: result,
 			});
 		},
 	);

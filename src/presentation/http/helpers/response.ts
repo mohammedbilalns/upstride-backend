@@ -1,13 +1,6 @@
 import type { Response } from "express";
 import type { HttpStatus } from "../../../shared/constants/http-status-codes";
 
-interface PaginationData {
-	page: number;
-	limit: number;
-	totalPages: number;
-	totalCount: number;
-}
-
 interface SuccessResponse<T> {
 	success: true;
 	message?: string;
@@ -22,7 +15,7 @@ interface SuccessResponse<T> {
 export const sendSuccess = <T>(
 	res: Response,
 	statusCode: HttpStatus,
-	options: { message?: string; data?: T; pagination?: PaginationData } = {},
+	options: { message?: string; data?: T } = {},
 ): Response => {
 	const { message, data } = options;
 
