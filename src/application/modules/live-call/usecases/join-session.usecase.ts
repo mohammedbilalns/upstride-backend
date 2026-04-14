@@ -22,6 +22,7 @@ export class JoinSessionUseCase implements IJoinSessionUseCase {
 			throw new BookingNotFoundError();
 		}
 
+		// TODO: validate Date and time too in here
 		if (input.userId !== booking.mentorUserId || booking.menteeId) {
 			throw new UnauthorizedError(
 				"You are not authorized to join this session",

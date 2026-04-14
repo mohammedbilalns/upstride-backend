@@ -6,6 +6,13 @@ import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";
 import { socketAsyncHandler } from "../helpers/socket-async-handler";
 import type { AuthedSocket } from "../middlewares/socket-auth.middleware";
+import {
+	JoinCallPayloadSchema,
+	LeaveCallPayloadSchema,
+	TerminateSessionPayloadSchema,
+	ToggledMediaPayloadSchema,
+	WhiteBoardPermissionSchema,
+} from "../validators/live-call.validator";
 
 @injectable()
 export class CallHandler {
@@ -24,10 +31,12 @@ export class CallHandler {
 		socket.on(
 			"call:join",
 			//TODO: validate incoming payload using zod validator
-			socketAsyncHandler(async (payload: { bookingId: string }) => {
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = JoinCallPayloadSchema.parse(payload);
+
 				const result = await this._joinSessionUseCase.execute({
 					userId,
-					bookingId: payload.bookingId,
+					bookingId: parsedPayload.bookingId,
 				});
 
 				const room = `call_${result.roomId}`;
@@ -60,8 +69,9 @@ export class CallHandler {
 			}),
 		);
 
-		socket.on("call:leave", (payload: { bookingId: string }) => {
-			const room = `call_${payload.bookingId}`;
+		socket.on("call:leave", (payload) => {
+			const parsedPayload = LeaveCallPayloadSchema.parse(payload);
+			const room = `call_${parsedPayload.bookingId}`;
 			socket.leave(room);
 			socket.to(room).emit("call:user-left", { userId });
 		});
@@ -97,20 +107,14 @@ export class CallHandler {
 			},
 		);
 
-		socket.on(
-			"call:toggled-media",
-			(payload: {
-				bookingId: string;
-				mediaType: string;
-				isEnabled: boolean;
-			}) => {
-				socket.to(`call_${payload.bookingId}`).emit("call:toggled-media", {
-					userId,
-					mediaType: payload.mediaType,
-					isEnabled: payload.isEnabled,
-				});
-			},
-		);
+		socket.on("call:toggled-media", (payload) => {
+			const parsedPayload = ToggledMediaPayloadSchema.parse(payload);
+			socket.to(`call_${parsedPayload.bookingId}`).emit("call:toggled-media", {
+				userId,
+				mediaType: parsedPayload.mediaType,
+				isEnabled: parsedPayload.isEnabled,
+			});
+		});
 
 		socket.on(
 			"whiteboard:sync",
@@ -126,22 +130,21 @@ export class CallHandler {
 			),
 		);
 
-		socket.on(
-			"whiteboard:permission",
-			(payload: { bookingId: string; menteeId: string; allow: boolean }) => {
-				//TODO: check if userId === booking.mentorId
-				socket
-					.to(`call_${payload.bookingId}`)
-					.emit("whiteboard:permission", payload);
-			},
-		);
+		socket.on("whiteboard:permission", (payload) => {
+			const parsedPayload = WhiteBoardPermissionSchema.parse(payload);
+			//TODO: check if userId === booking.mentorId using a use case
+			socket
+				.to(`call_${parsedPayload.bookingId}`)
+				.emit("whiteboard:permission", parsedPayload);
+		});
 
 		socket.on(
 			"call:terminate",
 			socketAsyncHandler(async (payload: { bookingId: string }) => {
+				const parsedPayload = TerminateSessionPayloadSchema.parse(payload);
 				await this._terminateSessionUseCase.execute({
 					userId,
-					bookingId: payload.bookingId,
+					bookingId: parsedPayload.bookingId,
 				});
 
 				socket

@@ -1,5 +1,6 @@
 import { MongooseError } from "mongoose";
 import type { Socket } from "socket.io";
+import { ZodError } from "zod";
 import { ErrorMessages, HttpStatus } from "../../../shared/constants";
 import { BaseError } from "../../../shared/errors/base.error";
 import logger from "../../../shared/logging/logger";
@@ -25,9 +26,20 @@ export const socketAsyncHandler = (
 				socket.emit(errorEvent, {
 					success: false,
 					message: err.message,
-					statusCode: err.statusCode,
 				});
 				return;
+			}
+
+			if (err instanceof ZodError) {
+				const errors = err.issues.map((e) => ({
+					path: e.path.join("."),
+					message: e.message,
+				}));
+
+				socket.emit(errorEvent, {
+					success: false,
+					message: errors[0].message,
+				});
 			}
 
 			// Mongo Errors
@@ -47,7 +59,6 @@ export const socketAsyncHandler = (
 				socket.emit(errorEvent, {
 					success: false,
 					message: ErrorMessages.INTERNAL_SERVER_ERROR,
-					statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
 				});
 				return;
 			}
@@ -57,7 +68,6 @@ export const socketAsyncHandler = (
 			socket.emit(errorEvent, {
 				success: false,
 				message: ErrorMessages.INTERNAL_SERVER_ERROR,
-				statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
 			});
 		}
 	};
