@@ -9,6 +9,7 @@ import {
 	registerChatBindings,
 	registerEventHandlersBindings,
 	registerInfrastructureServiceBindings,
+	registerLiveCallBindings,
 	registerMentorBindings,
 	registerMentorDiscoveryBindings,
 	registerMentorListsBindings,
@@ -34,6 +35,7 @@ registerAdminManagementBindings(apiContainer);
 registerArticleBindings(apiContainer);
 registerCatalogBindings(apiContainer);
 registerChatBindings(apiContainer);
+registerLiveCallBindings(apiContainer);
 registerMentorBindings(apiContainer);
 registerMentorDiscoveryBindings(apiContainer);
 registerMentorListsBindings(apiContainer);

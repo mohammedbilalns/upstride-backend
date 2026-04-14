@@ -7,6 +7,7 @@ export * from "./catalog.di";
 export * from "./chat.di";
 export * from "./events.di";
 export * from "./infrastructure-services.di";
+export * from "./live-call.di";
 export * from "./mentor.di";
 export * from "./mentor-discovery.di";
 export * from "./mentor-lists.di";

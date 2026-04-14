@@ -1,15 +1,19 @@
 import { inject, injectable } from "inversify";
+import type { IJoinSessionUseCase } from "../../../application/modules/live-call/usecases/join-session.usecase.interface";
+import type { ITerminateSessionUseCase } from "../../../application/modules/live-call/usecases/terminate-session.usecase.interface";
 import type { IWhiteboardCache } from "../../../application/services";
-import type { IBookingRepository } from "../../../domain/repositories/booking.repository.interface";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";
+import { socketAsyncHandler } from "../helpers/socket-async-handler";
 import type { AuthedSocket } from "../middlewares/socket-auth.middleware";
 
 @injectable()
 export class CallHandler {
 	constructor(
-		@inject(TYPES.Repositories.BookingRepository)
-		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.UseCases.JoinSession)
+		private readonly _joinSessionUseCase: IJoinSessionUseCase,
+		@inject(TYPES.UseCases.TerminateSession)
+		private readonly _terminateSessionUseCase: ITerminateSessionUseCase,
 		@inject(TYPES.Caches.Whiteboard)
 		private readonly _whiteboardCache: IWhiteboardCache,
 	) {}
@@ -17,33 +21,26 @@ export class CallHandler {
 	public attach(socket: AuthedSocket): void {
 		const userId = socket.data.user.id;
 
-		socket.on("call:join", async (payload: { bookingId: string }) => {
-			const booking = await this._bookingRepository.findById(payload.bookingId);
-			if (
-				!booking ||
-				(booking.mentorUserId !== userId && booking.menteeId !== userId)
-			) {
-				logger.warn(
-					`[CallHandler] Unauthorized participation attempt by user ${userId} for booking ${payload.bookingId}`,
-				);
-				socket.emit("call:error", {
-					message: "Unauthorized: You are not a participant of this session.",
+		socket.on(
+			"call:join",
+			//TODO: validate incoming payload using zod validator
+			socketAsyncHandler(async (payload: { bookingId: string }) => {
+				const result = await this._joinSessionUseCase.execute({
+					userId,
+					bookingId: payload.bookingId,
 				});
-				return;
-			}
 
-			const room = `call_${payload.bookingId}`;
-			socket.join(room);
-			logger.info(`[CallHandler] User ${userId} joined room ${room}`);
+				const room = `call_${result.roomId}`;
+				socket.join(room);
+				logger.info(`[CallHandler] User ${userId} joined room ${room}`);
 
-			// Notify others in the room
-			socket.to(room).emit("call:user-joined", { userId });
-			logger.info(
-				`[CallHandler] Emitted call:user-joined to room ${room} for user ${userId}`,
-			);
+				// Notify others in the room
+				socket.to(room).emit("call:user-joined", { userId });
+				logger.info(
+					`[CallHandler] Emitted call:user-joined to room ${room} for user ${userId}`,
+				);
 
-			// Provide initial whiteboard state if exists
-			try {
+				// Provide initial whiteboard state if exists
 				const cachedWhiteboard = await this._whiteboardCache.get(
 					payload.bookingId,
 				);
@@ -60,12 +57,8 @@ export class CallHandler {
 						`[CallHandler] No cached whiteboard state found for booking ${payload.bookingId}`,
 					);
 				}
-			} catch (error) {
-				logger.error(
-					`[CallHandler] Error fetching whiteboard state from Redis: ${error}`,
-				);
-			}
-		});
+			}),
+		);
 
 		socket.on("call:leave", (payload: { bookingId: string }) => {
 			const room = `call_${payload.bookingId}`;
@@ -121,20 +114,16 @@ export class CallHandler {
 
 		socket.on(
 			"whiteboard:sync",
-			async (payload: { bookingId: string; update: any }) => {
-				try {
+			socketAsyncHandler(
+				async (payload: { bookingId: string; update: any }) => {
 					// Persist state in Redis
 					await this._whiteboardCache.set(payload.bookingId, payload.update);
 
 					socket
 						.to(`call_${payload.bookingId}`)
 						.emit("whiteboard:sync", { userId, update: payload.update });
-				} catch (error) {
-					logger.error(
-						`[CallHandler] Error saving whiteboard to Redis: ${error}`,
-					);
-				}
-			},
+				},
+			),
 		);
 
 		socket.on(
@@ -147,28 +136,18 @@ export class CallHandler {
 			},
 		);
 
-		socket.on("call:terminate", async (payload: { bookingId: string }) => {
-			const booking = await this._bookingRepository.findById(payload.bookingId);
-			if (!booking || booking.mentorId !== userId) {
-				return; // Only mentor can terminate
-			}
-
-			const now = new Date().getTime();
-			const end = new Date(booking.endTime).getTime();
-			const diffMins = Math.abs((now - end) / 1000 / 60);
-
-			if (diffMins <= 5 && booking.status !== "COMPLETED") {
-				await this._bookingRepository.updateById(booking.id, {
-					status: "COMPLETED",
+		socket.on(
+			"call:terminate",
+			socketAsyncHandler(async (payload: { bookingId: string }) => {
+				await this._terminateSessionUseCase.execute({
+					userId,
+					bookingId: payload.bookingId,
 				});
-				logger.info(
-					`Booking ${booking.id} automatically completed on termination.`,
-				);
-			}
 
-			socket
-				.to(`call_${payload.bookingId}`)
-				.emit("call:terminated", { bookingId: booking.id });
-		});
+				socket
+					.to(`call_${payload.bookingId}`)
+					.emit("call:terminated", { bookingId: payload.bookingId });
+			}),
+		);
 	}
 }

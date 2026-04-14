@@ -17,10 +17,6 @@ const csrfCookieOptions = {
 	httpOnly: true,
 };
 
-const csrfSessionCookieOptions = {
-	...csrfCookieOptions,
-};
-
 const { generateCsrfToken, doubleCsrfProtection } = doubleCsrf({
 	getSecret: () => env.CSRF_SECRET,
 	getSessionIdentifier: (req: Request) =>
@@ -35,7 +31,7 @@ const { generateCsrfToken, doubleCsrfProtection } = doubleCsrf({
 const ensureCsrfSessionId: RequestHandler = (req, res, next) => {
 	if (!req.cookies[csrfSessionCookieName]) {
 		const sessionId = crypto.randomUUID();
-		res.cookie(csrfSessionCookieName, sessionId, csrfSessionCookieOptions);
+		res.cookie(csrfSessionCookieName, sessionId, csrfCookieOptions);
 		req.cookies[csrfSessionCookieName] = sessionId;
 	}
 	next();

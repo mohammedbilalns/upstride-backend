@@ -192,6 +192,8 @@ export const TYPES = {
 		GetPlatformPaymentTransactions: Symbol.for(
 			"GetPlatformPaymentTransactionsUseCase",
 		),
+		JoinSession: Symbol.for("JoinSessionUseCase"),
+		TerminateSession: Symbol.for("TerminateSessionUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),
