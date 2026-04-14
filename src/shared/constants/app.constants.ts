@@ -17,3 +17,14 @@ export const SessionSlotLimits = {
 } as const;
 
 export const IST_OFFSET_MINUTES = 330;
+
+export const COIN_VALUE = 2;
+
+export const USER_JOIN_REWARD_COIN_COUNT = 200;
+
+export const MAX_SESSION_PRICE_PER_30_MIN = 2000;
+export const DEFAULT_SESSION_PRICE_PER_30_MIN = 1000;
+
+export const PLATFOM_COMMISSION = {
+	SESSION_PERCENTAGE: 15,
+};

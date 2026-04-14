@@ -26,35 +26,66 @@ export const registerAuthenticationBindings = (container: Container): void => {
 	container.bind(TYPES.Services.AuthSession).to(AuthSessionService);
 
 	//UseCases
-	container.bind(TYPES.UseCases.LoginWithEmail).to(LoginWithEmailUseCase);
-	container.bind(TYPES.UseCases.SocialLogin).to(SocialLoginUseCase);
-	container.bind(TYPES.UseCases.RegisterWithEmail).to(RegisterWithEmailUseCase);
+	container
+		.bind(TYPES.UseCases.LoginWithEmail)
+		.to(LoginWithEmailUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.SocialLogin)
+		.to(SocialLoginUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.RegisterWithEmail)
+		.to(RegisterWithEmailUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.RequestPasswordReset)
-		.to(RequestPasswordResetUseCase);
-	container.bind(TYPES.UseCases.UpdatePassword).to(UpdatePasswordUseCase);
+		.to(RequestPasswordResetUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.UpdatePassword)
+		.to(UpdatePasswordUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.VerifyRegistrationOtp)
-		.to(VerifyRegistrationOtpUseCase);
+		.to(VerifyRegistrationOtpUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.VerifyResetPasswordOtp)
-		.to(VerifyResetPasswordOtpUseCase);
+		.to(VerifyResetPasswordOtpUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.VerifyChangePasswordOtp)
-		.to(VerifyChangePasswordOtpUseCase);
+		.to(VerifyChangePasswordOtpUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.ResendRegistrationOtp)
-		.to(ResendRegistrationOtpUseCase);
+		.to(ResendRegistrationOtpUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.ResendResetPasswordOtp)
-		.to(ResendResetPasswordOtpUseCase);
-	container.bind(TYPES.UseCases.RefreshSession).to(RefreshSessionUseCase);
-	container.bind(TYPES.UseCases.Logout).to(LogoutUseCase);
-	container.bind(TYPES.UseCases.RevokeSession).to(RevokeSessionUseCase);
+		.to(ResendResetPasswordOtpUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.RefreshSession)
+		.to(RefreshSessionUseCase)
+		.inSingletonScope();
+	container.bind(TYPES.UseCases.Logout).to(LogoutUseCase).inSingletonScope();
+	container
+		.bind(TYPES.UseCases.RevokeSession)
+		.to(RevokeSessionUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.RevokeAllOtherSessions)
-		.to(RevokeAllOtherSessionsUseCase);
-	container.bind(TYPES.UseCases.SaveUserInterests).to(SaveUserInterestsUseCase);
-	container.bind(TYPES.UseCases.GetMe).to(GetMeUseCase);
-	container.bind(TYPES.UseCases.GetActiveSessions).to(GetActiveSessionsUseCase);
+		.to(RevokeAllOtherSessionsUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.SaveUserInterests)
+		.to(SaveUserInterestsUseCase)
+		.inSingletonScope();
+	container.bind(TYPES.UseCases.GetMe).to(GetMeUseCase).inSingletonScope();
+	container
+		.bind(TYPES.UseCases.GetActiveSessions)
+		.to(GetActiveSessionsUseCase)
+		.inSingletonScope();
 };

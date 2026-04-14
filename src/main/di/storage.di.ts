@@ -9,6 +9,10 @@ export const registerStorageBindings = (container: Container): void => {
 	// usecases
 	container
 		.bind(TYPES.UseCases.GetPreSignedUploadUrl)
-		.to(GetPreSignedUploadUrlUseCase);
-	container.bind(TYPES.UseCases.DeleteFile).to(DeleteFileUseCase);
+		.to(GetPreSignedUploadUrlUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.DeleteFile)
+		.to(DeleteFileUseCase)
+		.inSingletonScope();
 };

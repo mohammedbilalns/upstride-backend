@@ -16,17 +16,22 @@ import { TYPES } from "../../shared/types/types";
 export const registerReportBindings = (container: Container): void => {
 	container
 		.bind<IReportArticleUseCase>(TYPES.UseCases.ReportArticle)
-		.to(ReportArticleUseCase);
+		.to(ReportArticleUseCase)
+		.inSingletonScope();
 	container
 		.bind<IReportUserUseCase>(TYPES.UseCases.ReportUser)
-		.to(ReportUserUseCase);
+		.to(ReportUserUseCase)
+		.inSingletonScope();
 	container
 		.bind<IGetReportsUseCase>(TYPES.UseCases.GetReports)
-		.to(GetReportsUseCase);
+		.to(GetReportsUseCase)
+		.inSingletonScope();
 	container
 		.bind<IUpdateReportStatusUseCase>(TYPES.UseCases.UpdateReportStatus)
-		.to(UpdateReportStatusUseCase);
+		.to(UpdateReportStatusUseCase)
+		.inSingletonScope();
 	container
 		.bind<IBlockArticleUseCase>(TYPES.UseCases.BlockArticle)
-		.to(BlockArticleUseCase);
+		.to(BlockArticleUseCase)
+		.inSingletonScope();
 };

@@ -2,6 +2,7 @@ import { Worker } from "bullmq";
 import type { Redis } from "ioredis";
 import type { JobMap } from "../../../application/ports/job-queue.port";
 import type { IMailService, MailMessage } from "../../../application/services";
+import type { IUserRepository } from "../../../domain/repositories/user.repository.interface";
 import logger from "../../../shared/logging/logger";
 import {
 	ChangePasswordOtpMailTemplate,
@@ -10,20 +11,60 @@ import {
 	ResetPasswordMailTemplate,
 } from "../../mail/templates";
 
-/**
- * Creates and returns the BullMQ worker for the mailQueue.
- *
- * @param connection The Redis connection instance.
- * @returns A BullMQ Worker instance.
- */
+// Let's create a minimal template directly here for brevity, or we could add it to templates
+class SessionReminderMailTemplate {
+	subject = "Upcoming Session Reminder";
+	render(data: { label: string; otherName: string; link: string }) {
+		return {
+			html: `<p>You have a session starting in ${data.label} with ${data.otherName}.</p><p>Join here: <a href="${data.link}">${data.link}</a></p>`,
+			text: `You have a session starting in ${data.label} with ${data.otherName}. Join here: ${data.link}`,
+		};
+	}
+}
+
 export const createMailWorker = (
 	connection: Redis,
 	mailService: IMailService,
+	userRepository: IUserRepository,
 ): Worker => {
 	const worker = new Worker(
 		"mailQueue",
 		async (job) => {
 			logger.info(`Processing mail job ${job.id} `);
+			if (job.name === "send-session-reminder") {
+				const data = job.data as JobMap["send-session-reminder"];
+				const mentee = await userRepository.findById(data.menteeId);
+				const mentor = await userRepository.findById(data.mentorId);
+				if (mentee?.email && mentor) {
+					const link = `${process.env.FRONTEND_URL || "http://localhost:5173"}/call/${data.bookingId}`;
+					const template = new SessionReminderMailTemplate();
+					const menteeMsg = template.render({
+						label: data.label,
+						otherName: mentor.name,
+						link,
+					});
+					const mentorMsg = template.render({
+						label: data.label,
+						otherName: mentee.name,
+						link,
+					});
+
+					await mailService.send({
+						to: mentee.email,
+						subject: template.subject,
+						html: menteeMsg.html,
+						text: menteeMsg.text,
+					});
+					await mailService.send({
+						to: mentor.email,
+						subject: template.subject,
+						html: mentorMsg.html,
+						text: mentorMsg.text,
+					});
+				}
+				return;
+			}
+
 			const message = buildMailMessage(
 				job.name as keyof JobMap,
 				job.data as JobMap[keyof JobMap],

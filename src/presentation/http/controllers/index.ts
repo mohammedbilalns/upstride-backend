@@ -12,7 +12,6 @@ export * from "./mentor-list.controller";
 export * from "./notification.controller";
 export * from "./password-reset.controller";
 export * from "./payment.controller";
-export * from "./platform-settings.controller";
 export * from "./profile.controller";
 export * from "./report.controller";
 export * from "./user-management.controller";

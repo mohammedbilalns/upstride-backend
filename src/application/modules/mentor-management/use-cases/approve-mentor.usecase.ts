@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import type { IUserRepository } from "../../../../domain/repositories/user.repository.interface";
+import { DEFAULT_SESSION_PRICE_PER_30_MIN } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { JobQueuePort } from "../../../ports/job-queue.port";
-import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { ApproveMentorInput } from "../dtos/approve-mentor.dto";
 import { MentorApplicationNotFoundError } from "../errors/mentor-application-not-found.error";
 import type { IApproveMentorUseCase } from "./approve-mentor.usecase.interface";
@@ -17,8 +17,6 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.JobQueue)
 		private readonly _jobQueue: JobQueuePort,
-		@inject(TYPES.Services.PlatformSettings)
-		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute(input: ApproveMentorInput): Promise<void> {
@@ -32,16 +30,12 @@ export class ApproveMentorUseCase implements IApproveMentorUseCase {
 			return;
 		}
 
-		const starterTier = this._platformSettingsService.mentors.starter;
 		await Promise.all([
 			this._mentorRepository.updateById(input.mentorId, {
 				isApproved: true,
 				isRejected: false,
 				rejectionReason: null,
-				tierName: starterTier.name,
-				tierMax30minPayment: starterTier.maxPricePer30Min,
-				currentPricePer30Min: starterTier.maxPricePer30Min,
-				score: starterTier.minScore,
+				currentPricePer30Min: DEFAULT_SESSION_PRICE_PER_30_MIN,
 			}),
 			this._userRepository.updateById(mentor.userId, { role: "MENTOR" }),
 		]);

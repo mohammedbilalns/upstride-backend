@@ -1,8 +1,11 @@
 import { inject, injectable } from "inversify";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
+import {
+	MAX_SESSION_PRICE_PER_30_MIN,
+	PLATFOM_COMMISSION,
+} from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
-import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import { MentorNotFoundError } from "../../../shared/errors/mentor-not-found.error";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import type {
@@ -20,8 +23,6 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 		private readonly _mentorWriteRepository: IMentorWriteRepository,
 		@inject(TYPES.Repositories.MentorProfileReadRepository)
 		private readonly _mentorProfileReadRepository: IMentorProfileReadRepository,
-		@inject(TYPES.Services.PlatformSettings)
-		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute({
@@ -37,14 +38,6 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 		}
 
 		const updates: Record<string, unknown> = {};
-		let tierMaxPrice = mentor.tierMax30minPayment;
-
-		if (tierMaxPrice === null || !mentor.tierName) {
-			const starterTier = this._platformSettingsService.mentors.starter;
-			updates.tierName = starterTier.name;
-			updates.tierMax30minPayment = starterTier.maxPricePer30Min;
-			tierMaxPrice = starterTier.maxPricePer30Min;
-		}
 
 		if (currentPricePer30Min !== undefined) {
 			if (currentPricePer30Min < 100 || currentPricePer30Min > 10000) {
@@ -53,17 +46,9 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 				);
 			}
 
-			if (tierMaxPrice !== null && currentPricePer30Min > tierMaxPrice) {
+			if (currentPricePer30Min > MAX_SESSION_PRICE_PER_30_MIN) {
 				throw new ValidationError(
-					"Current price per 30 min cannot exceed tier max price",
-				);
-			}
-
-			const maxTierPrice =
-				this._platformSettingsService.mentors.expert.maxPricePer30Min;
-			if (currentPricePer30Min > maxTierPrice) {
-				throw new ValidationError(
-					"Current price per 30 min exceeds global maximum tier price",
+					`Price per 30 min cannot exceed ${MAX_SESSION_PRICE_PER_30_MIN}`,
 				);
 			}
 		}
@@ -105,9 +90,7 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 			throw new MentorNotFoundError();
 		}
 
-		const sessionPercentage =
-			this._platformSettingsService.economy.platformCommissions
-				.sessionPercentage;
+		const sessionPercentage = PLATFOM_COMMISSION.SESSION_PERCENTAGE;
 		const mentorSessionEarningPercentage = Math.max(0, 100 - sessionPercentage);
 
 		return {

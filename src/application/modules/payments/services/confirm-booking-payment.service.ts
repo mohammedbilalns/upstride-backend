@@ -10,6 +10,7 @@ import type { IPlatformWalletRepository } from "../../../../domain/repositories/
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
+import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type {
 	ConfirmBookingPaymentParams,
@@ -29,6 +30,8 @@ export class ConfirmBookingPaymentService
 		private readonly _platformWalletRepository: IPlatformWalletRepository,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
 	) {}
 
 	async confirm({
@@ -60,6 +63,37 @@ export class ConfirmBookingPaymentService
 			paymentStatus: "COMPLETED",
 			meetingLink,
 		});
+
+		const start = new Date(booking.startTime);
+		const oneHourBefore = start.getTime() - 60 * 60 * 1000;
+		const fiveMinutesBefore = start.getTime() - 5 * 60 * 1000;
+		const now = Date.now();
+
+		if (oneHourBefore > now) {
+			await this._jobQueue.enqueue(
+				"send-session-reminder",
+				{
+					bookingId: booking.id,
+					mentorId: booking.mentorId,
+					menteeId: booking.menteeId,
+					label: "1 hour",
+				},
+				{ delay: oneHourBefore - now },
+			);
+		}
+
+		if (fiveMinutesBefore > now) {
+			await this._jobQueue.enqueue(
+				"send-session-reminder",
+				{
+					bookingId: booking.id,
+					mentorId: booking.mentorId,
+					menteeId: booking.menteeId,
+					label: "5 minutes",
+				},
+				{ delay: fiveMinutesBefore - now },
+			);
+		}
 
 		await Promise.all([
 			this._paymentTransactionRepository.create(

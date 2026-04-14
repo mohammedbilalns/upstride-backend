@@ -5,16 +5,14 @@ import type {
 	IPasswordService,
 	IPaymentService,
 	IPaymentWebhookParser,
-	IPlatformSettingsCache,
 	IStorageService,
 	IWalletService,
-	PlatformSettingsService,
+	IWhiteboardCache,
 } from "../../application/services";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
-import { RedisPlatformSettingsCache } from "../../infrastructure/database/redis/redis-platform-settings.cache";
+import { RedisWhiteboardCache } from "../../infrastructure/database/redis/redis-whiteboard.cache";
 import {
 	Argon2PasswordService,
-	CachedPlatformSettingsService,
 	CryptoOtpGenerator,
 	GoogleOAuthService,
 	JwtTokenService,
@@ -41,12 +39,8 @@ export const registerInfrastructureServiceBindings = (
 	container.bind(TYPES.Services.LinkedInOAuth).to(LinkedInOAuthService);
 	container.bind<IStorageService>(TYPES.Services.Storage).to(S3StorageService);
 	container
-		.bind<IPlatformSettingsCache>(TYPES.Caches.PlatformSettings)
-		.to(RedisPlatformSettingsCache)
-		.inSingletonScope();
-	container
-		.bind<PlatformSettingsService>(TYPES.Services.PlatformSettings)
-		.to(CachedPlatformSettingsService)
+		.bind<IWhiteboardCache>(TYPES.Caches.Whiteboard)
+		.to(RedisWhiteboardCache)
 		.inSingletonScope();
 	container
 		.bind<IWalletService>(TYPES.Services.WalletService)

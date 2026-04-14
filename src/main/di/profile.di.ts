@@ -23,8 +23,10 @@ export const registerProfileBindings = (container: Container): void => {
 		.inSingletonScope();
 	container
 		.bind<IRequestChangePasswordUseCase>(TYPES.UseCases.RequestChangePassword)
-		.to(RequestChangePasswordUseCase);
+		.to(RequestChangePasswordUseCase)
+		.inSingletonScope();
 	container
 		.bind<IChangePasswordUseCase>(TYPES.UseCases.ChangePassword)
-		.to(ChangePasswordUseCase);
+		.to(ChangePasswordUseCase)
+		.inSingletonScope();
 };

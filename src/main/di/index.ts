@@ -12,7 +12,6 @@ export * from "./mentor-discovery.di";
 export * from "./mentor-lists.di";
 export * from "./notifications.di";
 export * from "./payments.di";
-export * from "./platform-settings.di";
 export * from "./presentation.di";
 export * from "./profile.di";
 export * from "./queues.di";

@@ -26,29 +26,38 @@ export const registerMentorBindings = (container: Container): void => {
 		.bind<IGetMentorRegistrationInfoUseCase>(
 			TYPES.UseCases.GetMentorRegistrationInfo,
 		)
-		.to(GetMentorRegistrationInfoUseCase);
+		.to(GetMentorRegistrationInfoUseCase)
+		.inSingletonScope();
 	container
 		.bind<IRegisterMentorUseCase>(TYPES.UseCases.RegisterMentor)
-		.to(RegisterMentorUseCase);
+		.to(RegisterMentorUseCase)
+		.inSingletonScope();
 	container
 		.bind<IResubmitMentorUseCase>(TYPES.UseCases.ResubmitMentor)
-		.to(ResubmitMentorUseCase);
+		.to(ResubmitMentorUseCase)
+		.inSingletonScope();
 	container
 		.bind<IGetMentorApplicationsUseCase>(TYPES.UseCases.GetMentorApplications)
-		.to(GetMentorApplicationsUseCase);
+		.to(GetMentorApplicationsUseCase)
+		.inSingletonScope();
 	container
 		.bind<IGetMentorProfileUseCase>(TYPES.UseCases.GetMentorProfile)
-		.to(GetMentorProfileUseCase);
+		.to(GetMentorProfileUseCase)
+		.inSingletonScope();
 	container
 		.bind<IGetPublicMentorProfileUseCase>(TYPES.UseCases.GetPublicMentorProfile)
-		.to(GetPublicMentorProfileUseCase);
+		.to(GetPublicMentorProfileUseCase)
+		.inSingletonScope();
 	container
 		.bind<IUpdateMentorProfileUseCase>(TYPES.UseCases.UpdateMentorProfile)
-		.to(UpdateMentorProfileUseCase);
+		.to(UpdateMentorProfileUseCase)
+		.inSingletonScope();
 	container
 		.bind<IApproveMentorUseCase>(TYPES.UseCases.ApproveMentor)
-		.to(ApproveMentorUseCase);
+		.to(ApproveMentorUseCase)
+		.inSingletonScope();
 	container
 		.bind<IRejectMentorUseCase>(TYPES.UseCases.RejectMentor)
-		.to(RejectMentorUseCase);
+		.to(RejectMentorUseCase)
+		.inSingletonScope();
 };

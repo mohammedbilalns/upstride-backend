@@ -1,11 +1,13 @@
 import type { Server as HTTPServer } from "node:http";
 import { createShardedAdapter } from "@socket.io/redis-adapter";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import type { Redis } from "ioredis";
 import { Server as SocketIOServer } from "socket.io";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
 import logger from "../../shared/logging/logger";
+import { TYPES } from "../../shared/types/types";
 import { socketIOCorsOptions } from "./config/cors.config";
+import type { CallHandler } from "./handlers/call.handler";
 import {
 	type AuthedSocket,
 	socketAuthMiddleware,
@@ -15,6 +17,11 @@ import {
 export class WebSocketServer {
 	private _io: SocketIOServer | null = null;
 	private _redisSubClient: Redis | null = null;
+
+	constructor(
+		@inject(TYPES.WebSockets.CallHandler)
+		private readonly _callHandler: CallHandler,
+	) {}
 
 	/**
 	 * Initializes the Socket.io server and attaches it to the HTTP server.
@@ -69,6 +76,9 @@ export class WebSocketServer {
 			});
 
 			socket.join(userId);
+
+			// Attach Call Handlers
+			this._callHandler.attach(socket as AuthedSocket);
 
 			socket.on("disconnect", () => {
 				logger.info(`User disconnected: ${userId} (${socket.id})`);

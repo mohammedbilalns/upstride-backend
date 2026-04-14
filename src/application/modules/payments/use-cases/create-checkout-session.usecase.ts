@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
+import { COIN_VALUE } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { IPaymentService } from "../../../services/payment.service.interface";
-import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type {
 	CreateCheckoutSessionInput,
 	CreateCheckoutSessionOutput,
@@ -14,8 +14,6 @@ export class CreateCheckoutSessionUseCase
 	implements ICreateCheckoutSessionUseCase
 {
 	constructor(
-		@inject(TYPES.Services.PlatformSettings)
-		private readonly _platformSettingsService: PlatformSettingsService,
 		@inject(TYPES.Services.PaymentService)
 		private readonly _paymentService: IPaymentService,
 	) {}
@@ -23,10 +21,7 @@ export class CreateCheckoutSessionUseCase
 	async execute(
 		input: CreateCheckoutSessionInput,
 	): Promise<CreateCheckoutSessionOutput> {
-		await this._platformSettingsService.load();
-		const coinValue = this._platformSettingsService.economy.coinValue;
-
-		const amountInCurrency = input.coins / coinValue;
+		const amountInCurrency = input.coins / COIN_VALUE;
 		const amountInMinor = Math.round(amountInCurrency * 100);
 
 		if (amountInMinor <= 0) {
@@ -46,7 +41,7 @@ export class CreateCheckoutSessionUseCase
 			metadata: {
 				userId: input.userId,
 				coins: String(input.coins),
-				coinValue: String(coinValue),
+				coinValue: String(COIN_VALUE),
 			},
 		});
 

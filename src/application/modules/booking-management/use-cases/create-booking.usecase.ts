@@ -13,11 +13,12 @@ import type { IBookingRepository } from "../../../../domain/repositories/booking
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
 import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
+import { COIN_VALUE } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
+import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { IPaymentService } from "../../../services/payment.service.interface";
-import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { IWalletService } from "../../../services/wallet.service.interface";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
 import type {
@@ -40,12 +41,12 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		private readonly _platformWalletRepository: IPlatformWalletRepository,
 		@inject(TYPES.Services.WalletService)
 		private readonly _walletService: IWalletService,
-		@inject(TYPES.Services.PlatformSettings)
-		private readonly _platformSettingsService: PlatformSettingsService,
 		@inject(TYPES.Services.PaymentService)
 		private readonly _paymentService: IPaymentService,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
 	) {}
 
 	async execute(input: CreateBookingInput): Promise<CreateBookingResponse> {
@@ -63,12 +64,10 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		const end = new Date(input.endTime);
 		const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
 		const totalAmountCoins = (durationMinutes / 30) * pricePer30Min;
-		//await this._platformSettingsService.load();
-		const coinValue = this._platformSettingsService.economy.coinValue;
-		if (!Number.isFinite(coinValue) || coinValue <= 0) {
+		if (!Number.isFinite(COIN_VALUE) || COIN_VALUE <= 0) {
 			throw new NotFoundError("Invalid coin value configuration");
 		}
-		const totalAmountCurrency = totalAmountCoins / coinValue;
+		const totalAmountCurrency = totalAmountCoins / COIN_VALUE;
 
 		const validationData = Booking.create({
 			menteeId: input.menteeId,
@@ -133,12 +132,13 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 
 		const meetingLink =
 			paymentStatus === "COMPLETED"
-				? `${getClientBaseUrl()}/sessions/${bookingId}`
+				? `${getClientBaseUrl()}/call/${bookingId}`
 				: validationData.meetingLink;
 
 		const booking = new Booking(
 			bookingId,
 			validationData.mentorId,
+			mentor.userId,
 			validationData.menteeId,
 			validationData.startTime,
 			validationData.endTime,
@@ -156,6 +156,38 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		);
 
 		const createdBooking = await this._bookingRepository.create(booking);
+
+		if (paymentStatus === "COMPLETED") {
+			const oneHourBefore = start.getTime() - 60 * 60 * 1000;
+			const fiveMinutesBefore = start.getTime() - 5 * 60 * 1000;
+			const now = Date.now();
+
+			if (oneHourBefore > now) {
+				await this._jobQueue.enqueue(
+					"send-session-reminder",
+					{
+						bookingId: createdBooking.id,
+						mentorId: input.mentorId,
+						menteeId: input.menteeId,
+						label: "1 hour",
+					},
+					{ delay: oneHourBefore - now },
+				);
+			}
+
+			if (fiveMinutesBefore > now) {
+				await this._jobQueue.enqueue(
+					"send-session-reminder",
+					{
+						bookingId: createdBooking.id,
+						mentorId: input.mentorId,
+						menteeId: input.menteeId,
+						label: "5 minutes",
+					},
+					{ delay: fiveMinutesBefore - now },
+				);
+			}
+		}
 
 		if (input.paymentType === "STRIPE") {
 			const frontendBaseUrl = getClientBaseUrl();

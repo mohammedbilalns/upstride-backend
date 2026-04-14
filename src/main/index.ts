@@ -1,4 +1,3 @@
-import type { PlatformSettingsService } from "../application/services";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -9,7 +8,6 @@ import {
 } from "../infrastructure/database/redis/redis.connection";
 import env from "../shared/config/env";
 import logger from "../shared/logging/logger";
-import { TYPES } from "../shared/types/types";
 import App from "./app";
 import { bootstrapEventHandlers, mailQueue } from "./di";
 import { apiContainer } from "./di/api.container";
@@ -21,11 +19,6 @@ async function start() {
 	logger.info("Starting...");
 
 	await Promise.all([connectToMongo(), redisClient.ping()]);
-
-	const platformSettingsService = apiContainer.get<PlatformSettingsService>(
-		TYPES.Services.PlatformSettings,
-	);
-	await platformSettingsService.load();
 
 	// Initialize event handlers
 	bootstrapEventHandlers(apiContainer);

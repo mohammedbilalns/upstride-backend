@@ -15,7 +15,6 @@ export * from "./mentor-profile-read.repository";
 export * from "./mentor-write.repository";
 export * from "./notification.repository";
 export * from "./payment-transactions.repository";
-export * from "./platform-settings.repository";
 export * from "./platform-wallet.repository";
 export * from "./report.repository";
 export * from "./saved-mentor.repository";

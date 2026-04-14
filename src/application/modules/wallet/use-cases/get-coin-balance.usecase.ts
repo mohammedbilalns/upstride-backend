@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../../domain/repositories";
+import { COIN_VALUE } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
-import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import { UserNotFoundError } from "../../authentication/errors";
 import type {
 	GetCoinBalanceInput,
@@ -14,8 +14,6 @@ export class GetCoinBalanceUseCase implements IGetCoinBalanceUseCase {
 	constructor(
 		@inject(TYPES.Repositories.UserRepository)
 		private readonly _userRepository: IUserRepository,
-		@inject(TYPES.Services.PlatformSettings)
-		private readonly _platformSettingsService: PlatformSettingsService,
 	) {}
 
 	async execute(input: GetCoinBalanceInput): Promise<GetCoinBalanceOutput> {
@@ -25,11 +23,9 @@ export class GetCoinBalanceUseCase implements IGetCoinBalanceUseCase {
 			throw new UserNotFoundError();
 		}
 
-		await this._platformSettingsService.load();
-
 		return {
 			coinBalance: user.coinBalance,
-			coinValue: this._platformSettingsService.economy.coinValue,
+			coinValue: COIN_VALUE,
 		};
 	}
 }

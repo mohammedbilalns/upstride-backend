@@ -13,7 +13,6 @@ import {
 	registerMentorListsBindings,
 	registerNotificationBindings,
 	registerPaymentsBindings,
-	registerPlatformSettingsBindings,
 	registerPresentationBindings,
 	registerProfileBindings,
 	registerQueueBindings,
@@ -42,8 +41,6 @@ registerReportBindings(apiContainer);
 registerAvailabilityBindings(apiContainer);
 registerBookingBindings(apiContainer);
 registerPaymentsBindings(apiContainer);
-
-registerPlatformSettingsBindings(apiContainer);
 registerProfileBindings(apiContainer);
 registerStorageBindings(apiContainer);
 registerUserManagementBindings(apiContainer);

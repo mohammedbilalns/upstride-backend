@@ -7,9 +7,9 @@ import {
 } from "../../../../domain/entities/payment-transactions.entity";
 import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
 import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
+import { COIN_VALUE } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
-import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { IWalletService } from "../../../services/wallet.service.interface";
 import type { IRefundService, RefundParams } from "./refund.service.interface";
 
@@ -22,8 +22,6 @@ export class RefundService implements IRefundService {
 		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
 		@inject(TYPES.Repositories.PlatformWalletRepository)
 		private readonly _platformWalletRepo: IPlatformWalletRepository,
-		@inject(TYPES.Services.PlatformSettings)
-		private readonly _platformSettingsService: PlatformSettingsService,
 		@inject(TYPES.Services.IdGenerator)
 		private readonly _idGenerator: IIdGenerator,
 	) {}
@@ -39,10 +37,8 @@ export class RefundService implements IRefundService {
 
 		let refundCoins = refundAmount;
 		if (paymentType === "STRIPE") {
-			await this._platformSettingsService.load();
-			const coinValue = this._platformSettingsService.economy.coinValue;
-			if (Number.isFinite(coinValue) && coinValue > 0) {
-				refundCoins = Math.round((refundAmountMinor / 100) * coinValue);
+			if (Number.isFinite(COIN_VALUE) && COIN_VALUE > 0) {
+				refundCoins = Math.round((refundAmountMinor / 100) * COIN_VALUE);
 			}
 		}
 

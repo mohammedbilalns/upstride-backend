@@ -16,7 +16,6 @@ import type { CheckoutFailedHandler } from "../../application/events/handlers/pa
 import { ProfileUpdatedHandler } from "../../application/events/handlers/profile/profile-updated.handler";
 import { UserRegisteredHandler } from "../../application/events/handlers/user-registered.handler";
 import type { ICreateNotificationUseCase } from "../../application/modules/notifications/use-cases/create-notification.usecase.interface";
-import type { PlatformSettingsService } from "../../application/services/platform-settings.service";
 import type { IWalletService } from "../../application/services/wallet.service.interface";
 import { TYPES } from "../../shared/types/types";
 import { appEventBus } from "./queues.di";
@@ -25,14 +24,8 @@ export const bootstrapEventHandlers = (container: Container): void => {
 	const walletService = container.get<IWalletService>(
 		TYPES.Services.WalletService,
 	);
-	const platformSettings = container.get<PlatformSettingsService>(
-		TYPES.Services.PlatformSettings,
-	);
 
-	const userRegisteredHandler = new UserRegisteredHandler(
-		walletService,
-		platformSettings,
-	);
+	const userRegisteredHandler = new UserRegisteredHandler(walletService);
 
 	const messageSentHandler = new MessageSentHandler(
 		container.get<ICreateNotificationUseCase>(

@@ -6,6 +6,7 @@ export class BookingUsecaseMapper {
 		return {
 			id: entity.id,
 			mentorId: entity.mentorId,
+			mentorUserId: entity.mentorUserId,
 			menteeId: entity.menteeId,
 			startTime: entity.startTime,
 			endTime: entity.endTime,

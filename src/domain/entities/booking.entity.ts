@@ -37,6 +37,7 @@ export class Booking {
 	constructor(
 		public readonly id: string,
 		public readonly mentorId: string,
+		public readonly mentorUserId: string | null,
 		public readonly menteeId: string,
 		public readonly startTime: string,
 		public readonly endTime: string,

@@ -1,5 +1,6 @@
 import type { Worker } from "bullmq";
 import type { IMailService } from "../application/services";
+import type { IUserRepository } from "../domain/repositories/user.repository.interface";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -25,7 +26,10 @@ async function start() {
 	const mailService = workerContainer.get<IMailService>(
 		TYPES.Services.MailService,
 	);
-	mailWorker = createMailWorker(redisClient, mailService);
+	const userRepository = workerContainer.get<IUserRepository>(
+		TYPES.Repositories.UserRepository,
+	);
+	mailWorker = createMailWorker(redisClient, mailService, userRepository);
 }
 
 setupGracefulShutdown({

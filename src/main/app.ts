@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import compression from "compression";
+//import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
@@ -42,22 +42,18 @@ class App {
 		this._wsServer = apiContainer.get<WebSocketServer>(
 			TYPES.Services.WebSocketServer,
 		);
-		this._wsServer.initialize(this._server);
+		if (this._wsServer) {
+			this._wsServer.initialize(this._server);
+		}
 	}
 
 	/**
 	 * Register global middlewares.
-	 *
-	 * - JSON parsing
-	 * - CORS
-	 * - Security
-	 * - Logging
-	 * - Rate limiting
 	 */
 	private _setupMiddlewares() {
 		this._app
 			.use(helmet())
-			.use(compression())
+			//	.use(compression())
 			.use(requestLogger)
 			.use(cors(corsOptions))
 			.use(express.json())

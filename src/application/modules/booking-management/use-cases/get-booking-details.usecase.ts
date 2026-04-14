@@ -21,7 +21,11 @@ export class GetBookingDetailsUseCase implements IGetBookingDetailsUseCase {
 		input: GetBookingDetailsInput,
 	): Promise<GetBookingDetailsResponse> {
 		const booking = await this._bookingRepository.findById(input.bookingId);
-		if (!booking || booking.menteeId !== input.userId) {
+		if (
+			!booking ||
+			(booking.menteeId !== input.userId &&
+				booking.mentorUserId !== input.userId)
+		) {
 			throw new BookingNotFoundError();
 		}
 
@@ -30,7 +34,7 @@ export class GetBookingDetailsUseCase implements IGetBookingDetailsUseCase {
 			booking.paymentStatus === "COMPLETED" &&
 			(!booking.meetingLink || booking.meetingLink === "Pending")
 		) {
-			meetingLink = `${getClientBaseUrl()}/sessions/${booking.id}`;
+			meetingLink = `${getClientBaseUrl()}/call/${booking.id}`;
 			await this._bookingRepository.updateById(booking.id, { meetingLink });
 		}
 

@@ -13,16 +13,20 @@ import {
 	NotificationController,
 	PasswordResetController,
 	PaymentController,
-	PlatformSettingsController,
 	ProfileController,
 	ReportController,
 	UserManagementController,
 	WalletController,
 } from "../../presentation/http/controllers";
+import { CallHandler } from "../../presentation/websocket/handlers/call.handler";
 import { WebSocketServer } from "../../presentation/websocket/socket-server";
 import { TYPES } from "../../shared/types/types";
 
 export const registerPresentationBindings = (container: Container): void => {
+	container
+		.bind<CallHandler>(TYPES.WebSockets.CallHandler)
+		.to(CallHandler)
+		.inSingletonScope();
 	container
 		.bind<WebSocketServer>(TYPES.Services.WebSocketServer)
 		.to(WebSocketServer)
@@ -55,10 +59,6 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(TYPES.Controllers.Notification).to(NotificationController);
 	container.bind(PaymentController).to(PaymentController);
 	container.bind(TYPES.Controllers.Payment).to(PaymentController);
-	container.bind(PlatformSettingsController).to(PlatformSettingsController);
-	container
-		.bind(TYPES.Controllers.PlatformSettings)
-		.to(PlatformSettingsController);
 	container.bind(ProfileController).to(ProfileController);
 	container
 		.bind<ProfileController>(TYPES.Controllers.Profile)

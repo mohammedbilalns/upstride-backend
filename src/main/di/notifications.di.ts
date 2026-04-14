@@ -11,15 +11,22 @@ import { TYPES } from "../../shared/types/types";
 export const registerNotificationBindings = (container: Container): void => {
 	container
 		.bind(TYPES.UseCases.CreateNotification)
-		.to(CreateNotificationUseCase);
-	container.bind(TYPES.UseCases.GetNotifications).to(GetNotificationsUseCase);
+		.to(CreateNotificationUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.GetNotifications)
+		.to(GetNotificationsUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.MarkNotificationRead)
-		.to(MarkNotificationReadUseCase);
+		.to(MarkNotificationReadUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.MarkAllNotificationsRead)
-		.to(MarkAllNotificationsReadUseCase);
+		.to(MarkAllNotificationsReadUseCase)
+		.inSingletonScope();
 	container
 		.bind(TYPES.UseCases.GetUnreadNotificationCount)
-		.to(GetUnreadNotificationCountUseCase);
+		.to(GetUnreadNotificationCountUseCase)
+		.inSingletonScope();
 };

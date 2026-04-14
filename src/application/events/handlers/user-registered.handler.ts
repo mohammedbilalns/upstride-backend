@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { CoinTransactionType } from "../../../domain/entities/coin-transactions.entity";
 import type { UserRegisteredEvent } from "../../../domain/events/user-registered.event";
-import type { PlatformSettingsService } from "../../services/platform-settings.service";
+import { USER_JOIN_REWARD_COIN_COUNT } from "../../../shared/constants";
 import type { IWalletService } from "../../services/wallet.service.interface";
 import type { EventHandler } from "../event-handler.interface";
 
@@ -10,16 +10,14 @@ export class UserRegisteredHandler
 	implements EventHandler<UserRegisteredEvent>
 {
 	constructor(
+		//FIX: No types here
 		private _walletService: IWalletService,
-		private _platformSettings: PlatformSettingsService,
 	) {}
 
 	async handle(event: UserRegisteredEvent) {
-		const rewardAmount = this._platformSettings.economy.userJoinRewardCoinCount;
-
 		await this._walletService.credit(
 			event.payload.userId,
-			rewardAmount,
+			USER_JOIN_REWARD_COIN_COUNT,
 			CoinTransactionType.SignupBonus,
 		);
 	}

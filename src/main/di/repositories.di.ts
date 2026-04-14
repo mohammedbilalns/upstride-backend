@@ -13,7 +13,6 @@ import type {
 	IMentorProfileReadRepository,
 	IMentorWriteRepository,
 	INotificationRepository,
-	IPlatformSettingsRepository,
 	IProfessionRepository,
 	IReportRepository,
 	ISavedMentorRepository,
@@ -36,7 +35,6 @@ import {
 	MongoMentorWriteRepository,
 	MongoNotificationRepository,
 	MongoPaymentTransactionRepository,
-	MongoPlatformSettingsRepository,
 	MongoPlatformWalletRepository,
 	MongoReportRepository,
 	MongoSavedMentorRepository,
@@ -80,12 +78,6 @@ export const registerRepositoryBindings = (container: Container): void => {
 		.to(RedisTokenRevocationRepository)
 		.inSingletonScope();
 
-	container
-		.bind<IPlatformSettingsRepository>(
-			TYPES.Repositories.PlatformSettingsRepository,
-		)
-		.to(MongoPlatformSettingsRepository)
-		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.InterestRepository)
 		.to(MongoInterestRepository)

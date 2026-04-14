@@ -11,6 +11,7 @@ import type { BookingDocument } from "../models/booking.model";
 export class BookingMapper {
 	static toDomain(doc: BookingDocumentWithMentorAndMentee): Booking {
 		const mentorId = getMentorIdString(doc.mentorId);
+		const mentorUserId = getMentorUserIdString(doc.mentorId);
 		const mentorName = isPopulatedMentorRef(doc.mentorId)
 			? (doc.mentorId.userId?.name ?? null)
 			: null;
@@ -22,6 +23,7 @@ export class BookingMapper {
 		return new Booking(
 			doc._id.toString(),
 			mentorId,
+			mentorUserId,
 			menteeId,
 			doc.startTime.toISOString(),
 			doc.endTime.toISOString(),
@@ -83,7 +85,7 @@ export class BookingMapper {
 
 type PopulatedMentorRef = {
 	_id: Types.ObjectId;
-	userId?: { name?: string };
+	userId?: { _id: Types.ObjectId; name?: string };
 };
 
 type PopulatedMenteeRef = {
@@ -113,6 +115,15 @@ const getMentorIdString = (
 	mentorId: Types.ObjectId | PopulatedMentorRef,
 ): string =>
 	(isPopulatedMentorRef(mentorId) ? mentorId._id : mentorId).toString();
+
+const getMentorUserIdString = (
+	mentorId: Types.ObjectId | PopulatedMentorRef,
+): string | null => {
+	if (!isPopulatedMentorRef(mentorId) || !mentorId.userId) return null;
+	return (
+		"_id" in mentorId.userId ? mentorId.userId._id : mentorId.userId
+	).toString();
+};
 
 const getMenteeIdString = (
 	menteeId: Types.ObjectId | PopulatedMenteeRef,

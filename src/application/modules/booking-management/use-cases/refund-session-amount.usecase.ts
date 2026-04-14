@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify";
 import { SessionRefundedEvent } from "../../../../domain/events/session-refunded.event";
+import { COIN_VALUE } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import { DAY_MS } from "../../../../shared/utilities/time.util";
 import type { EventBus } from "../../../events/event-bus.interface";
-import type { PlatformSettingsService } from "../../../services/platform-settings.service";
 import type { IRefundService } from "../../payments/services/refund.service.interface";
 import type {
 	RefundSessionAmountInput,
@@ -16,8 +16,6 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 	constructor(
 		@inject(TYPES.Services.RefundService)
 		private readonly _refundService: IRefundService,
-		@inject(TYPES.Services.PlatformSettings)
-		private readonly _platformSettingsService: PlatformSettingsService,
 		@inject(TYPES.Services.EventBus)
 		private readonly _eventBus: EventBus,
 	) {}
@@ -25,6 +23,7 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 	async execute(
 		input: RefundSessionAmountInput,
 	): Promise<RefundSessionAmountResponse> {
+		//FIX : move strings to constants
 		let refundPercentage = 0;
 		let reason = "Refund not available within 24 hours of session start.";
 
@@ -54,8 +53,7 @@ export class RefundSessionAmountUseCase implements IRefundSessionAmountUseCase {
 		}
 
 		let baseCoins = 0;
-		await this._platformSettingsService.load();
-		const coinValue = this._platformSettingsService.economy.coinValue;
+		const coinValue = COIN_VALUE;
 		if (input.paymentStatus === "COMPLETED") {
 			if (input.paymentType === "COINS") {
 				baseCoins = input.totalAmount;

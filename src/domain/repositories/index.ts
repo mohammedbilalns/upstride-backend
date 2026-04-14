@@ -20,7 +20,6 @@ export * from "./mentor-write.repository.interface";
 export * from "./notification.repository.interface";
 export * from "./otp.repository.interface";
 export * from "./payment-transactions.repository.interface";
-export * from "./platform-settings.repository.interface";
 export * from "./platform-wallet.repository.interface";
 export * from "./profession.repository.interface";
 export * from "./report.repository.interface";

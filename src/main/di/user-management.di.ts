@@ -8,7 +8,16 @@ import { TYPES } from "../../shared/types/types";
 
 export const registerUserManagementBindings = (container: Container): void => {
 	// usecases
-	container.bind(TYPES.UseCases.GetUsers).to(GetUsersUseCase);
-	container.bind(TYPES.UseCases.BlockUser).to(BlockUserUseCase);
-	container.bind(TYPES.UseCases.UnblockUser).to(UnblockUserUseCase);
+	container
+		.bind(TYPES.UseCases.GetUsers)
+		.to(GetUsersUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.BlockUser)
+		.to(BlockUserUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.UnblockUser)
+		.to(UnblockUserUseCase)
+		.inSingletonScope();
 };
