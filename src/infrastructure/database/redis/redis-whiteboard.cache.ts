@@ -1,6 +1,9 @@
 import { inject, injectable } from "inversify";
 import type { Redis } from "ioredis";
-import type { IWhiteboardCache } from "../../../application/services/whiteboard-cache.interface";
+import type {
+	IWhiteboardCache,
+	WhiteboardState,
+} from "../../../application/services/whiteboard-cache.interface";
 import { TYPES } from "../../../shared/types/types";
 
 const WHITEBOARD_CACHE_PREFIX = "whiteboard:state:booking_";
@@ -13,20 +16,17 @@ export class RedisWhiteboardCache implements IWhiteboardCache {
 	) {}
 
 	/**
-	 * Fetches the current whiteboard state for a specific booking.
-	 * Returns the parsed JSON state or null if not found.
+	 * Fetches the current whiteboard state for a specific room.
 	 */
-	async get(bookingId: string): Promise<any | null> {
-		const cached = await this._redis.get(
-			`${WHITEBOARD_CACHE_PREFIX}${bookingId}`,
-		);
+	async get(roomId: string): Promise<WhiteboardState | null> {
+		const cached = await this._redis.get(`${WHITEBOARD_CACHE_PREFIX}${roomId}`);
 
 		if (!cached) {
 			return null;
 		}
 
 		try {
-			return JSON.parse(cached);
+			return JSON.parse(cached) as WhiteboardState;
 		} catch {
 			return null;
 		}
@@ -34,19 +34,18 @@ export class RedisWhiteboardCache implements IWhiteboardCache {
 
 	/**
 	 * Updates the whiteboard state for a specific booking.
-	 * Stores the state as a JSON string with a 24-hour TTL.
 	 */
-	async set(bookingId: string, state: any): Promise<void> {
+	async set(roomId: string, state: WhiteboardState): Promise<void> {
 		await this._redis.set(
-			`${WHITEBOARD_CACHE_PREFIX}${bookingId}`,
+			`${WHITEBOARD_CACHE_PREFIX}${roomId}`,
 			JSON.stringify(state),
 			"EX",
-			60 * 60 * 24, // 24 hours
+			60 * 60 * 2,
 		);
 	}
 
 	/**
-	 * Clears the whiteboard state for a specific booking.
+	 * Clears the whiteboard state for a specific room.
 	 */
 	async clear(bookingId: string): Promise<void> {
 		await this._redis.del(`${WHITEBOARD_CACHE_PREFIX}${bookingId}`);

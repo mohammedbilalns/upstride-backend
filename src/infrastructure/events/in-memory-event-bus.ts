@@ -23,7 +23,6 @@ export class InMemoryEventBus implements EventBus {
 		handler: (event: T) => Promise<void> | void,
 	): void {
 		this._emitter.on(eventName, (data) => {
-			// Catch  errors in handlers to avoid event loop issues
 			Promise.resolve(handler(data)).catch((err) => {
 				console.error(
 					`Error in InMemoryEventBus handler for ${eventName}:`,

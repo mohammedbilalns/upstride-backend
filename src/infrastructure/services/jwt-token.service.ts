@@ -15,7 +15,6 @@ import {
 import env from "../../shared/config/env";
 
 @injectable()
-// Implements token generation and verification with JWT secrets.
 export class JwtTokenService implements ITokenService {
 	generateAccessToken(payload: AccessTokenPayload): string {
 		return jwt.sign(payload, env.JWT_ACCESS_SECRET, {

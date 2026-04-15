@@ -5,6 +5,7 @@ export const BookingStatus = [
 	"CANCELLED_BY_MENTOR",
 	"CONFIRMED",
 	"PENDING",
+	"STARTED",
 	"COMPLETED",
 ] as const;
 export type BookingStatus = (typeof BookingStatus)[number];

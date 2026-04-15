@@ -11,7 +11,6 @@ import {
 	ResetPasswordMailTemplate,
 } from "../../mail/templates";
 
-// Let's create a minimal template directly here for brevity, or we could add it to templates
 class SessionReminderMailTemplate {
 	subject = "Upcoming Session Reminder";
 	render(data: { label: string; otherName: string; link: string }) {

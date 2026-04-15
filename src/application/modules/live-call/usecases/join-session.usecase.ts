@@ -22,7 +22,6 @@ export class JoinSessionUseCase implements IJoinSessionUseCase {
 			throw new BookingNotFoundError();
 		}
 
-		// Allow either booking participant to join the call session.
 		if (
 			booking.mentorUserId !== input.userId &&
 			booking.menteeId !== input.userId
@@ -31,6 +30,16 @@ export class JoinSessionUseCase implements IJoinSessionUseCase {
 				"You are not authorized to join this session",
 			);
 		}
+
+		if (
+			booking.mentorUserId === input.userId &&
+			booking.status === "CONFIRMED"
+		) {
+			await this._bookingRepository.updateById(booking.id, {
+				status: "STARTED",
+			});
+		}
+
 		return { roomId: booking.id };
 	}
 }

@@ -36,6 +36,7 @@ const bookingSchema = new Schema<BookingDocument>(
 				"CANCELLED_BY_MENTOR",
 				"CONFIRMED",
 				"PENDING",
+				"STARTED",
 				"COMPLETED",
 			],
 			default: "PENDING",

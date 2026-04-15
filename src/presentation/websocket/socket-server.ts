@@ -25,7 +25,6 @@ export class WebSocketServer {
 
 	/**
 	 * Initializes the Socket.io server and attaches it to the HTTP server.
-	 * Sets up Redis adapter for multi-instance communication and applies auth middleware.
 	 */
 	public initialize(httpServer: HTTPServer): void {
 		this._io = new SocketIOServer(httpServer, {

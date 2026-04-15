@@ -22,7 +22,7 @@ const transport = pino.transport({
 			},
 		},
 
-		// Loki transport for centralized logging
+		// Loki transport
 		{
 			target: "pino-loki",
 			level: env.LOG_LEVEL,

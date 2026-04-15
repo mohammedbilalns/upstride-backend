@@ -57,7 +57,7 @@ export class CallHandler {
 				socket.join(room);
 				logger.info(`[CallHandler] User ${userId} joined room ${room}`);
 
-				// Notify others in the room
+				// Notify other user  in the room
 				socket.to(room).emit("call:user-joined", { userId });
 				logger.info(
 					`[CallHandler] Emitted call:user-joined to room ${room} for user ${userId}`,

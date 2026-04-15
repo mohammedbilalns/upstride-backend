@@ -41,7 +41,7 @@ export class BookingRepository implements IBookingRepository {
 	): Promise<Booking[]> {
 		const docs = await BookingModel.find({
 			mentorId,
-			status: { $in: ["PENDING", "CONFIRMED"] },
+			status: { $in: ["PENDING", "CONFIRMED", "STARTED"] },
 			startTime: { $lt: endTime },
 			endTime: { $gt: startTime },
 		}).lean();
@@ -56,7 +56,7 @@ export class BookingRepository implements IBookingRepository {
 
 		const docs = await BookingModel.find({
 			mentorId,
-			status: { $in: ["PENDING", "CONFIRMED", "COMPLETED"] },
+			status: { $in: ["PENDING", "CONFIRMED", "STARTED", "COMPLETED"] },
 			startTime: { $gte: startOfDay, $lte: endOfDay },
 		}).lean();
 		return docs.map((d) => BookingMapper.toDomain(d));

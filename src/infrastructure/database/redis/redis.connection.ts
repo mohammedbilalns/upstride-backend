@@ -15,9 +15,6 @@ redisClient.on("error", (err) =>
 
 /**
  * Gracefully terminates the Redis connection.
- *
- * - quit() allows Redis to finish pending commands.
- * - Falls back to forceful disconnect() if graceful shutdown fails.
  */
 export const disconnectRedis = async () => {
 	if (!redisClient) return;
