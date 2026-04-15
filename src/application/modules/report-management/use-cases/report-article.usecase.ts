@@ -42,7 +42,6 @@ export class ReportArticleUseCase implements IReportArticleUseCase {
 		}
 
 		Report.assertCanReport(reporter.role, reporter.id, article.authorId);
-
 		const existingReports = await this._reportRepository.query({
 			query: {
 				targetId: input.articleId,

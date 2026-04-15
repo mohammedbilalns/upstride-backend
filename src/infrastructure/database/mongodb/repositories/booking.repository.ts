@@ -81,17 +81,19 @@ export class BookingRepository implements IBookingRepository {
 	) {
 		const base: Record<string, unknown> = { [field]: value };
 		const now = new Date();
+		const bufferTime = new Date(now.getTime() + 5 * 60 * 1000);
+
 		if (filter === "upcoming")
 			return {
 				...base,
-				startTime: { $gt: now },
-				status: { $in: ["CONFIRMED", "PENDING"] },
+				endTime: { $gt: bufferTime },
+				status: { $in: ["CONFIRMED", "PENDING", "STARTED"] },
 			};
 		if (filter === "payment_pending")
 			return {
 				...base,
-				startTime: { $gt: now },
-				status: { $in: ["CONFIRMED", "PENDING"] },
+				endTime: { $gt: bufferTime },
+				status: { $in: ["CONFIRMED", "PENDING", "STARTED"] },
 				paymentType: "STRIPE",
 				paymentStatus: { $ne: "COMPLETED" },
 			};
@@ -110,13 +112,13 @@ export class BookingRepository implements IBookingRepository {
 		if (filter === "upcoming_cancelled")
 			return {
 				...base,
-				startTime: { $gt: now },
+				endTime: { $gt: bufferTime },
 				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
 			};
 		if (filter === "past_cancelled")
 			return {
 				...base,
-				startTime: { $lt: now },
+				endTime: { $lt: bufferTime },
 				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
 			};
 		return base;

@@ -60,3 +60,8 @@ export const WhiteBoardPermissionSchema = z.object({
 export const TerminateSessionPayloadSchema = z.object({
 	bookingId: bookingIdSchema,
 });
+
+export const ChatMessagePayloadSchema = z.object({
+	bookingId: bookingIdSchema,
+	message: z.string().min(1).max(1000),
+});

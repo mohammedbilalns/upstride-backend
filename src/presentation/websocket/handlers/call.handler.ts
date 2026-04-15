@@ -8,6 +8,7 @@ import { TYPES } from "../../../shared/types/types";
 import { socketAsyncHandler } from "../helpers/socket-async-handler";
 import type { AuthedSocket } from "../middlewares/socket-auth.middleware";
 import {
+	ChatMessagePayloadSchema,
 	JoinCallPayloadSchema,
 	LeaveCallPayloadSchema,
 	TerminateSessionPayloadSchema,
@@ -198,6 +199,24 @@ export class CallHandler {
 				});
 				socket.to(`call_${parsedPayload.bookingId}`).emit("call:terminated", {
 					bookingId: parsedPayload.bookingId,
+				});
+			}),
+		);
+
+		socket.on(
+			"call:chat-message",
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = ChatMessagePayloadSchema.parse(payload);
+				const room = `call_${parsedPayload.bookingId}`;
+
+				logger.info(
+					`[CallHandler] Received call:chat-message from ${userId} in room ${room}`,
+				);
+
+				socket.to(room).emit("call:chat-message", {
+					senderId: userId,
+					message: parsedPayload.message,
+					timestamp: new Date().toISOString(),
 				});
 			}),
 		);
