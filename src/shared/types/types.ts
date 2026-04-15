@@ -32,7 +32,7 @@ export const TYPES = {
 		Whiteboard: Symbol.for("WhiteboardCache"),
 	},
 	Queues: {
-		MailQueue: Symbol.for("MailQueue"),
+		NotificationQueue: Symbol.for("NotificationQueue"),
 	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),

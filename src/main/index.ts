@@ -9,7 +9,7 @@ import {
 import env from "../shared/config/env";
 import logger from "../shared/logging/logger";
 import App from "./app";
-import { bootstrapEventHandlers, mailQueue } from "./di";
+import { bootstrapEventHandlers, notificationQueue } from "./di";
 import { apiContainer } from "./di/api.container";
 import { setupGracefulShutdown } from "./lifecyle/graceful-shutdown";
 
@@ -33,7 +33,7 @@ setupGracefulShutdown({
 	tasks: [
 		() => appInstance?.close(),
 		() => disconnectFromMongo(),
-		() => mailQueue.close(),
+		() => notificationQueue.close(),
 		() => disconnectRedis(),
 	],
 });

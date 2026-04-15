@@ -168,7 +168,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 					"send-session-reminder",
 					{
 						bookingId: createdBooking.id,
-						mentorId: input.mentorId,
+						mentorId: mentor.userId,
 						menteeId: input.menteeId,
 						label: "1 day",
 					},
@@ -181,7 +181,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 					"send-session-reminder",
 					{
 						bookingId: createdBooking.id,
-						mentorId: input.mentorId,
+						mentorId: mentor.userId,
 						menteeId: input.menteeId,
 						label: "1 hour",
 					},
@@ -194,7 +194,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 					"send-session-reminder",
 					{
 						bookingId: createdBooking.id,
-						mentorId: input.mentorId,
+						mentorId: mentor.userId,
 						menteeId: input.menteeId,
 						label: "5 minutes",
 					},

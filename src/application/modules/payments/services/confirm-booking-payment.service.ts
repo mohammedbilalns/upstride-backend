@@ -74,7 +74,7 @@ export class ConfirmBookingPaymentService
 				"send-session-reminder",
 				{
 					bookingId: booking.id,
-					mentorId: booking.mentorId,
+					mentorId: booking.mentorUserId!,
 					menteeId: booking.menteeId,
 					label: "1 hour",
 				},
@@ -87,7 +87,7 @@ export class ConfirmBookingPaymentService
 				"send-session-reminder",
 				{
 					bookingId: booking.id,
-					mentorId: booking.mentorId,
+					mentorId: booking.mentorUserId!,
 					menteeId: booking.menteeId,
 					label: "5 minutes",
 				},

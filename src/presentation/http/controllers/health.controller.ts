@@ -2,7 +2,7 @@ import type { Queue } from "bullmq";
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import { redisClient } from "../../../infrastructure/database/redis/redis.connection";
-import { mailQueue } from "../../../main/di/queues.di";
+import { notificationQueue } from "../../../main/di/queues.di";
 import { HttpStatus } from "../../../shared/constants";
 
 type HealthStatus = "up" | "down";
@@ -107,10 +107,10 @@ const checkQueue = async (
  * Main health check endpoint handler.
  */
 export const healthCheckHandler = async (_req: Request, res: Response) => {
-	const [mongo, redis, mailQueueHealth] = await Promise.all([
+	const [mongo, redis, notificationQueueHealth] = await Promise.all([
 		checkMongo(),
 		checkRedis(),
-		checkQueue("mailQueue", mailQueue),
+		checkQueue("notificationQueue", notificationQueue),
 	]);
 
 	const dependencies = {
@@ -120,7 +120,7 @@ export const healthCheckHandler = async (_req: Request, res: Response) => {
 
 	// Background job services
 	const services = {
-		mailQueue: mailQueueHealth,
+		notificationQueue: notificationQueueHealth,
 	};
 
 	// Aggregate all checks to determine overall health

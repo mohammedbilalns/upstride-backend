@@ -7,10 +7,12 @@ import { JobQueueAdapter } from "../../infrastructure/queue/job-queue.adapter";
 import { TYPES } from "../../shared/types/types";
 
 /**
- * Mail queue for processing email sending jobs.
- * Workers listen to this queue to handle email delivery tasks.
+ * Notification queue for processing email and push notification jobs.
+ * Workers listen to this queue to handle delivery tasks.
  */
-export const mailQueue = new Queue("mailQueue", { connection: redisClient });
+export const notificationQueue = new Queue("notificationQueue", {
+	connection: redisClient,
+});
 
 const inMemoryEventBus = new InMemoryEventBus();
 export const appEventBus = inMemoryEventBus;
@@ -19,7 +21,9 @@ export const appEventBus = inMemoryEventBus;
  * Registers queue and event bus bindings to the Inversify container.
  */
 export const registerQueueBindings = (container: Container): void => {
-	container.bind<Queue>(TYPES.Queues.MailQueue).toConstantValue(mailQueue);
+	container
+		.bind<Queue>(TYPES.Queues.NotificationQueue)
+		.toConstantValue(notificationQueue);
 	container.bind<JobQueuePort>(TYPES.Services.JobQueue).to(JobQueueAdapter);
 	container.bind(TYPES.Services.EventBus).toConstantValue(appEventBus);
 };

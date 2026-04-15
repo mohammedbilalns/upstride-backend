@@ -13,14 +13,14 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import { createMailWorker } from "../infrastructure/queue/workers/mail.worker";
+import { createNotificationWorker } from "../infrastructure/queue/workers/notification.worker";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
-import { mailQueue } from "./di/queues.di";
+import { notificationQueue } from "./di/queues.di";
 import { workerContainer } from "./di/worker.container";
 import { setupGracefulShutdown } from "./lifecyle/graceful-shutdown";
 
-let mailWorker: Worker;
+let notificationWorker: Worker;
 
 async function start() {
 	logger.info("Starting worker...");
@@ -41,7 +41,7 @@ async function start() {
 			TYPES.Repositories.PushSubscriptionRepository,
 		);
 
-	mailWorker = createMailWorker(
+	notificationWorker = createNotificationWorker(
 		redisClient,
 		mailService,
 		userRepository,
@@ -54,8 +54,8 @@ setupGracefulShutdown({
 	name: "WORKER",
 	tasks: [
 		() => disconnectFromMongo(),
-		() => mailWorker?.close(),
-		() => mailQueue.close(),
+		() => notificationWorker?.close(),
+		() => notificationQueue.close(),
 		() => disconnectRedis(),
 	],
 });

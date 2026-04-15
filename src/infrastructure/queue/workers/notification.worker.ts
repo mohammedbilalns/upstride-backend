@@ -26,7 +26,7 @@ class SessionReminderMailTemplate {
 	}
 }
 
-export const createMailWorker = (
+export const createNotificationWorker = (
 	connection: Redis,
 	mailService: IMailService,
 	userRepository: IUserRepository,
@@ -34,9 +34,9 @@ export const createMailWorker = (
 	pushSubscriptionRepository: IPushSubscriptionRepository,
 ): Worker => {
 	const worker = new Worker(
-		"mailQueue",
+		"notificationQueue",
 		async (job) => {
-			logger.info(`Processing mail job ${job.id} `);
+			logger.info(`Processing notification job ${job.id} `);
 			if (job.name === "send-session-reminder") {
 				const data = job.data as JobMap["send-session-reminder"];
 				const mentee = await userRepository.findById(data.menteeId);
@@ -71,9 +71,21 @@ export const createMailWorker = (
 						});
 					} else {
 						// Send push notifications for 1 hour and 5 minutes
-						const sendPush = async (userId: string, otherName: string) => {
+						const sendPush = async (
+							userId: string,
+							otherName: string,
+							role: string,
+						) => {
+							logger.info(
+								`[NotificationWorker] Sending ${data.label} push to ${role} (${userId})`,
+							);
 							const subscriptions =
 								await pushSubscriptionRepository.findByUserId(userId);
+
+							logger.info(
+								`[NotificationWorker] Found ${subscriptions.length} subscriptions for ${role} (${userId})`,
+							);
+
 							const payload = JSON.stringify({
 								title: "Upcoming Session",
 								body: `Your session with ${otherName} starts in ${data.label}.`,
@@ -82,12 +94,24 @@ export const createMailWorker = (
 
 							for (const sub of subscriptions) {
 								try {
+									logger.info(
+										`[NotificationWorker] Attempting push to endpoint: ${sub.endpoint.substring(0, 30)}...`,
+									);
 									await pushNotificationPort.sendNotification(
 										{ endpoint: sub.endpoint, keys: sub.keys },
 										payload,
 									);
+									logger.info(
+										`[NotificationWorker] Push delivered successfully to ${sub.endpoint.substring(0, 30)}...`,
+									);
 								} catch (error: any) {
+									logger.error(
+										`[NotificationWorker] Push failed for ${role}: ${error.message}`,
+									);
 									if (error.message === "SUBSCRIPTION_EXPIRED") {
+										logger.info(
+											`[NotificationWorker] Deleting expired subscription for ${userId}`,
+										);
 										await pushSubscriptionRepository.deleteByEndpoint(
 											sub.endpoint,
 										);
@@ -96,8 +120,8 @@ export const createMailWorker = (
 							}
 						};
 
-						await sendPush(data.menteeId, mentor.name);
-						await sendPush(data.mentorId, mentee.name);
+						await sendPush(data.menteeId, mentor.name, "Mentee");
+						await sendPush(data.mentorId, mentee.name, "Mentor");
 					}
 				}
 				return;
@@ -113,7 +137,7 @@ export const createMailWorker = (
 	);
 
 	worker.on("failed", (job, err) => {
-		logger.error(`Mail job ${job?.id} failed: ${err.message} `);
+		logger.error(`Notification job ${job?.id} failed: ${err.message} `);
 	});
 
 	return worker;
@@ -155,6 +179,6 @@ const buildMailMessage = (
 			return { to: data.to, subject: template.subject, html, text };
 		}
 		default:
-			throw new Error(`Unknown mail job: ${jobName}`);
+			throw new Error(`Unknown notification job: ${jobName}`);
 	}
 };

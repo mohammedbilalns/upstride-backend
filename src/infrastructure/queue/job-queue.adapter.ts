@@ -9,7 +9,8 @@ import { TYPES } from "../../shared/types/types";
 @injectable()
 export class JobQueueAdapter implements JobQueuePort {
 	constructor(
-		@inject(TYPES.Queues.MailQueue) private readonly _mailQueue: Queue,
+		@inject(TYPES.Queues.NotificationQueue)
+		private readonly _notificationQueue: Queue,
 	) {}
 
 	async enqueue<K extends keyof JobMap>(
@@ -17,6 +18,6 @@ export class JobQueueAdapter implements JobQueuePort {
 		payload: JobMap[K],
 		opts?: { delay?: number },
 	): Promise<void> {
-		await this._mailQueue.add(job, payload, { delay: opts?.delay });
+		await this._notificationQueue.add(job, payload, { delay: opts?.delay });
 	}
 }
