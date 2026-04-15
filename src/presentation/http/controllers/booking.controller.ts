@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import type { ICancelBookingUseCase } from "../../../application/modules/booking-management/use-cases/cancel-booking.usecase.interface";
 import type { ICancelBookingByMentorUseCase } from "../../../application/modules/booking-management/use-cases/cancel-booking-by-mentor.usecase.interface";
 import type { ICreateBookingUseCase } from "../../../application/modules/booking-management/use-cases/create-booking.usecase.interface";
+import type { IGenerateReceiptPdfUseCase } from "../../../application/modules/booking-management/use-cases/generate-receipt-pdf.usecase.interface";
 import type { IGetAvailableSlotsUseCase } from "../../../application/modules/booking-management/use-cases/get-available-slots.usecase.interface";
 import type { IGetBookingDetailsUseCase } from "../../../application/modules/booking-management/use-cases/get-booking-details.usecase.interface";
 import type { IGetMentorBookingsUseCase } from "../../../application/modules/booking-management/use-cases/get-mentor-bookings.usecase.interface";
@@ -42,6 +43,8 @@ export class BookingController {
 		private readonly _getBookingDetailsUseCase: IGetBookingDetailsUseCase,
 		@inject(TYPES.UseCases.RepayBooking)
 		private readonly _repayBookingUseCase: IRepayBookingUseCase,
+		@inject(TYPES.UseCases.GenerateReceiptPdf)
+		private readonly _generateReceiptPdfUseCase: IGenerateReceiptPdfUseCase,
 	) {}
 
 	getAvailableSlots = asyncHandler(async (req: AuthenticatedRequest, res) => {
@@ -143,5 +146,21 @@ export class BookingController {
 		return sendSuccess(res, HttpStatus.OK, {
 			data: result,
 		});
+	});
+
+	generateReceiptPdf = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const bookingId = (req.params as { id: string }).id;
+		const result = await this._generateReceiptPdfUseCase.execute({
+			userId: req.user.id,
+			bookingId,
+		});
+
+		res.setHeader("Content-Type", "application/pdf");
+		res.setHeader(
+			"Content-Disposition",
+			`attachment; filename="${result.filename}"`,
+		);
+		res.setHeader("Content-Length", result.pdfBuffer.length.toString());
+		res.send(result.pdfBuffer);
 	});
 }

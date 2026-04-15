@@ -5,6 +5,8 @@ import { CancelBookingByMentorUseCase } from "../../application/modules/booking-
 import type { ICancelBookingByMentorUseCase } from "../../application/modules/booking-management/use-cases/cancel-booking-by-mentor.usecase.interface";
 import { CreateBookingUseCase } from "../../application/modules/booking-management/use-cases/create-booking.usecase";
 import type { ICreateBookingUseCase } from "../../application/modules/booking-management/use-cases/create-booking.usecase.interface";
+import { GenerateReceiptPdfUseCase } from "../../application/modules/booking-management/use-cases/generate-receipt-pdf.usecase";
+import type { IGenerateReceiptPdfUseCase } from "../../application/modules/booking-management/use-cases/generate-receipt-pdf.usecase.interface";
 import { GetAvailableSlotsUseCase } from "../../application/modules/booking-management/use-cases/get-available-slots.usecase";
 import type { IGetAvailableSlotsUseCase } from "../../application/modules/booking-management/use-cases/get-available-slots.usecase.interface";
 import { GetBookingDetailsUseCase } from "../../application/modules/booking-management/use-cases/get-booking-details.usecase";
@@ -17,6 +19,7 @@ import { RefundSessionAmountUseCase } from "../../application/modules/booking-ma
 import type { IRefundSessionAmountUseCase } from "../../application/modules/booking-management/use-cases/refund-session-amount.usecase.interface";
 import { RepayBookingUseCase } from "../../application/modules/booking-management/use-cases/repay-booking.usecase";
 import type { IRepayBookingUseCase } from "../../application/modules/booking-management/use-cases/repay-booking.usecase.interface";
+import { PdfReceiptService } from "../../infrastructure/services/pdf-receipt.service";
 import { BookingController } from "../../presentation/http/controllers/booking.controller";
 import { TYPES } from "../../shared/types/types";
 
@@ -57,6 +60,18 @@ export const registerBookingBindings = (container: Container): void => {
 	container
 		.bind<IRepayBookingUseCase>(TYPES.UseCases.RepayBooking)
 		.to(RepayBookingUseCase)
+		.inSingletonScope();
+
+	// PDF Receipt Service
+	container
+		.bind(TYPES.Services.PdfReceiptService)
+		.to(PdfReceiptService)
+		.inSingletonScope();
+
+	// Generate Receipt PDF Use Case
+	container
+		.bind<IGenerateReceiptPdfUseCase>(TYPES.UseCases.GenerateReceiptPdf)
+		.to(GenerateReceiptPdfUseCase)
 		.inSingletonScope();
 
 	// Controller

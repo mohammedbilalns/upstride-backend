@@ -22,6 +22,7 @@ export const TYPES = {
 			"UpsertPaymentTransactionService",
 		),
 		WebSocketServer: Symbol.for("WebSocketServer"),
+		PdfReceiptService: Symbol.for("PdfReceiptService"),
 	},
 	WebSockets: {
 		CallHandler: Symbol.for("CallHandler"),
@@ -178,6 +179,7 @@ export const TYPES = {
 		GetUserBookings: Symbol.for("GetUserBookingsUseCase"),
 		GetMentorBookings: Symbol.for("GetMentorBookingsUseCase"),
 		RepayBooking: Symbol.for("RepayBookingUseCase"),
+		GenerateReceiptPdf: Symbol.for("GenerateReceiptPdfUseCase"),
 
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
 		HandlePaymentWebhook: Symbol.for("HandlePaymentWebhookUseCase"),

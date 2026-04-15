@@ -184,6 +184,7 @@ export const ROUTES = {
 		CANCEL: (id: string) => `/${id}/cancel`,
 		MENTOR_CANCEL: (id: string) => `/${id}/mentor/cancel`,
 		REPAY: (id: string) => `/${id}/repay`,
+		RECEIPT: (id: string) => `/${id}/receipt`,
 		USER: "/me",
 		MENTOR: "/mentor/me",
 	},

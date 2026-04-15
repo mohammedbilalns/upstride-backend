@@ -89,4 +89,10 @@ bookingRouter.get(
 	bookingController.getMentorBookings,
 );
 
+bookingRouter.get(
+	ROUTES.BOOKINGS.RECEIPT(":id"),
+	verifySession,
+	bookingController.generateReceiptPdf,
+);
+
 export { bookingRouter };
