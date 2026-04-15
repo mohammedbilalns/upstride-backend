@@ -46,14 +46,9 @@ export class WebSocketServer {
 
 		this._setupHandlers();
 
-		// Logs successful initialization for monitoring and debugging purposes
 		logger.info("WebSocket Server initialized");
 	}
 
-	/**
-	 * Sets up connection handlers for authenticated sockets.
-	 * Logs incoming/outgoing events and manages user rooms.
-	 */
 	private _setupHandlers(): void {
 		if (!this._io) return;
 

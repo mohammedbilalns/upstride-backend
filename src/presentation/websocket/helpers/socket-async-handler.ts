@@ -40,6 +40,7 @@ export const socketAsyncHandler = (
 					success: false,
 					message: errors[0].message,
 				});
+				return;
 			}
 
 			// Mongo Errors

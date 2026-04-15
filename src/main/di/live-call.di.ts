@@ -1,4 +1,6 @@
 import type { Container } from "inversify";
+import { AuthorizeWhiteboardPermissionUseCase } from "../../application/modules/live-call/usecases/authorize-whiteboard-permission.usecase";
+import type { IAuthorizeWhiteboardPermissionUseCase } from "../../application/modules/live-call/usecases/authorize-whiteboard-permission.usecase.interface";
 import { JoinSessionUseCase } from "../../application/modules/live-call/usecases/join-session.usecase";
 import type { IJoinSessionUseCase } from "../../application/modules/live-call/usecases/join-session.usecase.interface";
 import { TerminateSessionUseCase } from "../../application/modules/live-call/usecases/terminate-session.usecase";
@@ -13,5 +15,11 @@ export const registerLiveCallBindings = (container: Container): void => {
 	container
 		.bind<ITerminateSessionUseCase>(TYPES.UseCases.TerminateSession)
 		.to(TerminateSessionUseCase)
+		.inSingletonScope();
+	container
+		.bind<IAuthorizeWhiteboardPermissionUseCase>(
+			TYPES.UseCases.AuthorizeWhiteboardPermission,
+		)
+		.to(AuthorizeWhiteboardPermissionUseCase)
 		.inSingletonScope();
 };

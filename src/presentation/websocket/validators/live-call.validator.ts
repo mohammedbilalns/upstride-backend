@@ -1,26 +1,28 @@
 import z from "zod";
 import { objectIdSchema } from "../../../shared/validators";
 
+const bookingIdSchema = z.string().uuid("Invalid bookingId");
+
 export const JoinCallPayloadSchema = z.object({
-	bookingId: objectIdSchema,
+	bookingId: bookingIdSchema,
 });
 
 export const LeaveCallPayloadSchema = z.object({
-	bookingId: objectIdSchema,
+	bookingId: bookingIdSchema,
 });
 
 export const ToggledMediaPayloadSchema = z.object({
-	bookingId: objectIdSchema,
+	bookingId: bookingIdSchema,
 	mediaType: z.string().trim().min(1),
 	isEnabled: z.boolean(),
 });
 
 export const WhiteBoardPermissionSchema = z.object({
-	bookingId: objectIdSchema,
+	bookingId: bookingIdSchema,
 	menteeId: objectIdSchema,
 	allow: z.boolean(),
 });
 
 export const TerminateSessionPayloadSchema = z.object({
-	bookingId: objectIdSchema,
+	bookingId: bookingIdSchema,
 });

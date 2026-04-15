@@ -25,7 +25,7 @@ export interface ToggledMediaPayload {
 
 export interface WhiteboardSyncPayload {
 	bookingId: string;
-	update: any; // State vector or delta
+	update: any;
 }
 
 export interface WhiteboardPermissionPayload {

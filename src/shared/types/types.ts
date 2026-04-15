@@ -194,6 +194,9 @@ export const TYPES = {
 		),
 		JoinSession: Symbol.for("JoinSessionUseCase"),
 		TerminateSession: Symbol.for("TerminateSessionUseCase"),
+		AuthorizeWhiteboardPermission: Symbol.for(
+			"AuthorizeWhiteboardPermissionUseCase",
+		),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),

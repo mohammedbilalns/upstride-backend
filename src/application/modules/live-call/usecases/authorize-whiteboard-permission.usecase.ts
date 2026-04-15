@@ -3,34 +3,29 @@ import type { IBookingRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import { UnauthorizedError } from "../../authentication/errors";
 import { BookingNotFoundError } from "../../booking-management/errors/booking.errors";
-import type {
-	JoinSessionInput,
-	JoinSessionOutput,
-} from "../dtos/join-session.dto";
-import type { IJoinSessionUseCase } from "./join-session.usecase.interface";
+import type { AuthorizeWhiteboardPermissionInput } from "../dtos/authorize-whiteboard-permission.dto";
+import type { IAuthorizeWhiteboardPermissionUseCase } from "./authorize-whiteboard-permission.usecase.interface";
 
 @injectable()
-export class JoinSessionUseCase implements IJoinSessionUseCase {
+export class AuthorizeWhiteboardPermissionUseCase
+	implements IAuthorizeWhiteboardPermissionUseCase
+{
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
-		private _bookingRepository: IBookingRepository,
+		private readonly _bookingRepository: IBookingRepository,
 	) {}
-	async execute(input: JoinSessionInput): Promise<JoinSessionOutput> {
+
+	async execute(input: AuthorizeWhiteboardPermissionInput): Promise<void> {
 		const booking = await this._bookingRepository.findById(input.bookingId);
 
 		if (!booking) {
 			throw new BookingNotFoundError();
 		}
 
-		// Allow either booking participant to join the call session.
-		if (
-			booking.mentorUserId !== input.userId &&
-			booking.menteeId !== input.userId
-		) {
+		if (booking.mentorUserId !== input.userId) {
 			throw new UnauthorizedError(
-				"You are not authorized to join this session",
+				"You are not authorized to manage whiteboard permissions for this session",
 			);
 		}
-		return { roomId: booking.id };
 	}
 }
