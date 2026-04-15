@@ -2,7 +2,9 @@ import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
+import { ValidationError } from "../../../shared/errors/validation-error";
 import { UnauthorizedError } from "../../authentication/errors";
+import { BookingNotFoundError } from "../../booking-management/errors/booking.errors";
 import type { TerminateSessionInput } from "../dtos/terminate-session.dto";
 import type { ITerminateSessionUseCase } from "./terminate-session.usecase.interface";
 
@@ -17,7 +19,7 @@ export class TerminateSessionUseCase implements ITerminateSessionUseCase {
 		const booking = await this._bookingRepository.findById(input.bookingId);
 
 		if (!booking) {
-			throw new Error("Booking not found");
+			throw new BookingNotFoundError();
 		}
 
 		if (booking.mentorUserId !== input.userId) {
@@ -28,13 +30,23 @@ export class TerminateSessionUseCase implements ITerminateSessionUseCase {
 
 		const now = new Date();
 		const end = new Date(booking.endTime);
-		const diffMins = Math.abs((now.getTime() - end.getTime()) / 1000 / 60);
+		const ONE_MINUTE_IN_MS = 60 * 1000;
+		const terminationAllowedAfter = new Date(end.getTime() - ONE_MINUTE_IN_MS);
 
-		if (diffMins <= 5 && booking.status !== "COMPLETED") {
+		if (now < terminationAllowedAfter) {
+			const waitMins = Math.ceil(
+				(terminationAllowedAfter.getTime() - now.getTime()) / 1000 / 60,
+			);
+			throw new ValidationError(
+				`You can only terminate the session in the last minute or after it has ended. Please wait ${waitMins} more minute(s).`,
+			);
+		}
+
+		if (booking.status !== "COMPLETED") {
 			await this._bookingRepository.updateById(booking.id, {
 				status: "COMPLETED",
 			});
-			logger.info(`Booking ${booking.id} marked as  complete on termination.`);
+			logger.info(`Booking ${booking.id} marked as complete on termination.`);
 		}
 	}
 }

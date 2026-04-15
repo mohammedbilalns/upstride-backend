@@ -35,6 +35,14 @@ export class CallHandler {
 	public attach(socket: AuthedSocket): void {
 		const userId = socket.data.user.id;
 
+		socket.on("disconnecting", () => {
+			for (const room of socket.rooms) {
+				if (room.startsWith("call_")) {
+					socket.to(room).emit("call:user-left", { userId });
+				}
+			}
+		});
+
 		socket.on(
 			"call:join",
 			socketAsyncHandler(async (payload) => {
@@ -185,6 +193,9 @@ export class CallHandler {
 					bookingId: parsedPayload.bookingId,
 				});
 
+				socket.emit("call:terminated", {
+					bookingId: parsedPayload.bookingId,
+				});
 				socket.to(`call_${parsedPayload.bookingId}`).emit("call:terminated", {
 					bookingId: parsedPayload.bookingId,
 				});
