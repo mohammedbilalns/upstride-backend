@@ -95,10 +95,28 @@ export class BookingRepository implements IBookingRepository {
 				paymentType: "STRIPE",
 				paymentStatus: { $ne: "COMPLETED" },
 			};
+		if (filter === "completed")
+			return {
+				...base,
+				endTime: { $lt: now },
+				status: "COMPLETED",
+			};
 		if (filter === "past") return { ...base, endTime: { $lt: now } };
 		if (filter === "cancelled")
 			return {
 				...base,
+				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
+			};
+		if (filter === "upcoming_cancelled")
+			return {
+				...base,
+				startTime: { $gt: now },
+				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
+			};
+		if (filter === "past_cancelled")
+			return {
+				...base,
+				startTime: { $lt: now },
 				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
 			};
 		return base;

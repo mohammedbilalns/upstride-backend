@@ -10,7 +10,10 @@ export type BookingFilter =
 	| "all"
 	| "upcoming"
 	| "past"
+	| "completed"
 	| "cancelled"
+	| "upcoming_cancelled"
+	| "past_cancelled"
 	| "payment_pending";
 
 export interface IBookingRepository

@@ -71,7 +71,16 @@ export const BookingListQuerySchema = z.object({
 		})
 		.default(12),
 	filter: z
-		.enum(["past", "cancelled", "upcoming", "all", "payment_pending"])
+		.enum([
+			"past",
+			"completed",
+			"cancelled",
+			"upcoming_cancelled",
+			"past_cancelled",
+			"upcoming",
+			"all",
+			"payment_pending",
+		])
 		.default("all"),
 });
 
