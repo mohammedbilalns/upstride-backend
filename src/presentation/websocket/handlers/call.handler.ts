@@ -1,9 +1,4 @@
 import { inject, injectable } from "inversify";
-import type {
-	WebRTCAnswerPayload,
-	WebRTCIceCandidatePayload,
-	WebRTCOfferPayload,
-} from "../../../application/modules/call-management/call-events.interface";
 import type { IAuthorizeWhiteboardPermissionUseCase } from "../../../application/modules/live-call/usecases/authorize-whiteboard-permission.usecase.interface";
 import type { IJoinSessionUseCase } from "../../../application/modules/live-call/usecases/join-session.usecase.interface";
 import type { ITerminateSessionUseCase } from "../../../application/modules/live-call/usecases/terminate-session.usecase.interface";
@@ -17,15 +12,12 @@ import {
 	LeaveCallPayloadSchema,
 	TerminateSessionPayloadSchema,
 	ToggledMediaPayloadSchema,
+	WebRTCAnswerPayloadSchema,
+	WebRTCIceCandidatePayloadSchema,
+	WebRTCOfferPayloadSchema,
 	WhiteBoardPermissionSchema,
+	WhiteboardSyncPayloadSchema,
 } from "../validators/live-call.validator";
-
-type WhiteboardElementState = Record<string, unknown>;
-
-interface WhiteboardSyncEventPayload {
-	bookingId: string;
-	update: readonly WhiteboardElementState[];
-}
 
 @injectable()
 export class CallHandler {
@@ -65,7 +57,7 @@ export class CallHandler {
 
 				// Provide initial whiteboard state if exists
 				const cachedWhiteboard = await this._whiteboardCache.get(
-					payload.bookingId,
+					parsedPayload.bookingId,
 				);
 				if (cachedWhiteboard) {
 					socket.emit("whiteboard:sync", {
@@ -73,69 +65,98 @@ export class CallHandler {
 						isInitial: true,
 					});
 					logger.info(
-						`[CallHandler] Sent initial whiteboard state (${cachedWhiteboard.length} elements) to user ${userId} for booking ${payload.bookingId}`,
+						`[CallHandler] Sent initial whiteboard state (${cachedWhiteboard.length} elements) to user ${userId} for booking ${parsedPayload.bookingId}`,
 					);
 				} else {
 					logger.info(
-						`[CallHandler] No cached whiteboard state found for booking ${payload.bookingId}`,
+						`[CallHandler] No cached whiteboard state found for booking ${parsedPayload.bookingId}`,
 					);
 				}
 			}),
 		);
 
-		socket.on("call:leave", (payload) => {
-			const parsedPayload = LeaveCallPayloadSchema.parse(payload);
-			const room = `call_${parsedPayload.bookingId}`;
-			socket.leave(room);
-			socket.to(room).emit("call:user-left", { userId });
-		});
+		socket.on(
+			"call:leave",
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = LeaveCallPayloadSchema.parse(payload);
+				const room = `call_${parsedPayload.bookingId}`;
+				socket.leave(room);
+				socket.to(room).emit("call:user-left", { userId });
+			}),
+		);
 
-		socket.on("call:offer", (payload: WebRTCOfferPayload) => {
-			logger.info(
-				`[CallHandler] Received call:offer from ${userId} for booking ${payload.bookingId}`,
-			);
-			socket
-				.to(`call_${payload.bookingId}`)
-				.emit("call:offer", { userId, offer: payload.offer });
-		});
+		socket.on(
+			"call:offer",
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = WebRTCOfferPayloadSchema.parse(payload);
+				logger.info(
+					`[CallHandler] Received call:offer from ${userId} for booking ${parsedPayload.bookingId}`,
+				);
+				socket.to(`call_${parsedPayload.bookingId}`).emit("call:offer", {
+					userId,
+					offer: parsedPayload.offer,
+				});
+			}),
+		);
 
-		socket.on("call:answer", (payload: WebRTCAnswerPayload) => {
-			logger.info(
-				`[CallHandler] Received call:answer from ${userId} for booking ${payload.bookingId}`,
-			);
-			socket
-				.to(`call_${payload.bookingId}`)
-				.emit("call:answer", { userId, answer: payload.answer });
-		});
+		socket.on(
+			"call:answer",
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = WebRTCAnswerPayloadSchema.parse(payload);
+				logger.info(
+					`[CallHandler] Received call:answer from ${userId} for booking ${parsedPayload.bookingId}`,
+				);
+				socket.to(`call_${parsedPayload.bookingId}`).emit("call:answer", {
+					userId,
+					answer: parsedPayload.answer,
+				});
+			}),
+		);
 
-		socket.on("call:ice-candidate", (payload: WebRTCIceCandidatePayload) => {
-			logger.info(
-				`[CallHandler] Received call:ice-candidate from ${userId} for booking ${payload.bookingId}`,
-			);
-			socket.to(`call_${payload.bookingId}`).emit("call:ice-candidate", {
-				userId,
-				candidate: payload.candidate,
-			});
-		});
+		socket.on(
+			"call:ice-candidate",
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = WebRTCIceCandidatePayloadSchema.parse(payload);
+				logger.info(
+					`[CallHandler] Received call:ice-candidate from ${userId} for booking ${parsedPayload.bookingId}`,
+				);
+				socket
+					.to(`call_${parsedPayload.bookingId}`)
+					.emit("call:ice-candidate", {
+						userId,
+						candidate: parsedPayload.candidate,
+					});
+			}),
+		);
 
-		socket.on("call:toggled-media", (payload) => {
-			const parsedPayload = ToggledMediaPayloadSchema.parse(payload);
-			socket.to(`call_${parsedPayload.bookingId}`).emit("call:toggled-media", {
-				userId,
-				mediaType: parsedPayload.mediaType,
-				isEnabled: parsedPayload.isEnabled,
-			});
-		});
+		socket.on(
+			"call:toggled-media",
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = ToggledMediaPayloadSchema.parse(payload);
+				socket
+					.to(`call_${parsedPayload.bookingId}`)
+					.emit("call:toggled-media", {
+						userId,
+						mediaType: parsedPayload.mediaType,
+						isEnabled: parsedPayload.isEnabled,
+					});
+			}),
+		);
 
 		socket.on(
 			"whiteboard:sync",
-			socketAsyncHandler(async (payload: WhiteboardSyncEventPayload) => {
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = WhiteboardSyncPayloadSchema.parse(payload);
 				// Persist state in Redis
-				await this._whiteboardCache.set(payload.bookingId, payload.update);
+				await this._whiteboardCache.set(
+					parsedPayload.bookingId,
+					parsedPayload.update,
+				);
 
-				socket
-					.to(`call_${payload.bookingId}`)
-					.emit("whiteboard:sync", { userId, update: payload.update });
+				socket.to(`call_${parsedPayload.bookingId}`).emit("whiteboard:sync", {
+					userId,
+					update: parsedPayload.update,
+				});
 			}),
 		);
 
@@ -164,9 +185,9 @@ export class CallHandler {
 					bookingId: parsedPayload.bookingId,
 				});
 
-				socket
-					.to(`call_${payload.bookingId}`)
-					.emit("call:terminated", { bookingId: payload.bookingId });
+				socket.to(`call_${parsedPayload.bookingId}`).emit("call:terminated", {
+					bookingId: parsedPayload.bookingId,
+				});
 			}),
 		);
 	}
