@@ -12,6 +12,7 @@ export const TYPES = {
 		WalletService: Symbol.for("WalletService"),
 		EventBus: Symbol.for("EventBus"),
 		NotificationPort: Symbol.for("NotificationPort"),
+		PushNotificationPort: Symbol.for("PushNotificationPort"),
 		PaymentService: Symbol.for("PaymentService"),
 		PaymentWebhookParser: Symbol.for("PaymentWebhookParser"),
 		IdGenerator: Symbol.for("IdGenerator"),
@@ -59,6 +60,7 @@ export const TYPES = {
 		SavedMentorRepository: Symbol.for("SavedMentorRepository"),
 		AvailabilityRepository: Symbol.for("AvailabilityRepository"),
 		BookingRepository: Symbol.for("BookingRepository"),
+		PushSubscriptionRepository: Symbol.for("PushSubscriptionRepository"),
 	},
 
 	Databases: {
@@ -82,6 +84,8 @@ export const TYPES = {
 		RevokeSession: Symbol.for("RevokeSessionUseCase"),
 		RevokeAllOtherSessions: Symbol.for("RevokeAllOtherSessionsUseCase"),
 		SaveUserInterests: Symbol.for("SaveUserInterestsUseCase"),
+		RegisterPushSubscription: Symbol.for("RegisterPushSubscriptionUseCase"),
+		UnregisterPushSubscription: Symbol.for("UnregisterPushSubscriptionUseCase"),
 		CreateNotification: Symbol.for("CreateNotificationUseCase"),
 		GetNotifications: Symbol.for("GetNotificationsUseCase"),
 		MarkNotificationRead: Symbol.for("MarkNotificationReadUseCase"),
@@ -199,6 +203,7 @@ export const TYPES = {
 		AuthorizeWhiteboardPermission: Symbol.for(
 			"AuthorizeWhiteboardPermissionUseCase",
 		),
+		ValidateJoinSession: Symbol.for("ValidateJoinSessionUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),

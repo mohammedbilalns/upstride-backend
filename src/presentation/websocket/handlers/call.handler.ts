@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import type { IAuthorizeWhiteboardPermissionUseCase } from "../../../application/modules/live-call/usecases/authorize-whiteboard-permission.usecase.interface";
 import type { IJoinSessionUseCase } from "../../../application/modules/live-call/usecases/join-session.usecase.interface";
 import type { ITerminateSessionUseCase } from "../../../application/modules/live-call/usecases/terminate-session.usecase.interface";
+import type { IValidateJoinSessionUseCase } from "../../../application/modules/live-call/usecases/validate-join-session.usecase.interface";
 import type { IWhiteboardCache } from "../../../application/services";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";
@@ -27,6 +28,8 @@ export class CallHandler {
 		private readonly _joinSessionUseCase: IJoinSessionUseCase,
 		@inject(TYPES.UseCases.TerminateSession)
 		private readonly _terminateSessionUseCase: ITerminateSessionUseCase,
+		@inject(TYPES.UseCases.ValidateJoinSession)
+		private readonly _validateJoinSessionUseCase: IValidateJoinSessionUseCase,
 		@inject(TYPES.UseCases.AuthorizeWhiteboardPermission)
 		private readonly _authorizeWhiteboardPermissionUseCase: IAuthorizeWhiteboardPermissionUseCase,
 		@inject(TYPES.Caches.Whiteboard)
@@ -43,6 +46,21 @@ export class CallHandler {
 				}
 			}
 		});
+
+		socket.on(
+			"call:pre-join-check",
+			socketAsyncHandler(async (payload) => {
+				const parsedPayload = JoinCallPayloadSchema.parse(payload);
+				await this._validateJoinSessionUseCase.execute({
+					userId,
+					bookingId: parsedPayload.bookingId,
+				});
+
+				socket.emit("call:pre-join-check:success", {
+					bookingId: parsedPayload.bookingId,
+				});
+			}),
+		);
 
 		socket.on(
 			"call:join",

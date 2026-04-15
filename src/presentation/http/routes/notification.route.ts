@@ -6,6 +6,7 @@ import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	NotificationIdParamSchema,
 	NotificationsQuerySchema,
+	RegisterPushSubscriptionSchema,
 } from "../validators";
 
 const router = Router();
@@ -18,6 +19,18 @@ router.get(
 	ROUTES.NOTIFICATIONS.ROOT,
 	validate({ query: NotificationsQuerySchema }),
 	notificationController.getNotifications,
+);
+
+router.post(
+	ROUTES.NOTIFICATIONS.REGISTER_PUSH,
+	validate({ body: RegisterPushSubscriptionSchema }),
+	notificationController.registerPushSubscription,
+);
+
+router.delete(
+	ROUTES.NOTIFICATIONS.REGISTER_PUSH,
+	validate({ body: RegisterPushSubscriptionSchema }),
+	notificationController.unregisterPushSubscription,
 );
 
 router.patch(

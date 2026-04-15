@@ -1,7 +1,12 @@
 import { Worker } from "bullmq";
 import type { Redis } from "ioredis";
 import type { JobMap } from "../../../application/ports/job-queue.port";
-import type { IMailService, MailMessage } from "../../../application/services";
+import type {
+	IMailService,
+	IPushNotificationPort,
+	MailMessage,
+} from "../../../application/services";
+import type { IPushSubscriptionRepository } from "../../../domain/repositories/push-subscription.repository.interface";
 import type { IUserRepository } from "../../../domain/repositories/user.repository.interface";
 import logger from "../../../shared/logging/logger";
 import {
@@ -25,6 +30,8 @@ export const createMailWorker = (
 	connection: Redis,
 	mailService: IMailService,
 	userRepository: IUserRepository,
+	pushNotificationPort: IPushNotificationPort,
+	pushSubscriptionRepository: IPushSubscriptionRepository,
 ): Worker => {
 	const worker = new Worker(
 		"mailQueue",
@@ -37,29 +44,61 @@ export const createMailWorker = (
 				if (mentee?.email && mentor) {
 					const link = `${process.env.FRONTEND_URL || "http://localhost:5173"}/call/${data.bookingId}`;
 					const template = new SessionReminderMailTemplate();
-					const menteeMsg = template.render({
-						label: data.label,
-						otherName: mentor.name,
-						link,
-					});
-					const mentorMsg = template.render({
-						label: data.label,
-						otherName: mentee.name,
-						link,
-					});
 
-					await mailService.send({
-						to: mentee.email,
-						subject: template.subject,
-						html: menteeMsg.html,
-						text: menteeMsg.text,
-					});
-					await mailService.send({
-						to: mentor.email,
-						subject: template.subject,
-						html: mentorMsg.html,
-						text: mentorMsg.text,
-					});
+					if (data.label === "1 day") {
+						const menteeMsg = template.render({
+							label: data.label,
+							otherName: mentor.name,
+							link,
+						});
+						const mentorMsg = template.render({
+							label: data.label,
+							otherName: mentee.name,
+							link,
+						});
+
+						await mailService.send({
+							to: mentee.email,
+							subject: template.subject,
+							html: menteeMsg.html,
+							text: menteeMsg.text,
+						});
+						await mailService.send({
+							to: mentor.email,
+							subject: template.subject,
+							html: mentorMsg.html,
+							text: mentorMsg.text,
+						});
+					} else {
+						// Send push notifications for 1 hour and 5 minutes
+						const sendPush = async (userId: string, otherName: string) => {
+							const subscriptions =
+								await pushSubscriptionRepository.findByUserId(userId);
+							const payload = JSON.stringify({
+								title: "Upcoming Session",
+								body: `Your session with ${otherName} starts in ${data.label}.`,
+								link,
+							});
+
+							for (const sub of subscriptions) {
+								try {
+									await pushNotificationPort.sendNotification(
+										{ endpoint: sub.endpoint, keys: sub.keys },
+										payload,
+									);
+								} catch (error: any) {
+									if (error.message === "SUBSCRIPTION_EXPIRED") {
+										await pushSubscriptionRepository.deleteByEndpoint(
+											sub.endpoint,
+										);
+									}
+								}
+							}
+						};
+
+						await sendPush(data.menteeId, mentor.name);
+						await sendPush(data.mentorId, mentee.name);
+					}
 				}
 				return;
 			}

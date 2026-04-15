@@ -1,5 +1,9 @@
 import type { Worker } from "bullmq";
-import type { IMailService } from "../application/services";
+import type {
+	IMailService,
+	IPushNotificationPort as PushNotificationPort,
+} from "../application/services";
+import type { IPushSubscriptionRepository } from "../domain/repositories/push-subscription.repository.interface";
 import type { IUserRepository } from "../domain/repositories/user.repository.interface";
 import {
 	connectToMongo,
@@ -26,10 +30,24 @@ async function start() {
 	const mailService = workerContainer.get<IMailService>(
 		TYPES.Services.MailService,
 	);
+	const pushNotificationPort = workerContainer.get<PushNotificationPort>(
+		TYPES.Services.PushNotificationPort,
+	);
 	const userRepository = workerContainer.get<IUserRepository>(
 		TYPES.Repositories.UserRepository,
 	);
-	mailWorker = createMailWorker(redisClient, mailService, userRepository);
+	const pushSubscriptionRepository =
+		workerContainer.get<IPushSubscriptionRepository>(
+			TYPES.Repositories.PushSubscriptionRepository,
+		);
+
+	mailWorker = createMailWorker(
+		redisClient,
+		mailService,
+		userRepository,
+		pushNotificationPort,
+		pushSubscriptionRepository,
+	);
 }
 
 setupGracefulShutdown({

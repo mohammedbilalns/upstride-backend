@@ -40,7 +40,7 @@ const transport = pino.transport({
 const logger = pino(
 	{
 		level: env.LOG_LEVEL,
-		timestamp: pino.stdTimeFunctions.unixTime,
+		timestamp: pino.stdTimeFunctions.epochTime,
 		errorKey: "stack",
 		mixin: () => {
 			const requestId = RequestContext.getRequestId();

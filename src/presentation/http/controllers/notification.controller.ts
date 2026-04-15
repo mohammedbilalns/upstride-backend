@@ -4,12 +4,18 @@ import type {
 	IGetUnreadNotificationCountUseCase,
 	IMarkAllNotificationsReadUseCase,
 	IMarkNotificationReadUseCase,
+	IRegisterPushSubscriptionUseCase,
+	IUnregisterPushSubscriptionUseCase,
 } from "../../../application/modules/notifications/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
 import { asyncHandler, sendSuccess } from "../helpers";
-import type { NotificationIdParam, NotificationsQuery } from "../validators";
+import type {
+	NotificationIdParam,
+	NotificationsQuery,
+	RegisterPushSubscriptionBody,
+} from "../validators";
 
 @injectable()
 export class NotificationController {
@@ -22,7 +28,37 @@ export class NotificationController {
 		private readonly _markAllNotificationsReadUseCase: IMarkAllNotificationsReadUseCase,
 		@inject(TYPES.UseCases.GetUnreadNotificationCount)
 		private readonly _getUnreadNotificationCountUseCase: IGetUnreadNotificationCountUseCase,
+		@inject(TYPES.UseCases.RegisterPushSubscription)
+		private readonly _registerPushSubscriptionUseCase: IRegisterPushSubscriptionUseCase,
+		@inject(TYPES.UseCases.UnregisterPushSubscription)
+		private readonly _unregisterPushSubscriptionUseCase: IUnregisterPushSubscriptionUseCase,
 	) {}
+
+	registerPushSubscription = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			await this._registerPushSubscriptionUseCase.execute({
+				userId: req.user.id,
+				...(req.validated?.body as RegisterPushSubscriptionBody),
+			});
+
+			return sendSuccess(res, HttpStatus.OK, {
+				message: "Push subscription registered successfully",
+			});
+		},
+	);
+
+	unregisterPushSubscription = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			await this._unregisterPushSubscriptionUseCase.execute({
+				userId: req.user.id,
+				...(req.validated?.body as RegisterPushSubscriptionBody),
+			});
+
+			return sendSuccess(res, HttpStatus.OK, {
+				message: "Push subscription unregistered successfully",
+			});
+		},
+	);
 
 	getNotifications = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		const result = await this._getNotificationsUseCase.execute({

@@ -15,3 +15,16 @@ export const NotificationIdParamSchema =
 	buildObjectIdParamSchema("notificationId");
 
 export type NotificationIdParam = z.infer<typeof NotificationIdParamSchema>;
+
+export const RegisterPushSubscriptionSchema = z.object({
+	endpoint: z.url(),
+	keys: z.object({
+		p256dh: z.string().min(1),
+		auth: z.string().min(1),
+	}),
+	deviceType: z.string().optional(),
+});
+
+export type RegisterPushSubscriptionBody = z.infer<
+	typeof RegisterPushSubscriptionSchema
+>;

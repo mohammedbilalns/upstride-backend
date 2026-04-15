@@ -8,3 +8,7 @@ export * from "./mark-all-notifications-read.usecase";
 export * from "./mark-all-notifications-read.usecase.interface";
 export * from "./mark-notification-read.usecase";
 export * from "./mark-notification-read.usecase.interface";
+export * from "./register-push-subscription.usecase";
+export * from "./register-push-subscription.usecase.interface";
+export * from "./unregister-push-subscription.usecase";
+export * from "./unregister-push-subscription.usecase.interface";

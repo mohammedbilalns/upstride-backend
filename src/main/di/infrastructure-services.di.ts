@@ -8,9 +8,11 @@ import type {
 	IStorageService,
 	IWalletService,
 	IWhiteboardCache,
+	IPushNotificationPort as PushNotificationPort,
 } from "../../application/services";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
 import { RedisWhiteboardCache } from "../../infrastructure/database/redis/redis-whiteboard.cache";
+import { WebPushAdapter } from "../../infrastructure/notifications/web-push.adapter";
 import {
 	Argon2PasswordService,
 	CryptoOtpGenerator,
@@ -57,6 +59,11 @@ export const registerInfrastructureServiceBindings = (
 	container
 		.bind<IIdGenerator>(TYPES.Services.IdGenerator)
 		.to(UuidGenerator)
+		.inSingletonScope();
+
+	container
+		.bind<PushNotificationPort>(TYPES.Services.PushNotificationPort)
+		.to(WebPushAdapter)
 		.inSingletonScope();
 
 	container.bind(TYPES.Databases.Redis).toConstantValue(redisClient);

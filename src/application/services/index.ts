@@ -5,6 +5,7 @@ export * from "./otp-generator.service.interface";
 export * from "./password.service.interface";
 export * from "./payment.service.interface";
 export * from "./payment-webhook.parser.interface";
+export * from "./push-notification.service.interface";
 export * from "./storage.service.interface";
 export * from "./token.service.interface";
 export * from "./wallet.service.interface";

@@ -30,6 +30,8 @@ const envSchema = z.object({
 	STRIPE_WEBHOOK_SECRET: z.string().min(1),
 	STRIPE_SUCCESS_URL: z.string().min(1),
 	STRIPE_CANCEL_URL: z.string().min(1),
+	VAPID_PRIVATE_KEY: z.string().min(1),
+	VAPID_PUBLIC_KEY: z.string().min(1),
 });
 
 const env = envSchema.parse(process.env);

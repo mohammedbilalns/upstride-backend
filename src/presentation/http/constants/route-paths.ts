@@ -34,6 +34,7 @@ export const ROUTES = {
 		UNREAD_COUNT: "/unread-count",
 		READ_ALL: "/read-all",
 		MARK_READ: "/:notificationId/read",
+		REGISTER_PUSH: "/register-push",
 	},
 	CHATS: {
 		BASE: "/chats",

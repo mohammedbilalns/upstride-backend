@@ -158,9 +158,23 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		const createdBooking = await this._bookingRepository.create(booking);
 
 		if (paymentStatus === "COMPLETED") {
+			const oneDayBefore = start.getTime() - 24 * 60 * 60 * 1000;
 			const oneHourBefore = start.getTime() - 60 * 60 * 1000;
 			const fiveMinutesBefore = start.getTime() - 5 * 60 * 1000;
 			const now = Date.now();
+
+			if (oneDayBefore > now) {
+				await this._jobQueue.enqueue(
+					"send-session-reminder",
+					{
+						bookingId: createdBooking.id,
+						mentorId: input.mentorId,
+						menteeId: input.menteeId,
+						label: "1 day",
+					},
+					{ delay: oneDayBefore - now },
+				);
+			}
 
 			if (oneHourBefore > now) {
 				await this._jobQueue.enqueue(

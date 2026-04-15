@@ -5,6 +5,8 @@ import {
 	GetUnreadNotificationCountUseCase,
 	MarkAllNotificationsReadUseCase,
 	MarkNotificationReadUseCase,
+	RegisterPushSubscriptionUseCase,
+	UnregisterPushSubscriptionUseCase,
 } from "../../application/modules/notifications/use-cases";
 import { TYPES } from "../../shared/types/types";
 
@@ -28,5 +30,13 @@ export const registerNotificationBindings = (container: Container): void => {
 	container
 		.bind(TYPES.UseCases.GetUnreadNotificationCount)
 		.to(GetUnreadNotificationCountUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.RegisterPushSubscription)
+		.to(RegisterPushSubscriptionUseCase)
+		.inSingletonScope();
+	container
+		.bind(TYPES.UseCases.UnregisterPushSubscription)
+		.to(UnregisterPushSubscriptionUseCase)
 		.inSingletonScope();
 };

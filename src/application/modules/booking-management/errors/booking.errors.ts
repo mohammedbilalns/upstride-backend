@@ -56,3 +56,11 @@ export class UnauthorizedAvailabilityActionError extends ApplicationError {
 		super(message, HttpStatus.FORBIDDEN);
 	}
 }
+
+export class SessionTooEarlyError extends ConflictError {
+	constructor(
+		message: string = "Session has not started yet. You can join 5 minutes before the start time.",
+	) {
+		super(message);
+	}
+}
