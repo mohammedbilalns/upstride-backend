@@ -4,7 +4,7 @@ import { TYPES } from "../../../../shared/types/types";
 import { UnauthorizedError } from "../../authentication/errors";
 import {
 	BookingNotFoundError,
-	//SessionTooEarlyError,
+	SessionTooEarlyError,
 } from "../../booking-management/errors/booking.errors";
 import type { JoinSessionInput } from "../dtos/join-session.dto";
 import type { IValidateJoinSessionUseCase } from "./validate-join-session.usecase.interface";
@@ -40,12 +40,12 @@ export class ValidateJoinSessionUseCase implements IValidateJoinSessionUseCase {
 		}
 
 		//	Restrict joining until 5 minutes before start time
-		// 	const now = Date.now();
-		// 	const startTime = new Date(booking.startTime).getTime();
-		// 	const JOIN_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
-		//
-		// 	if (now < startTime - JOIN_WINDOW_MS) {
-		// 		throw new SessionTooEarlyError();
-		// 	}
+		const now = Date.now();
+		const startTime = new Date(booking.startTime).getTime();
+		const JOIN_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+
+		if (now < startTime - JOIN_WINDOW_MS) {
+			throw new SessionTooEarlyError();
+		}
 	}
 }

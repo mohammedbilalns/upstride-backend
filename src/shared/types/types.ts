@@ -204,6 +204,7 @@ export const TYPES = {
 			"AuthorizeWhiteboardPermissionUseCase",
 		),
 		ValidateJoinSession: Symbol.for("ValidateJoinSessionUseCase"),
+		ScheduleLiveSesionReminder: Symbol.for("ScheduleLiveSesionReminderUseCase"),
 	},
 	Controllers: {
 		UserManagement: Symbol.for("UserManagementController"),

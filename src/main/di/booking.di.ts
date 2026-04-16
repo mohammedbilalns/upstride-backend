@@ -19,6 +19,8 @@ import { RefundSessionAmountUseCase } from "../../application/modules/booking-ma
 import type { IRefundSessionAmountUseCase } from "../../application/modules/booking-management/use-cases/refund-session-amount.usecase.interface";
 import { RepayBookingUseCase } from "../../application/modules/booking-management/use-cases/repay-booking.usecase";
 import type { IRepayBookingUseCase } from "../../application/modules/booking-management/use-cases/repay-booking.usecase.interface";
+import { ScheduleLiveSesionReminderUseCase } from "../../application/modules/booking-management/use-cases/schedule-live-sesion-reminder.usecase";
+import type { IScheduleLiveSesionReminderUseCase } from "../../application/modules/booking-management/use-cases/schedule-mentor-reminder.usecase.interface";
 import { PdfReceiptService } from "../../infrastructure/services/pdf-receipt.service";
 import { BookingController } from "../../presentation/http/controllers/booking.controller";
 import { TYPES } from "../../shared/types/types";
@@ -60,6 +62,13 @@ export const registerBookingBindings = (container: Container): void => {
 	container
 		.bind<IRepayBookingUseCase>(TYPES.UseCases.RepayBooking)
 		.to(RepayBookingUseCase)
+		.inSingletonScope();
+
+	container
+		.bind<IScheduleLiveSesionReminderUseCase>(
+			TYPES.UseCases.ScheduleLiveSesionReminder,
+		)
+		.to(ScheduleLiveSesionReminderUseCase)
 		.inSingletonScope();
 
 	// PDF Receipt Service
