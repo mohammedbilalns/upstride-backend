@@ -124,10 +124,10 @@ export class SocialLoginUseCase implements ISocialLoginUseCase {
 			new UserRegisteredEvent({ userId: user.id, email: user.email }),
 		);
 
-		return {
-			setupToken: this._tokenService.generateSetupToken({
-				sub: user.id,
-			}),
-		};
+		const setupToken = await this._tokenService.generateSetupToken({
+			sub: user.id,
+		});
+
+		return { setupToken };
 	}
 }

@@ -41,7 +41,7 @@ export const socketAuthMiddleware = async (
 				TYPES.Repositories.TokenRevocationRepository,
 			);
 
-		const payload = tokenService.verifyAccessToken(token);
+		const payload = await tokenService.verifyAccessToken(token);
 		const isRevoked = await tokenRevocationRepository.isSessionRevoked(
 			payload.sid,
 		);

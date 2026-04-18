@@ -22,7 +22,7 @@ export class UpdatePasswordUseCase implements IUpdatePasswordUseCase {
 	async execute(input: UpdatePasswordInput): Promise<void> {
 		const user = await getUserByEmailOrThrow(this._userRepository, input.email);
 
-		const { sub } = this._tokenService.verifyResetToken(input.tempToken);
+		const { sub } = await this._tokenService.verifyResetToken(input.tempToken);
 
 		if (sub !== user.id) throw new AuthenticationError();
 

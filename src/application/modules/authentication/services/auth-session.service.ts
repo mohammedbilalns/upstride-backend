@@ -8,7 +8,7 @@ import {
 	type IIdGenerator,
 	type IStorageService,
 	type ITokenService,
-	REFRESH_TOKEN_EXPIRES_IN,
+	REFRESH_TOKEN_EXPIRES_IN_SECONDS,
 } from "../../../services";
 import type { AuthDeviceContext, LoginResponse } from "../dtos";
 import { LoginResponseMapper } from "../mappers/login-response.mapper";
@@ -31,25 +31,26 @@ export class AuthSessionService implements IAuthSessionService {
 		user: User,
 		deviceContext: AuthDeviceContext,
 	): Promise<LoginResponse> {
-		const sessionId = this._idGenerator.generate();
-		const refreshTokenId = this._idGenerator.generate();
-		const accessTokenId = this._idGenerator.generate();
+		const [sessionId, refreshTokenId, accessTokenId] =
+			this._idGenerator.generateMany(3);
 
-		const accessToken = this._tokenService.generateAccessToken({
-			sub: user.id,
-			role: user.role,
-			jti: accessTokenId,
-			sid: sessionId,
-		});
-
-		const refreshToken = this._tokenService.generateRefreshToken({
-			sub: user.id,
-			jti: refreshTokenId,
-			sid: sessionId,
-		});
-
+		const [accessToken, refreshToken] = await Promise.all([
+			this._tokenService.generateAccessToken({
+				sub: user.id,
+				role: user.role,
+				jti: accessTokenId,
+				sid: sessionId,
+			}),
+			this._tokenService.generateRefreshToken({
+				sub: user.id,
+				jti: refreshTokenId,
+				sid: sessionId,
+			}),
+		]);
 		const refreshTokenHash = this._tokenService.hashToken(refreshToken);
-		const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN * 1000);
+		const expiresAt = new Date(
+			Date.now() + REFRESH_TOKEN_EXPIRES_IN_SECONDS * 1000,
+		);
 
 		const session = new Session(
 			"",

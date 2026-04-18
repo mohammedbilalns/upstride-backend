@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { injectable } from "inversify";
-import jwt from "jsonwebtoken";
+import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import {
 	ACCESS_TOKEN_EXPIRES_IN,
 	type AccessTokenPayload,
@@ -16,44 +16,62 @@ import env from "../../shared/config/env";
 
 @injectable()
 export class JwtTokenService implements ITokenService {
-	generateAccessToken(payload: AccessTokenPayload): string {
-		return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
-			expiresIn: ACCESS_TOKEN_EXPIRES_IN,
-		});
+	constructor(
+		private _accessSecret = new TextEncoder().encode(env.JWT_ACCESS_SECRET),
+		private _refreshSecret = new TextEncoder().encode(env.JWT_REFRESH_SECRET),
+		private _resetSecret = new TextEncoder().encode(env.JWT_RESET_SECRET),
+		private _setupSecret = new TextEncoder().encode(env.JWT_SETUP_SECRET),
+	) {}
+
+	private async sign<T extends object>(
+		payload: T,
+		secret: Uint8Array,
+		expiresIn: string,
+	): Promise<string> {
+		const jwtPayload = { ...payload } as unknown as JWTPayload;
+
+		return await new SignJWT(jwtPayload)
+			.setProtectedHeader({ alg: "HS256" })
+			.setIssuedAt()
+			.setExpirationTime(expiresIn)
+			.sign(secret);
 	}
 
-	generateRefreshToken(payload: RefreshTokenPayload): string {
-		return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
-			expiresIn: REFRESH_TOKEN_EXPIRES_IN,
-		});
+	private async verify<T>(token: string, secret: Uint8Array): Promise<T> {
+		const { payload } = await jwtVerify(token, secret);
+		return payload as T;
 	}
 
-	generateResetToken(payload: ResetTokenPayload): string {
-		return jwt.sign(payload, env.JWT_RESET_SECRET, {
-			expiresIn: RESET_TOKEN_EXPIRES_IN,
-		});
+	async generateAccessToken(payload: AccessTokenPayload): Promise<string> {
+		return this.sign(payload, this._accessSecret, ACCESS_TOKEN_EXPIRES_IN);
 	}
 
-	generateSetupToken(payload: SetupTokenPayload): string {
-		return jwt.sign(payload, env.JWT_SETUP_SECRET, {
-			expiresIn: SETUP_TOKEN_EXPIRES_IN,
-		});
+	async generateRefreshToken(payload: RefreshTokenPayload): Promise<string> {
+		return this.sign(payload, this._refreshSecret, REFRESH_TOKEN_EXPIRES_IN);
 	}
 
-	verifyAccessToken(token: string): AccessTokenPayload {
-		return jwt.verify(token, env.JWT_ACCESS_SECRET) as AccessTokenPayload;
+	async generateResetToken(payload: ResetTokenPayload): Promise<string> {
+		return this.sign(payload, this._resetSecret, RESET_TOKEN_EXPIRES_IN);
 	}
 
-	verifyRefreshToken(token: string): RefreshTokenPayload {
-		return jwt.verify(token, env.JWT_REFRESH_SECRET) as RefreshTokenPayload;
+	async generateSetupToken(payload: SetupTokenPayload): Promise<string> {
+		return this.sign(payload, this._setupSecret, SETUP_TOKEN_EXPIRES_IN);
 	}
 
-	verifyResetToken(token: string): ResetTokenPayload {
-		return jwt.verify(token, env.JWT_RESET_SECRET) as ResetTokenPayload;
+	async verifyAccessToken(token: string): Promise<AccessTokenPayload> {
+		return this.verify<AccessTokenPayload>(token, this._accessSecret);
 	}
 
-	verifySetupToken(token: string): SetupTokenPayload {
-		return jwt.verify(token, env.JWT_SETUP_SECRET) as SetupTokenPayload;
+	async verifyRefreshToken(token: string): Promise<RefreshTokenPayload> {
+		return this.verify<RefreshTokenPayload>(token, this._refreshSecret);
+	}
+
+	async verifyResetToken(token: string): Promise<ResetTokenPayload> {
+		return this.verify<ResetTokenPayload>(token, this._resetSecret);
+	}
+
+	async verifySetupToken(token: string): Promise<SetupTokenPayload> {
+		return this.verify(token, this._setupSecret);
 	}
 
 	hashToken(token: string): string {

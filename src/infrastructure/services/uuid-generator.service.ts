@@ -7,4 +7,14 @@ export class UuidGenerator implements IIdGenerator {
 	generate(): string {
 		return randomUUID();
 	}
+
+	generateMany(count: number): string[] {
+		const ids: string[] = new Array(count);
+
+		for (let i = 0; i < count; i++) {
+			ids[i] = randomUUID();
+		}
+
+		return ids;
+	}
 }

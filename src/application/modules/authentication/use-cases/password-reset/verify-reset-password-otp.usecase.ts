@@ -61,7 +61,7 @@ export class VerifyResetPasswordOtpUseCase
 
 		await this._otpRepository.deleteAll(user.id, policy.purpose);
 
-		const resetToken = this._tokenService.generateResetToken({
+		const resetToken = await this._tokenService.generateResetToken({
 			sub: user.id,
 		});
 

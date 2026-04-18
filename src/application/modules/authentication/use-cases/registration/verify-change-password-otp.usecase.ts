@@ -59,11 +59,12 @@ export class VerifyChangePasswordOtpUseCase
 			throw new InvalidOtpError();
 		}
 
-		await this._otpRepository.deleteAll(user.id, policy.purpose);
-
-		const resetToken = this._tokenService.generateResetToken({
-			sub: user.id,
-		});
+		const [resetToken, _] = await Promise.all([
+			this._tokenService.generateResetToken({
+				sub: user.id,
+			}),
+			this._otpRepository.deleteAll(user.id, policy.purpose),
+		]);
 
 		return {
 			resetToken,

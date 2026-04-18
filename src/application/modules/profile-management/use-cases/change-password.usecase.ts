@@ -20,9 +20,11 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
 	) {}
 
 	async execute(input: ChangePasswordInput): Promise<void> {
-		const user = await getUserByIdOrThrow(this._userRepository, input.userId);
+		const [user, payload] = await Promise.all([
+			getUserByIdOrThrow(this._userRepository, input.userId),
 
-		const payload = this._tokenService.verifyResetToken(input.token);
+			this._tokenService.verifyResetToken(input.token),
+		]);
 
 		if (payload.sub !== user.id) {
 			throw new AuthenticationError();

@@ -69,16 +69,17 @@ export class VerifyRegistrationOtpUseCase
 
 		const finalUser = updatedUser || user;
 
-		await this._eventBus.publish(
-			new UserRegisteredEvent({
-				userId: finalUser.id,
-				email: finalUser.email,
+		const [setupToken, _] = await Promise.all([
+			this._tokenService.generateSetupToken({
+				sub: finalUser.id,
 			}),
-		);
-
-		const setupToken = this._tokenService.generateSetupToken({
-			sub: finalUser.id,
-		});
+			await this._eventBus.publish(
+				new UserRegisteredEvent({
+					userId: finalUser.id,
+					email: finalUser.email,
+				}),
+			),
+		]);
 
 		return {
 			setupToken,

@@ -29,7 +29,9 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 			throw new UnauthorizedError();
 		}
 
-		const payload = this._tokenService.verifyRefreshToken(input.refreshToken);
+		const payload = await this._tokenService.verifyRefreshToken(
+			input.refreshToken,
+		);
 		const { sid } = payload;
 
 		const session = await this._sessionRepository.findBySid(sid);
@@ -59,27 +61,27 @@ export class RefreshSessionUseCase implements IRefreshSessionUseCase {
 
 		assertUserCanAuthenticate(user);
 
-		const accessTokenId = this._idGenerator.generate();
-		const refreshTokenId = this._idGenerator.generate();
+		const [accessTokenId, refreshTokenId] = this._idGenerator.generateMany(2);
 
-		const newRefreshToken = this._tokenService.generateRefreshToken({
-			sub: user.id,
-			jti: refreshTokenId,
-			sid: session.sid,
-		});
+		const [newRefreshToken, accessToken] = await Promise.all([
+			await this._tokenService.generateRefreshToken({
+				sub: user.id,
+				jti: refreshTokenId,
+				sid: session.sid,
+			}),
+			this._tokenService.generateAccessToken({
+				sub: user.id,
+				role: user.role,
+				jti: accessTokenId,
+				sid: session.sid,
+			}),
+		]);
 
 		const newRefreshTokenHash = this._tokenService.hashToken(newRefreshToken);
 
 		await this._sessionRepository.updateBySid(session.sid, {
 			lastUsedAt: new Date(),
 			refreshTokenHash: newRefreshTokenHash,
-		});
-
-		const accessToken = this._tokenService.generateAccessToken({
-			sub: user.id,
-			role: user.role,
-			jti: accessTokenId,
-			sid: session.sid,
 		});
 
 		return {

@@ -9,7 +9,7 @@ import type {
 import type { ITokenRevocationRepository } from "../../../../domain/repositories/token-revocation.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { EventBus } from "../../../events/event-bus.interface";
-import { REFRESH_TOKEN_EXPIRES_IN } from "../../../services";
+import { REFRESH_TOKEN_EXPIRES_IN_SECONDS } from "../../../services";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { BlockUserInput } from "../dtos/block-user.dto";
 import type { IBlockUserUseCase } from "./block-user.usecase.interface";
@@ -50,7 +50,7 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 				this._tokenRevocationRepository.revokeMultiple(
 					sids.map((sid: string) => ({
 						sessionId: sid,
-						ttl: REFRESH_TOKEN_EXPIRES_IN,
+						ttl: REFRESH_TOKEN_EXPIRES_IN_SECONDS,
 					})),
 				),
 			]);

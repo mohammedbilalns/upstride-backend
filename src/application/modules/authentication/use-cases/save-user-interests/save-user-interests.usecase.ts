@@ -9,7 +9,7 @@ import { TYPES } from "../../../../../shared/types/types";
 import { formatDeviceString } from "../../../../../shared/utilities/device.util";
 import {
 	type ITokenService,
-	REFRESH_TOKEN_EXPIRES_IN,
+	REFRESH_TOKEN_EXPIRES_IN_SECONDS,
 } from "../../../../services";
 import type { IIdGenerator } from "../../../../services/id-generator.service.interface";
 import type { IStorageService } from "../../../../services/storage.service.interface";
@@ -40,7 +40,7 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 	async execute(
 		input: SaveUserInterestsInput,
 	): Promise<SaveUserInterestsResponse> {
-		const { sub: userId } = this._tokenService.verifySetupToken(
+		const { sub: userId } = await this._tokenService.verifySetupToken(
 			input.setupToken,
 		);
 		if (!userId) throw new AuthenticationError();
@@ -60,21 +60,24 @@ export class SaveUserInterestsUseCase implements ISaveUserInterestsUseCase {
 		const accessTokenId = this._idGenerator.generate();
 		const sessionId = this._idGenerator.generate();
 
-		const accessToken = this._tokenService.generateAccessToken({
-			sub: finalUser.id,
-			role: finalUser.role,
-			jti: accessTokenId,
-			sid: sessionId,
-		});
-
-		const refreshToken = this._tokenService.generateRefreshToken({
-			sub: finalUser.id,
-			jti: refreshTokenId,
-			sid: sessionId,
-		});
+		const [accessToken, refreshToken] = await Promise.all([
+			this._tokenService.generateAccessToken({
+				sub: finalUser.id,
+				role: finalUser.role,
+				jti: accessTokenId,
+				sid: sessionId,
+			}),
+			this._tokenService.generateRefreshToken({
+				sub: finalUser.id,
+				jti: refreshTokenId,
+				sid: sessionId,
+			}),
+		]);
 
 		const refreshTokenHash = this._tokenService.hashToken(refreshToken);
-		const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN * 1000);
+		const expiresAt = new Date(
+			Date.now() + REFRESH_TOKEN_EXPIRES_IN_SECONDS * 1000,
+		);
 
 		const session = new Session(
 			"",

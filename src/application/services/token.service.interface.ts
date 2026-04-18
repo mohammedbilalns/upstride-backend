@@ -21,19 +21,20 @@ export interface SetupTokenPayload {
 	sub: string;
 }
 
-export const ACCESS_TOKEN_EXPIRES_IN = 15 * 60;
-export const REFRESH_TOKEN_EXPIRES_IN = 7 * 24 * 60 * 60;
-export const RESET_TOKEN_EXPIRES_IN = 15 * 60;
-export const SETUP_TOKEN_EXPIRES_IN = 30 * 60;
+export const ACCESS_TOKEN_EXPIRES_IN = "15m";
+export const REFRESH_TOKEN_EXPIRES_IN = "7d";
+export const RESET_TOKEN_EXPIRES_IN = "15m";
+export const SETUP_TOKEN_EXPIRES_IN = "30m";
+export const REFRESH_TOKEN_EXPIRES_IN_SECONDS = 7 * 24 * 60 * 60;
 
 export interface ITokenService {
-	generateAccessToken(payload: AccessTokenPayload): string;
-	generateRefreshToken(payload: RefreshTokenPayload): string;
-	generateResetToken(payload: ResetTokenPayload): string;
-	generateSetupToken(payload: SetupTokenPayload): string;
-	verifyAccessToken(token: string): AccessTokenPayload;
-	verifyRefreshToken(token: string): RefreshTokenPayload;
-	verifyResetToken(token: string): ResetTokenPayload;
-	verifySetupToken(token: string): SetupTokenPayload;
+	generateAccessToken(payload: AccessTokenPayload): Promise<string>;
+	generateRefreshToken(payload: RefreshTokenPayload): Promise<string>;
+	generateResetToken(payload: ResetTokenPayload): Promise<string>;
+	generateSetupToken(payload: SetupTokenPayload): Promise<string>;
+	verifyAccessToken(token: string): Promise<AccessTokenPayload>;
+	verifyRefreshToken(token: string): Promise<RefreshTokenPayload>;
+	verifyResetToken(token: string): Promise<ResetTokenPayload>;
+	verifySetupToken(token: string): Promise<SetupTokenPayload>;
 	hashToken(token: string): string;
 }
