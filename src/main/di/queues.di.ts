@@ -4,13 +4,14 @@ import type { JobQueuePort } from "../../application/ports/job-queue.port";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
 import { InMemoryEventBus } from "../../infrastructure/events/in-memory-event-bus";
 import { JobQueueAdapter } from "../../infrastructure/queue/job-queue.adapter";
+import { QUEUE_NAMES } from "../../shared/constants";
 import { TYPES } from "../../shared/types/types";
 
 /**
  * Notification queue for processing email and push notification jobs.
  * Workers listen to this queue to handle delivery tasks.
  */
-export const notificationQueue = new Queue("notificationQueue", {
+export const notificationQueue = new Queue(QUEUE_NAMES.NOTIFICATION, {
 	connection: redisClient,
 });
 

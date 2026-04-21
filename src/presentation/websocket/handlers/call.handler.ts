@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
-import type { IAuthorizeWhiteboardPermissionUseCase } from "../../../application/modules/live-call/usecases/authorize-whiteboard-permission.usecase.interface";
-import type { IJoinSessionUseCase } from "../../../application/modules/live-call/usecases/join-session.usecase.interface";
-import type { ITerminateSessionUseCase } from "../../../application/modules/live-call/usecases/terminate-session.usecase.interface";
-import type { IValidateJoinSessionUseCase } from "../../../application/modules/live-call/usecases/validate-join-session.usecase.interface";
+import type { IAuthorizeWhiteboardPermissionUseCase } from "../../../application/modules/live-call/use-cases/authorize-whiteboard-permission.use-case.interface";
+import type { IJoinSessionUseCase } from "../../../application/modules/live-call/use-cases/join-session.use-case.interface";
+import type { ITerminateSessionUseCase } from "../../../application/modules/live-call/use-cases/terminate-session.use-case.interface";
+import type { IValidateJoinSessionUseCase } from "../../../application/modules/live-call/use-cases/validate-join-session.use-case.interface";
 import type { IWhiteboardCache } from "../../../application/services";
 import logger from "../../../shared/logging/logger";
 import { TYPES } from "../../../shared/types/types";

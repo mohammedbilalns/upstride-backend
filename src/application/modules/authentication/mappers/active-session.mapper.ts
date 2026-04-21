@@ -5,6 +5,7 @@ export class ActiveSessionMapper {
 	static toDTO(session: Session, currentSessionId: string): ActiveSessionDTO {
 		return {
 			id: session.sid,
+			ip: session.ipAddress,
 			deviceName: session.deviceName,
 			deviceType: session.deviceType,
 			lastUsedAt: session.lastUsedAt,

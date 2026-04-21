@@ -4,6 +4,7 @@ export interface GetActiveSessionsInput {
 
 export interface ActiveSessionDTO {
 	id: string;
+	ip: string;
 	deviceName: string;
 	deviceType: string;
 	lastUsedAt: Date;

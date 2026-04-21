@@ -1,10 +1,4 @@
 import type { Worker } from "bullmq";
-import type {
-	IMailService,
-	IPushNotificationPort as PushNotificationPort,
-} from "../application/services";
-import type { IPushSubscriptionRepository } from "../domain/repositories/push-subscription.repository.interface";
-import type { IUserRepository } from "../domain/repositories/user.repository.interface";
 import {
 	connectToMongo,
 	disconnectFromMongo,
@@ -13,7 +7,7 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import { createNotificationWorker } from "../infrastructure/queue/workers/notification.worker";
+import type { NotificationWorkerFactory } from "../infrastructure/queue/workers";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
 import { notificationQueue } from "./di/queues.di";
@@ -27,27 +21,9 @@ async function start() {
 
 	await Promise.all([connectToMongo(), redisClient.ping()]);
 
-	const mailService = workerContainer.get<IMailService>(
-		TYPES.Services.MailService,
-	);
-	const pushNotificationPort = workerContainer.get<PushNotificationPort>(
-		TYPES.Services.PushNotificationPort,
-	);
-	const userRepository = workerContainer.get<IUserRepository>(
-		TYPES.Repositories.UserRepository,
-	);
-	const pushSubscriptionRepository =
-		workerContainer.get<IPushSubscriptionRepository>(
-			TYPES.Repositories.PushSubscriptionRepository,
-		);
-
-	notificationWorker = createNotificationWorker(
-		redisClient,
-		mailService,
-		userRepository,
-		pushNotificationPort,
-		pushSubscriptionRepository,
-	);
+	notificationWorker = workerContainer
+		.get<NotificationWorkerFactory>(TYPES.Workers.NotificationWorkerFactory)
+		.create();
 }
 
 setupGracefulShutdown({

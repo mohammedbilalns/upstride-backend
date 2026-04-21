@@ -1,5 +1,6 @@
 import type { Request } from "express";
 import { UAParser } from "ua-parser-js";
+import { normalizeIpAddress } from "./ip-address.util";
 
 export function extractDeviceInfo(req: Request) {
 	const userAgent = req.headers["user-agent"] || ("unknown" as string);
@@ -13,7 +14,7 @@ export function extractDeviceInfo(req: Request) {
 		? `${deviceOsName} ${deviceOsVersion}`
 		: deviceOsName;
 	const browser = ua.getBrowser().name || "unknown";
-	const ipAddress = req.ip || req.socket?.remoteAddress || "unknown";
+	const ipAddress = normalizeIpAddress(req.ip || req.socket?.remoteAddress);
 
 	return {
 		deviceType,

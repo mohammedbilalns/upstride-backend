@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import { redisClient } from "../../../infrastructure/database/redis/redis.connection";
 import { notificationQueue } from "../../../main/di/queues.di";
-import { HttpStatus } from "../../../shared/constants";
+import { HttpStatus, QUEUE_NAMES } from "../../../shared/constants";
 
 type HealthStatus = "up" | "down";
 
@@ -110,7 +110,7 @@ export const healthCheckHandler = async (_req: Request, res: Response) => {
 	const [mongo, redis, notificationQueueHealth] = await Promise.all([
 		checkMongo(),
 		checkRedis(),
-		checkQueue("notificationQueue", notificationQueue),
+		checkQueue(QUEUE_NAMES.NOTIFICATION, notificationQueue),
 	]);
 
 	const dependencies = {

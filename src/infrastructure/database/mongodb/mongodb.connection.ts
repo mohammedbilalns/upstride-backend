@@ -18,7 +18,6 @@ export const connectToMongo = async () => {
 
 export const disconnectFromMongo = async () => {
 	if (!isConnected) return;
-
 	try {
 		await mongoose.connection.close();
 		isConnected = false;
@@ -32,3 +31,8 @@ export const disconnectFromMongo = async () => {
 		);
 	}
 };
+
+mongoose.connection.on("disonnected", () => {
+	isConnected = false;
+	logger.warn("MongoDB Disconnected unexpectedly");
+});

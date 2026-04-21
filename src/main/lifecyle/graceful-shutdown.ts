@@ -1,6 +1,7 @@
 import logger from "../../shared/logging/logger";
 
 type ShutdownTask = () => void | Promise<void>;
+
 export function setupGracefulShutdown(options: {
 	name: string;
 	tasks: ShutdownTask[];

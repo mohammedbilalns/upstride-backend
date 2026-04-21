@@ -1,5 +1,5 @@
-export * from "./get-me.usecase";
-export * from "./get-me.usecase.interface";
+export * from "./get-me.use-case";
+export * from "./get-me.use-case.interface";
 export * from "./login";
 export * from "./logout";
 export * from "./password-reset";

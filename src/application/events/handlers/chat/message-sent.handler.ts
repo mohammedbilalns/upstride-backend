@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import type { MessageSentEvent } from "../../../../domain/events/message-sent.event";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
-import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.usecase.interface";
+import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.use-case.interface";
 import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()

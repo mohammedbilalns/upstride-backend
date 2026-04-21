@@ -1,2 +1,2 @@
-export * from "./refresh-session.usecase";
-export * from "./refresh-session.usecase.interface";
+export * from "./refresh-session.use-case";
+export * from "./refresh-session.use-case.interface";

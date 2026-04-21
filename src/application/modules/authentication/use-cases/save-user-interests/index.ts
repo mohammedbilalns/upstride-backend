@@ -1,2 +1,2 @@
-export * from "./save-user-interests.usecase";
-export * from "./save-user-interests.usecase.interface";
+export * from "./save-user-interests.use-case";
+export * from "./save-user-interests.use-case.interface";

@@ -4,7 +4,7 @@ import type { PaginatedResult } from "../../../../domain/repositories/capabiliti
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import type { GetBookingsResponse } from "../dtos/booking.dto";
-import { BookingUsecaseMapper } from "../mappers/booking-usecase.mapper";
+import { BookingMapper } from "../mappers/booking.mapper";
 
 export const buildBookingListResponse = async (
 	bookingRepository: IBookingRepository,
@@ -29,7 +29,7 @@ export const buildBookingListResponse = async (
 
 	return mapPaginatedResult(result, (items) =>
 		items.map((booking) => {
-			const dto = BookingUsecaseMapper.toDto(booking);
+			const dto = BookingMapper.toDto(booking);
 			if (
 				booking.paymentStatus === "COMPLETED" &&
 				(!booking.meetingLink || booking.meetingLink === "Pending")

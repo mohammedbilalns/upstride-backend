@@ -34,6 +34,14 @@ export const TYPES = {
 	Queues: {
 		NotificationQueue: Symbol.for("NotificationQueue"),
 	},
+	Workers: {
+		NotificationWorkerFactory: Symbol.for("NotificationWorkerFactory"),
+		RegisterOtpHandler: Symbol.for("RegisterOtpHandler"),
+		ResetPasswordOtpHandler: Symbol.for("ResetPasswordOtpHandler"),
+		ChangePasswordOtpHandler: Symbol.for("ChangePasswordOtpHandler"),
+		MentorApprovalHandler: Symbol.for("MentorApprovalHandler"),
+		SessionReminderHandler: Symbol.for("SessionReminderHandler"),
+	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),
 		CoinTransactionRepository: Symbol.for("CoinTransactionRepository"),

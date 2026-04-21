@@ -1,2 +1,2 @@
-export * from "./get-mentors.usecase";
-export * from "./get-mentors.usecase.interface";
+export * from "./get-mentors.use-case";
+export * from "./get-mentors.use-case.interface";
