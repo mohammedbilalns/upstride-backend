@@ -60,6 +60,7 @@ export class UnblockArticleUseCase implements IUnblockArticleUseCase {
 		}
 
 		return {
+			resourceId: (updated || article).id,
 			article: ArticleMapper.toDto(updated || article),
 			isUnblocked: true,
 		};

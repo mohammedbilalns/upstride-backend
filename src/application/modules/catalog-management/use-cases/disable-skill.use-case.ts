@@ -11,7 +11,8 @@ export class DisableSkillUseCase implements IDisableSkillUseCase {
 		private readonly _skillRepository: ISkillRepository,
 	) {}
 
-	async execute(input: DisableSkillInput): Promise<void> {
+	async execute(input: DisableSkillInput): Promise<{ resourceId: string }> {
 		await this._skillRepository.disable(input.skillId);
+		return { resourceId: input.skillId };
 	}
 }

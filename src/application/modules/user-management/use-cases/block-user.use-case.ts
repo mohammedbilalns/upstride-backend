@@ -29,7 +29,7 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 		private _eventBus: EventBus,
 	) {}
 
-	async execute(input: BlockUserInput): Promise<void> {
+	async execute(input: BlockUserInput): Promise<{ resourceId: string }> {
 		const user = await this._userRepository.findById(input.userId);
 		if (!user) {
 			throw new UserNotFoundError();
@@ -66,5 +66,7 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 				actionTaken: "blocked user",
 			});
 		}
+
+		return { resourceId: input.userId };
 	}
 }

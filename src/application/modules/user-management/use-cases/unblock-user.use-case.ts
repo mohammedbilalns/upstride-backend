@@ -16,7 +16,7 @@ export class UnblockUserUseCase implements IUnblockUserUseCase {
 		private _eventBus: EventBus,
 	) {}
 
-	async execute(input: BlockUserInput): Promise<void> {
+	async execute(input: BlockUserInput): Promise<{ resourceId: string }> {
 		const user = await this._userRepository.findById(input.userId);
 		if (!user) {
 			throw new UserNotFoundError();
@@ -27,5 +27,7 @@ export class UnblockUserUseCase implements IUnblockUserUseCase {
 		await this._eventBus.publish(
 			new UserStatusChangedEvent({ userId: input.userId, isBlocked: false }),
 		);
+
+		return { resourceId: input.userId };
 	}
 }

@@ -37,23 +37,25 @@ export class UserManagementController {
 	});
 
 	blockUser = asyncHandler(async (req, res) => {
-		await this._blockUserUseCase.execute({
+		const data = await this._blockUserUseCase.execute({
 			userId: (req.validated?.params as UserIdParam).id,
 			...(req.validated?.body as BlockUserBody),
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: UserManagementResponseMessages.USER_BLOCKED_SUCCESS,
+			data,
 		});
 	});
 
 	unblockUser = asyncHandler(async (req, res) => {
-		await this._unblockUserUseCase.execute({
+		const data = await this._unblockUserUseCase.execute({
 			userId: (req.validated?.params as UserIdParam).id,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: UserManagementResponseMessages.USER_UNBLOCKED_SUCCESS,
+			data,
 		});
 	});
 }

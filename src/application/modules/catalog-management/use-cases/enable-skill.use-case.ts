@@ -11,7 +11,8 @@ export class EnableSkillUseCase implements IEnableSkillUseCase {
 		private readonly _skillRepository: ISkillRepository,
 	) {}
 
-	async execute(input: EnableSkillInput): Promise<void> {
+	async execute(input: EnableSkillInput): Promise<{ resourceId: string }> {
 		await this._skillRepository.enable(input.skillId);
+		return { resourceId: input.skillId };
 	}
 }

@@ -11,7 +11,8 @@ export class DisableInterestUseCase implements IDisableInterestUseCase {
 		private readonly _interestRepository: IInterestRepository,
 	) {}
 
-	async execute(input: DisableInterestInput): Promise<void> {
+	async execute(input: DisableInterestInput): Promise<{ resourceId: string }> {
 		await this._interestRepository.disable(input.interestId);
+		return { resourceId: input.interestId };
 	}
 }

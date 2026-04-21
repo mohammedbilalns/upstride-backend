@@ -6,6 +6,7 @@ export interface UnblockArticleInput {
 }
 
 export interface UnblockArticleOutput {
+	resourceId: string;
 	article: ArticleDto;
 	isUnblocked: boolean;
 }

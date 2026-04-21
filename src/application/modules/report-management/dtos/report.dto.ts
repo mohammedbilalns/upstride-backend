@@ -93,5 +93,6 @@ export interface BlockArticleInput {
 }
 
 export interface BlockArticleOutput {
+	resourceId: string;
 	article: ArticleDto;
 }

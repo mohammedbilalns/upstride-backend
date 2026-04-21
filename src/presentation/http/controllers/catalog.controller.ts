@@ -83,12 +83,13 @@ export class CatalogController {
 	});
 
 	disableInterest = asyncHandler(async (req, res) => {
-		await this._disableInterestUseCase.execute({
+		const data = await this._disableInterestUseCase.execute({
 			interestId: req.params.id as string,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.INTEREST_DISABLED_SUCCESS,
+			data,
 		});
 	});
 
@@ -101,12 +102,13 @@ export class CatalogController {
 	});
 
 	disableSkill = asyncHandler(async (req, res) => {
-		await this._disableSkillUseCase.execute({
+		const data = await this._disableSkillUseCase.execute({
 			skillId: req.params.id as string,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.SKILL_DISABLED_SUCCESS,
+			data,
 		});
 	});
 
@@ -119,42 +121,46 @@ export class CatalogController {
 	});
 
 	disableProfession = asyncHandler(async (req, res) => {
-		await this._disableProfessionUseCase.execute({
+		const data = await this._disableProfessionUseCase.execute({
 			professionId: req.params.id as string,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.PROFESSION_DISABLED_SUCCESS,
+			data,
 		});
 	});
 
 	enableInterest = asyncHandler(async (req, res) => {
-		await this._enableInterestUseCase.execute({
+		const data = await this._enableInterestUseCase.execute({
 			interestId: req.params.id as string,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.INTEREST_ENABLED_SUCCESS,
+			data,
 		});
 	});
 
 	enableSkill = asyncHandler(async (req, res) => {
-		await this._enableSkillUseCase.execute({
+		const data = await this._enableSkillUseCase.execute({
 			skillId: req.params.id as string,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.SKILL_ENABLED_SUCCESS,
+			data,
 		});
 	});
 
 	enableProfession = asyncHandler(async (req, res) => {
-		await this._enableProfessionUseCase.execute({
+		const data = await this._enableProfessionUseCase.execute({
 			professionId: req.params.id as string,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.PROFESSION_ENABLED_SUCCESS,
+			data,
 		});
 	});
 }

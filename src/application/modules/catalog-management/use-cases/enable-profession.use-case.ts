@@ -11,7 +11,8 @@ export class EnableProfessionUseCase implements IEnableProfessionUseCase {
 		private readonly _professionRepository: IProfessionRepository,
 	) {}
 
-	async execute(input: EnableProfessionInput): Promise<void> {
+	async execute(input: EnableProfessionInput): Promise<{ resourceId: string }> {
 		await this._professionRepository.enable(input.professionId);
+		return { resourceId: input.professionId };
 	}
 }

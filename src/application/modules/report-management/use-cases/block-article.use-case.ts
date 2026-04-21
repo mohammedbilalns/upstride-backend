@@ -69,6 +69,9 @@ export class BlockArticleUseCase implements IBlockArticleUseCase {
 			});
 		}
 
-		return { article: ArticleMapper.toDto(updated) };
+		return {
+			resourceId: updated.id,
+			article: ArticleMapper.toDto(updated),
+		};
 	}
 }

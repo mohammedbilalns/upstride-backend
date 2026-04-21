@@ -11,7 +11,10 @@ export class DisableProfessionUseCase implements IDisableProfessionUseCase {
 		private readonly _professionRepository: IProfessionRepository,
 	) {}
 
-	async execute(input: DisableProfessionInput): Promise<void> {
+	async execute(
+		input: DisableProfessionInput,
+	): Promise<{ resourceId: string }> {
 		await this._professionRepository.disable(input.professionId);
+		return { resourceId: input.professionId };
 	}
 }

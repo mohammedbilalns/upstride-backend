@@ -11,7 +11,8 @@ export class EnableInterestUseCase implements IEnableInterestUseCase {
 		private readonly _interestRepository: IInterestRepository,
 	) {}
 
-	async execute(input: EnableInterestInput): Promise<void> {
+	async execute(input: EnableInterestInput): Promise<{ resourceId: string }> {
 		await this._interestRepository.enable(input.interestId);
+		return { resourceId: input.interestId };
 	}
 }
