@@ -7,7 +7,10 @@ import {
 	AddInterestBodySchema,
 	AddProfessionBodySchema,
 	AddSkillBodySchema,
-	updateCatalogStatusParamsSchema,
+	updateCatalogParamsSchema,
+	updateInterestBodySchema,
+	updateProfessionBodySchema,
+	updateSkillBodySchema,
 } from "../validators/catalog";
 
 const router = Router();
@@ -24,12 +27,12 @@ router.post(
 );
 router.patch(
 	ROUTES.CATALOG.DISABLE_INTEREST(":id"),
-	validate({ params: updateCatalogStatusParamsSchema }),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.disableInterest,
 );
 router.patch(
 	ROUTES.CATALOG.ENABLE_INTEREST(":id"),
-	validate({ params: updateCatalogStatusParamsSchema }),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.enableInterest,
 );
 
@@ -40,12 +43,12 @@ router.post(
 );
 router.patch(
 	ROUTES.CATALOG.DISABLE_SKILL(":id"),
-	validate({ params: updateCatalogStatusParamsSchema }),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.disableSkill,
 );
 router.patch(
 	ROUTES.CATALOG.ENABLE_SKILL(":id"),
-	validate({ params: updateCatalogStatusParamsSchema }),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.enableSkill,
 );
 
@@ -56,13 +59,34 @@ router.post(
 );
 router.patch(
 	ROUTES.CATALOG.DISABLE_PROFESSION(":id"),
-	validate({ params: updateCatalogStatusParamsSchema }),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.disableProfession,
 );
 router.patch(
 	ROUTES.CATALOG.ENABLE_PROFESSION(":id"),
-	validate({ params: updateCatalogStatusParamsSchema }),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.enableProfession,
+);
+
+router.patch(
+	ROUTES.CATALOG.UPDATE_SKILL(":id"),
+	validate({ params: updateCatalogParamsSchema, body: updateSkillBodySchema }),
+);
+
+router.patch(
+	ROUTES.CATALOG.UPDATE_INTEREST(":id"),
+	validate({
+		params: updateCatalogParamsSchema,
+		body: updateInterestBodySchema,
+	}),
+);
+
+router.patch(
+	ROUTES.CATALOG.UPDATE_PROFESSION("id"),
+	validate({
+		params: updateCatalogParamsSchema,
+		body: updateProfessionBodySchema,
+	}),
 );
 
 export { router as catalogRouter };

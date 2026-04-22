@@ -25,6 +25,12 @@ import {
 	type IGetOnboardingCatalogUseCase,
 	type IGetProfessionsUseCase,
 } from "../../application/modules/catalog/use-cases";
+import type { IUpdateInterestUseCase } from "../../application/modules/catalog/use-cases/udpate-interest.use-case.interface";
+import { UpdateInterestUseCase } from "../../application/modules/catalog/use-cases/update-interest.use-case";
+import { UpdateProfessionUseCase } from "../../application/modules/catalog/use-cases/update-profession.use-case";
+import type { IUpdateProfessionUseCase } from "../../application/modules/catalog/use-cases/update-profession.use-case.interface";
+import { UpdateSkillUseCase } from "../../application/modules/catalog/use-cases/update-skill.use-case";
+import type { IUpdateSkillUseCase } from "../../application/modules/catalog/use-cases/update-skill.use-case.interface";
 import { TYPES } from "../../shared/types/types";
 
 export const registerCatalogBindings = (container: Container): void => {
@@ -75,5 +81,18 @@ export const registerCatalogBindings = (container: Container): void => {
 	container
 		.bind<IEnableProfessionUseCase>(TYPES.UseCases.EnableProfession)
 		.to(EnableProfessionUseCase)
+		.inSingletonScope();
+	container
+		.bind<IUpdateInterestUseCase>(TYPES.UseCases.UpdateInterest)
+		.to(UpdateInterestUseCase)
+		.inSingletonScope();
+
+	container
+		.bind<IUpdateSkillUseCase>(TYPES.UseCases.UpdateSkill)
+		.to(UpdateSkillUseCase)
+		.inSingletonScope();
+	container
+		.bind<IUpdateProfessionUseCase>(TYPES.UseCases.UpdateProfession)
+		.to(UpdateProfessionUseCase)
 		.inSingletonScope();
 };

@@ -109,6 +109,9 @@ export const CatalogResponseMessages = {
 	INTEREST_ENABLED_SUCCESS: "Interest enabled successfully",
 	SKILL_ENABLED_SUCCESS: "Skill enabled successfully",
 	PROFESSION_ENABLED_SUCCESS: "Profession enabled successfully",
+	UPDATE_INTEREST_SUCCESS: "Interest updated successfully",
+	UPDATE_SKILL_SUCCESS: "Skill updated successfully",
+	UPDATE_PROFESSION_SUCCESS: "Profession updated successfully",
 };
 
 export const AdminsResponseMessages = {

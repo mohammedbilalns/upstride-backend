@@ -213,6 +213,9 @@ export const TYPES = {
 		),
 		ValidateJoinSession: Symbol.for("ValidateJoinSessionUseCase"),
 		ScheduleLiveSesionReminder: Symbol.for("ScheduleLiveSesionReminderUseCase"),
+		UpdateSkill: Symbol.for("UpdateSkillUseCase"),
+		UpdateProfession: Symbol.for("UpdateProfessionUseCase"),
+		UpdateInterest: Symbol.for("UpdateInterestUseCase"),
 	},
 	Controllers: {
 		Users: Symbol.for("UserController"),
