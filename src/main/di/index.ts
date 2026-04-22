@@ -1,4 +1,4 @@
-export * from "./admin-management.di";
+export * from "./admin.di";
 export * from "./article.di";
 export * from "./authentication.di";
 export * from "./availability.di";
@@ -19,5 +19,5 @@ export * from "./queues.di";
 export * from "./report.di";
 export * from "./repositories.di";
 export * from "./storage.di";
-export * from "./user-management.di";
+export * from "./users.di";
 export * from "./wallet.di";

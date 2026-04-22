@@ -11,7 +11,7 @@ import {
 } from "../../application/modules/admin/use-cases";
 import { TYPES } from "../../shared/types/types";
 
-export const registerAdminManagementBindings = (container: Container): void => {
+export const registerAdminBindings = (container: Container): void => {
 	container
 		.bind<IGetAdminsUseCase>(TYPES.UseCases.GetAdmins)
 		.to(GetAdminsUseCase)

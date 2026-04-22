@@ -14,5 +14,5 @@ export * from "./password-reset.controller";
 export * from "./payment.controller";
 export * from "./profile.controller";
 export * from "./report.controller";
-export * from "./user-management.controller";
+export * from "./users.controller";
 export * from "./wallet.controller";
