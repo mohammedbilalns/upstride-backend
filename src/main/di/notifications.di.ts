@@ -7,7 +7,7 @@ import {
 	MarkNotificationReadUseCase,
 	RegisterPushSubscriptionUseCase,
 	UnregisterPushSubscriptionUseCase,
-} from "../../application/modules/notifications/use-cases";
+} from "../../application/modules/notification/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerNotificationBindings = (container: Container): void => {

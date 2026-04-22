@@ -7,8 +7,8 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import type { EventBus } from "../../../events/event-bus.interface";
-import { ArticleNotFoundError } from "../../article-management/errors";
-import { ArticleMapper } from "../../article-management/mappers/article.mapper";
+import { ArticleNotFoundError } from "../../article/errors";
+import { ArticleMapper } from "../../article/mappers/article.mapper";
 import { UserNotFoundError } from "../../authentication/errors";
 import type { BlockArticleInput, BlockArticleOutput } from "../dtos/report.dto";
 import { AdminOnlyReportActionError } from "../errors";

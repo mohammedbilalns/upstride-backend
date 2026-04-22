@@ -8,7 +8,7 @@ import type {
 	IGetProfileUseCase,
 	IRequestChangePasswordUseCase,
 	IUpdateProfileUseCase,
-} from "../../../application/modules/profile-management/use-cases";
+} from "../../../application/modules/profile/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

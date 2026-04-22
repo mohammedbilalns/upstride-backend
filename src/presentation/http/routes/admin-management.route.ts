@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { apiContainer } from "../../../main/di/api.container";
 import { ROUTES } from "../constants";
-import { AdminManagementController } from "../controllers/admin-management.controller";
+import { AdminManagementController } from "../controllers/admin.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	AdminIdParamSchema,

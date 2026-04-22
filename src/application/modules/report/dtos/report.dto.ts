@@ -2,7 +2,7 @@ import type {
 	ReportStatus,
 	ReportTargetType,
 } from "../../../../domain/entities/report.entity";
-import type { ArticleDto } from "../../article-management/dtos/article.dto";
+import type { ArticleDto } from "../../article/dtos/article.dto";
 
 export interface ReportDto {
 	id: string;

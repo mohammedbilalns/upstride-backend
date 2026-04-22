@@ -6,7 +6,8 @@ import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util"
 import {
 	AvailabilityNotFoundError,
 	UnauthorizedAvailabilityActionError,
-} from "../../booking-management/errors/booking.errors";
+} from "../../booking/errors/booking.errors";
+
 import type { ReenableAvailabilityInput } from "../dtos/availability.dto";
 import type { IReenableAvailabilityUseCase } from "./reenable-availability.use-case.interface";
 

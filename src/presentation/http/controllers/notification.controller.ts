@@ -6,7 +6,7 @@ import type {
 	IMarkNotificationReadUseCase,
 	IRegisterPushSubscriptionUseCase,
 	IUnregisterPushSubscriptionUseCase,
-} from "../../../application/modules/notifications/use-cases";
+} from "../../../application/modules/notification/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

@@ -1,11 +1,11 @@
 import { inject, injectable } from "inversify";
-import type { ICheckAndCreateAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/check-and-create-availability.use-case.interface";
-import type { ICheckAndReenableAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/check-and-reenable-availability.use-case.interface";
-import type { ICreateAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/create-availability.use-case.interface";
-import type { IDeleteAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/delete-availability.use-case.interface";
-import type { IGetMentorAvailabilitiesUseCase } from "../../../application/modules/availability-management/use-cases/get-mentor-availabilities.use-case.interface";
-import type { IReenableAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/reenable-availability.use-case.interface";
-import type { IUpdateAvailabilityUseCase } from "../../../application/modules/availability-management/use-cases/update-availability.use-case.interface";
+import type { ICheckAndCreateAvailabilityUseCase } from "../../../application/modules/availability/use-cases/check-and-create-availability.use-case.interface";
+import type { ICheckAndReenableAvailabilityUseCase } from "../../../application/modules/availability/use-cases/check-and-reenable-availability.use-case.interface";
+import type { ICreateAvailabilityUseCase } from "../../../application/modules/availability/use-cases/create-availability.use-case.interface";
+import type { IDeleteAvailabilityUseCase } from "../../../application/modules/availability/use-cases/delete-availability.use-case.interface";
+import type { IGetMentorAvailabilitiesUseCase } from "../../../application/modules/availability/use-cases/get-mentor-availabilities.use-case.interface";
+import type { IReenableAvailabilityUseCase } from "../../../application/modules/availability/use-cases/reenable-availability.use-case.interface";
+import type { IUpdateAvailabilityUseCase } from "../../../application/modules/availability/use-cases/update-availability.use-case.interface";
 import { HttpStatus } from "../../../shared/constants/http-status-codes";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

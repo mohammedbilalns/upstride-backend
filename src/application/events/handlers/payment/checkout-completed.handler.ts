@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import type { CheckoutCompletedEvent } from "../../../../domain/events/checkout-completed.event";
 import { TYPES } from "../../../../shared/types/types";
-import type { IConfirmBookingPaymentService } from "../../../modules/payments/services/confirm-booking-payment.service.interface";
-import type { IProcessWalletTopupService } from "../../../modules/payments/services/process-wallet-topup.service.interface";
+import type { IConfirmBookingPaymentService } from "../../../modules/payment/services/confirm-booking-payment.service.interface";
+import type { IProcessWalletTopupService } from "../../../modules/payment/services/process-wallet-topup.service.interface";
 import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()

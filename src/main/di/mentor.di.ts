@@ -18,7 +18,7 @@ import {
 	RejectMentorUseCase,
 	ResubmitMentorUseCase,
 	UpdateMentorProfileUseCase,
-} from "../../application/modules/mentor-management/use-cases";
+} from "../../application/modules/mentor-moderation/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerMentorBindings = (container: Container): void => {

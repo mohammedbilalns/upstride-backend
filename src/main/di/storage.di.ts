@@ -2,7 +2,7 @@ import type { Container } from "inversify";
 import {
 	DeleteFileUseCase,
 	GetPreSignedUploadUrlUseCase,
-} from "../../application/modules/storage-management/use-cases";
+} from "../../application/modules/storage/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerStorageBindings = (container: Container): void => {

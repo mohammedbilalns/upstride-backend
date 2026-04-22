@@ -24,7 +24,7 @@ import {
 	type IFetchCatalogUseCase,
 	type IGetOnboardingCatalogUseCase,
 	type IGetProfessionsUseCase,
-} from "../../application/modules/catalog-management/use-cases";
+} from "../../application/modules/catalog/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerCatalogBindings = (container: Container): void => {

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { ArticleUnblockedEvent } from "../../../../domain/events/article-unblocked.event";
 import { TYPES } from "../../../../shared/types/types";
-import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.use-case.interface";
+import type { ICreateNotificationUseCase } from "../../../modules/notification/use-cases/create-notification.use-case.interface";
 import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()

@@ -5,7 +5,7 @@ import type {
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import { UserNotFoundError } from "../../authentication/errors";
-import type { ICreateNotificationUseCase } from "../../notifications/use-cases";
+import type { ICreateNotificationUseCase } from "../../notification/use-cases";
 import type {
 	UpdateReportStatusInput,
 	UpdateReportStatusOutput,

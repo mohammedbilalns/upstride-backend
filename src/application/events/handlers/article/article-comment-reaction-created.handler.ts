@@ -3,7 +3,7 @@ import type { ArticleCommentReactionCreatedEvent } from "../../../../domain/even
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import { shouldNotify } from "../../../../shared/utilities/notification.utils";
-import type { ICreateNotificationUseCase } from "../../../modules/notifications/use-cases/create-notification.use-case.interface";
+import type { ICreateNotificationUseCase } from "../../../modules/notification/use-cases/create-notification.use-case.interface";
 import type { EventHandler } from "../../event-handler.interface";
 
 @injectable()

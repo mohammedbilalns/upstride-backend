@@ -4,7 +4,7 @@ import type {
 	IGetChatUseCase,
 	IMarkMessagesReadUseCase,
 	ISendMessageUseCase,
-} from "../../../application/modules/chat-management/use-cases";
+} from "../../../application/modules/chat/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

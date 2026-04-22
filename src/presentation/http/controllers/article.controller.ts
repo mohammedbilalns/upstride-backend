@@ -14,7 +14,7 @@ import type {
 	ISubmitArticleAppealUseCase,
 	IUpdateArticleCommentUseCase,
 	IUpdateArticleUseCase,
-} from "../../../application/modules/article-management/use-cases";
+} from "../../../application/modules/article/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
-import type { IUnblockArticleUseCase } from "../../../application/modules/article-management/use-cases";
+import type { IUnblockArticleUseCase } from "../../../application/modules/article/use-cases";
 import type {
 	IBlockArticleUseCase,
 	IGetReportsUseCase,
 	IReportArticleUseCase,
 	IReportUserUseCase,
 	IUpdateReportStatusUseCase,
-} from "../../../application/modules/report-management/use-cases";
+} from "../../../application/modules/report/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";

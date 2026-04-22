@@ -1,4 +1,4 @@
-export * from "./admin-management.controller";
+export * from "./admin.controller";
 export * from "./article.controller";
 export * from "./auth.controller";
 export * from "./availability.controller";

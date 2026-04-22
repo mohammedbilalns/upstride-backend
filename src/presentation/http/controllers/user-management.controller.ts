@@ -3,7 +3,7 @@ import type {
 	IBlockUserUseCase,
 	IGetUsersUseCase,
 	IUnblockUserUseCase,
-} from "../../../application/modules/user-management/use-cases";
+} from "../../../application/modules/user-moderation/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { UserManagementResponseMessages } from "../constants";

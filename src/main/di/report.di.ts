@@ -10,7 +10,7 @@ import {
 	ReportArticleUseCase,
 	ReportUserUseCase,
 	UpdateReportStatusUseCase,
-} from "../../application/modules/report-management/use-cases";
+} from "../../application/modules/report/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerReportBindings = (container: Container): void => {

@@ -5,7 +5,7 @@ import { UnauthorizedError } from "../../authentication/errors";
 import {
 	BookingNotFoundError,
 	SessionTooEarlyError,
-} from "../../booking-management/errors/booking.errors";
+} from "../../booking/errors/booking.errors";
 import type { JoinSessionInput } from "../dtos/join-session.dto";
 import type { IValidateJoinSessionUseCase } from "./validate-join-session.use-case.interface";
 

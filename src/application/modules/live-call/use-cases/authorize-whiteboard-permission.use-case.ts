@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import { UnauthorizedError } from "../../authentication/errors";
-import { BookingNotFoundError } from "../../booking-management/errors/booking.errors";
+import { BookingNotFoundError } from "../../booking/errors/booking.errors";
 import type { AuthorizeWhiteboardPermissionInput } from "../dtos/authorize-whiteboard-permission.dto";
 import type { IAuthorizeWhiteboardPermissionUseCase } from "./authorize-whiteboard-permission.use-case.interface";
 

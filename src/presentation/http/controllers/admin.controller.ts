@@ -4,7 +4,7 @@ import type {
 	ICreateAdminUseCase,
 	IGetAdminsUseCase,
 	IUnblockAdminUseCase,
-} from "../../../application/modules/admin-management/use-cases";
+} from "../../../application/modules/admin/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { AdminManagementResponseMessages } from "../constants";

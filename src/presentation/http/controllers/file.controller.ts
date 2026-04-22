@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import type {
 	DeleteFileUseCase,
 	GetPreSignedUploadUrlUseCase,
-} from "../../../application/modules/storage-management/use-cases";
+} from "../../../application/modules/storage/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { FileResponseMessages } from "../constants";

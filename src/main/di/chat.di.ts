@@ -5,7 +5,7 @@ import {
 	GetChatUseCase,
 	MarkMessagesReadUseCase,
 	SendMessageUseCase,
-} from "../../application/modules/chat-management/use-cases";
+} from "../../application/modules/chat/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerChatBindings = (container: Container): void => {

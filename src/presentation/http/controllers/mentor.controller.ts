@@ -10,7 +10,7 @@ import type {
 	IRejectMentorUseCase,
 	IResubmitMentorUseCase,
 	IUpdateMentorProfileUseCase,
-} from "../../../application/modules/mentor-management/use-cases";
+} from "../../../application/modules/mentor-moderation/use-cases";
 import type {
 	MentorApplicationsQuery,
 	MentorDiscoveryQuery,

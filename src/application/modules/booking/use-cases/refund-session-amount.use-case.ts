@@ -4,7 +4,7 @@ import { COIN_VALUE } from "../../../../shared/constants";
 import { TYPES } from "../../../../shared/types/types";
 import { DAY_MS } from "../../../../shared/utilities/time.util";
 import type { EventBus } from "../../../events/event-bus.interface";
-import type { IRefundService } from "../../payments/services/refund.service.interface";
+import type { IRefundService } from "../../payment/services/refund.service.interface";
 import type {
 	RefundSessionAmountInput,
 	RefundSessionAmountResponse,

@@ -4,7 +4,7 @@ import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import { ValidationError } from "../../../shared/errors/validation-error";
 import { UnauthorizedError } from "../../authentication/errors";
-import { BookingNotFoundError } from "../../booking-management/errors/booking.errors";
+import { BookingNotFoundError } from "../../booking/errors/booking.errors";
 import type { TerminateSessionInput } from "../dtos/terminate-session.dto";
 import type { ITerminateSessionUseCase } from "./terminate-session.use-case.interface";
 

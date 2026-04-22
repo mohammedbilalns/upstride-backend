@@ -5,7 +5,7 @@ import type { IMentorProfileReadRepository } from "../../../../domain/repositori
 import { TYPES } from "../../../../shared/types/types";
 import { istDateStringTimeToUtcIso } from "../../../../shared/utilities/time.util";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
-import { AvailabilitySlotUtil } from "../../availability-management/utils/availability-slot.util";
+import { AvailabilitySlotUtil } from "../../availability/utils/availability-slot.util";
 import type {
 	GetAvailableSlotsInput,
 	GetAvailableSlotsResponse,

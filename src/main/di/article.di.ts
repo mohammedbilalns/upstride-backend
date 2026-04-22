@@ -30,7 +30,7 @@ import {
 	UnblockArticleUseCase,
 	UpdateArticleCommentUseCase,
 	UpdateArticleUseCase,
-} from "../../application/modules/article-management/use-cases";
+} from "../../application/modules/article/use-cases";
 import { TYPES } from "../../shared/types/types";
 
 export const registerArticleBindings = (container: Container): void => {

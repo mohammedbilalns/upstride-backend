@@ -6,7 +6,7 @@ import type {
 	IUserRepository,
 } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import { ArticleNotFoundError } from "../../article-management/errors";
+import { ArticleNotFoundError } from "../../article/errors";
 import { UserNotFoundError } from "../../authentication/errors";
 import type {
 	ReportArticleInput,
