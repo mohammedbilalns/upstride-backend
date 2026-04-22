@@ -7,6 +7,7 @@ import {
 	AddInterestBodySchema,
 	AddProfessionBodySchema,
 	AddSkillBodySchema,
+	updateCatalogStatusParamsSchema,
 } from "../validators/catalog";
 
 const router = Router();
@@ -21,13 +22,14 @@ router.post(
 	validate({ body: AddInterestBodySchema }),
 	catalogController.addInterest,
 );
-//TODO: validate ids
 router.patch(
 	ROUTES.CATALOG.DISABLE_INTEREST(":id"),
+	validate({ params: updateCatalogStatusParamsSchema }),
 	catalogController.disableInterest,
 );
 router.patch(
 	ROUTES.CATALOG.ENABLE_INTEREST(":id"),
+	validate({ params: updateCatalogStatusParamsSchema }),
 	catalogController.enableInterest,
 );
 
@@ -38,9 +40,14 @@ router.post(
 );
 router.patch(
 	ROUTES.CATALOG.DISABLE_SKILL(":id"),
+	validate({ params: updateCatalogStatusParamsSchema }),
 	catalogController.disableSkill,
 );
-router.patch(ROUTES.CATALOG.ENABLE_SKILL(":id"), catalogController.enableSkill);
+router.patch(
+	ROUTES.CATALOG.ENABLE_SKILL(":id"),
+	validate({ params: updateCatalogStatusParamsSchema }),
+	catalogController.enableSkill,
+);
 
 router.post(
 	ROUTES.CATALOG.ADD_PROFESSION,
@@ -49,10 +56,12 @@ router.post(
 );
 router.patch(
 	ROUTES.CATALOG.DISABLE_PROFESSION(":id"),
+	validate({ params: updateCatalogStatusParamsSchema }),
 	catalogController.disableProfession,
 );
 router.patch(
 	ROUTES.CATALOG.ENABLE_PROFESSION(":id"),
+	validate({ params: updateCatalogStatusParamsSchema }),
 	catalogController.enableProfession,
 );
 

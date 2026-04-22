@@ -27,6 +27,10 @@ const toMinutes = (time: string) => {
 
 export const AvailabilityIdParamSchema = buildObjectIdParamSchema("id");
 
+// export const AvailabilityIdParamSchema = {
+//   id: objectIdSchema
+// }
+//
 export type AvailabilityIdParam = z.infer<typeof AvailabilityIdParamSchema>;
 
 const AvailabilityBaseSchema = z.object({

@@ -1,4 +1,5 @@
 import z from "zod";
+import { objectIdSchema } from "../../../../shared/validators";
 
 export const AddInterestBodySchema = z.object({
 	name: z
@@ -23,4 +24,8 @@ export const AddProfessionBodySchema = z.object({
 		.trim()
 		.min(2, "Name must be at least 2 characters")
 		.max(50, "Name must be at most 50 characters"),
+});
+
+export const updateCatalogStatusParamsSchema = z.object({
+	id: objectIdSchema,
 });

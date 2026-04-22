@@ -27,7 +27,7 @@ router.post(
 );
 
 router.patch(
-	"/:id/block",
+	ROUTES.ADMINS.BLOCK(":id"),
 	validate({ params: AdminIdParamSchema }),
 	controller.blockAdmin,
 );
