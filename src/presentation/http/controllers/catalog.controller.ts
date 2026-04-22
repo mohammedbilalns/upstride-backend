@@ -75,10 +75,11 @@ export class CatalogController {
 	});
 
 	addInterest = asyncHandler(async (req, res) => {
-		await this._addInterestUseCase.execute(req.body);
+		const data = await this._addInterestUseCase.execute(req.body);
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: CatalogResponseMessages.INTEREST_ADDED_SUCCESS,
+			data,
 		});
 	});
 
@@ -94,10 +95,11 @@ export class CatalogController {
 	});
 
 	addSkill = asyncHandler(async (req, res) => {
-		await this._addSkillUseCase.execute(req.body);
+		const data = await this._addSkillUseCase.execute(req.body);
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: CatalogResponseMessages.SKILL_ADDED_SUCCESS,
+			data,
 		});
 	});
 
@@ -113,10 +115,11 @@ export class CatalogController {
 	});
 
 	addProfession = asyncHandler(async (req, res) => {
-		await this._addProfessionUseCase.execute(req.body);
+		const data = await this._addProfessionUseCase.execute(req.body);
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: CatalogResponseMessages.PROFESSION_ADDED_SUCCESS,
+			data,
 		});
 	});
 

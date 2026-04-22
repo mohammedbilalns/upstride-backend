@@ -7,7 +7,7 @@ import type {
 import { CatalogLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import { createUniqueSlug } from "../../../shared/utilities/slug.util";
-import type { AddSkillInput } from "../dtos/add-skill.dto";
+import type { AddSkillInput, AddSkillOutput } from "../dtos/add-skill.dto";
 import { CatalogLimitExceededError } from "../errors/catalog-limit-exceeded.error";
 import { InterestNotFound } from "../errors/interest-not-found.error";
 import { SkillConflictError } from "../errors/skill-conflict.error";
@@ -22,7 +22,7 @@ export class AddSkillUseCase implements IAddSkillUseCase {
 		private readonly _interestRepository: IInterestRepository,
 	) {}
 
-	async execute(input: AddSkillInput): Promise<void> {
+	async execute(input: AddSkillInput): Promise<AddSkillOutput> {
 		const name = input.name.trim();
 		const interest = await this._interestRepository.findById(input.interestId);
 
@@ -30,18 +30,18 @@ export class AddSkillUseCase implements IAddSkillUseCase {
 			throw new InterestNotFound();
 		}
 
-		const skillsInInterest = await this._skillRepository.query({
-			query: { interestId: input.interestId },
-		});
-		if (skillsInInterest.length >= CatalogLimits.MAX_SKILLS_PER_INTEREST) {
+		const [skillsCountInInterest, existingByName] = await Promise.all([
+			this._skillRepository.countByInterestId(input.interestId),
+			this._skillRepository.query({
+				query: { name, interestId: input.interestId },
+			}),
+		]);
+
+		if (skillsCountInInterest >= CatalogLimits.MAX_SKILLS_PER_INTEREST) {
 			throw new CatalogLimitExceededError(
 				`Maximum limit of ${CatalogLimits.MAX_SKILLS_PER_INTEREST} skills for this interest reached`,
 			);
 		}
-
-		const existingByName = await this._skillRepository.query({
-			query: { name, interestId: input.interestId },
-		});
 
 		if (existingByName.length > 0) {
 			throw new SkillConflictError(
@@ -56,8 +56,14 @@ export class AddSkillUseCase implements IAddSkillUseCase {
 			return !existing.some((skill) => skill.slug === s);
 		});
 
-		await this._skillRepository.create(
+		const created = await this._skillRepository.create(
 			new Skill("", name, slug, input.interestId, true, new Date(), new Date()),
 		);
+
+		return {
+			newSkillId: created.id,
+			interestId: created.interestId,
+			slug: created.slug,
+		};
 	}
 }

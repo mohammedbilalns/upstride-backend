@@ -4,7 +4,10 @@ import type { IProfessionRepository } from "../../../../domain/repositories/prof
 import { CatalogLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import { createUniqueSlug } from "../../../shared/utilities/slug.util";
-import type { AddProfessionInput } from "../dtos/add-profession.dto";
+import type {
+	AddProfessionInput,
+	AddProfessionOutput,
+} from "../dtos/add-profession.dto";
 import { CatalogLimitExceededError } from "../errors/catalog-limit-exceeded.error";
 import { ProfessionConflictError } from "../errors/profession-conflict.error";
 import type { IAddProfessionUseCase } from "./add-profession.use-case.interface";
@@ -16,7 +19,7 @@ export class AddProfessionUseCase implements IAddProfessionUseCase {
 		private readonly _professionRepository: IProfessionRepository,
 	) {}
 
-	async execute(input: AddProfessionInput): Promise<void> {
+	async execute(input: AddProfessionInput): Promise<AddProfessionOutput> {
 		const name = input.name.trim();
 
 		const existingByName = await this._professionRepository.query({
@@ -45,8 +48,10 @@ export class AddProfessionUseCase implements IAddProfessionUseCase {
 			return !existing.some((p) => p.slug === s);
 		});
 
-		await this._professionRepository.create(
+		const created = await this._professionRepository.create(
 			new Profession("", name, slug, true),
 		);
+
+		return { newProfessionId: created.id, slug: created.slug };
 	}
 }

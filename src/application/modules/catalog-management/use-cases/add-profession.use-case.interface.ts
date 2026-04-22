@@ -1,5 +1,8 @@
-import type { AddProfessionInput } from "../dtos/add-profession.dto";
+import type {
+	AddProfessionInput,
+	AddProfessionOutput,
+} from "../dtos/add-profession.dto";
 
 export interface IAddProfessionUseCase {
-	execute(input: AddProfessionInput): Promise<void>;
+	execute(input: AddProfessionInput): Promise<AddProfessionOutput>;
 }

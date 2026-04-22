@@ -18,4 +18,6 @@ export interface ISkillRepository
 		UpdatableByIdRepository<Skill>,
 		QueryableRepository<Skill, SkillQuery>,
 		DisablableRepository,
-		EnableableRepository {}
+		EnableableRepository {
+	countByInterestId(interestId: string): Promise<number>;
+}

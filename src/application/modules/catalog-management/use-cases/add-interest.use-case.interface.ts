@@ -1,5 +1,8 @@
-import type { AddInterestInput } from "../dtos/add-interest.dto";
+import type {
+	AddInterestInput,
+	AddInterestOutput,
+} from "../dtos/add-interest.dto";
 
 export interface IAddInterestUseCase {
-	execute(input: AddInterestInput): Promise<void>;
+	execute(input: AddInterestInput): Promise<AddInterestOutput>;
 }

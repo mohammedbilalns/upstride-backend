@@ -4,7 +4,10 @@ import type { IInterestRepository } from "../../../../domain/repositories";
 import { CatalogLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
 import { createUniqueSlug } from "../../../shared/utilities/slug.util";
-import type { AddInterestInput } from "../dtos/add-interest.dto";
+import type {
+	AddInterestInput,
+	AddInterestOutput,
+} from "../dtos/add-interest.dto";
 import { CatalogLimitExceededError } from "../errors/catalog-limit-exceeded.error";
 import { InterestConflictError } from "../errors/interest-conflict.error";
 import type { IAddInterestUseCase } from "./add-interest.use-case.interface";
@@ -16,7 +19,7 @@ export class AddInterestUseCase implements IAddInterestUseCase {
 		private readonly _interestRepository: IInterestRepository,
 	) {}
 
-	async execute(input: AddInterestInput): Promise<void> {
+	async execute(input: AddInterestInput): Promise<AddInterestOutput> {
 		const name = input.name.trim();
 
 		const totalInterests = await this._interestRepository.query({ query: {} });
@@ -43,8 +46,10 @@ export class AddInterestUseCase implements IAddInterestUseCase {
 			return !existing.some((interest) => interest.slug === s);
 		});
 
-		await this._interestRepository.create(
+		const created = await this._interestRepository.create(
 			new Interest("", name, slug, true, new Date(), new Date()),
 		);
+
+		return { newInterestId: created.id, slug: created.slug };
 	}
 }

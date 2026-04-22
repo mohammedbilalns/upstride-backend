@@ -47,6 +47,11 @@ export class MongoSkillRepository
 		await this.model.findByIdAndUpdate(id, { isActive: true });
 	}
 
+	async countByInterestId(interestId: string): Promise<number> {
+		const count = await this.model.countDocuments({ interestId });
+		return count;
+	}
+
 	async query({ query, sort }: QueryParams<SkillQuery>): Promise<Skill[]> {
 		const filter: QueryFilter<SkillDocument> = {};
 
