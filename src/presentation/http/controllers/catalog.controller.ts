@@ -191,7 +191,7 @@ export class CatalogController {
 		});
 	});
 
-	UpdateInterest = asyncHandler(async (req, res) => {
+	updateInterest = asyncHandler(async (req, res) => {
 		await this._updateInterestUseCase.execute({
 			interestId: (req.validated?.params as UpdateCatalogParams).id,
 			name: (req.validated?.body as UpdateInterestBody).name,
@@ -202,7 +202,7 @@ export class CatalogController {
 		});
 	});
 
-	UpdateSkill = asyncHandler(async (req, res) => {
+	updateSkill = asyncHandler(async (req, res) => {
 		await this._updateSkillUseCase.execute({
 			skillId: (req.validated?.params as UpdateCatalogParams).id,
 			name: (req.validated?.body as UpdateSkillBody).name,
@@ -213,7 +213,7 @@ export class CatalogController {
 		});
 	});
 
-	UpdateProfession = -asyncHandler(async (req, res) => {
+	updateProfession = asyncHandler(async (req, res) => {
 		await this._updateProfessionUseCase.execute({
 			professionId: (req.validated?.params as UpdateCatalogParams).id,
 			name: (req.validated?.body as UpdateProfessionBody).name,

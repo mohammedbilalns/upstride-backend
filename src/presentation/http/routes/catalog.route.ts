@@ -71,6 +71,7 @@ router.patch(
 router.patch(
 	ROUTES.CATALOG.UPDATE_SKILL(":id"),
 	validate({ params: updateCatalogParamsSchema, body: updateSkillBodySchema }),
+	catalogController.updateSkill,
 );
 
 router.patch(
@@ -79,14 +80,16 @@ router.patch(
 		params: updateCatalogParamsSchema,
 		body: updateInterestBodySchema,
 	}),
+	catalogController.updateInterest,
 );
 
 router.patch(
-	ROUTES.CATALOG.UPDATE_PROFESSION("id"),
+	ROUTES.CATALOG.UPDATE_PROFESSION(":id"),
 	validate({
 		params: updateCatalogParamsSchema,
 		body: updateProfessionBodySchema,
 	}),
+	catalogController.updateProfession,
 );
 
 export { router as catalogRouter };
