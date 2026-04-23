@@ -59,6 +59,7 @@ export interface GetArticlesInput {
 	authorId?: string;
 	isMentorView?: boolean;
 	ids?: string[];
+	tag?: string;
 	limit?: number;
 	isAdminView?: boolean;
 	status?: "active" | "blocked";

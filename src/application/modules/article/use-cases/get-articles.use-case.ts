@@ -34,7 +34,7 @@ export class GetArticlesUseCase implements IGetArticlesUseCase {
 	) {}
 
 	async execute(input: GetArticlesInput): Promise<GetArticlesOutput> {
-		const tags: string[] = [];
+		const tags: string[] = input.tag ? [input.tag] : [];
 
 		let authorIds: string[] | undefined;
 

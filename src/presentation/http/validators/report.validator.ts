@@ -10,6 +10,7 @@ import {
 	pageSchema,
 } from "../../../shared/validators";
 
+// TODO: Improve validation strictness
 const ReportReasonSchema = z
 	.string()
 	.trim()
