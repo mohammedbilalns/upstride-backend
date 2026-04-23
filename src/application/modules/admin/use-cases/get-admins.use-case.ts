@@ -22,17 +22,26 @@ export class GetAdminsUseCase implements IGetAdminsUseCase {
 			defaultRole: "ADMIN",
 		});
 
-		const result = await this._userRepository.paginate({
-			page: input.page,
-			limit: input.limit,
-			query,
-			sort,
-		});
+		const [result, stats] = await Promise.all([
+			this._userRepository.paginate({
+				page: input.page,
+				limit: input.limit,
+				query,
+				sort,
+			}),
+			this._userRepository.getStats(),
+		]);
 
 		const { items, ...meta } = mapPaginatedResult(
 			result,
 			AdminListMapper.toDTOs,
 		);
-		return { ...meta, admins: items };
+		return {
+			...meta,
+			admins: items,
+			totalAdmins: stats.totalAdmins,
+			activeAdmins: stats.activeAdmins,
+			blockedAdmins: stats.blockedAdmins,
+		};
 	}
 }

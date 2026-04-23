@@ -20,4 +20,7 @@ export interface GetAdminsResponse {
 	page: number;
 	limit: number;
 	totalPages: number;
+	totalAdmins: number;
+	activeAdmins: number;
+	blockedAdmins: number;
 }

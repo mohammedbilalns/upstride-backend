@@ -23,17 +23,25 @@ export class GetUsersUseCase implements IGetUsersUseCase {
 			defaultRole: ["USER", "MENTOR"],
 		});
 
-		const result = await this._userRepository.paginate({
-			page: input.page,
-			limit: input.limit,
-			query,
-			sort,
-		});
+		const [result, stats] = await Promise.all([
+			this._userRepository.paginate({
+				page: input.page,
+				limit: input.limit,
+				query,
+				sort,
+			}),
+			this._userRepository.getStats(),
+		]);
 
 		const { items, ...meta } = mapPaginatedResult(
 			result,
 			UserListMapper.toDTOs,
 		);
-		return { ...meta, users: items };
+		return {
+			...meta,
+			users: items,
+			totalUsers: stats.totalUsers,
+			totalMentors: stats.totalMentors,
+		};
 	}
 }

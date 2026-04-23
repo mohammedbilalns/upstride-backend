@@ -24,4 +24,10 @@ export interface IReportRepository
 		FindByIdRepository<Report>,
 		QueryableRepository<Report, ReportQuery>,
 		PaginatableRepository<Report, ReportQuery>,
-		UpdatableByIdRepository<Report> {}
+		UpdatableByIdRepository<Report> {
+	getStats(): Promise<{
+		totalReports: number;
+		pendingReports: number;
+		appealedReports: number;
+	}>;
+}

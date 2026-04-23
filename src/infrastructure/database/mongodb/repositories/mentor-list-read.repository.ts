@@ -285,4 +285,27 @@ export class MongoMentorListReadRepository
 
 		return result.map((doc) => doc.userId.toString());
 	}
+
+	async getStats() {
+		const stats = await this.model.aggregate([
+			{
+				$facet: {
+					newMentorRequests: [
+						{ $match: { isApproved: false, isRejected: false } },
+						{ $count: "count" },
+					],
+					approvedMentors: [
+						{ $match: { isApproved: true } },
+						{ $count: "count" },
+					],
+				},
+			},
+		]);
+
+		const res = stats[0];
+		return {
+			newMentorRequests: res.newMentorRequests[0]?.count || 0,
+			approvedMentors: res.approvedMentors[0]?.count || 0,
+		};
+	}
 }

@@ -70,6 +70,9 @@ export interface GetReportsOutput {
 	page: number;
 	limit: number;
 	totalPages: number;
+	totalReports: number;
+	pendingReports: number;
+	appealedReports: number;
 }
 
 export type ReportDecisionStatus = "RESOLVED" | "REJECTED" | "CLOSED";
