@@ -7,6 +7,10 @@ import {
 	AddInterestBodySchema,
 	AddProfessionBodySchema,
 	AddSkillBodySchema,
+	updateCatalogParamsSchema,
+	updateInterestBodySchema,
+	updateProfessionBodySchema,
+	updateSkillBodySchema,
 } from "../validators/catalog";
 
 const router = Router();
@@ -21,13 +25,14 @@ router.post(
 	validate({ body: AddInterestBodySchema }),
 	catalogController.addInterest,
 );
-//TODO: validate ids
 router.patch(
 	ROUTES.CATALOG.DISABLE_INTEREST(":id"),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.disableInterest,
 );
 router.patch(
 	ROUTES.CATALOG.ENABLE_INTEREST(":id"),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.enableInterest,
 );
 
@@ -38,9 +43,14 @@ router.post(
 );
 router.patch(
 	ROUTES.CATALOG.DISABLE_SKILL(":id"),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.disableSkill,
 );
-router.patch(ROUTES.CATALOG.ENABLE_SKILL(":id"), catalogController.enableSkill);
+router.patch(
+	ROUTES.CATALOG.ENABLE_SKILL(":id"),
+	validate({ params: updateCatalogParamsSchema }),
+	catalogController.enableSkill,
+);
 
 router.post(
 	ROUTES.CATALOG.ADD_PROFESSION,
@@ -49,11 +59,37 @@ router.post(
 );
 router.patch(
 	ROUTES.CATALOG.DISABLE_PROFESSION(":id"),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.disableProfession,
 );
 router.patch(
 	ROUTES.CATALOG.ENABLE_PROFESSION(":id"),
+	validate({ params: updateCatalogParamsSchema }),
 	catalogController.enableProfession,
+);
+
+router.patch(
+	ROUTES.CATALOG.UPDATE_SKILL(":id"),
+	validate({ params: updateCatalogParamsSchema, body: updateSkillBodySchema }),
+	catalogController.updateSkill,
+);
+
+router.patch(
+	ROUTES.CATALOG.UPDATE_INTEREST(":id"),
+	validate({
+		params: updateCatalogParamsSchema,
+		body: updateInterestBodySchema,
+	}),
+	catalogController.updateInterest,
+);
+
+router.patch(
+	ROUTES.CATALOG.UPDATE_PROFESSION(":id"),
+	validate({
+		params: updateCatalogParamsSchema,
+		body: updateProfessionBodySchema,
+	}),
+	catalogController.updateProfession,
 );
 
 export { router as catalogRouter };

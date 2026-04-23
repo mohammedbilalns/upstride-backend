@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
+	buildObjectIdParamSchema,
 	limitSchema,
-	objectIdSchema,
 	pageSchema,
 	passwordSchema,
 } from "../../../shared/validators";
@@ -15,9 +15,7 @@ export const AdminsQuerySchema = z.object({
 });
 export type AdminsQuery = z.infer<typeof AdminsQuerySchema>;
 
-export const AdminIdParamSchema = z.object({
-	id: objectIdSchema,
-});
+export const AdminIdParamSchema = buildObjectIdParamSchema("id");
 export type AdminIdParam = z.infer<typeof AdminIdParamSchema>;
 
 export const CreateAdminBodySchema = z.object({

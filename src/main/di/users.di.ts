@@ -6,7 +6,7 @@ import {
 } from "../../application/modules/user-moderation/use-cases";
 import { TYPES } from "../../shared/types/types";
 
-export const registerUserManagementBindings = (container: Container): void => {
+export const registerUsersBindings = (container: Container): void => {
 	// usecases
 	container
 		.bind(TYPES.UseCases.GetUsers)

@@ -57,15 +57,18 @@ export const ROUTES = {
 		ADD_PROFESSION: "/professions",
 		DISABLE_PROFESSION: (id: string) => `/professions/${id}/disable`,
 		ENABLE_PROFESSION: (id: string) => `/professions/${id}/enable`,
+		UPDATE_SKILL: (id: string) => `/skills/${id}`,
+		UPDATE_INTEREST: (id: string) => `/interests/${id}`,
+		UPDATE_PROFESSION: (id: string) => `/professions/${id}`,
 	},
-	USER_MANAGEMENT: {
-		BASE: "/user-management",
+	USERS: {
+		BASE: "/users",
 		FETCH_USERS: "/fetch-users",
 		BLOCK: (id: string) => `/${id}/block`,
 		UNBLOCK: (id: string) => `/${id}/unblock`,
 	},
-	ADMIN_MANAGEMENT: {
-		BASE: "/admin-management",
+	ADMINS: {
+		BASE: "/admins",
 		FETCH_ADMINS: "/fetch-admins",
 		CREATE_ADMIN: "/create",
 		BLOCK: (id: string) => `/${id}/block`,

@@ -13,38 +13,56 @@ import type {
 	IGetOnboardingCatalogUseCase,
 	IGetProfessionsUseCase,
 } from "../../../application/modules/catalog/use-cases";
+import type { IUpdateInterestUseCase } from "../../../application/modules/catalog/use-cases/udpate-interest.use-case.interface";
+import type { IUpdateProfessionUseCase } from "../../../application/modules/catalog/use-cases/update-profession.use-case.interface";
+import type { IUpdateSkillUseCase } from "../../../application/modules/catalog/use-cases/update-skill.use-case.interface";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { CatalogResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
+import type {
+	AddInterestBody,
+	AddProfessionBody,
+	AddSkillBody,
+	UpdateCatalogParams,
+	UpdateInterestBody,
+	UpdateProfessionBody,
+	UpdateSkillBody,
+} from "../validators/catalog";
 
 @injectable()
 export class CatalogController {
 	constructor(
 		@inject(TYPES.UseCases.GetOnboardingCatalog)
-		private _getOnboardingCatalogUseCase: IGetOnboardingCatalogUseCase,
+		private readonly _getOnboardingCatalogUseCase: IGetOnboardingCatalogUseCase,
 		@inject(TYPES.UseCases.GetProfessions)
-		private _getProfessionsUseCase: IGetProfessionsUseCase,
+		private readonly _getProfessionsUseCase: IGetProfessionsUseCase,
 		@inject(TYPES.UseCases.FetchCatalog)
-		private _fetchCatalogUseCase: IFetchCatalogUseCase,
+		private readonly _fetchCatalogUseCase: IFetchCatalogUseCase,
 		@inject(TYPES.UseCases.AddInterest)
-		private _addInterestUseCase: IAddInterestUseCase,
+		private readonly _addInterestUseCase: IAddInterestUseCase,
 		@inject(TYPES.UseCases.DisableInterest)
-		private _disableInterestUseCase: IDisableInterestUseCase,
+		private readonly _disableInterestUseCase: IDisableInterestUseCase,
 		@inject(TYPES.UseCases.AddSkill)
-		private _addSkillUseCase: IAddSkillUseCase,
+		private readonly _addSkillUseCase: IAddSkillUseCase,
 		@inject(TYPES.UseCases.DisableSkill)
-		private _disableSkillUseCase: IDisableSkillUseCase,
+		private readonly _disableSkillUseCase: IDisableSkillUseCase,
 		@inject(TYPES.UseCases.AddProfession)
-		private _addProfessionUseCase: IAddProfessionUseCase,
+		private readonly _addProfessionUseCase: IAddProfessionUseCase,
 		@inject(TYPES.UseCases.DisableProfession)
-		private _disableProfessionUseCase: IDisableProfessionUseCase,
+		private readonly _disableProfessionUseCase: IDisableProfessionUseCase,
 		@inject(TYPES.UseCases.EnableInterest)
-		private _enableInterestUseCase: IEnableInterestUseCase,
+		private readonly _enableInterestUseCase: IEnableInterestUseCase,
 		@inject(TYPES.UseCases.EnableSkill)
-		private _enableSkillUseCase: IEnableSkillUseCase,
+		private readonly _enableSkillUseCase: IEnableSkillUseCase,
 		@inject(TYPES.UseCases.EnableProfession)
-		private _enableProfessionUseCase: IEnableProfessionUseCase,
+		private readonly _enableProfessionUseCase: IEnableProfessionUseCase,
+		@inject(TYPES.UseCases.UpdateSkill)
+		private readonly _updateSkillUseCase: IUpdateSkillUseCase,
+		@inject(TYPES.UseCases.UpdateProfession)
+		private readonly _updateProfessionUseCase: IUpdateProfessionUseCase,
+		@inject(TYPES.UseCases.UpdateInterest)
+		private readonly _updateInterestUseCase: IUpdateInterestUseCase,
 	) {}
 
 	fetchCatalog = asyncHandler(async (_req, res) => {
@@ -75,7 +93,9 @@ export class CatalogController {
 	});
 
 	addInterest = asyncHandler(async (req, res) => {
-		const data = await this._addInterestUseCase.execute(req.body);
+		const data = await this._addInterestUseCase.execute(
+			req.validated?.body as AddInterestBody,
+		);
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: CatalogResponseMessages.INTEREST_ADDED_SUCCESS,
@@ -85,7 +105,7 @@ export class CatalogController {
 
 	disableInterest = asyncHandler(async (req, res) => {
 		const data = await this._disableInterestUseCase.execute({
-			interestId: req.params.id as string,
+			interestId: (req.validated?.params as UpdateCatalogParams).id,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -95,7 +115,9 @@ export class CatalogController {
 	});
 
 	addSkill = asyncHandler(async (req, res) => {
-		const data = await this._addSkillUseCase.execute(req.body);
+		const data = await this._addSkillUseCase.execute(
+			req.validated?.body as AddSkillBody,
+		);
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: CatalogResponseMessages.SKILL_ADDED_SUCCESS,
@@ -105,7 +127,7 @@ export class CatalogController {
 
 	disableSkill = asyncHandler(async (req, res) => {
 		const data = await this._disableSkillUseCase.execute({
-			skillId: req.params.id as string,
+			skillId: (req.validated?.params as UpdateCatalogParams).id,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -115,7 +137,9 @@ export class CatalogController {
 	});
 
 	addProfession = asyncHandler(async (req, res) => {
-		const data = await this._addProfessionUseCase.execute(req.body);
+		const data = await this._addProfessionUseCase.execute(
+			req.validated?.body as AddProfessionBody,
+		);
 
 		sendSuccess(res, HttpStatus.CREATED, {
 			message: CatalogResponseMessages.PROFESSION_ADDED_SUCCESS,
@@ -125,7 +149,7 @@ export class CatalogController {
 
 	disableProfession = asyncHandler(async (req, res) => {
 		const data = await this._disableProfessionUseCase.execute({
-			professionId: req.params.id as string,
+			professionId: (req.validated?.params as UpdateCatalogParams).id,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -136,7 +160,7 @@ export class CatalogController {
 
 	enableInterest = asyncHandler(async (req, res) => {
 		const data = await this._enableInterestUseCase.execute({
-			interestId: req.params.id as string,
+			interestId: (req.validated?.params as UpdateCatalogParams).id,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -147,7 +171,7 @@ export class CatalogController {
 
 	enableSkill = asyncHandler(async (req, res) => {
 		const data = await this._enableSkillUseCase.execute({
-			skillId: req.params.id as string,
+			skillId: (req.validated?.params as UpdateCatalogParams).id,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
@@ -158,12 +182,45 @@ export class CatalogController {
 
 	enableProfession = asyncHandler(async (req, res) => {
 		const data = await this._enableProfessionUseCase.execute({
-			professionId: req.params.id as string,
+			professionId: (req.validated?.params as UpdateCatalogParams).id,
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
 			message: CatalogResponseMessages.PROFESSION_ENABLED_SUCCESS,
 			data,
+		});
+	});
+
+	updateInterest = asyncHandler(async (req, res) => {
+		await this._updateInterestUseCase.execute({
+			interestId: (req.validated?.params as UpdateCatalogParams).id,
+			name: (req.validated?.body as UpdateInterestBody).name,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.UPDATE_INTEREST_SUCCESS,
+		});
+	});
+
+	updateSkill = asyncHandler(async (req, res) => {
+		await this._updateSkillUseCase.execute({
+			skillId: (req.validated?.params as UpdateCatalogParams).id,
+			name: (req.validated?.body as UpdateSkillBody).name,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.UPDATE_SKILL_SUCCESS,
+		});
+	});
+
+	updateProfession = asyncHandler(async (req, res) => {
+		await this._updateProfessionUseCase.execute({
+			professionId: (req.validated?.params as UpdateCatalogParams).id,
+			name: (req.validated?.body as UpdateProfessionBody).name,
+		});
+
+		sendSuccess(res, HttpStatus.OK, {
+			message: CatalogResponseMessages.UPDATE_PROFESSION_SUCCESS,
 		});
 	});
 }

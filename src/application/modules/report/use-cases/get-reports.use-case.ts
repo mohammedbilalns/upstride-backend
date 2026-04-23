@@ -43,14 +43,23 @@ export class GetReportsUseCase implements IGetReportsUseCase {
 			}),
 		};
 
-		const result = await this._reportRepository.paginate({
-			page: input.page ?? 1,
-			limit: input.limit ?? DEFAULT_PAGE_SIZE,
-			query,
-			sort: { createdAt: -1 },
-		});
+		const [result, stats] = await Promise.all([
+			this._reportRepository.paginate({
+				page: input.page ?? 1,
+				limit: input.limit ?? DEFAULT_PAGE_SIZE,
+				query,
+				sort: { createdAt: -1 },
+			}),
+			this._reportRepository.getStats(),
+		]);
 
 		const { items, ...meta } = mapPaginatedResult(result, ReportMapper.toDtos);
-		return { ...meta, reports: items };
+		return {
+			...meta,
+			reports: items,
+			totalReports: stats.totalReports,
+			pendingReports: stats.pendingReports,
+			appealedReports: stats.appealedReports,
+		};
 	}
 }

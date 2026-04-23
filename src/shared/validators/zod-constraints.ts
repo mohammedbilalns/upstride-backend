@@ -89,3 +89,10 @@ export const phoneSchema = z
 	.regex(/^\+[1-9]\d{1,14}$/, {
 		message: "Phone number must be in valid E.164 format (e.g., +919876543210)",
 	});
+
+export const nameSchema = z
+	.string()
+	.trim()
+	.min(2)
+	.max(50)
+	.regex(/^[\p{L}\s'-]+$/u, "Invalid name format");

@@ -47,12 +47,15 @@ export class GetMentorApplicationsUseCase
 			sort = { isApproved: -1, isRejected: -1, createdAt: -1 };
 		}
 
-		const result = await this._mentorRepository.paginate({
-			page: input.page,
-			limit: input.limit,
-			query,
-			sort,
-		});
+		const [result, stats] = await Promise.all([
+			this._mentorRepository.paginate({
+				page: input.page,
+				limit: input.limit,
+				query,
+				sort,
+			}),
+			this._mentorRepository.getStats(),
+		]);
 
 		const items = await Promise.all(
 			result.items.map(async (item) => {
@@ -63,6 +66,10 @@ export class GetMentorApplicationsUseCase
 			}),
 		);
 
-		return mapPaginatedResult(result, () => items);
+		return {
+			...mapPaginatedResult(result, () => items),
+			newMentorRequests: stats.newMentorRequests,
+			approvedMentors: stats.approvedMentors,
+		};
 	}
 }

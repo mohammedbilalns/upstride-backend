@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema } from "../../../shared/validators";
+import { nameSchema, objectIdSchema } from "../../../shared/validators";
 
 export const MentorListIdParamSchema = z.object({
 	listId: z.string().min(1, "List ID is required"),
@@ -12,11 +12,7 @@ export const MentorIdParamSchema = z.object({
 export type MentorIdParam = z.infer<typeof MentorIdParamSchema>;
 
 export const CreateMentorListBodySchema = z.object({
-	name: z
-		.string()
-		.trim()
-		.min(3, "List name must be at least 3 characters")
-		.max(50, "List name must be at most 50 characters"),
+	name: nameSchema,
 	description: z
 		.string()
 		.trim()

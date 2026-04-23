@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { UserPreferencesLimits } from "../../../shared/constants/app.constants";
+import { nameSchema } from "../../../shared/validators";
 
 export const UpdateProfileBodySchema = z.object({
-	name: z.string().min(2, "Name must be at least 2 characters").optional(),
+	name: nameSchema.optional(),
 	profilePictureId: z.string().optional(),
 	interests: z
 		.array(z.string().min(1, "Interest ID is required"))

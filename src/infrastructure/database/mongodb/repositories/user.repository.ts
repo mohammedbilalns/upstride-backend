@@ -167,4 +167,33 @@ export class MongoUserRepository
 			throw new Error("User not found");
 		}
 	}
+
+	async getStats() {
+		const stats = await this.model.aggregate([
+			{
+				$facet: {
+					totalUsers: [{ $match: { role: "USER" } }, { $count: "count" }],
+					totalMentors: [{ $match: { role: "MENTOR" } }, { $count: "count" }],
+					totalAdmins: [{ $match: { role: "ADMIN" } }, { $count: "count" }],
+					activeAdmins: [
+						{ $match: { role: "ADMIN", isBlocked: false } },
+						{ $count: "count" },
+					],
+					blockedAdmins: [
+						{ $match: { role: "ADMIN", isBlocked: true } },
+						{ $count: "count" },
+					],
+				},
+			},
+		]);
+
+		const res = stats[0];
+		return {
+			totalUsers: res.totalUsers[0]?.count || 0,
+			totalMentors: res.totalMentors[0]?.count || 0,
+			totalAdmins: res.totalAdmins[0]?.count || 0,
+			activeAdmins: res.activeAdmins[0]?.count || 0,
+			blockedAdmins: res.blockedAdmins[0]?.count || 0,
+		};
+	}
 }

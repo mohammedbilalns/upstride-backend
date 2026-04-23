@@ -27,4 +27,11 @@ export interface IUserRepository
 	findProfileById(id: string): Promise<UserWithPopulatedPreferences | null>;
 	deleteById(id: string): Promise<void>;
 	incrementBalance(userId: string, amount: number): Promise<void>;
+	getStats(): Promise<{
+		totalUsers: number;
+		totalMentors: number;
+		totalAdmins: number;
+		activeAdmins: number;
+		blockedAdmins: number;
+	}>;
 }

@@ -7,16 +7,16 @@ import type {
 } from "../../../application/modules/admin/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
-import { AdminManagementResponseMessages } from "../constants";
+import { AdminsResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
 	AdminIdParam,
 	AdminsQuery,
 	CreateAdminBody,
-} from "../validators/admin-management.validator";
+} from "../validators/admins.validator";
 
 @injectable()
-export class AdminManagementController {
+export class AdminController {
 	constructor(
 		@inject(TYPES.UseCases.GetAdmins)
 		private _getAdminsUseCase: IGetAdminsUseCase,
@@ -34,7 +34,7 @@ export class AdminManagementController {
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: AdminManagementResponseMessages.ADMINS_FETCHED_SUCCESS,
+			message: AdminsResponseMessages.ADMINS_FETCHED_SUCCESS,
 			data,
 		});
 	});
@@ -45,7 +45,7 @@ export class AdminManagementController {
 		});
 
 		sendSuccess(res, HttpStatus.CREATED, {
-			message: AdminManagementResponseMessages.ADMIN_CREATED_SUCCESS,
+			message: AdminsResponseMessages.ADMIN_CREATED_SUCCESS,
 			data: result,
 		});
 	});
@@ -56,7 +56,7 @@ export class AdminManagementController {
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: AdminManagementResponseMessages.ADMIN_BLOCKED_SUCCESS,
+			message: AdminsResponseMessages.ADMIN_BLOCKED_SUCCESS,
 		});
 	});
 
@@ -66,7 +66,7 @@ export class AdminManagementController {
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: AdminManagementResponseMessages.ADMIN_UNBLOCKED_SUCCESS,
+			message: AdminsResponseMessages.ADMIN_UNBLOCKED_SUCCESS,
 		});
 	});
 }

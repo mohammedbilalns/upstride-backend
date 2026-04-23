@@ -37,4 +37,6 @@ export interface GetMentorApplicationsResponse {
 	page: number;
 	limit: number;
 	totalPages: number;
+	newMentorRequests: number;
+	approvedMentors: number;
 }

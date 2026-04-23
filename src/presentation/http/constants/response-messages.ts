@@ -52,7 +52,7 @@ export const ReportResponseMessages = {
 	ARTICLE_UNBLOCKED_SUCCESS: "Article unblocked successfully",
 };
 
-export const UserManagementResponseMessages = {
+export const UsersResponseMessages = {
 	USERS_FETCHED_SUCCESS: "Users fetched successfully",
 	USER_BLOCKED_SUCCESS: "User blocked successfully",
 	USER_UNBLOCKED_SUCCESS: "User unblocked successfully",
@@ -109,9 +109,12 @@ export const CatalogResponseMessages = {
 	INTEREST_ENABLED_SUCCESS: "Interest enabled successfully",
 	SKILL_ENABLED_SUCCESS: "Skill enabled successfully",
 	PROFESSION_ENABLED_SUCCESS: "Profession enabled successfully",
+	UPDATE_INTEREST_SUCCESS: "Interest updated successfully",
+	UPDATE_SKILL_SUCCESS: "Skill updated successfully",
+	UPDATE_PROFESSION_SUCCESS: "Profession updated successfully",
 };
 
-export const AdminManagementResponseMessages = {
+export const AdminsResponseMessages = {
 	ADMINS_FETCHED_SUCCESS: "Admins fetched successfully",
 	ADMIN_CREATED_SUCCESS: "Created admin successfully",
 	ADMIN_BLOCKED_SUCCESS: "Admin blocked successfully",

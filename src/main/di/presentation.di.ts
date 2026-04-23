@@ -1,7 +1,7 @@
 import type { Container } from "inversify";
 import { WebSocketNotificationPort } from "../../infrastructure/notifications/websocket-notification.port";
 import {
-	AdminManagementController,
+	AdminController,
 	ArticleController,
 	AuthController,
 	CatalogController,
@@ -15,7 +15,7 @@ import {
 	PaymentController,
 	ProfileController,
 	ReportController,
-	UserManagementController,
+	UsersController,
 	WalletController,
 } from "../../presentation/http/controllers";
 import { CallHandler } from "../../presentation/websocket/handlers/call.handler";
@@ -41,12 +41,10 @@ export const registerPresentationBindings = (container: Container): void => {
 	container.bind(CatalogController).to(CatalogController);
 	container.bind(ChatController).to(ChatController);
 	container.bind(TYPES.Controllers.Chat).to(ChatController);
-	container.bind(UserManagementController).to(UserManagementController);
-	container.bind(TYPES.Controllers.UserManagement).to(UserManagementController);
-	container.bind(AdminManagementController).to(AdminManagementController);
-	container
-		.bind(TYPES.Controllers.AdminManagement)
-		.to(AdminManagementController);
+	container.bind(UsersController).to(UsersController);
+	container.bind(TYPES.Controllers.Users).to(UsersController);
+	container.bind(AdminController).to(AdminController);
+	container.bind(TYPES.Controllers.Admins).to(AdminController);
 	container.bind(ArticleController).to(ArticleController);
 	container.bind(TYPES.Controllers.Article).to(ArticleController);
 	container.bind(FileController).to(FileController);

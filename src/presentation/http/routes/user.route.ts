@@ -1,34 +1,34 @@
 import { Router } from "express";
 import { apiContainer } from "../../../main/di/api.container";
 import { ROUTES } from "../constants";
-import { UserManagementController } from "../controllers/user-management.controller";
+import { UsersController } from "../controllers/users.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	BlockUserBodySchema,
 	UserIdParamSchema,
 	UsersQuerySchema,
-} from "../validators/user-management.validator";
+} from "../validators/users.validator";
 
 const router = Router();
-const controller = apiContainer.get(UserManagementController);
+const controller = apiContainer.get(UsersController);
 
 router.use(verifySession, authorizeRoles(["ADMIN", "SUPER_ADMIN"]));
 
 router.get(
-	ROUTES.USER_MANAGEMENT.FETCH_USERS,
+	ROUTES.USERS.FETCH_USERS,
 	validate({ query: UsersQuerySchema }),
 	controller.getUsers,
 );
 
 router.patch(
-	"/:id/block",
+	ROUTES.USERS.BLOCK(":id"),
 	validate({ params: UserIdParamSchema, body: BlockUserBodySchema }),
 	controller.blockUser,
 );
 router.patch(
-	"/:id/unblock",
+	ROUTES.USERS.UNBLOCK(":id"),
 	validate({ params: UserIdParamSchema }),
 	controller.unblockUser,
 );
 
-export { router as userManagementRouter };
+export { router as usersRouter };

@@ -1,4 +1,4 @@
-export * from "./admin-management.route";
+export * from "./admin.route";
 export * from "./article.route";
 export * from "./auth.route";
 export * from "./availability.route";
@@ -12,6 +12,6 @@ export * from "./notification.route";
 export * from "./payment.route";
 export * from "./profile.route";
 export * from "./report.route";
-export * from "./user-management.route";
+export * from "./user.route";
 export * from "./v1.route";
 export * from "./wallet.route";

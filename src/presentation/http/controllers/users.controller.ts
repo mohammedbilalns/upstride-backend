@@ -6,16 +6,16 @@ import type {
 } from "../../../application/modules/user-moderation/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
-import { UserManagementResponseMessages } from "../constants";
+import { UsersResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
 	BlockUserBody,
 	UserIdParam,
 	UsersQuery,
-} from "../validators/user-management.validator";
+} from "../validators/users.validator";
 
 @injectable()
-export class UserManagementController {
+export class UsersController {
 	constructor(
 		@inject(TYPES.UseCases.GetUsers)
 		private _getUsersUseCase: IGetUsersUseCase,
@@ -31,7 +31,7 @@ export class UserManagementController {
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: UserManagementResponseMessages.USERS_FETCHED_SUCCESS,
+			message: UsersResponseMessages.USERS_FETCHED_SUCCESS,
 			data,
 		});
 	});
@@ -43,7 +43,7 @@ export class UserManagementController {
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: UserManagementResponseMessages.USER_BLOCKED_SUCCESS,
+			message: UsersResponseMessages.USER_BLOCKED_SUCCESS,
 			data,
 		});
 	});
@@ -54,7 +54,7 @@ export class UserManagementController {
 		});
 
 		sendSuccess(res, HttpStatus.OK, {
-			message: UserManagementResponseMessages.USER_UNBLOCKED_SUCCESS,
+			message: UsersResponseMessages.USER_UNBLOCKED_SUCCESS,
 			data,
 		});
 	});

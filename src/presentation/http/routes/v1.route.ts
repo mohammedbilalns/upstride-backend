@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ROUTES } from "../constants";
-import { adminManagementRouter } from "./admin-management.route";
+import { adminsRouter } from "./admin.route";
 import { articleRouter } from "./article.route";
 import { authRouter } from "./auth.route";
 import { availabilityRouter } from "./availability.route";
@@ -14,7 +14,7 @@ import { notificationRouter } from "./notification.route";
 import { paymentRouter } from "./payment.route";
 import { profileRouter } from "./profile.route";
 import { reportRouter } from "./report.route";
-import { userManagementRouter } from "./user-management.route";
+import { usersRouter } from "./user.route";
 import { walletRouter } from "./wallet.route";
 
 export const router = Router();
@@ -28,8 +28,8 @@ router.use(ROUTES.ARTICLES.BASE, articleRouter);
 router.use(ROUTES.PROFILE.BASE, profileRouter);
 router.use(ROUTES.CATALOG.BASE, catalogRouter);
 router.use(ROUTES.CHATS.BASE, chatRouter);
-router.use(ROUTES.USER_MANAGEMENT.BASE, userManagementRouter);
-router.use(ROUTES.ADMIN_MANAGEMENT.BASE, adminManagementRouter);
+router.use(ROUTES.USERS.BASE, usersRouter);
+router.use(ROUTES.ADMINS.BASE, adminsRouter);
 router.use(ROUTES.STORAGE.BASE, fileRouter);
 router.use(ROUTES.MENTOR.BASE, mentorRouter);
 router.use(ROUTES.MENTOR_LISTS.BASE, mentorListRouter);

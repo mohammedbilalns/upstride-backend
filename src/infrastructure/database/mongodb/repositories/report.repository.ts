@@ -148,4 +148,28 @@ export class MongoReportRepository
 
 		return docs;
 	}
+	async getStats() {
+		const stats = await this.model.aggregate([
+			{
+				$facet: {
+					totalReports: [{ $count: "count" }],
+					pendingReports: [
+						{ $match: { status: "PENDING" } },
+						{ $count: "count" },
+					],
+					appealedReports: [
+						{ $match: { isAppealSubmitted: true } },
+						{ $count: "count" },
+					],
+				},
+			},
+		]);
+
+		const res = stats[0];
+		return {
+			totalReports: res.totalReports[0]?.count || 0,
+			pendingReports: res.pendingReports[0]?.count || 0,
+			appealedReports: res.appealedReports[0]?.count || 0,
+		};
+	}
 }

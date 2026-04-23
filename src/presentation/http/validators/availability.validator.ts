@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
 	buildObjectIdParamSchema,
+	nameSchema,
 	optionalLimitSchema,
 	optionalPageSchema,
 } from "../../../shared/validators";
@@ -27,14 +28,14 @@ const toMinutes = (time: string) => {
 
 export const AvailabilityIdParamSchema = buildObjectIdParamSchema("id");
 
+// export const AvailabilityIdParamSchema = {
+//   id: objectIdSchema
+// }
+//
 export type AvailabilityIdParam = z.infer<typeof AvailabilityIdParamSchema>;
 
 const AvailabilityBaseSchema = z.object({
-	name: z
-		.string()
-		.trim()
-		.min(2, "Name must be at least 2 characters")
-		.max(100, "Name must be at most 100 characters"),
+	name: nameSchema,
 	description: z
 		.string()
 		.trim()
