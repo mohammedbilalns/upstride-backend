@@ -66,6 +66,7 @@ export const TYPES = {
 		ArticleReactionRepository: Symbol.for("ArticleReactionRepository"),
 		ArticleViewRepository: Symbol.for("ArticleViewRepository"),
 		SavedMentorRepository: Symbol.for("SavedMentorRepository"),
+		DashboardRepository: Symbol.for("DashboardRepository"),
 		AvailabilityRepository: Symbol.for("AvailabilityRepository"),
 		BookingRepository: Symbol.for("BookingRepository"),
 		PushSubscriptionRepository: Symbol.for("PushSubscriptionRepository"),
@@ -192,6 +193,10 @@ export const TYPES = {
 		GetMentorBookings: Symbol.for("GetMentorBookingsUseCase"),
 		RepayBooking: Symbol.for("RepayBookingUseCase"),
 		GenerateReceiptPdf: Symbol.for("GenerateReceiptPdfUseCase"),
+		GetDashboard: Symbol.for("GetDashboardUseCase"),
+		GetDashboardActivityOverview: Symbol.for(
+			"GetDashboardActivityOverviewUseCase",
+		),
 
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
 		HandlePaymentWebhook: Symbol.for("HandlePaymentWebhookUseCase"),
@@ -237,6 +242,7 @@ export const TYPES = {
 
 		Availability: Symbol.for("AvailabilityController"),
 		Booking: Symbol.for("BookingController"),
+		Dashboard: Symbol.for("DashboardController"),
 	},
 	PaymentHandlers: {
 		CheckoutCompleted: Symbol.for("CheckoutCompletedHandler"),

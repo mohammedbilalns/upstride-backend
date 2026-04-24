@@ -4,6 +4,7 @@ export * from "./availability.validator";
 export * from "./booking.validator";
 export * from "./change-password.validator";
 export * from "./chat.validator";
+export * from "./dashboard.validator";
 export * from "./mentor-list.validator";
 export * from "./notification.validator";
 export * from "./payment";

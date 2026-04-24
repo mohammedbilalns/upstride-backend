@@ -5,6 +5,7 @@ export * from "./availability.route";
 export * from "./booking.route";
 export * from "./catalog.route";
 export * from "./chat.route";
+export * from "./dashboard.route";
 export * from "./file.route";
 export * from "./mentor.route";
 export * from "./mentor-list.route";

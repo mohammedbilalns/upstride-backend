@@ -11,6 +11,7 @@ export * from "./capabilities/updatable-by-id.repository.interface";
 export * from "./chat.repository.interface";
 export * from "./chat-message.repository.interface";
 export * from "./coin-transactions.repository.interface";
+export * from "./dashboard.repository.interface";
 export * from "./interest.repository.interface";
 export * from "./mentor.repository.types";
 export * from "./mentor-list.repository.interface";

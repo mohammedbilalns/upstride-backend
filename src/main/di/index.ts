@@ -5,6 +5,7 @@ export * from "./availability.di";
 export * from "./booking.di";
 export * from "./catalog.di";
 export * from "./chat.di";
+export * from "./dashboard.di";
 export * from "./events.di";
 export * from "./infrastructure-services.di";
 export * from "./live-call.di";

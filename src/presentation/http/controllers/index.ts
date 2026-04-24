@@ -5,6 +5,7 @@ export * from "./availability.controller";
 export * from "./booking.controller";
 export * from "./catalog.controller";
 export * from "./chat.controller";
+export * from "./dashboard.controller";
 export * from "./file.controller";
 export * from "./logout.controller";
 export * from "./mentor.controller";
