@@ -42,6 +42,7 @@ export class BookingRepository implements IBookingRepository {
 		const docs = await BookingModel.find({
 			mentorId,
 			status: { $in: ["PENDING", "CONFIRMED", "STARTED"] },
+			paymentStatus: { $ne: "FAILED" },
 			startTime: { $lt: endTime },
 			endTime: { $gt: startTime },
 		}).lean();
@@ -51,14 +52,24 @@ export class BookingRepository implements IBookingRepository {
 	async findByMentorIdAndDate(
 		mentorId: string,
 		date: Date,
+		options?: { includeFailed?: boolean },
 	): Promise<Booking[]> {
 		const { start: startOfDay, end: endOfDay } = getUtcRangeForIstDate(date);
+		const paymentStatus = options?.includeFailed
+			? undefined
+			: { $ne: "FAILED" };
 
-		const docs = await BookingModel.find({
+		const query: Record<string, unknown> = {
 			mentorId,
 			status: { $in: ["PENDING", "CONFIRMED", "STARTED", "COMPLETED"] },
 			startTime: { $gte: startOfDay, $lte: endOfDay },
-		}).lean();
+		};
+
+		if (paymentStatus) {
+			query.paymentStatus = paymentStatus;
+		}
+
+		const docs = await BookingModel.find(query).lean();
 		return docs.map((d) => BookingMapper.toDomain(d));
 	}
 

@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import { PaymentStatus } from "../../../../domain/entities/payment-transactions.entity";
 import type { CheckoutFailedEvent } from "../../../../domain/events/checkout-failed.event";
+import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type { EventHandler } from "../../event-handler.interface";
@@ -10,6 +11,8 @@ export class CheckoutFailedHandler
 	implements EventHandler<CheckoutFailedEvent>
 {
 	constructor(
+		@inject(TYPES.Repositories.BookingRepository)
+		private readonly _bookingRepository: IBookingRepository,
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
 		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
 	) {}
@@ -31,5 +34,12 @@ export class CheckoutFailedHandler
 
 	async handle(event: CheckoutFailedEvent): Promise<void> {
 		await this.handleFailure(event.payload.sessionId);
+
+		const bookingId = event.payload.metadata?.bookingId;
+		if (bookingId && event.payload.metadata?.type === "BOOKING_PAYMENT") {
+			await this._bookingRepository.updateById(bookingId, {
+				paymentStatus: "FAILED",
+			});
+		}
 	}
 }

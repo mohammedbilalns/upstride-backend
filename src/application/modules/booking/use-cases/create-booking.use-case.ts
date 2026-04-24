@@ -88,7 +88,13 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			end,
 		);
 
-		if (overlap.length > 0) {
+		const blockingOverlap = overlap.find(
+			(booking) =>
+				booking.paymentStatus === "COMPLETED" ||
+				booking.menteeId === input.menteeId,
+		);
+
+		if (blockingOverlap) {
 			throw new SlotNotAvailableError();
 		}
 
@@ -126,6 +132,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 					),
 				);
 			}
+			// Set the payment status to completed
 			paymentStatus = "COMPLETED";
 		}
 

@@ -19,7 +19,7 @@ export class HandlePaymentWebhookUseCase
 	async execute(input: HandlePaymentWebhookInput): Promise<void> {
 		const event = await this._paymentWebhookParser.parse(input);
 		if (!event) {
-			return;
+			throw new Error("Failed parse payment webhook input");
 		}
 
 		await this._processPaymentEventUseCase.execute(event);

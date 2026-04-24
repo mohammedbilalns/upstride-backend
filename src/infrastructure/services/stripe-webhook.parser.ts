@@ -8,6 +8,7 @@ import type {
 } from "../../application/services/payment-webhook.parser.interface";
 import { PaymentProvider } from "../../domain/entities/payment-transactions.entity";
 import env from "../../shared/config/env";
+import logger from "../../shared/logging/logger";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
@@ -16,11 +17,18 @@ export class StripeWebhookParser implements IPaymentWebhookParser {
 	async parse(
 		input: PaymentWebhookParseInput,
 	): Promise<PaymentWebhookEvent | null> {
-		const event = stripe.webhooks.constructEvent(
-			input.payload,
-			input.signature,
-			env.STRIPE_WEBHOOK_SECRET,
-		);
+		let event: Stripe.Event;
+
+		try {
+			event = stripe.webhooks.constructEvent(
+				input.payload,
+				input.signature,
+				env.STRIPE_WEBHOOK_SECRET,
+			);
+		} catch (error) {
+			logger.error(`Error parsing webhook: ${error}`);
+			throw new Error("Invalid webhook payload");
+		}
 
 		if (
 			event.type !== "checkout.session.completed" &&
