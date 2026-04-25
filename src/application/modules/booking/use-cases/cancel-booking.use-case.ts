@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { Booking } from "../../../../domain/entities/booking.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { ValidationError } from "../../../shared/errors";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
@@ -39,6 +40,12 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 			booking.status === "CANCELLED_BY_MENTOR"
 		) {
 			throw new BookingAlreadyCancelledError();
+		}
+
+		if (booking.paymentStatus === "PENDING") {
+			throw new ValidationError(
+				"Cannot cancel a booking while payment is pending.",
+			);
 		}
 
 		Booking.assertCancellable(booking.status);

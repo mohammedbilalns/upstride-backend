@@ -68,6 +68,12 @@ export type DashboardBookingRecord = {
 	updatedAt: Date;
 };
 
+export const DASHBOARD_EXCLUDED_BOOKING_STATUSES: BookingStatus[] = [
+	"CANCELLED_BY_MENTEE",
+	"CANCELLED_BY_MENTOR",
+	"SLOT_TAKEN_BY_ANOTHER_USER",
+];
+
 export type DashboardSavedMentorRecord = {
 	_id: string;
 	mentorId:

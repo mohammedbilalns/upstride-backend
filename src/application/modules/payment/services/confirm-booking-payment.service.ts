@@ -91,7 +91,7 @@ export class ConfirmBookingPaymentService
 			await Promise.all(
 				staleSiblingBookings.map((sibling) =>
 					this._bookingRepository.updateById(sibling.id, {
-						status: "CANCELLED_BY_MENTEE",
+						status: "SLOT_TAKEN_BY_ANOTHER_USER",
 					}),
 				),
 			);

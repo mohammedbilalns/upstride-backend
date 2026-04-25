@@ -5,6 +5,7 @@ export const BookingStatus = [
 	"CANCELLED_BY_MENTOR",
 	"CONFIRMED",
 	"PENDING",
+	"SLOT_TAKEN_BY_ANOTHER_USER",
 	"STARTED",
 	"COMPLETED",
 ] as const;

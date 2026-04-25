@@ -113,7 +113,13 @@ export class MongoDashboardRepository implements IDashboardRepository {
 			{ $match: matchStage },
 			{
 				$match: {
-					status: { $nin: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
+					status: {
+						$nin: [
+							"CANCELLED_BY_MENTEE",
+							"CANCELLED_BY_MENTOR",
+							"SLOT_TAKEN_BY_ANOTHER_USER",
+						],
+					},
 					paymentStatus: { $ne: "FAILED" },
 				},
 			},

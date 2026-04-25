@@ -118,19 +118,37 @@ export class BookingRepository implements IBookingRepository {
 		if (filter === "cancelled")
 			return {
 				...base,
-				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
+				status: {
+					$in: [
+						"CANCELLED_BY_MENTEE",
+						"CANCELLED_BY_MENTOR",
+						"SLOT_TAKEN_BY_ANOTHER_USER",
+					],
+				},
 			};
 		if (filter === "upcoming_cancelled")
 			return {
 				...base,
 				endTime: { $gt: bufferTime },
-				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
+				status: {
+					$in: [
+						"CANCELLED_BY_MENTEE",
+						"CANCELLED_BY_MENTOR",
+						"SLOT_TAKEN_BY_ANOTHER_USER",
+					],
+				},
 			};
 		if (filter === "past_cancelled")
 			return {
 				...base,
 				endTime: { $lt: bufferTime },
-				status: { $in: ["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"] },
+				status: {
+					$in: [
+						"CANCELLED_BY_MENTEE",
+						"CANCELLED_BY_MENTOR",
+						"SLOT_TAKEN_BY_ANOTHER_USER",
+					],
+				},
 			};
 		return base;
 	}

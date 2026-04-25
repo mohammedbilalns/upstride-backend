@@ -37,6 +37,7 @@ const bookingSchema = new Schema<BookingDocument>(
 				"CANCELLED_BY_MENTOR",
 				"CONFIRMED",
 				"PENDING",
+				"SLOT_TAKEN_BY_ANOTHER_USER",
 				"STARTED",
 				"COMPLETED",
 			],
