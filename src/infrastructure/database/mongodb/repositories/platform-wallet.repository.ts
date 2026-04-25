@@ -37,7 +37,7 @@ export class MongoPlatformWalletRepository
 			.findOneAndUpdate(
 				{ key: PLATFORM_WALLET_KEY },
 				{ $setOnInsert: { key: PLATFORM_WALLET_KEY, balance: 0 } },
-				{ new: true, upsert: true },
+				{ returnDocument: "after", upsert: true },
 			)
 			.lean();
 		return this.toDomain(doc as PlatformWalletDocument);
@@ -51,7 +51,7 @@ export class MongoPlatformWalletRepository
 					$inc: { balance: amount },
 					$setOnInsert: { key: PLATFORM_WALLET_KEY },
 				},
-				{ new: true, upsert: true },
+				{ returnDocument: "after", upsert: true },
 			)
 			.lean();
 		return this.toDomain(doc as PlatformWalletDocument);

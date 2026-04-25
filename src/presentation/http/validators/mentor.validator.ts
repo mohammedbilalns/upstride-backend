@@ -178,9 +178,28 @@ export const RejectMentorBodySchema = z.object({
 export type RejectMentorBody = z.infer<typeof RejectMentorBodySchema>;
 
 export const UpdateMentorProfileBodySchema = z.object({
+	currentRoleId: z.string().trim().min(1).optional(),
+	organization: z.string().trim().min(1).optional(),
+	areasOfExpertise: z
+		.array(z.string().trim().min(1))
+		.min(1, "Select at least one area of interest")
+		.max(
+			MAX_MENTOR_AREAS_OF_EXPERTISE,
+			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of interest allowed`,
+		)
+		.optional(),
 	currentPricePer30Min: z.number().int().min(100).max(10000).optional(),
-	bio: z.string().min(10).optional(),
+	bio: z.string().trim().min(10).optional(),
+	educationalQualifications: z
+		.array(z.string().trim().min(1))
+		.min(1, "At least one educational qualification is required")
+		.max(
+			MAX_MENTOR_EDUCATION_ITEMS,
+			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
+		)
+		.optional(),
 	addSkills: z.array(SkillItemSchema).optional(),
+	removeSkills: z.array(z.string().min(1)).optional(),
 	addEducationalQualifications: z.array(z.string().min(1)).optional(),
 });
 

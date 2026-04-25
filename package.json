@@ -22,6 +22,7 @@
 		"seed:users": "npx tsx --env-file=.env scripts/seed-users.ts",
 		"seed:platform-transactions": "npx tsx --env-file=.env scripts/generate-platform-transactions.ts",
 		"fix:payment-transaction-indexes": "npx tsx --env-file=.env scripts/fix-payment-transaction-indexes.ts",
+		"migrate:user-preferences-skill-levels": "npx tsx --env-file=.env scripts/migrate-user-preferences-skill-levels.ts",
 		"seed": "npm run seed:interests && npm run seed:professions && npm run seed:skills"
 	},
 	"keywords": [],

@@ -1,6 +1,5 @@
 import type {
 	AuthType,
-	SkillLevel,
 	UserRole,
 } from "../../../../domain/entities/user.entity";
 import type {
@@ -31,7 +30,6 @@ export interface UserProfileDTO {
 			skills: {
 				skillId: string;
 				name: string;
-				level: SkillLevel;
 			}[];
 		}[];
 	};

@@ -1,4 +1,3 @@
-import type { SkillLevel } from "../../../../domain/entities/user.entity";
 import type {
 	PopulatedInterest,
 	PopulatedSkill,
@@ -15,7 +14,7 @@ export class ProfileMapper {
 			(i: PopulatedInterest) => ({
 				id: (i._id || i.id)?.toString() || "",
 				name: i.name,
-				skills: [] as { skillId: string; name: string; level: SkillLevel }[],
+				skills: [] as { skillId: string; name: string }[],
 			}),
 		);
 
@@ -24,7 +23,6 @@ export class ProfileMapper {
 				skillId: (s.skillId._id || s.skillId.id)?.toString() || "",
 				name: s.skillId.name || "Unknown",
 				interestId: s.skillId.interestId.toString(),
-				level: s.level,
 			}),
 		);
 
@@ -35,7 +33,6 @@ export class ProfileMapper {
 				interest.skills.push({
 					skillId: skill.skillId,
 					name: skill.name,
-					level: skill.level,
 				});
 			}
 		}

@@ -1,13 +1,9 @@
-import type { SkillLevel } from "../../../../../domain/entities/user.entity";
 import type { LoginResponse } from "../login/login-with-email.dto";
 
 export interface SaveUserInterestsInput {
 	setupToken: string;
 	interests: string[];
-	skills: {
-		skillId: string;
-		level: SkillLevel;
-	}[];
+	skills: string[];
 	deviceType?: string;
 	deviceVendor?: string;
 	deviceModel?: string;

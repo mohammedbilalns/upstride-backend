@@ -128,7 +128,7 @@ export class MongoPaymentTransactionRepository
 			.findOneAndUpdate(
 				{ providerPaymentId, transactionOwner },
 				{ $set: { status } },
-				{ new: true },
+				{ returnDocument: "after" },
 			)
 			.lean();
 

@@ -2,12 +2,17 @@ import type { SkillLevel } from "../../../../domain/entities/user.entity";
 
 export interface UpdateMentorProfileInput {
 	userId: string;
+	currentRoleId?: string;
+	organization?: string;
+	areasOfExpertise?: string[];
 	currentPricePer30Min?: number;
 	bio?: string;
+	educationalQualifications?: string[];
 	addSkills?: {
 		skillId: string;
 		level: SkillLevel;
 	}[];
+	removeSkills?: string[];
 	addEducationalQualifications?: string[];
 }
 

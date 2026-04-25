@@ -1,6 +1,6 @@
 import { UserPreferencesLimits } from "../../shared/constants/app.constants";
 import { EntityValidationError } from "../errors";
-import type { AuthType, SkillLevel, UserRole } from "./user.entity";
+import type { AuthType, UserRole } from "./user.entity";
 
 export interface PopulatedInterest {
 	_id?: { toString(): string };
@@ -15,7 +15,6 @@ export interface PopulatedSkill {
 		name: string;
 		interestId: { toString(): string };
 	};
-	level: SkillLevel;
 }
 
 export interface UserWithPopulatedPreferences {
@@ -35,7 +34,7 @@ export interface UserWithPopulatedPreferences {
 
 export interface RawUserPreferences {
 	interests: string[];
-	skills: Array<{ skillId: string; level: SkillLevel }>;
+	skills: Array<{ skillId: string }>;
 }
 
 /**
@@ -44,13 +43,14 @@ export interface RawUserPreferences {
 export class UserPreferences {
 	private constructor(
 		public readonly interests: string[],
-		public readonly skills: Array<{ skillId: string; level: SkillLevel }>,
+		public readonly skills: Array<{ skillId: string }>,
 	) {}
 
-	static create(
-		interests: string[],
-		skills: Array<{ skillId: string; level: SkillLevel }>,
-	): UserPreferences {
+	static create(interests: string[], skills: string[]): UserPreferences {
+		const normalizedSkills = skills.map((skillId) => ({
+			skillId,
+		}));
+
 		if (
 			interests.length < UserPreferencesLimits.MIN_INTERESTS ||
 			interests.length > UserPreferencesLimits.MAX_INTERESTS
@@ -65,8 +65,8 @@ export class UserPreferences {
 			UserPreferencesLimits.MAX_INTERESTS *
 			UserPreferencesLimits.MAX_SKILLS_PER_INTEREST;
 		if (
-			skills.length < UserPreferencesLimits.MIN_SKILLS_PER_INTEREST ||
-			skills.length > maxSkills
+			normalizedSkills.length < UserPreferencesLimits.MIN_SKILLS_PER_INTEREST ||
+			normalizedSkills.length > maxSkills
 		) {
 			throw new EntityValidationError(
 				"UserPreferences",
@@ -74,7 +74,7 @@ export class UserPreferences {
 			);
 		}
 
-		return new UserPreferences(interests, skills);
+		return new UserPreferences([...interests], normalizedSkills);
 	}
 
 	toRaw(): RawUserPreferences {

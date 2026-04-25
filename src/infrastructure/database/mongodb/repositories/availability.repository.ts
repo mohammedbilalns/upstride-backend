@@ -142,7 +142,7 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 		const doc = await AvailabilityModel.findByIdAndUpdate(
 			id,
 			{ $set: persistenceUpdate },
-			{ new: true },
+			{ returnDocument: "after" },
 		).lean();
 		return doc ? AvailabilityMapper.toDomain(doc) : null;
 	}

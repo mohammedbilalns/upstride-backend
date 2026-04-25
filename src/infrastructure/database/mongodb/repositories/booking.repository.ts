@@ -80,7 +80,7 @@ export class BookingRepository implements IBookingRepository {
 		const doc = await BookingModel.findByIdAndUpdate(
 			id,
 			{ $set: update },
-			{ new: true },
+			{ returnDocument: "after" },
 		).lean();
 		return doc ? BookingMapper.toDomain(doc) : null;
 	}

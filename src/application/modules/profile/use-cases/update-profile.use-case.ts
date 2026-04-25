@@ -43,7 +43,10 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 
 		if (input.interests || input.skills) {
 			const newInterests = input.interests || user.preferences?.interests || [];
-			const newSkills = input.skills || user.preferences?.skills || [];
+			const newSkills =
+				input.skills ||
+				user.preferences?.skills.map((skill) => skill.skillId) ||
+				[];
 
 			const prefs = UserPreferences.create(newInterests, newSkills);
 			updateData.preferences = prefs.toRaw();
