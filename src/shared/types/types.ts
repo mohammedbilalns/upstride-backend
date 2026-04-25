@@ -77,6 +77,7 @@ export const TYPES = {
 		DashboardRepository: Symbol.for("DashboardRepository"),
 		AvailabilityRepository: Symbol.for("AvailabilityRepository"),
 		BookingRepository: Symbol.for("BookingRepository"),
+		ReviewRepository: Symbol.for("ReviewRepository"),
 		PushSubscriptionRepository: Symbol.for("PushSubscriptionRepository"),
 	},
 
@@ -203,6 +204,8 @@ export const TYPES = {
 		GenerateReceiptPdf: Symbol.for("GenerateReceiptPdfUseCase"),
 		ScheduleSessionSettlement: Symbol.for("ScheduleSessionSettlementUseCase"),
 		SettleEndedSession: Symbol.for("SettleEndedSessionUseCase"),
+		CreateReview: Symbol.for("CreateReviewUseCase"),
+		GetMentorReviews: Symbol.for("GetMentorReviewsUseCase"),
 		GetDashboard: Symbol.for("GetDashboardUseCase"),
 		GetDashboardActivityOverview: Symbol.for(
 			"GetDashboardActivityOverviewUseCase",
@@ -252,6 +255,7 @@ export const TYPES = {
 
 		Availability: Symbol.for("AvailabilityController"),
 		Booking: Symbol.for("BookingController"),
+		Review: Symbol.for("ReviewController"),
 		Dashboard: Symbol.for("DashboardController"),
 	},
 	PaymentHandlers: {

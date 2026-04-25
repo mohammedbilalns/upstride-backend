@@ -19,6 +19,7 @@ export * from "./profile.di";
 export * from "./queues.di";
 export * from "./report.di";
 export * from "./repositories.di";
+export * from "./review.di";
 export * from "./storage.di";
 export * from "./users.di";
 export * from "./wallet.di";

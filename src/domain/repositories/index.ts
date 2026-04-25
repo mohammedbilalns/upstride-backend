@@ -25,6 +25,7 @@ export * from "./platform-wallet.repository.interface";
 export * from "./profession.repository.interface";
 export * from "./push-subscription.repository.interface";
 export * from "./report.repository.interface";
+export * from "./review.repository.interface";
 export * from "./saved-mentor.repository.interface";
 export * from "./session.repository.interface";
 export * from "./skill.repository.interface";

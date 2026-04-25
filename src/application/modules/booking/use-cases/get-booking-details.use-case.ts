@@ -1,5 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IReviewRepository } from "../../../../domain/repositories/review.repository.interface";
+import { ReviewMapper } from "../../../../infrastructure/database/mongodb/mappers/review.mapper";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type {
@@ -15,6 +17,8 @@ export class GetBookingDetailsUseCase implements IGetBookingDetailsUseCase {
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.ReviewRepository)
+		private readonly _reviewRepository: IReviewRepository,
 	) {}
 
 	async execute(
@@ -40,6 +44,8 @@ export class GetBookingDetailsUseCase implements IGetBookingDetailsUseCase {
 
 		const dto = BookingMapper.toDto(booking);
 		dto.meetingLink = meetingLink;
+		const review = await this._reviewRepository.findByBookingId(booking.id);
+		dto.review = review ? ReviewMapper.toDto(review) : null;
 
 		return { booking: dto };
 	}

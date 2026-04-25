@@ -1,3 +1,5 @@
+import type { ReviewDto } from "../../review/dtos/review.dto";
+
 export interface PublicMentorProfileDto {
 	id: string;
 	user: {
@@ -17,6 +19,8 @@ export interface PublicMentorProfileDto {
 	skills: { id: string; name: string; level: string }[];
 	yearsOfExperience: number;
 	avgRating: number;
+	recentReviews: ReviewDto[];
+	reviewsTotal: number;
 }
 
 export interface GetPublicMentorProfileInput {

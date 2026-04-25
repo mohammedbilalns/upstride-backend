@@ -17,6 +17,7 @@ import type {
 	IProfessionRepository,
 	IPushSubscriptionRepository,
 	IReportRepository,
+	IReviewRepository,
 	ISavedMentorRepository,
 } from "../../domain/repositories";
 
@@ -41,6 +42,7 @@ import {
 	MongoPaymentTransactionRepository,
 	MongoPlatformWalletRepository,
 	MongoReportRepository,
+	MongoReviewRepository,
 	MongoSavedMentorRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
@@ -166,6 +168,10 @@ export const registerRepositoryBindings = (container: Container): void => {
 	container
 		.bind<IBookingRepository>(TYPES.Repositories.BookingRepository)
 		.to(BookingRepository)
+		.inSingletonScope();
+	container
+		.bind<IReviewRepository>(TYPES.Repositories.ReviewRepository)
+		.to(MongoReviewRepository)
 		.inSingletonScope();
 	container
 		.bind<IPushSubscriptionRepository>(

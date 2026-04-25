@@ -1,10 +1,13 @@
 import type { MentorProfileDetails } from "../../../../domain/repositories/mentor.repository.types";
+import type { ReviewDto } from "../../review/dtos/review.dto";
 import type { PublicMentorProfileDto } from "../dtos/get-public-mentor-profile.dto";
 
 export class MentorPublicProfileMapper {
 	static toDto(
 		profile: MentorProfileDetails,
 		avatar?: string,
+		recentReviews: ReviewDto[] = [],
+		reviewsTotal = 0,
 	): PublicMentorProfileDto {
 		return {
 			id: profile.id,
@@ -26,6 +29,8 @@ export class MentorPublicProfileMapper {
 			})),
 			yearsOfExperience: profile.yearsOfExperience,
 			avgRating: profile.avgRating,
+			recentReviews,
+			reviewsTotal,
 		};
 	}
 }

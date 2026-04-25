@@ -15,6 +15,7 @@ import { notificationRouter } from "./notification.route";
 import { paymentRouter } from "./payment.route";
 import { profileRouter } from "./profile.route";
 import { reportRouter } from "./report.route";
+import { reviewRouter } from "./review.route";
 import { usersRouter } from "./user.route";
 import { walletRouter } from "./wallet.route";
 
@@ -40,4 +41,5 @@ router.use(ROUTES.PAYMENTS.BASE, paymentRouter);
 router.use(ROUTES.WALLET.BASE, walletRouter);
 router.use(ROUTES.AVAILABILITY.BASE, availabilityRouter);
 router.use(ROUTES.BOOKINGS.BASE, bookingRouter);
+router.use(ROUTES.REVIEWS.BASE, reviewRouter);
 router.use(ROUTES.DASHBOARD.BASE, dashboardRouter);

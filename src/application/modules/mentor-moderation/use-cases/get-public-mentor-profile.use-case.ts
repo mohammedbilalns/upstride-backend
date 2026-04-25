@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { IReportRepository } from "../../../../domain/repositories/report.repository.interface";
+import type { IReviewRepository } from "../../../../domain/repositories/review.repository.interface";
 
 import { TYPES } from "../../../../shared/types/types";
 import type { IStorageService } from "../../../services/storage.service.interface";
@@ -23,6 +24,8 @@ export class GetPublicMentorProfileUseCase
 
 		@inject(TYPES.Repositories.ReportRepository)
 		private readonly _reportRepository: IReportRepository,
+		@inject(TYPES.Repositories.ReviewRepository)
+		private readonly _reviewRepository: IReviewRepository,
 		@inject(TYPES.Services.Storage)
 		private readonly _storageService: IStorageService,
 	) {}
@@ -64,6 +67,12 @@ export class GetPublicMentorProfileUseCase
 			? this._storageService.getPublicUrl(profile.user.profilePictureId)
 			: undefined;
 
+		const recentReviewsResult = await this._reviewRepository.paginateByMentorId(
+			profile.id,
+			1,
+			5,
+		);
+
 		let isReported = false;
 		if (requesterUserId) {
 			const activeReports = await this._reportRepository.query({
@@ -77,7 +86,12 @@ export class GetPublicMentorProfileUseCase
 		}
 
 		return {
-			profile: MentorPublicProfileMapper.toDto(profile, avatar),
+			profile: MentorPublicProfileMapper.toDto(
+				profile,
+				avatar,
+				recentReviewsResult.items,
+				recentReviewsResult.total,
+			),
 			isReported,
 		};
 	}

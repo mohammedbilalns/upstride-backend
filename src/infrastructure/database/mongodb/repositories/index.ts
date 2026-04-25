@@ -19,6 +19,7 @@ export * from "./payment-transactions.repository";
 export * from "./platform-wallet.repository";
 export * from "./push-subscription.repository";
 export * from "./report.repository";
+export * from "./review.repository";
 export * from "./saved-mentor.repository";
 export * from "./session.repository";
 export * from "./skill.repository";

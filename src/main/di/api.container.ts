@@ -21,6 +21,7 @@ import {
 	registerQueueBindings,
 	registerReportBindings,
 	registerRepositoryBindings,
+	registerReviewBindings,
 	registerStorageBindings,
 	registerUsersBindings,
 	registerWalletBindings,
@@ -46,6 +47,7 @@ registerAvailabilityBindings(apiContainer);
 registerBookingBindings(apiContainer);
 registerDashboardBindings(apiContainer);
 registerPaymentsBindings(apiContainer);
+registerReviewBindings(apiContainer);
 registerEventHandlersBindings(apiContainer);
 registerProfileBindings(apiContainer);
 registerStorageBindings(apiContainer);
