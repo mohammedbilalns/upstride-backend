@@ -7,14 +7,18 @@ import {
 	disconnectRedis,
 	redisClient,
 } from "../infrastructure/database/redis/redis.connection";
-import type { NotificationWorkerFactory } from "../infrastructure/queue/workers";
+import type {
+	BookingWorkerFactory,
+	NotificationWorkerFactory,
+} from "../infrastructure/queue/workers";
 import logger from "../shared/logging/logger";
 import { TYPES } from "../shared/types/types";
-import { notificationQueue } from "./di/queues.di";
+import { bookingSettlementQueue, notificationQueue } from "./di/queues.di";
 import { workerContainer } from "./di/worker.container";
 import { setupGracefulShutdown } from "./lifecyle/graceful-shutdown";
 
 let notificationWorker: Worker;
+let bookingWorker: Worker;
 
 async function start() {
 	logger.info("Starting worker...");
@@ -24,6 +28,9 @@ async function start() {
 	notificationWorker = workerContainer
 		.get<NotificationWorkerFactory>(TYPES.Workers.NotificationWorkerFactory)
 		.create();
+	bookingWorker = workerContainer
+		.get<BookingWorkerFactory>(TYPES.Workers.BookingWorkerFactory)
+		.create();
 }
 
 setupGracefulShutdown({
@@ -31,7 +38,9 @@ setupGracefulShutdown({
 	tasks: [
 		() => disconnectFromMongo(),
 		() => notificationWorker?.close(),
+		() => bookingWorker?.close(),
 		() => notificationQueue.close(),
+		() => bookingSettlementQueue.close(),
 		() => disconnectRedis(),
 	],
 });

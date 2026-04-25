@@ -8,6 +8,7 @@ export * from "./booking.repository";
 export * from "./chat.repository";
 export * from "./chat-message.repository";
 export * from "./coin-transactions.repository";
+export * from "./dashboard.repository";
 export * from "./interest.repository";
 export * from "./mentor-list.repository";
 export * from "./mentor-list-read.repository";

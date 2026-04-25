@@ -8,6 +8,7 @@ import type {
 	IBookingRepository,
 	IChatMessageRepository,
 	IChatRepository,
+	IDashboardRepository,
 	IMentorListReadRepository,
 	IMentorListRepository,
 	IMentorProfileReadRepository,
@@ -29,6 +30,7 @@ import {
 	MongoChatMessageRepository,
 	MongoChatRepository,
 	MongoCoinTransactionRepository,
+	MongoDashboardRepository,
 	MongoInterestRepository,
 	MongoMentorListReadRepository,
 	MongoMentorListRepository,
@@ -152,6 +154,10 @@ export const registerRepositoryBindings = (container: Container): void => {
 	container
 		.bind<ISavedMentorRepository>(TYPES.Repositories.SavedMentorRepository)
 		.to(MongoSavedMentorRepository)
+		.inSingletonScope();
+	container
+		.bind<IDashboardRepository>(TYPES.Repositories.DashboardRepository)
+		.to(MongoDashboardRepository)
 		.inSingletonScope();
 	container
 		.bind<IAvailabilityRepository>(TYPES.Repositories.AvailabilityRepository)

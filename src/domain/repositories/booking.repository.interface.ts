@@ -42,5 +42,9 @@ export interface IBookingRepository
 		limit: number,
 	): Promise<PaginatedResult<Booking>>;
 
-	findByMentorIdAndDate(mentorId: string, date: Date): Promise<Booking[]>;
+	findByMentorIdAndDate(
+		mentorId: string,
+		date: Date,
+		options?: { includeFailed?: boolean },
+	): Promise<Booking[]>;
 }

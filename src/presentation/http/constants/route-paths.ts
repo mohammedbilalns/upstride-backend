@@ -192,4 +192,9 @@ export const ROUTES = {
 		USER: "/me",
 		MENTOR: "/mentor/me",
 	},
+	DASHBOARD: {
+		BASE: "/dashboard",
+		ROOT: "/",
+		ACTIVITY_OVERVIEW: "/activity-overview",
+	},
 };

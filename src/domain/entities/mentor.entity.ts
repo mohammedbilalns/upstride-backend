@@ -40,6 +40,7 @@ export class Mentor {
 		public readonly experience: MentorExperience[],
 		public readonly isApproved: boolean,
 		public readonly applicationAttempts: number,
+		public readonly skippedSessionsCount: number,
 		public readonly isRejected: boolean,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
@@ -81,6 +82,12 @@ export class Mentor {
 			throw new EntityValidationError(
 				"score",
 				"Maximum of 3 application attempts allowed.",
+			);
+		}
+		if (this.skippedSessionsCount < 0) {
+			throw new EntityValidationError(
+				"score",
+				"Skipped sessions count cannot be negative.",
 			);
 		}
 		if (this.areasOfExpertise.length > 2) {

@@ -12,6 +12,7 @@ import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
+import type { IScheduleSessionSettlementUseCase } from "../../booking/use-cases/schedule-session-settlement.use-case.interface";
 import type {
 	ConfirmBookingPaymentParams,
 	IConfirmBookingPaymentService,
@@ -32,6 +33,8 @@ export class ConfirmBookingPaymentService
 		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.Services.JobQueue)
 		private readonly _jobQueue: JobQueuePort,
+		@inject(TYPES.UseCases.ScheduleSessionSettlement)
+		private readonly _scheduleSessionSettlementUseCase: IScheduleSessionSettlementUseCase,
 	) {}
 
 	async confirm({
@@ -50,6 +53,7 @@ export class ConfirmBookingPaymentService
 		}
 
 		const payerId = booking.menteeId;
+		const start = new Date(booking.startTime);
 
 		if (booking.paymentStatus === "COMPLETED") return;
 
@@ -64,17 +68,46 @@ export class ConfirmBookingPaymentService
 			meetingLink,
 		});
 
-		const start = new Date(booking.startTime);
+		const bookingsForDay = await this._bookingRepository.findByMentorIdAndDate(
+			booking.mentorId,
+			start,
+			{ includeFailed: true },
+		);
+
+		const staleSiblingBookings = bookingsForDay.filter((sibling) => {
+			if (sibling.id === booking.id) return false;
+
+			const siblingStart = new Date(sibling.startTime).getTime();
+			const siblingEnd = new Date(sibling.endTime).getTime();
+			const bookingStart = start.getTime();
+			const bookingEnd = new Date(booking.endTime).getTime();
+
+			const overlaps = bookingStart < siblingEnd && bookingEnd > siblingStart;
+
+			return overlaps && sibling.paymentStatus !== "COMPLETED";
+		});
+
+		if (staleSiblingBookings.length > 0) {
+			await Promise.all(
+				staleSiblingBookings.map((sibling) =>
+					this._bookingRepository.updateById(sibling.id, {
+						status: "CANCELLED_BY_MENTEE",
+					}),
+				),
+			);
+		}
+
 		const oneHourBefore = start.getTime() - 60 * 60 * 1000;
 		const fiveMinutesBefore = start.getTime() - 5 * 60 * 1000;
 		const now = Date.now();
+		const mentorUserId = booking.mentorUserId;
 
-		if (oneHourBefore > now) {
+		if (mentorUserId && oneHourBefore > now) {
 			await this._jobQueue.enqueue(
 				"send-session-reminder",
 				{
 					bookingId: booking.id,
-					mentorId: booking.mentorUserId!,
+					mentorId: mentorUserId,
 					menteeId: booking.menteeId,
 					label: "1 hour",
 				},
@@ -82,18 +115,23 @@ export class ConfirmBookingPaymentService
 			);
 		}
 
-		if (fiveMinutesBefore > now) {
+		if (mentorUserId && fiveMinutesBefore > now) {
 			await this._jobQueue.enqueue(
 				"send-session-reminder",
 				{
 					bookingId: booking.id,
-					mentorId: booking.mentorUserId!,
+					mentorId: mentorUserId,
 					menteeId: booking.menteeId,
 					label: "5 minutes",
 				},
 				{ delay: fiveMinutesBefore - now },
 			);
 		}
+
+		await this._scheduleSessionSettlementUseCase.execute({
+			bookingId: booking.id,
+			endTime: new Date(booking.endTime),
+		});
 
 		await Promise.all([
 			this._paymentTransactionRepository.create(

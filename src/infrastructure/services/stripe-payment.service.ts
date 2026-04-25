@@ -22,7 +22,7 @@ export class StripePaymentService implements IPaymentService {
 					price_data: {
 						currency: params.currency,
 						product_data: {
-							name: "Coins",
+							name: "Upstride Slot booking",
 							description: `${params.coins} coins`,
 						},
 						unit_amount: params.amount,

@@ -13,6 +13,11 @@ export const RESPONSE_MESSAGES = {
 		CANCELLED_BY_MENTOR: "Booking cancelled dynamically by mentor",
 		PAYMENT_INITIATED: "Booking payment initiated.",
 	},
+	DASHBOARD: {
+		FETCHED_SUCCESS: "Dashboard fetched successfully",
+		ACTIVITY_OVERVIEW_FETCHED_SUCCESS:
+			"Dashboard activity overview fetched successfully",
+	},
 };
 
 export const AuthResponseMessages = {

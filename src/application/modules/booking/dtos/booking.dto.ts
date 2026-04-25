@@ -20,6 +20,9 @@ export interface SlotDto {
 	endTime: string; // ISO string (UTC)
 	durationMinutes: number;
 	price: number;
+	status: "AVAILABLE" | "BOOKED" | "BOOKED_PENDING";
+	bookingId?: string;
+	bookingPaymentStatus?: PaymentStatus;
 }
 
 export interface GetAvailableSlotsResponse {
@@ -133,6 +136,7 @@ export interface BookingDto {
 	notes: string | null;
 	menteeName: string | null;
 	mentorName: string | null;
+	settledAt: string | null;
 	createdAt: string;
 	updatedAt: string;
 }

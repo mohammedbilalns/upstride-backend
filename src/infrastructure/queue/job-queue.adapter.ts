@@ -16,8 +16,11 @@ export class JobQueueAdapter implements JobQueuePort {
 	async enqueue<K extends keyof JobMap>(
 		job: K,
 		payload: JobMap[K],
-		opts?: { delay?: number },
+		opts?: { delay?: number; jobId?: string },
 	): Promise<void> {
-		await this._notificationQueue.add(job, payload, { delay: opts?.delay });
+		await this._notificationQueue.add(job, payload, {
+			delay: opts?.delay,
+			jobId: opts?.jobId,
+		});
 	}
 }

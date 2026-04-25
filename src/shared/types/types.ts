@@ -4,6 +4,7 @@ export const TYPES = {
 		TokenService: Symbol.for("TokenService"),
 		MailService: Symbol.for("MailService"),
 		JobQueue: Symbol.for("JobQueuePort"),
+		BookingJobQueue: Symbol.for("BookingJobQueuePort"),
 		OtpGenerator: Symbol.for("OtpGenerator"),
 		GoogleOAuth: Symbol.for("GoogleOAuth"),
 		LinkedInOAuth: Symbol.for("LinkedInOAuth"),
@@ -22,6 +23,10 @@ export const TYPES = {
 		UpsertPaymentTransactionService: Symbol.for(
 			"UpsertPaymentTransactionService",
 		),
+		SessionSettlementCalculator: Symbol.for("SessionSettlementCalculator"),
+		MentorSessionPayout: Symbol.for("MentorSessionPayout"),
+		SessionRefund: Symbol.for("SessionRefund"),
+		MentorNoShow: Symbol.for("MentorNoShow"),
 		WebSocketServer: Symbol.for("WebSocketServer"),
 		PdfReceiptService: Symbol.for("PdfReceiptService"),
 	},
@@ -33,14 +38,17 @@ export const TYPES = {
 	},
 	Queues: {
 		NotificationQueue: Symbol.for("NotificationQueue"),
+		BookingSettlementQueue: Symbol.for("BookingSettlementQueue"),
 	},
 	Workers: {
 		NotificationWorkerFactory: Symbol.for("NotificationWorkerFactory"),
+		BookingWorkerFactory: Symbol.for("BookingWorkerFactory"),
 		RegisterOtpHandler: Symbol.for("RegisterOtpHandler"),
 		ResetPasswordOtpHandler: Symbol.for("ResetPasswordOtpHandler"),
 		ChangePasswordOtpHandler: Symbol.for("ChangePasswordOtpHandler"),
 		MentorApprovalHandler: Symbol.for("MentorApprovalHandler"),
 		SessionReminderHandler: Symbol.for("SessionReminderHandler"),
+		BookingSettlementHandler: Symbol.for("BookingSettlementHandler"),
 	},
 	Repositories: {
 		UserRepository: Symbol.for("UserRepository"),
@@ -66,6 +74,7 @@ export const TYPES = {
 		ArticleReactionRepository: Symbol.for("ArticleReactionRepository"),
 		ArticleViewRepository: Symbol.for("ArticleViewRepository"),
 		SavedMentorRepository: Symbol.for("SavedMentorRepository"),
+		DashboardRepository: Symbol.for("DashboardRepository"),
 		AvailabilityRepository: Symbol.for("AvailabilityRepository"),
 		BookingRepository: Symbol.for("BookingRepository"),
 		PushSubscriptionRepository: Symbol.for("PushSubscriptionRepository"),
@@ -192,6 +201,12 @@ export const TYPES = {
 		GetMentorBookings: Symbol.for("GetMentorBookingsUseCase"),
 		RepayBooking: Symbol.for("RepayBookingUseCase"),
 		GenerateReceiptPdf: Symbol.for("GenerateReceiptPdfUseCase"),
+		ScheduleSessionSettlement: Symbol.for("ScheduleSessionSettlementUseCase"),
+		SettleEndedSession: Symbol.for("SettleEndedSessionUseCase"),
+		GetDashboard: Symbol.for("GetDashboardUseCase"),
+		GetDashboardActivityOverview: Symbol.for(
+			"GetDashboardActivityOverviewUseCase",
+		),
 
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
 		HandlePaymentWebhook: Symbol.for("HandlePaymentWebhookUseCase"),
@@ -237,6 +252,7 @@ export const TYPES = {
 
 		Availability: Symbol.for("AvailabilityController"),
 		Booking: Symbol.for("BookingController"),
+		Dashboard: Symbol.for("DashboardController"),
 	},
 	PaymentHandlers: {
 		CheckoutCompleted: Symbol.for("CheckoutCompletedHandler"),

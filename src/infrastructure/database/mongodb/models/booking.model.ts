@@ -18,6 +18,7 @@ export interface BookingDocument {
 	totalAmount: number;
 	currency: string;
 	notes: string | null;
+	settledAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -51,6 +52,7 @@ const bookingSchema = new Schema<BookingDocument>(
 		currency: { type: String, required: true },
 		meetingLink: { type: String, default: "" },
 		notes: { type: String, default: null },
+		settledAt: { type: Date, default: null },
 	},
 	{ timestamps: true },
 );
