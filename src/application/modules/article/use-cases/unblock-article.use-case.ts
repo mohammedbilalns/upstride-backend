@@ -52,8 +52,7 @@ export class UnblockArticleUseCase implements IUnblockArticleUseCase {
 
 			if (article.blockedByReportId) {
 				await this._reportRepository.updateById(article.blockedByReportId, {
-					isAppealSubmitted: false,
-					actionTaken: "unblocked article",
+					actionTaken: "Unblocked article",
 					actionTakenAt: new Date(),
 				});
 			}

@@ -74,7 +74,7 @@ export class GetArticleUseCase implements IGetArticleUseCase {
 		let appealMessage: string | null = null;
 		let appealedAt: string | null = null;
 
-		if (isAuthor && article.isBlockedByAdmin) {
+		if (isAuthor) {
 			const reports = await this._reportRepository.query({
 				query: {
 					targetId: article.id,
