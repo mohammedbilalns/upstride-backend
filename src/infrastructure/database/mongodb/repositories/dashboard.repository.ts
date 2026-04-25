@@ -1,4 +1,4 @@
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { Types } from "mongoose";
 import type {
 	DashboardActivityOverviewSource,
@@ -7,6 +7,8 @@ import type {
 	DashboardSource,
 	IDashboardRepository,
 } from "../../../../domain/repositories/dashboard.repository.interface";
+import type { IReviewRepository } from "../../../../domain/repositories/review.repository.interface";
+import { TYPES } from "../../../../shared/types/types";
 import {
 	type ArticleDoc,
 	type BookingDoc,
@@ -26,6 +28,11 @@ import { UserModel } from "../models/user.model";
 
 @injectable()
 export class MongoDashboardRepository implements IDashboardRepository {
+	constructor(
+		@inject(TYPES.Repositories.ReviewRepository)
+		private readonly _reviewRepository: IReviewRepository,
+	) {}
+
 	async getDashboardSource(input: {
 		userId: string;
 		role: DashboardRole;
@@ -36,14 +43,18 @@ export class MongoDashboardRepository implements IDashboardRepository {
 			articleViewsCount,
 			recentArticles,
 			recentSavedMentors,
-			mentorAverageRating,
+			mentorId,
 		] = await Promise.all([
 			this.getBookings(input.userId, input.role),
 			this.getSessions(input.userId),
 			this.getArticleViewsCount(input.userId),
 			this.getRecentArticles(input.userId, input.role),
 			this.getRecentSavedMentors(input.userId),
-			this.getMentorAverageRating(input.userId, input.role),
+			this.getMentorId(input.userId),
+		]);
+		const [mentorAverageRating, recentReviews] = await Promise.all([
+			this.getMentorAverageRating(mentorId, input.role),
+			this.getRecentReviews(mentorId, input.role),
 		]);
 
 		return DashboardRepositoryMapper.toDashboardSource({
@@ -54,6 +65,7 @@ export class MongoDashboardRepository implements IDashboardRepository {
 			recentArticles,
 			recentSavedMentors,
 			mentorAverageRating,
+			recentReviews,
 		});
 	}
 
@@ -269,15 +281,26 @@ export class MongoDashboardRepository implements IDashboardRepository {
 		return DashboardRepositoryMapper.toSavedMentors(docs as SavedMentorDoc[]);
 	}
 
-	private async getMentorAverageRating(userId: string, role: DashboardRole) {
-		if (role !== "MENTOR") {
+	private async getMentorId(userId: string) {
+		const mentor = await MentorModel.findOne({ userId }).select("_id").lean<{
+			_id: Types.ObjectId;
+		}>();
+
+		return mentor?._id.toString() ?? null;
+	}
+
+	private async getMentorAverageRating(
+		mentorId: string | null,
+		role: DashboardRole,
+	) {
+		if (role !== "MENTOR" || !mentorId) {
 			return null;
 		}
 
 		const docs = await MentorModel.aggregate([
 			{
 				$match: {
-					userId: new Types.ObjectId(userId),
+					_id: new Types.ObjectId(mentorId),
 				},
 			},
 			{
@@ -289,5 +312,19 @@ export class MongoDashboardRepository implements IDashboardRepository {
 		]).exec();
 
 		return docs[0]?.avgRating ?? null;
+	}
+
+	private async getRecentReviews(mentorId: string | null, role: DashboardRole) {
+		if (role !== "MENTOR" || !mentorId) {
+			return [];
+		}
+
+		const result = await this._reviewRepository.paginateByMentorId(
+			mentorId,
+			1,
+			3,
+		);
+
+		return result.items;
 	}
 }

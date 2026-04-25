@@ -79,6 +79,16 @@ const toArticleDto = (
 	createdAt: article.createdAt.toISOString(),
 });
 
+const toReviewDto = (
+	review: DashboardSource["recentReviews"][number],
+): DashboardReviewDto => ({
+	id: review.id,
+	reviewerName: review.reviewerName ?? "Anonymous",
+	rating: review.rating,
+	comment: review.comment,
+	createdAt: review.createdAt.toISOString(),
+});
+
 const toRecentActivity = (source: DashboardSource, role: DashboardRole) => {
 	const bookings = source.bookings.map(toAnalyticsBooking);
 	const completedBookings = bookings.filter(
@@ -193,7 +203,7 @@ export class DashboardMapper {
 			summary.totalMentees = distinctMentees.size;
 			summary.averageRating = 0;
 			summary.totalAverageRating = source.mentorAverageRating ?? 0;
-			summary.recentReviews = [] satisfies DashboardReviewDto[];
+			summary.recentReviews = source.recentReviews.map(toReviewDto);
 			summary.earningsChart = {
 				period: "month",
 				labels: activityOverview.labels,
