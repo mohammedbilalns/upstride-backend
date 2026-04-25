@@ -4,6 +4,7 @@ import type { IBookingRepository } from "../../../../domain/repositories/booking
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
+import type { ICreateNotificationUseCase } from "../../notification/use-cases/create-notification.use-case.interface";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
@@ -27,6 +28,8 @@ export class CancelBookingByMentorUseCase
 		private readonly _mentorWriteRepository: IMentorWriteRepository,
 		@inject(TYPES.UseCases.RefundSessionAmount)
 		private readonly _refundSessionAmountUseCase: IRefundSessionAmountUseCase,
+		@inject(TYPES.UseCases.CreateNotification)
+		private readonly _createNotificationUseCase: ICreateNotificationUseCase,
 	) {}
 
 	async execute(input: CancelBookingInput): Promise<CancelBookingResponse> {
@@ -68,6 +71,29 @@ export class CancelBookingByMentorUseCase
 			paymentStatus: booking.paymentStatus,
 			totalAmount: booking.totalAmount,
 			cancelledBy: "mentor",
+		});
+
+		await this._createNotificationUseCase.execute({
+			userId: booking.menteeId,
+			actorId: mentor.userId,
+			relatedEntityId: booking.id,
+			title: "Session Cancelled by Mentor",
+			description:
+				refundResult.refund.amount > 0
+					? `Your booking ${booking.id} was cancelled by the mentor. Refund: ${refundResult.refund.amount} coins (${refundResult.refund.percentage}%).`
+					: `Your booking ${booking.id} was cancelled by the mentor. No refund was issued.`,
+			type: "SESSION",
+			event: "SESSION_CANCELLED",
+			metadata: {
+				bookingId: booking.id,
+				cancelledBy: "mentor",
+				cancellationReason: input.reason || "None provided",
+				refundAmount: refundResult.refund.amount,
+				refundPercentage: refundResult.refund.percentage,
+				refundReason: refundResult.refund.reason,
+				paymentType: booking.paymentType,
+				paymentStatus: booking.paymentStatus,
+			},
 		});
 
 		return {

@@ -3,6 +3,7 @@ import { Booking } from "../../../../domain/entities/booking.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { ValidationError } from "../../../shared/errors";
+import type { ICreateNotificationUseCase } from "../../notification/use-cases/create-notification.use-case.interface";
 import type {
 	CancelBookingInput,
 	CancelBookingResponse,
@@ -22,6 +23,8 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 		private readonly _bookingRepository: IBookingRepository,
 		@inject(TYPES.UseCases.RefundSessionAmount)
 		private readonly _refundSessionAmountUseCase: IRefundSessionAmountUseCase,
+		@inject(TYPES.UseCases.CreateNotification)
+		private readonly _createNotificationUseCase: ICreateNotificationUseCase,
 	) {}
 
 	async execute(input: CancelBookingInput): Promise<CancelBookingResponse> {
@@ -66,6 +69,31 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 			totalAmount: booking.totalAmount,
 			cancelledBy: "user",
 		});
+
+		if (booking.mentorUserId) {
+			await this._createNotificationUseCase.execute({
+				userId: booking.mentorUserId,
+				actorId: input.userId,
+				relatedEntityId: booking.id,
+				title: "Session Cancelled",
+				description:
+					refundResult.refund.amount > 0
+						? `A mentee cancelled booking ${booking.id}. Refund to the mentee: ${refundResult.refund.amount} coins (${refundResult.refund.percentage}%).`
+						: `A mentee cancelled booking ${booking.id}. No refund was issued.`,
+				type: "SESSION",
+				event: "SESSION_CANCELLED",
+				metadata: {
+					bookingId: booking.id,
+					cancelledBy: "mentee",
+					cancellationReason: input.reason || "None provided",
+					refundAmount: refundResult.refund.amount,
+					refundPercentage: refundResult.refund.percentage,
+					refundReason: refundResult.refund.reason,
+					paymentType: booking.paymentType,
+					paymentStatus: booking.paymentStatus,
+				},
+			});
+		}
 
 		return {
 			bookingId: booking.id,
