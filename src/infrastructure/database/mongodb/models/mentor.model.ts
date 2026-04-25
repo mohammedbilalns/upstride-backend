@@ -32,6 +32,7 @@ export interface MentorDocument {
 	}[];
 	isApproved: boolean;
 	applicationAttempts: number;
+	skippedSessionsCount: number;
 	isRejected: boolean;
 	rejectionReason: string | null;
 	avgRating: number;
@@ -100,6 +101,11 @@ const mentorSchema = new Schema<MentorDocument>(
 				(val: number) => val <= 3,
 				"{PATH} exceeds the limit of 3 attempts",
 			],
+		},
+		skippedSessionsCount: {
+			type: Number,
+			default: 0,
+			min: 0,
 		},
 		rejectionReason: { type: String },
 		isUserBlocked: { type: Boolean, default: false },

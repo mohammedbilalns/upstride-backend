@@ -12,6 +12,7 @@ import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
+import type { IScheduleSessionSettlementUseCase } from "../../booking/use-cases/schedule-session-settlement.use-case.interface";
 import type {
 	ConfirmBookingPaymentParams,
 	IConfirmBookingPaymentService,
@@ -32,6 +33,8 @@ export class ConfirmBookingPaymentService
 		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.Services.JobQueue)
 		private readonly _jobQueue: JobQueuePort,
+		@inject(TYPES.UseCases.ScheduleSessionSettlement)
+		private readonly _scheduleSessionSettlementUseCase: IScheduleSessionSettlementUseCase,
 	) {}
 
 	async confirm({
@@ -124,6 +127,11 @@ export class ConfirmBookingPaymentService
 				{ delay: fiveMinutesBefore - now },
 			);
 		}
+
+		await this._scheduleSessionSettlementUseCase.execute({
+			bookingId: booking.id,
+			endTime: new Date(booking.endTime),
+		});
 
 		await Promise.all([
 			this._paymentTransactionRepository.create(

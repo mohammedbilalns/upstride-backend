@@ -69,6 +69,7 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			existingMentor.isRejected
 				? existingMentor.applicationAttempts + 1
 				: existingMentor.applicationAttempts,
+			existingMentor.skippedSessionsCount,
 			false,
 			existingMentor.createdAt,
 			new Date(),

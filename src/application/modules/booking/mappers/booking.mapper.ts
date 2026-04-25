@@ -20,6 +20,7 @@ export class BookingMapper {
 			notes: entity.notes,
 			menteeName: entity.menteeName ?? null,
 			mentorName: entity.mentorName ?? null,
+			settledAt: entity.settledAt ? entity.settledAt.toISOString() : null,
 			createdAt: entity.createdAt.toISOString(),
 			updatedAt: entity.updatedAt.toISOString(),
 		};

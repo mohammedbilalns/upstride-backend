@@ -28,6 +28,7 @@ import { calculateBookingAmount } from "../utils/calculate-booking-amount.util";
 import { generateMeetingLink } from "../utils/generate-meeting-link";
 import type { ICreateBookingUseCase } from "./create-booking.use-case.interface";
 import type { IScheduleLiveSesionReminderUseCase } from "./schedule-mentor-reminder.use-case.interface";
+import type { IScheduleSessionSettlementUseCase } from "./schedule-session-settlement.use-case.interface";
 
 @injectable()
 export class CreateBookingUseCase implements ICreateBookingUseCase {
@@ -48,6 +49,8 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 		private readonly _idGenerator: IIdGenerator,
 		@inject(TYPES.UseCases.ScheduleLiveSesionReminder)
 		private readonly _scheduleLiveSesionReminderUseCase: IScheduleLiveSesionReminderUseCase,
+		@inject(TYPES.UseCases.ScheduleSessionSettlement)
+		private readonly _scheduleSessionSettlementUseCase: IScheduleSessionSettlementUseCase,
 	) {}
 
 	async execute(input: CreateBookingInput): Promise<CreateBookingResponse> {
@@ -152,6 +155,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			validationData.notes || null,
 			null,
 			null,
+			null,
 			new Date(),
 			new Date(),
 		);
@@ -164,6 +168,10 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 				bookingId: createdBooking.id,
 				mentorId: mentor.userId,
 				menteeId: input.menteeId,
+			});
+			await this._scheduleSessionSettlementUseCase.execute({
+				bookingId: createdBooking.id,
+				endTime: end,
 			});
 		}
 

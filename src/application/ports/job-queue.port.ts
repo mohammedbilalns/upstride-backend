@@ -15,6 +15,6 @@ export interface JobQueuePort {
 	enqueue<K extends keyof JobMap>(
 		job: K,
 		payload: JobMap[K],
-		opts?: { delay?: number },
+		opts?: { delay?: number; jobId?: string },
 	): Promise<void>;
 }

@@ -1,4 +1,8 @@
 import type { Container } from "inversify";
+import { MentorNoShowService } from "../../application/modules/booking/services/mentor-no-show.service";
+import { MentorSessionPayoutService } from "../../application/modules/booking/services/mentor-session-payout.service";
+import { SessionRefundService } from "../../application/modules/booking/services/session-refund.service";
+import { SessionSettlementCalculatorService } from "../../application/modules/booking/services/session-settlement-calculator.service";
 import { CancelBookingUseCase } from "../../application/modules/booking/use-cases/cancel-booking.use-case";
 import type { ICancelBookingUseCase } from "../../application/modules/booking/use-cases/cancel-booking.use-case.interface";
 import { CancelBookingByMentorUseCase } from "../../application/modules/booking/use-cases/cancel-booking-by-mentor.use-case";
@@ -21,6 +25,8 @@ import { RepayBookingUseCase } from "../../application/modules/booking/use-cases
 import type { IRepayBookingUseCase } from "../../application/modules/booking/use-cases/repay-booking.use-case.interface";
 import { ScheduleLiveSesionReminderUseCase } from "../../application/modules/booking/use-cases/schedule-live-sesion-reminder.use-case";
 import type { IScheduleLiveSesionReminderUseCase } from "../../application/modules/booking/use-cases/schedule-mentor-reminder.use-case.interface";
+import { ScheduleSessionSettlementUseCase } from "../../application/modules/booking/use-cases/schedule-session-settlement.use-case";
+import type { IScheduleSessionSettlementUseCase } from "../../application/modules/booking/use-cases/schedule-session-settlement.use-case.interface";
 import { PdfReceiptService } from "../../infrastructure/services/pdf-receipt.service";
 import { BookingController } from "../../presentation/http/controllers/booking.controller";
 import { TYPES } from "../../shared/types/types";
@@ -69,6 +75,31 @@ export const registerBookingBindings = (container: Container): void => {
 			TYPES.UseCases.ScheduleLiveSesionReminder,
 		)
 		.to(ScheduleLiveSesionReminderUseCase)
+		.inSingletonScope();
+	container
+		.bind<IScheduleSessionSettlementUseCase>(
+			TYPES.UseCases.ScheduleSessionSettlement,
+		)
+		.to(ScheduleSessionSettlementUseCase)
+		.inSingletonScope();
+
+	container
+		.bind<SessionSettlementCalculatorService>(
+			TYPES.Services.SessionSettlementCalculator,
+		)
+		.to(SessionSettlementCalculatorService)
+		.inSingletonScope();
+	container
+		.bind<MentorSessionPayoutService>(TYPES.Services.MentorSessionPayout)
+		.to(MentorSessionPayoutService)
+		.inSingletonScope();
+	container
+		.bind<SessionRefundService>(TYPES.Services.SessionRefund)
+		.to(SessionRefundService)
+		.inSingletonScope();
+	container
+		.bind<MentorNoShowService>(TYPES.Services.MentorNoShow)
+		.to(MentorNoShowService)
 		.inSingletonScope();
 
 	// PDF Receipt Service
