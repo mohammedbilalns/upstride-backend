@@ -1,5 +1,6 @@
 export interface ArticleAuthorSnapshotDto {
 	name: string;
+	interests?: string[];
 	avatarUrl?: string;
 	isBlocked?: boolean;
 }

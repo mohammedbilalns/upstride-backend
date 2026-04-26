@@ -7,6 +7,7 @@ export class ProfileUpdatedEvent extends DomainEvent {
 		public readonly payload: {
 			userId: string;
 			name?: string;
+			interests?: string[];
 			avatarUrl?: string;
 		},
 	) {

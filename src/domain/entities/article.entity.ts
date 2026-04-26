@@ -7,6 +7,7 @@ export class Article {
 		public readonly authorId: string,
 		public readonly authorSnapshot: {
 			name: string;
+			interests: string[];
 			avatarUrl?: string;
 			isBlocked?: boolean;
 		},

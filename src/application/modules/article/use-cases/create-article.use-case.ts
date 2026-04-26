@@ -55,7 +55,11 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
 		const article = new Article(
 			"",
 			user.id,
-			{ name: user.name, avatarUrl },
+			{
+				name: user.name,
+				interests: user.preferences?.interests ?? [],
+				avatarUrl,
+			},
 			slug,
 			featuredImageUrl,
 			input.title,

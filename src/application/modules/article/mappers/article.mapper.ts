@@ -8,6 +8,7 @@ export class ArticleMapper {
 			authorId: entity.authorId,
 			authorSnapshot: {
 				name: entity.authorSnapshot.name,
+				interests: entity.authorSnapshot.interests,
 				avatarUrl: entity.authorSnapshot.avatarUrl,
 				isBlocked: entity.authorSnapshot.isBlocked,
 			},

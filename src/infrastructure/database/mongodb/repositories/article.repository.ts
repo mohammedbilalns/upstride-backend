@@ -44,11 +44,21 @@ export class MongoArticleRepository
 
 	async updateAuthorSnapshotByAuthorId(
 		authorId: string,
-		snapshot: { name?: string; avatarUrl?: string; isBlocked?: boolean },
+		snapshot: {
+			name?: string;
+			interests?: string[];
+			avatarUrl?: string;
+			isBlocked?: boolean;
+		},
 	): Promise<void> {
 		const update: Record<string, unknown> = {};
 		if (snapshot.name !== undefined) {
 			update["authorSnapshot.name"] = snapshot.name;
+		}
+		if (snapshot.interests !== undefined) {
+			update["authorSnapshot.interestIds"] = snapshot.interests.map(
+				(interestId) => new Types.ObjectId(interestId),
+			);
 		}
 		if (snapshot.avatarUrl !== undefined) {
 			update["authorSnapshot.avatarUrl"] = snapshot.avatarUrl;

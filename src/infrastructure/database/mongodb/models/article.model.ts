@@ -5,6 +5,7 @@ export interface ArticleDocument {
 	authorId: Types.ObjectId;
 	authorSnapshot: {
 		name: string;
+		interestIds: Types.ObjectId[];
 		avatarUrl?: string;
 		isBlocked?: boolean;
 	};
@@ -32,6 +33,9 @@ const articleSchema = new Schema<ArticleDocument>(
 		authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
 		authorSnapshot: {
 			name: { type: String, required: true },
+			interestIds: [
+				{ type: Schema.Types.ObjectId, ref: "Interest", default: [] },
+			],
 			avatarUrl: { type: String },
 			isBlocked: { type: Boolean, default: false },
 		},

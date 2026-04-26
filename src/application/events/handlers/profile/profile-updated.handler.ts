@@ -17,6 +17,7 @@ export class ProfileUpdatedHandler
 	async handle(event: ProfileUpdatedEvent): Promise<void> {
 		if (
 			event.payload.name === undefined &&
+			event.payload.interests === undefined &&
 			event.payload.avatarUrl === undefined
 		) {
 			return;
@@ -28,6 +29,9 @@ export class ProfileUpdatedHandler
 				{
 					...(event.payload.name !== undefined && {
 						name: event.payload.name,
+					}),
+					...(event.payload.interests !== undefined && {
+						interests: event.payload.interests,
 					}),
 					...(event.payload.avatarUrl !== undefined && {
 						avatarUrl: event.payload.avatarUrl,

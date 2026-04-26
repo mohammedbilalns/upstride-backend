@@ -29,7 +29,12 @@ export interface IArticleRepository
 	findBySlug(slug: string): Promise<Article | null>;
 	updateAuthorSnapshotByAuthorId(
 		authorId: string,
-		snapshot: { name?: string; avatarUrl?: string; isBlocked?: boolean },
+		snapshot: {
+			name?: string;
+			interests?: string[];
+			avatarUrl?: string;
+			isBlocked?: boolean;
+		},
 	): Promise<void>;
 
 	getTopTags(
