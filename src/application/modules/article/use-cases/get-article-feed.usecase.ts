@@ -7,6 +7,7 @@ import { TYPES } from "../../../../shared/types/types";
 import { computeArticleFeed } from "../../../../shared/utilities/feed-scoring.util";
 import { reorderByIds } from "../../../../shared/utilities/reorder-by-ids.util";
 import type { IFeedCacheService } from "../../../services";
+import type { IStorageService } from "../../../services/storage.service.interface";
 import {
 	emptyPaginatedResult,
 	mapPaginatedResult,
@@ -27,6 +28,8 @@ export class GetArticleFeedUseCase implements IGetArticleFeedUseCase {
 		private readonly _userRepository: IUserRepository,
 		@inject(TYPES.Services.FeedCacheService)
 		private readonly _feedCacheService: IFeedCacheService,
+		@inject(TYPES.Services.Storage)
+		private readonly _storageService: IStorageService,
 	) {}
 
 	async execute(input: GetArticleFeedInput): Promise<GetArticlesOutput> {
@@ -84,8 +87,20 @@ export class GetArticleFeedUseCase implements IGetArticleFeedUseCase {
 			},
 		});
 
-		const orderedItems = reorderByIds(docs, pageIds).map((article) =>
-			ArticleMapper.toDto(article),
+		const orderedItems = await Promise.all(
+			reorderByIds(docs, pageIds).map(async (article) => {
+				const dto = ArticleMapper.toDto(article);
+				if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
+					try {
+						dto.featuredImageUrl = this._storageService.getPublicUrl(
+							dto.featuredImageId,
+						);
+					} catch (err) {
+						console.error("Failed to sign article featured image URL:", err);
+					}
+				}
+				return dto;
+			}),
 		);
 
 		return {
