@@ -1,6 +1,7 @@
 import { Container } from "inversify";
 import {
 	registerAdminBindings,
+	registerAdminDashboardBindings,
 	registerArticleBindings,
 	registerAuthenticationBindings,
 	registerAvailabilityBindings,
@@ -34,6 +35,7 @@ registerRepositoryBindings(apiContainer);
 registerQueueBindings(apiContainer);
 registerAuthenticationBindings(apiContainer);
 registerAdminBindings(apiContainer);
+registerAdminDashboardBindings(apiContainer);
 registerArticleBindings(apiContainer);
 registerCatalogBindings(apiContainer);
 registerChatBindings(apiContainer);

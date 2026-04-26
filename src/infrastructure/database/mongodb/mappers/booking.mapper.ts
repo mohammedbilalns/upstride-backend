@@ -36,6 +36,7 @@ export class BookingMapper {
 			doc.notes,
 			menteeName,
 			mentorName,
+			doc.mentorJoinedAt ?? null,
 			doc.settledAt ?? null,
 			doc.createdAt,
 			doc.updatedAt,
@@ -57,6 +58,7 @@ export class BookingMapper {
 			totalAmount: entity.totalAmount,
 			currency: entity.currency,
 			notes: entity.notes,
+			mentorJoinedAt: entity.mentorJoinedAt,
 			settledAt: entity.settledAt,
 		};
 	}

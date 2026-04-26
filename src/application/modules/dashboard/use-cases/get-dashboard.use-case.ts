@@ -36,10 +36,7 @@ export class GetDashboardUseCase implements IGetDashboardUseCase {
 	private toPublicArticleImage(
 		article: DashboardSummaryDto["recommendedArticles"][number],
 	) {
-		if (
-			!article.featuredImageUrl ||
-			article.featuredImageUrl.startsWith("http")
-		) {
+		if (!article.featuredImageUrl) {
 			return article;
 		}
 

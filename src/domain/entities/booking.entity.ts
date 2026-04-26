@@ -52,6 +52,7 @@ export class Booking {
 		public readonly notes: string | null,
 		public readonly menteeName: string | null,
 		public readonly mentorName: string | null,
+		public readonly mentorJoinedAt: Date | null,
 		public readonly settledAt: Date | null,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,

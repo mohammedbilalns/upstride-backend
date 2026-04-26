@@ -1,4 +1,5 @@
 export * from "./admin.controller";
+export * from "./admin-dashboard.controller";
 export * from "./article.controller";
 export * from "./auth.controller";
 export * from "./availability.controller";

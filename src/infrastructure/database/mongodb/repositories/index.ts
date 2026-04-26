@@ -1,4 +1,5 @@
 export * from "./abstract.repository";
+export * from "./admin-dashboard.repository";
 export * from "./article.repository";
 export * from "./article-comment.repository";
 export * from "./article-reaction.repository";

@@ -1,5 +1,6 @@
 import type { Container } from "inversify";
 import type {
+	IAdminDashboardRepository,
 	IArticleCommentRepository,
 	IArticleReactionRepository,
 	IArticleRepository,
@@ -24,6 +25,7 @@ import type {
 import {
 	AvailabilityRepository,
 	BookingRepository,
+	MongoAdminDashboardRepository,
 	MongoArticleCommentRepository,
 	MongoArticleReactionRepository,
 	MongoArticleRepository,
@@ -55,6 +57,12 @@ import { RedisTokenRevocationRepository } from "../../infrastructure/database/re
 import { TYPES } from "../../shared/types/types";
 
 export const registerRepositoryBindings = (container: Container): void => {
+	container
+		.bind<IAdminDashboardRepository>(
+			TYPES.Repositories.AdminDashboardRepository,
+		)
+		.to(MongoAdminDashboardRepository)
+		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.UserRepository)
 		.to(MongoUserRepository)

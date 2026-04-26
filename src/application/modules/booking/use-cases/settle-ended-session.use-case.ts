@@ -78,6 +78,10 @@ export class SettleEndedSessionUseCase implements ISettleEndedSessionUseCase {
 	}
 
 	private _mentorJoined(booking: Booking): boolean {
-		return booking.status === "STARTED" || booking.status === "COMPLETED";
+		return (
+			booking.mentorJoinedAt !== null ||
+			booking.status === "STARTED" ||
+			booking.status === "COMPLETED"
+		);
 	}
 }

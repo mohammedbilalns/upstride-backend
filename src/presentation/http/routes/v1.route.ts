@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ROUTES } from "../constants";
 import { adminsRouter } from "./admin.route";
+import { adminDashboardRouter } from "./admin-dashboard.route";
 import { articleRouter } from "./article.route";
 import { authRouter } from "./auth.route";
 import { availabilityRouter } from "./availability.route";
@@ -32,6 +33,7 @@ router.use(ROUTES.CATALOG.BASE, catalogRouter);
 router.use(ROUTES.CHATS.BASE, chatRouter);
 router.use(ROUTES.USERS.BASE, usersRouter);
 router.use(ROUTES.ADMINS.BASE, adminsRouter);
+router.use(ROUTES.ADMIN_DASHBOARD.BASE, adminDashboardRouter);
 router.use(ROUTES.STORAGE.BASE, fileRouter);
 router.use(ROUTES.MENTOR.BASE, mentorRouter);
 router.use(ROUTES.MENTOR_LISTS.BASE, mentorListRouter);

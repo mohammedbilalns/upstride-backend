@@ -1,3 +1,4 @@
+export * from "./admin-dashboard.repository.interface";
 export * from "./article.repository.interface";
 export * from "./article-comment.repository.interface";
 export * from "./article-reaction.repository.interface";

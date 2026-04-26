@@ -133,6 +133,11 @@ export interface BookingDto {
 	paymentStatus: PaymentStatus;
 	totalAmount: number;
 	currency: string;
+	mentorPayout: {
+		amount: number;
+		currency: string;
+		percentage: number;
+	};
 	meetingLink: string;
 	notes: string | null;
 	menteeName: string | null;

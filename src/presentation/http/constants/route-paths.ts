@@ -74,6 +74,13 @@ export const ROUTES = {
 		BLOCK: (id: string) => `/${id}/block`,
 		UNBLOCK: (id: string) => `/${id}/unblock`,
 	},
+	ADMIN_DASHBOARD: {
+		BASE: "/admin-dashboard",
+		ROOT: "/",
+		USER_GROWTH: "/user-growth",
+		REVENUE_ANALYTICS: "/revenue-analytics",
+		SESSION_OVERVIEW: "/session-overview",
+	},
 	STORAGE: {
 		BASE: "/storage",
 		GET_PRESIGNED_URL: "/presigned-upload-url",

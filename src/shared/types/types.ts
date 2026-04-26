@@ -51,6 +51,7 @@ export const TYPES = {
 		BookingSettlementHandler: Symbol.for("BookingSettlementHandler"),
 	},
 	Repositories: {
+		AdminDashboardRepository: Symbol.for("AdminDashboardRepository"),
 		UserRepository: Symbol.for("UserRepository"),
 		CoinTransactionRepository: Symbol.for("CoinTransactionRepository"),
 		OtpRepository: Symbol.for("OtpRepository"),
@@ -210,6 +211,16 @@ export const TYPES = {
 		GetDashboardActivityOverview: Symbol.for(
 			"GetDashboardActivityOverviewUseCase",
 		),
+		GetAdminDashboard: Symbol.for("GetAdminDashboardUseCase"),
+		GetAdminDashboardUserGrowth: Symbol.for(
+			"GetAdminDashboardUserGrowthUseCase",
+		),
+		GetAdminDashboardRevenueAnalytics: Symbol.for(
+			"GetAdminDashboardRevenueAnalyticsUseCase",
+		),
+		GetAdminDashboardSessionOverview: Symbol.for(
+			"GetAdminDashboardSessionOverviewUseCase",
+		),
 
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
 		HandlePaymentWebhook: Symbol.for("HandlePaymentWebhookUseCase"),
@@ -257,6 +268,7 @@ export const TYPES = {
 		Booking: Symbol.for("BookingController"),
 		Review: Symbol.for("ReviewController"),
 		Dashboard: Symbol.for("DashboardController"),
+		AdminDashboard: Symbol.for("AdminDashboardController"),
 	},
 	PaymentHandlers: {
 		CheckoutCompleted: Symbol.for("CheckoutCompletedHandler"),
