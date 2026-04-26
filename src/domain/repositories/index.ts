@@ -1,3 +1,4 @@
+export * from "./admin-dashboard.repository.interface";
 export * from "./article.repository.interface";
 export * from "./article-comment.repository.interface";
 export * from "./article-reaction.repository.interface";
@@ -25,6 +26,7 @@ export * from "./platform-wallet.repository.interface";
 export * from "./profession.repository.interface";
 export * from "./push-subscription.repository.interface";
 export * from "./report.repository.interface";
+export * from "./review.repository.interface";
 export * from "./saved-mentor.repository.interface";
 export * from "./session.repository.interface";
 export * from "./skill.repository.interface";

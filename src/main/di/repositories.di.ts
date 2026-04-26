@@ -1,5 +1,6 @@
 import type { Container } from "inversify";
 import type {
+	IAdminDashboardRepository,
 	IArticleCommentRepository,
 	IArticleReactionRepository,
 	IArticleRepository,
@@ -17,12 +18,14 @@ import type {
 	IProfessionRepository,
 	IPushSubscriptionRepository,
 	IReportRepository,
+	IReviewRepository,
 	ISavedMentorRepository,
 } from "../../domain/repositories";
 
 import {
 	AvailabilityRepository,
 	BookingRepository,
+	MongoAdminDashboardRepository,
 	MongoArticleCommentRepository,
 	MongoArticleReactionRepository,
 	MongoArticleRepository,
@@ -41,6 +44,7 @@ import {
 	MongoPaymentTransactionRepository,
 	MongoPlatformWalletRepository,
 	MongoReportRepository,
+	MongoReviewRepository,
 	MongoSavedMentorRepository,
 	MongoSessionRepository,
 	MongoSkillRepository,
@@ -53,6 +57,12 @@ import { RedisTokenRevocationRepository } from "../../infrastructure/database/re
 import { TYPES } from "../../shared/types/types";
 
 export const registerRepositoryBindings = (container: Container): void => {
+	container
+		.bind<IAdminDashboardRepository>(
+			TYPES.Repositories.AdminDashboardRepository,
+		)
+		.to(MongoAdminDashboardRepository)
+		.inSingletonScope();
 	container
 		.bind(TYPES.Repositories.UserRepository)
 		.to(MongoUserRepository)
@@ -166,6 +176,10 @@ export const registerRepositoryBindings = (container: Container): void => {
 	container
 		.bind<IBookingRepository>(TYPES.Repositories.BookingRepository)
 		.to(BookingRepository)
+		.inSingletonScope();
+	container
+		.bind<IReviewRepository>(TYPES.Repositories.ReviewRepository)
+		.to(MongoReviewRepository)
 		.inSingletonScope();
 	container
 		.bind<IPushSubscriptionRepository>(

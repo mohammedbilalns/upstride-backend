@@ -1,8 +1,13 @@
 import type {
 	BookingStatus,
 	PaymentStatus,
+	PaymentType,
 } from "../../../../domain/entities/booking.entity";
-import { IST_OFFSET_MINUTES } from "../../../../shared/constants/app.constants";
+import {
+	COIN_VALUE,
+	IST_OFFSET_MINUTES,
+	PLATFOM_COMMISSION,
+} from "../../../../shared/constants/app.constants";
 import { getUtcRangeForIstDate } from "../../../../shared/utilities/time.util";
 import type {
 	DashboardActivityItemDto,
@@ -61,12 +66,40 @@ export type DashboardBookingRecord = {
 	startTime: Date;
 	endTime: Date;
 	status: BookingStatus;
+	paymentType: PaymentType;
 	paymentStatus: PaymentStatus;
 	totalAmount: number;
 	currency: string;
 	createdAt: Date;
 	updatedAt: Date;
 };
+
+export const DASHBOARD_EXCLUDED_BOOKING_STATUSES: BookingStatus[] = [
+	"CANCELLED_BY_MENTEE",
+	"CANCELLED_BY_MENTOR",
+	"SLOT_TAKEN_BY_ANOTHER_USER",
+];
+
+const getMentorCommissionPercentage = (): number =>
+	Math.max(0, 100 - PLATFOM_COMMISSION.SESSION_PERCENTAGE);
+
+export const getBookingGrossCoins = (
+	booking: DashboardBookingRecord,
+): number =>
+	booking.paymentType === "COINS"
+		? booking.totalAmount
+		: booking.totalAmount * COIN_VALUE;
+
+export const getBookingMentorNetCoins = (
+	booking: DashboardBookingRecord,
+): number =>
+	Math.round(
+		(getBookingGrossCoins(booking) * getMentorCommissionPercentage()) / 100,
+	);
+
+export const getBookingPlatformFeeCoins = (
+	booking: DashboardBookingRecord,
+): number => getBookingGrossCoins(booking) - getBookingMentorNetCoins(booking);
 
 export type DashboardSavedMentorRecord = {
 	_id: string;
@@ -367,7 +400,7 @@ export const buildActivityOverview = (
 		);
 
 		if (earnings) {
-			earnings[bucketIndex] += booking.totalAmount;
+			earnings[bucketIndex] += getBookingMentorNetCoins(booking);
 		}
 	}
 

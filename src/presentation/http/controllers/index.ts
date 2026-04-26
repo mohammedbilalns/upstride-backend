@@ -1,4 +1,5 @@
 export * from "./admin.controller";
+export * from "./admin-dashboard.controller";
 export * from "./article.controller";
 export * from "./auth.controller";
 export * from "./availability.controller";
@@ -15,5 +16,6 @@ export * from "./password-reset.controller";
 export * from "./payment.controller";
 export * from "./profile.controller";
 export * from "./report.controller";
+export * from "./review.controller";
 export * from "./users.controller";
 export * from "./wallet.controller";

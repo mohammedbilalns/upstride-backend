@@ -2,8 +2,6 @@ import { model, Schema, type Types } from "mongoose";
 import {
 	type AuthType,
 	AuthTypeValues,
-	type SkillLevel,
-	SkillLevelValues,
 	type UserRole,
 	UserRoleValues,
 } from "../../../../domain/entities/user.entity";
@@ -26,7 +24,6 @@ export interface UserDocument {
 		interests: Types.ObjectId[];
 		skills: {
 			skillId: Types.ObjectId;
-			level: SkillLevel;
 		}[];
 	};
 	createdAt: Date;
@@ -51,10 +48,10 @@ export const userSchema = new Schema<UserDocument>(
 			interests: [{ type: Schema.Types.ObjectId, ref: "Interest" }],
 			skills: [
 				{
-					skillId: { type: Schema.Types.ObjectId, ref: "Skill" },
-					level: {
-						type: String,
-						enum: SkillLevelValues,
+					skillId: {
+						type: Schema.Types.ObjectId,
+						ref: "Skill",
+						required: true,
 					},
 				},
 			],

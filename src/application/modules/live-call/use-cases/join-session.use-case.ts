@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import { BookingNotFoundError } from "../../booking/errors/booking.errors";
 import type {
 	JoinSessionInput,
 	JoinSessionOutput,
@@ -19,18 +20,37 @@ export class JoinSessionUseCase implements IJoinSessionUseCase {
 	async execute(input: JoinSessionInput): Promise<JoinSessionOutput> {
 		await this._validateJoinSessionUseCase.execute(input);
 
-		//FIX: remove the non null assertion
-		const booking = (await this._bookingRepository.findById(input.bookingId))!;
+		const booking = await this._bookingRepository.findById(input.bookingId);
+		if (!booking) {
+			throw new BookingNotFoundError();
+		}
 
-		if (
-			booking.mentorUserId === input.userId &&
-			booking.status === "CONFIRMED"
-		) {
-			await this._bookingRepository.updateById(booking.id, {
-				status: "STARTED",
-			});
+		if (this._isHostingMentor(booking.mentorUserId, input.userId)) {
+			const nextUpdate: {
+				status?: "STARTED";
+				mentorJoinedAt?: Date;
+			} = {};
+
+			if (booking.status === "CONFIRMED") {
+				nextUpdate.status = "STARTED";
+			}
+
+			if (!booking.mentorJoinedAt) {
+				nextUpdate.mentorJoinedAt = new Date();
+			}
+
+			if (Object.keys(nextUpdate).length > 0) {
+				await this._bookingRepository.updateById(booking.id, nextUpdate);
+			}
 		}
 
 		return { roomId: booking.id };
+	}
+
+	private _isHostingMentor(
+		mentorUserId: string | null,
+		userId: string,
+	): boolean {
+		return mentorUserId === userId;
 	}
 }

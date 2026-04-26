@@ -23,6 +23,9 @@ import {
 	countUpcomingBookings,
 	type DashboardBookingRecord,
 	type DashboardSessionRecord,
+	getBookingGrossCoins,
+	getBookingMentorNetCoins,
+	getBookingPlatformFeeCoins,
 	getMenteeName,
 	getMentorName,
 	getMonthRangeForNow,
@@ -53,6 +56,7 @@ const toAnalyticsBooking = (
 	startTime: booking.startTime,
 	endTime: booking.endTime,
 	status: booking.status,
+	paymentType: booking.paymentType,
 	paymentStatus: booking.paymentStatus,
 	totalAmount: booking.totalAmount,
 	currency: booking.currency,
@@ -77,6 +81,16 @@ const toArticleDto = (
 	featuredImageUrl: article.featuredImageUrl,
 	views: article.views,
 	createdAt: article.createdAt.toISOString(),
+});
+
+const toReviewDto = (
+	review: DashboardSource["recentReviews"][number],
+): DashboardReviewDto => ({
+	id: review.id,
+	reviewerName: review.reviewerName ?? "Anonymous",
+	rating: review.rating,
+	comment: review.comment,
+	createdAt: review.createdAt.toISOString(),
 });
 
 const toRecentActivity = (source: DashboardSource, role: DashboardRole) => {
@@ -177,7 +191,15 @@ export class DashboardMapper {
 
 		if (source.role === "MENTOR") {
 			const totalRevenue = completedBookings.reduce(
-				(total, booking) => total + booking.totalAmount,
+				(total, booking) => total + getBookingGrossCoins(booking),
+				0,
+			);
+			const platformFees = completedBookings.reduce(
+				(total, booking) => total + getBookingPlatformFeeCoins(booking),
+				0,
+			);
+			const netEarnings = completedBookings.reduce(
+				(total, booking) => total + getBookingMentorNetCoins(booking),
 				0,
 			);
 			const distinctMentees = new Set(
@@ -189,11 +211,14 @@ export class DashboardMapper {
 			);
 
 			summary.totalRevenue = Number(totalRevenue.toFixed(2));
+			summary.platformFees = Number(platformFees.toFixed(2));
+			summary.netEarnings = Number(netEarnings.toFixed(2));
+			summary.earningsCurrency = "COINS";
 			summary.totalSessionsAttended = completedBookings.length;
 			summary.totalMentees = distinctMentees.size;
 			summary.averageRating = 0;
 			summary.totalAverageRating = source.mentorAverageRating ?? 0;
-			summary.recentReviews = [] satisfies DashboardReviewDto[];
+			summary.recentReviews = source.recentReviews.map(toReviewDto);
 			summary.earningsChart = {
 				period: "month",
 				labels: activityOverview.labels,

@@ -34,6 +34,11 @@ export class MongoProfessionRepository
 		return this.createDocument(profession);
 	}
 
+	async findById(id: string): Promise<Profession | null> {
+		const doc = await this.model.findById(id).lean();
+		return doc ? this.toDomain(doc as ProfessionDocument) : null;
+	}
+
 	async updateById(
 		id: string,
 		update: Partial<Profession>,

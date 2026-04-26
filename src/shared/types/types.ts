@@ -51,6 +51,7 @@ export const TYPES = {
 		BookingSettlementHandler: Symbol.for("BookingSettlementHandler"),
 	},
 	Repositories: {
+		AdminDashboardRepository: Symbol.for("AdminDashboardRepository"),
 		UserRepository: Symbol.for("UserRepository"),
 		CoinTransactionRepository: Symbol.for("CoinTransactionRepository"),
 		OtpRepository: Symbol.for("OtpRepository"),
@@ -77,6 +78,7 @@ export const TYPES = {
 		DashboardRepository: Symbol.for("DashboardRepository"),
 		AvailabilityRepository: Symbol.for("AvailabilityRepository"),
 		BookingRepository: Symbol.for("BookingRepository"),
+		ReviewRepository: Symbol.for("ReviewRepository"),
 		PushSubscriptionRepository: Symbol.for("PushSubscriptionRepository"),
 	},
 
@@ -203,9 +205,21 @@ export const TYPES = {
 		GenerateReceiptPdf: Symbol.for("GenerateReceiptPdfUseCase"),
 		ScheduleSessionSettlement: Symbol.for("ScheduleSessionSettlementUseCase"),
 		SettleEndedSession: Symbol.for("SettleEndedSessionUseCase"),
+		CreateReview: Symbol.for("CreateReviewUseCase"),
+		GetMentorReviews: Symbol.for("GetMentorReviewsUseCase"),
 		GetDashboard: Symbol.for("GetDashboardUseCase"),
 		GetDashboardActivityOverview: Symbol.for(
 			"GetDashboardActivityOverviewUseCase",
+		),
+		GetAdminDashboard: Symbol.for("GetAdminDashboardUseCase"),
+		GetAdminDashboardUserGrowth: Symbol.for(
+			"GetAdminDashboardUserGrowthUseCase",
+		),
+		GetAdminDashboardRevenueAnalytics: Symbol.for(
+			"GetAdminDashboardRevenueAnalyticsUseCase",
+		),
+		GetAdminDashboardSessionOverview: Symbol.for(
+			"GetAdminDashboardSessionOverviewUseCase",
 		),
 
 		CreateCheckoutSession: Symbol.for("CreateCheckoutSessionUseCase"),
@@ -252,7 +266,9 @@ export const TYPES = {
 
 		Availability: Symbol.for("AvailabilityController"),
 		Booking: Symbol.for("BookingController"),
+		Review: Symbol.for("ReviewController"),
 		Dashboard: Symbol.for("DashboardController"),
+		AdminDashboard: Symbol.for("AdminDashboardController"),
 	},
 	PaymentHandlers: {
 		CheckoutCompleted: Symbol.for("CheckoutCompletedHandler"),

@@ -17,14 +17,7 @@ export const UpdateProfileBodySchema = z.object({
 		)
 		.optional(),
 	skills: z
-		.array(
-			z.object({
-				skillId: z.string().min(1, "Skill ID is required"),
-				level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"], {
-					message: "Invalid skill level",
-				}),
-			}),
-		)
+		.array(z.string().min(1, "Skill ID is required"))
 		.min(
 			UserPreferencesLimits.MIN_SKILLS_PER_INTEREST,
 			`Select at least ${UserPreferencesLimits.MIN_SKILLS_PER_INTEREST} skills`,

@@ -3,6 +3,7 @@ import type {
 	CreatableRepository,
 	DisablableRepository,
 	EnableableRepository,
+	FindByIdRepository,
 	QueryableRepository,
 	UpdatableByIdRepository,
 } from "./capabilities";
@@ -15,6 +16,7 @@ export interface ProfessionQuery {
 export interface IProfessionRepository
 	extends CreatableRepository<Profession>,
 		UpdatableByIdRepository<Profession>,
+		FindByIdRepository<Profession>,
 		QueryableRepository<Profession, ProfessionQuery>,
 		DisablableRepository,
 		EnableableRepository {

@@ -16,7 +16,7 @@ export class MongoosePushSubscriptionRepository
 				keys: subscription.keys,
 				deviceType: subscription.deviceType,
 			},
-			{ upsert: true, new: true },
+			{ upsert: true, returnDocument: "after" },
 		);
 	}
 

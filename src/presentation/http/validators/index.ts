@@ -1,3 +1,4 @@
+export * from "./admin-dashboard.validator";
 export * from "./article.validator";
 export * from "./auth";
 export * from "./availability.validator";

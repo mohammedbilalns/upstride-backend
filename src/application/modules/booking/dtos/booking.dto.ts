@@ -4,6 +4,7 @@ import type {
 	PaymentType,
 } from "../../../../domain/entities/booking.entity";
 import type { BookingFilter } from "../../../../domain/repositories/booking.repository.interface";
+import type { ReviewDto } from "../../review/dtos/review.dto";
 
 // ──────────────────────────────────────────────
 // Get Available Slots
@@ -132,10 +133,16 @@ export interface BookingDto {
 	paymentStatus: PaymentStatus;
 	totalAmount: number;
 	currency: string;
+	mentorPayout: {
+		amount: number;
+		currency: string;
+		percentage: number;
+	};
 	meetingLink: string;
 	notes: string | null;
 	menteeName: string | null;
 	mentorName: string | null;
+	review: ReviewDto | null;
 	settledAt: string | null;
 	createdAt: string;
 	updatedAt: string;

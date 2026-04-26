@@ -38,7 +38,6 @@ export class User {
 			interests: string[];
 			skills: {
 				skillId: string;
-				level: SkillLevel;
 			}[];
 		},
 	) {}

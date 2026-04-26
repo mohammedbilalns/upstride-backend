@@ -96,7 +96,10 @@ export class Mentor {
 				"Maximum of 2 areas of expertise allowed.",
 			);
 		}
-		if (this.educationalQualifications.length > MAX_MENTOR_EDUCATION_ITEMS) {
+		if (
+			this.educationalQualifications.length >
+			MAX_MENTOR_EDUCATION_ITEMS + 1
+		) {
 			throw new EntityValidationError(
 				"score",
 				`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed.`,

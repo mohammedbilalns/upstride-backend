@@ -156,6 +156,7 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 			null,
 			null,
 			null,
+			null,
 			new Date(),
 			new Date(),
 		);

@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
 import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
+import type { IReviewRepository } from "../../../../domain/repositories/review.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { getMentorByUserIdOrThrow } from "../../../shared/utilities/mentor.util";
 import type {
@@ -17,6 +18,8 @@ export class GetMentorBookingsUseCase implements IGetMentorBookingsUseCase {
 		private readonly _bookingRepository: IBookingRepository,
 		@inject(TYPES.Repositories.MentorWriteRepository)
 		private readonly _mentorWriteRepository: IMentorWriteRepository,
+		@inject(TYPES.Repositories.ReviewRepository)
+		private readonly _reviewRepository: IReviewRepository,
 	) {}
 
 	async execute(input: GetBookingsInput): Promise<GetBookingsResponse> {
@@ -34,6 +37,10 @@ export class GetMentorBookingsUseCase implements IGetMentorBookingsUseCase {
 			page,
 			limit,
 		);
-		return buildBookingListResponse(this._bookingRepository, result);
+		return buildBookingListResponse(
+			this._bookingRepository,
+			this._reviewRepository,
+			result,
+		);
 	}
 }

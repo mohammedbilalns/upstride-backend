@@ -14,6 +14,14 @@ export class StripePaymentService implements IPaymentService {
 	async createCheckoutSession(
 		params: CreateCheckoutSessionParams,
 	): Promise<CreateCheckoutSessionResult> {
+		const isBookingPayment = params.metadata?.type === "BOOKING_PAYMENT";
+		const productName = isBookingPayment
+			? "Upstride Session Booking"
+			: "Upstride Coin Top-Up";
+		const productDescription = isBookingPayment
+			? "Session booking payment"
+			: `${params.coins} coins`;
+
 		const session = await stripe.checkout.sessions.create({
 			mode: "payment",
 			payment_method_types: ["card"],
@@ -22,8 +30,8 @@ export class StripePaymentService implements IPaymentService {
 					price_data: {
 						currency: params.currency,
 						product_data: {
-							name: "Upstride Slot booking",
-							description: `${params.coins} coins`,
+							name: productName,
+							description: productDescription,
 						},
 						unit_amount: params.amount,
 					},

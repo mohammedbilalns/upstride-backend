@@ -74,6 +74,13 @@ export const ROUTES = {
 		BLOCK: (id: string) => `/${id}/block`,
 		UNBLOCK: (id: string) => `/${id}/unblock`,
 	},
+	ADMIN_DASHBOARD: {
+		BASE: "/admin-dashboard",
+		ROOT: "/",
+		USER_GROWTH: "/user-growth",
+		REVENUE_ANALYTICS: "/revenue-analytics",
+		SESSION_OVERVIEW: "/session-overview",
+	},
 	STORAGE: {
 		BASE: "/storage",
 		GET_PRESIGNED_URL: "/presigned-upload-url",
@@ -84,6 +91,7 @@ export const ROUTES = {
 		REGISTRATION_INFO: "/registration-info",
 		PROFILE: "/profile",
 		PUBLIC_PROFILE: (id: string) => `/public/${id}`,
+		REVIEWS: (mentorId: string) => `/reviews/${mentorId}`,
 		REGISTER: "/register",
 		RESUBMIT: "/resubmit",
 		DISCOVERY: "/discover",
@@ -171,6 +179,11 @@ export const ROUTES = {
 		BLOCK_ARTICLE: (articleId: string) => `/articles/${articleId}/block`,
 		UNBLOCK_ARTICLE: (articleId: string) => `/articles/${articleId}/unblock`,
 	},
+	REVIEWS: {
+		BASE: "/reviews",
+		BOOKING: (bookingId: string) => `/bookings/${bookingId}`,
+		MENTOR: (mentorId: string) => `/mentors/${mentorId}`,
+	},
 	AVAILABILITY: {
 		BASE: "/availability",
 		ROOT: "/",
@@ -184,6 +197,7 @@ export const ROUTES = {
 		BASE: "/bookings",
 		ROOT: "/",
 		BY_ID: (id: string) => `/${id}`,
+		REVIEW: (id: string) => `/${id}/review`,
 		SLOTS: (mentorId: string) => `/slots/${mentorId}`,
 		CANCEL: (id: string) => `/${id}/cancel`,
 		MENTOR_CANCEL: (id: string) => `/${id}/mentor/cancel`,

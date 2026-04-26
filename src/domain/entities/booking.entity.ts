@@ -5,6 +5,7 @@ export const BookingStatus = [
 	"CANCELLED_BY_MENTOR",
 	"CONFIRMED",
 	"PENDING",
+	"SLOT_TAKEN_BY_ANOTHER_USER",
 	"STARTED",
 	"COMPLETED",
 ] as const;
@@ -51,6 +52,7 @@ export class Booking {
 		public readonly notes: string | null,
 		public readonly menteeName: string | null,
 		public readonly mentorName: string | null,
+		public readonly mentorJoinedAt: Date | null,
 		public readonly settledAt: Date | null,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,

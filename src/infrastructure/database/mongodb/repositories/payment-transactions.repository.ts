@@ -12,11 +12,25 @@ import type {
 	PaymentTransactionQuery,
 } from "../../../../domain/repositories/payment-transactions.repository.interface";
 import { PaymentTransactionMapper } from "../mappers/payment-transactions.mapper";
+import { BookingModel } from "../models/booking.model";
 import {
 	type PaymentTransactionDocument,
 	PaymentTransactionModel,
 } from "../models/payment-transactions.model";
+import { PlatformWalletModel } from "../models/platform-wallet.model";
+import {
+	calculateEffectivePlatformRevenue,
+	type EffectiveRevenueBookingLike,
+} from "../utils/effective-platform-revenue.util";
 import { AbstractMongoRepository } from "./abstract.repository";
+
+type EffectiveRevenueBooking = {
+	status: string;
+	paymentStatus: string;
+	paymentType: "STRIPE" | "COINS";
+	totalAmount: number;
+	endTime: Date;
+};
 
 const applyTransactionOwnerFilter = (
 	filter: QueryFilter<PaymentTransactionDocument>,
@@ -128,11 +142,40 @@ export class MongoPaymentTransactionRepository
 			.findOneAndUpdate(
 				{ providerPaymentId, transactionOwner },
 				{ $set: { status } },
-				{ new: true },
+				{ returnDocument: "after" },
 			)
 			.lean();
 
 		return doc ? this.toDomain(doc as PaymentTransactionDocument) : null;
+	}
+
+	async getEffectivePlatformRevenue(): Promise<number> {
+		const now = new Date();
+		const [wallet, bookings] = await Promise.all([
+			PlatformWalletModel.findOne({ key: "platform" }, { balance: 1 }).lean<{
+				balance: number;
+			} | null>(),
+			BookingModel.find(
+				{
+					status: { $in: ["PENDING", "CONFIRMED", "STARTED"] },
+					paymentStatus: "COMPLETED",
+					endTime: { $gt: now },
+				},
+				{
+					status: 1,
+					paymentStatus: 1,
+					paymentType: 1,
+					totalAmount: 1,
+					endTime: 1,
+				},
+			).lean<EffectiveRevenueBooking[]>(),
+		]);
+
+		return calculateEffectivePlatformRevenue(
+			wallet?.balance ?? 0,
+			bookings as EffectiveRevenueBookingLike[],
+			now,
+		);
 	}
 
 	async query({

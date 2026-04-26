@@ -42,6 +42,7 @@ export class CreateCheckoutSessionUseCase
 				userId: input.userId,
 				coins: String(input.coins),
 				coinValue: String(COIN_VALUE),
+				type: "COIN_TOPUP",
 			},
 		});
 

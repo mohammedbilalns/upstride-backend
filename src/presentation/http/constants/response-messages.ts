@@ -18,6 +18,15 @@ export const RESPONSE_MESSAGES = {
 		ACTIVITY_OVERVIEW_FETCHED_SUCCESS:
 			"Dashboard activity overview fetched successfully",
 	},
+	ADMIN_DASHBOARD: {
+		FETCHED_SUCCESS: "Admin dashboard fetched successfully",
+		USER_GROWTH_FETCHED_SUCCESS:
+			"Admin dashboard user growth fetched successfully",
+		REVENUE_ANALYTICS_FETCHED_SUCCESS:
+			"Admin dashboard revenue analytics fetched successfully",
+		SESSION_OVERVIEW_FETCHED_SUCCESS:
+			"Admin dashboard session overview fetched successfully",
+	},
 };
 
 export const AuthResponseMessages = {

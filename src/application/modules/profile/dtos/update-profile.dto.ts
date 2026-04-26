@@ -1,14 +1,9 @@
-import type { SkillLevel } from "../../../../domain/entities/user.entity";
-
 export interface UpdateProfileInput {
 	userId: string;
 	name?: string;
 	profilePictureId?: string;
 	interests?: string[];
-	skills?: {
-		skillId: string;
-		level: SkillLevel;
-	}[];
+	skills?: string[];
 }
 
 export interface UpdateProfileOutput {

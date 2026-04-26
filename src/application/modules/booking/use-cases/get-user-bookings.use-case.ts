@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IReviewRepository } from "../../../../domain/repositories/review.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import type {
 	GetBookingsInput,
@@ -13,6 +14,8 @@ export class GetUserBookingsUseCase implements IGetUserBookingsUseCase {
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.ReviewRepository)
+		private readonly _reviewRepository: IReviewRepository,
 	) {}
 
 	async execute(input: GetBookingsInput): Promise<GetBookingsResponse> {
@@ -26,6 +29,10 @@ export class GetUserBookingsUseCase implements IGetUserBookingsUseCase {
 			page,
 			limit,
 		);
-		return buildBookingListResponse(this._bookingRepository, result);
+		return buildBookingListResponse(
+			this._bookingRepository,
+			this._reviewRepository,
+			result,
+		);
 	}
 }

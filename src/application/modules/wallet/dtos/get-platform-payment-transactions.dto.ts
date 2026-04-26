@@ -14,4 +14,7 @@ export interface GetPlatformPaymentTransactionsOutput {
 	page: number;
 	limit: number;
 	totalPages: number;
+	summary: {
+		effectiveRevenue: number;
+	};
 }

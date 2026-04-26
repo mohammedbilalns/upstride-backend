@@ -1,4 +1,9 @@
-import type { BookingStatus, PaymentStatus } from "../entities/booking.entity";
+import type {
+	BookingStatus,
+	PaymentStatus,
+	PaymentType,
+} from "../entities/booking.entity";
+import type { ReviewSummary } from "./review.repository.interface";
 
 export type DashboardRole = "USER" | "MENTOR";
 export type DashboardPeriod = "week" | "month" | "year";
@@ -17,6 +22,7 @@ export interface DashboardBookingAggregate {
 	startTime: Date;
 	endTime: Date;
 	status: BookingStatus;
+	paymentType: PaymentType;
 	paymentStatus: PaymentStatus;
 	totalAmount: number;
 	currency: string;
@@ -57,6 +63,7 @@ export interface DashboardSource {
 	recentArticles: DashboardArticleAggregate[];
 	recentSavedMentors: DashboardSavedMentorAggregate[];
 	mentorAverageRating: number | null;
+	recentReviews: ReviewSummary[];
 }
 
 export interface DashboardActivityOverviewSource {

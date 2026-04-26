@@ -23,6 +23,7 @@ export type BookingDoc = {
 	startTime?: Date | string;
 	endTime?: Date | string;
 	status?: DashboardBookingAggregate["status"];
+	paymentType?: DashboardBookingAggregate["paymentType"];
 	paymentStatus?: DashboardBookingAggregate["paymentStatus"];
 	totalAmount?: number;
 	currency?: string;
@@ -86,6 +87,7 @@ export class DashboardRepositoryMapper {
 			startTime: toDate(doc.startTime),
 			endTime: toDate(doc.endTime),
 			status: doc.status ?? "PENDING",
+			paymentType: doc.paymentType ?? "COINS",
 			paymentStatus: doc.paymentStatus ?? "PENDING",
 			totalAmount: Number(doc.totalAmount ?? 0),
 			currency: String(doc.currency ?? "inr"),

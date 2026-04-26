@@ -22,7 +22,7 @@ export interface NotificationDocument {
 		email?: boolean;
 	};
 	actorId?: Types.ObjectId;
-	relatedEntityId?: Types.ObjectId;
+	relatedEntityId?: string;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -43,7 +43,7 @@ const notificationSchema = new Schema<NotificationDocument>(
 			email: { type: Boolean },
 		},
 		actorId: { type: Schema.Types.ObjectId, ref: "User" },
-		relatedEntityId: { type: Schema.Types.ObjectId, ref: "User" },
+		relatedEntityId: { type: String },
 	},
 	{ timestamps: true },
 );

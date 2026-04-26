@@ -54,10 +54,7 @@ export class UpdateReportStatusUseCase implements IUpdateReportStatusUseCase {
 			throw new ReportNotFoundError();
 		}
 
-		if (
-			existing.status !== updated.status &&
-			(updated.status === "RESOLVED" || updated.status === "CLOSED")
-		) {
+		if (existing.status !== updated.status) {
 			await this._createNotificationUseCase.execute({
 				userId: existing.reporterId,
 				title: "Report Update",
