@@ -38,7 +38,14 @@ export class GetPlatformPaymentTransactionsUseCase
 			query,
 			sort,
 		});
+		const effectiveRevenue =
+			await this._paymentTransactionRepository.getEffectivePlatformRevenue();
 
-		return mapPaginatedResult(result, PaymentTransactionDtoMapper.toDTOs);
+		return {
+			...mapPaginatedResult(result, PaymentTransactionDtoMapper.toDTOs),
+			summary: {
+				effectiveRevenue,
+			},
+		};
 	}
 }

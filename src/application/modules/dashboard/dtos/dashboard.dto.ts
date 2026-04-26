@@ -73,6 +73,9 @@ export interface DashboardSummaryDto {
 	hoursLearned: number;
 	articlesRead?: number;
 	totalRevenue?: number;
+	platformFees?: number;
+	netEarnings?: number;
+	earningsCurrency?: string;
 	totalSessionsAttended?: number;
 	averageRating?: number;
 	totalMentees?: number;

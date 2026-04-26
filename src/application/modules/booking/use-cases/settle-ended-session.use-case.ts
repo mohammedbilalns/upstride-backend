@@ -47,8 +47,15 @@ export class SettleEndedSessionUseCase implements ISettleEndedSessionUseCase {
 
 		const settledAt = new Date();
 		const amounts = this._settlementCalculator.calculate(booking);
+		const mentorJoined = this._mentorJoined(booking);
 
-		if (this._mentorJoined(booking)) {
+		if (mentorJoined && booking.status === "STARTED") {
+			await this._bookingRepository.updateById(booking.id, {
+				status: "COMPLETED",
+			});
+		}
+
+		if (mentorJoined) {
 			if (booking.mentorUserId) {
 				await this._mentorSessionPayout.creditMentor(
 					booking,

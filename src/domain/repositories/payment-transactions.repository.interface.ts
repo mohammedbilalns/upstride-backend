@@ -33,4 +33,5 @@ export interface IPaymentTransactionRepository
 		status: PaymentStatus,
 		transactionOwner: "platform" | "user" | "mentor",
 	): Promise<PaymentTransaction | null>;
+	getEffectivePlatformRevenue(): Promise<number>;
 }

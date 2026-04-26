@@ -23,6 +23,9 @@ import {
 	countUpcomingBookings,
 	type DashboardBookingRecord,
 	type DashboardSessionRecord,
+	getBookingGrossCoins,
+	getBookingMentorNetCoins,
+	getBookingPlatformFeeCoins,
 	getMenteeName,
 	getMentorName,
 	getMonthRangeForNow,
@@ -53,6 +56,7 @@ const toAnalyticsBooking = (
 	startTime: booking.startTime,
 	endTime: booking.endTime,
 	status: booking.status,
+	paymentType: booking.paymentType,
 	paymentStatus: booking.paymentStatus,
 	totalAmount: booking.totalAmount,
 	currency: booking.currency,
@@ -187,7 +191,15 @@ export class DashboardMapper {
 
 		if (source.role === "MENTOR") {
 			const totalRevenue = completedBookings.reduce(
-				(total, booking) => total + booking.totalAmount,
+				(total, booking) => total + getBookingGrossCoins(booking),
+				0,
+			);
+			const platformFees = completedBookings.reduce(
+				(total, booking) => total + getBookingPlatformFeeCoins(booking),
+				0,
+			);
+			const netEarnings = completedBookings.reduce(
+				(total, booking) => total + getBookingMentorNetCoins(booking),
 				0,
 			);
 			const distinctMentees = new Set(
@@ -199,6 +211,9 @@ export class DashboardMapper {
 			);
 
 			summary.totalRevenue = Number(totalRevenue.toFixed(2));
+			summary.platformFees = Number(platformFees.toFixed(2));
+			summary.netEarnings = Number(netEarnings.toFixed(2));
+			summary.earningsCurrency = "COINS";
 			summary.totalSessionsAttended = completedBookings.length;
 			summary.totalMentees = distinctMentees.size;
 			summary.averageRating = 0;

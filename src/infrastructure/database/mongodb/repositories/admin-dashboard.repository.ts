@@ -4,6 +4,7 @@ import type {
 	AdminDashboardChartQuery,
 	AdminDashboardMetricSource,
 	AdminDashboardRevenueAnalyticsSource,
+	AdminDashboardRevenueBreakdownSource,
 	AdminDashboardSessionOverviewSource,
 	AdminDashboardSummarySource,
 	AdminDashboardTopCategorySource,
@@ -11,15 +12,20 @@ import type {
 	AdminDashboardUserGrowthSource,
 	IAdminDashboardRepository,
 } from "../../../../domain/repositories/admin-dashboard.repository.interface";
-import { COIN_VALUE } from "../../../../shared/constants/app.constants";
 import { getSystemHealthSnapshot } from "../../../../shared/utilities/health-check.util";
 import { AdminDashboardRepositoryMapper } from "../mappers/admin-dashboard.mapper";
 import { BookingModel } from "../models/booking.model";
 import { InterestModel } from "../models/interests.model";
 import { MentorModel } from "../models/mentor.model";
 import { PaymentTransactionModel } from "../models/payment-transactions.model";
+import { PlatformWalletModel } from "../models/platform-wallet.model";
 import { SessionModel } from "../models/session.model";
 import { UserModel } from "../models/user.model";
+import {
+	calculateEffectivePlatformRevenue,
+	sumUpcomingSessionLiability,
+	toMonetaryBookingAmount,
+} from "../utils/effective-platform-revenue.util";
 
 interface DateRange {
 	start: Date;
@@ -33,9 +39,11 @@ interface Bucket {
 }
 
 type LeanBooking = {
+	_id: string;
 	mentorId: Types.ObjectId;
 	startTime: Date;
 	endTime: Date;
+	updatedAt: Date;
 	status: string;
 	paymentStatus: string;
 	paymentType: "STRIPE" | "COINS";
@@ -47,6 +55,7 @@ type LeanPayment = {
 	purpose: "coins" | "session";
 	transactionOwner?: "platform" | "user" | "mentor";
 	createdAt: Date;
+	providerPaymentId: string;
 };
 
 const IST_TIME_ZONE = "Asia/Kolkata";
@@ -227,12 +236,40 @@ const buildBuckets = (
 	return dayBuckets;
 };
 
-const toMonetaryBookingAmount = (
+const getPlatformRevenueAmount = (
 	booking: Pick<LeanBooking, "paymentType" | "totalAmount">,
-): number =>
-	booking.paymentType === "COINS"
-		? booking.totalAmount / COIN_VALUE
-		: booking.totalAmount;
+): number => roundToTwo(toMonetaryBookingAmount(booking) * 0.15);
+
+const isMenteeCancelledBooking = (
+	booking: Pick<LeanBooking, "status" | "paymentStatus">,
+) =>
+	booking.status === "CANCELLED_BY_MENTEE" &&
+	booking.paymentStatus === "COMPLETED";
+
+const buildRefundAmountMap = (payments: LeanPayment[]) =>
+	payments.reduce<Map<string, number>>((map, payment) => {
+		if (!payment.providerPaymentId.startsWith("refund_")) {
+			return map;
+		}
+
+		map.set(
+			payment.providerPaymentId.replace(/^refund_/, ""),
+			Math.abs(payment.amount),
+		);
+		return map;
+	}, new Map<string, number>());
+
+const getRetainedRefundAmount = (
+	booking: Pick<LeanBooking, "_id" | "paymentType" | "totalAmount">,
+	refundAmounts: Map<string, number>,
+) =>
+	roundToTwo(
+		Math.max(
+			0,
+			toMonetaryBookingAmount(booking) -
+				(refundAmounts.get(booking._id) ?? 0) / 100,
+		),
+	);
 
 const isUpcomingBooking = (
 	booking: Pick<LeanBooking, "status" | "paymentStatus" | "endTime">,
@@ -289,9 +326,6 @@ export class MongoAdminDashboardRepository
 			systemHealth,
 			topMentors,
 			topCategories,
-			totalPayments,
-			currentPayments,
-			previousPayments,
 		] = await Promise.all([
 			UserModel.countDocuments({ role: "USER" }),
 			UserModel.countDocuments({
@@ -317,8 +351,10 @@ export class MongoAdminDashboardRepository
 					paymentStatus: { $ne: "FAILED" },
 				},
 				{
+					_id: 1,
 					startTime: 1,
 					endTime: 1,
+					updatedAt: 1,
 					status: 1,
 					paymentStatus: 1,
 					paymentType: 1,
@@ -332,8 +368,10 @@ export class MongoAdminDashboardRepository
 					startTime: { $gte: currentAndPreviousStart, $lte: currentRange.end },
 				},
 				{
+					_id: 1,
 					startTime: 1,
 					endTime: 1,
+					updatedAt: 1,
 					status: 1,
 					paymentStatus: 1,
 					paymentType: 1,
@@ -363,10 +401,10 @@ export class MongoAdminDashboardRepository
 			getSystemHealthSnapshot(),
 			this.getTopMentors(currentRange, previousRange),
 			this.getTopCategories(currentRange),
-			this.getRevenuePayments(),
-			this.getRevenuePayments(currentRange),
-			this.getRevenuePayments(previousRange),
 		]);
+		const refundAmountMap = buildRefundAmountMap(
+			await this.getRevenuePayments(),
+		);
 
 		const totalSessions = allBookings.length;
 		const currentSessions = rangeBookings.filter(
@@ -394,9 +432,17 @@ export class MongoAdminDashboardRepository
 					previousSessions,
 				),
 				totalRevenue: toMetricSource(
-					this.sumRevenue(totalPayments),
-					this.sumRevenue(currentPayments),
-					this.sumRevenue(previousPayments),
+					this.sumEffectivePlatformRevenue(allBookings, refundAmountMap),
+					this.sumEffectivePlatformRevenue(
+						allBookings,
+						refundAmountMap,
+						currentRange,
+					),
+					this.sumEffectivePlatformRevenue(
+						allBookings,
+						refundAmountMap,
+						previousRange,
+					),
 				),
 				activeUsersNow: toMetricSource(
 					activeUsersNow,
@@ -483,59 +529,74 @@ export class MongoAdminDashboardRepository
 	): Promise<AdminDashboardRevenueAnalyticsSource> {
 		const range = getRangeFromQuery(query);
 		const buckets = buildBuckets(query, range);
-		const payments = await this.getRevenuePayments(range);
+		const [payments, bookings, effectiveRevenueBreakdown] = await Promise.all([
+			this.getRevenuePayments(range),
+			BookingModel.find(
+				{
+					status: {
+						$in: ["COMPLETED", "CANCELLED_BY_MENTEE"],
+					},
+					paymentStatus: "COMPLETED",
+					$or: [
+						{ endTime: { $gte: range.start, $lte: range.end } },
+						{ updatedAt: { $gte: range.start, $lte: range.end } },
+					],
+				},
+				{
+					_id: 1,
+					endTime: 1,
+					updatedAt: 1,
+					status: 1,
+					paymentStatus: 1,
+					paymentType: 1,
+					totalAmount: 1,
+				},
+			).lean<LeanBooking[]>(),
+			this.getEffectiveRevenueBreakdown(),
+		]);
+		const refundAmountMap = buildRefundAmountMap(payments);
+		const completedBookings = bookings.filter(isCompletedBooking);
+		const cancelledBookings = bookings.filter(isMenteeCancelledBooking);
 
-		const series = buckets.map((bucket) =>
-			AdminDashboardRepositoryMapper.toRevenuePointSource({
+		const series = buckets.map((bucket) => {
+			const bucketSessionCommissions = completedBookings.reduce(
+				(sum, booking) => {
+					if (
+						booking.endTime.getTime() < bucket.start.getTime() ||
+						booking.endTime.getTime() > bucket.end.getTime()
+					) {
+						return sum;
+					}
+
+					return sum + getPlatformRevenueAmount(booking);
+				},
+				0,
+			);
+
+			const bucketRetainedRefunds = cancelledBookings.reduce((sum, booking) => {
+				if (
+					booking.updatedAt.getTime() < bucket.start.getTime() ||
+					booking.updatedAt.getTime() > bucket.end.getTime()
+				) {
+					return sum;
+				}
+
+				return sum + getRetainedRefundAmount(booking, refundAmountMap);
+			}, 0);
+
+			return AdminDashboardRepositoryMapper.toRevenuePointSource({
 				label: bucket.label,
-				value: roundToTwo(
-					payments
-						.filter(
-							(payment) =>
-								payment.createdAt.getTime() >= bucket.start.getTime() &&
-								payment.createdAt.getTime() <= bucket.end.getTime(),
-						)
-						.reduce((total, payment) => {
-							const amountMajor = payment.amount / 100;
-							if (payment.transactionOwner === "platform") {
-								return total + amountMajor;
-							}
-
-							return payment.purpose === "coins" ? total + amountMajor : total;
-						}, 0),
-				),
-			}),
-		);
-
-		const platformAmounts = payments
-			.filter((payment) => payment.transactionOwner === "platform")
-			.map((payment) => payment.amount / 100);
+				value: roundToTwo(bucketSessionCommissions + bucketRetainedRefunds),
+			});
+		});
 
 		return AdminDashboardRepositoryMapper.toRevenueAnalyticsSource({
 			period: query.period,
 			labels: series.map((point) => point.label),
 			series,
-			breakdown: AdminDashboardRepositoryMapper.toRevenueBreakdownSource({
-				platformFees: roundToTwo(
-					platformAmounts.reduce((sum, amount) => sum + amount, 0),
-				),
-				mentorPayouts: roundToTwo(
-					Math.abs(
-						platformAmounts
-							.filter((amount) => amount < 0)
-							.reduce((sum, amount) => sum + amount, 0),
-					),
-				),
-				otherIncome: roundToTwo(
-					payments
-						.filter(
-							(payment) =>
-								payment.purpose === "coins" &&
-								payment.transactionOwner !== "platform",
-						)
-						.reduce((sum, payment) => sum + payment.amount / 100, 0),
-				),
-			}),
+			breakdown: AdminDashboardRepositoryMapper.toRevenueBreakdownSource(
+				effectiveRevenueBreakdown,
+			),
 		});
 	}
 
@@ -572,7 +633,7 @@ export class MongoAdminDashboardRepository
 
 		return PaymentTransactionModel.find(
 			{
-				status: "completed",
+				status: { $in: ["completed", "refunded"] },
 				$or: [
 					{ transactionOwner: "platform" },
 					{ transactionOwner: "user", purpose: "coins" },
@@ -581,19 +642,98 @@ export class MongoAdminDashboardRepository
 				],
 				...dateFilter,
 			},
-			{ amount: 1, purpose: 1, transactionOwner: 1, createdAt: 1 },
+			{
+				amount: 1,
+				purpose: 1,
+				transactionOwner: 1,
+				createdAt: 1,
+				providerPaymentId: 1,
+			},
 		).lean<LeanPayment[]>();
 	}
 
-	private sumRevenue(payments: LeanPayment[]): number {
+	private async getEffectiveRevenueBreakdown(): Promise<AdminDashboardRevenueBreakdownSource> {
+		const now = new Date();
+		const [wallet, upcomingBookings] = await Promise.all([
+			PlatformWalletModel.findOne({ key: "platform" }, { balance: 1 }).lean<{
+				balance: number;
+			} | null>(),
+			BookingModel.find(
+				{
+					status: { $in: ["PENDING", "CONFIRMED", "STARTED"] },
+					paymentStatus: "COMPLETED",
+					endTime: { $gt: now },
+				},
+				{
+					status: 1,
+					paymentStatus: 1,
+					paymentType: 1,
+					totalAmount: 1,
+					endTime: 1,
+				},
+			).lean<
+				Array<
+					Pick<
+						LeanBooking,
+						| "status"
+						| "paymentStatus"
+						| "paymentType"
+						| "totalAmount"
+						| "endTime"
+					>
+				>
+			>(),
+		]);
+
+		const platformWalletBalance = roundToTwo((wallet?.balance ?? 0) / 100);
+		const upcomingSessionLiability = sumUpcomingSessionLiability(
+			upcomingBookings,
+			now,
+		);
+
+		return AdminDashboardRepositoryMapper.toRevenueBreakdownSource({
+			effectiveRevenue: calculateEffectivePlatformRevenue(
+				wallet?.balance ?? 0,
+				upcomingBookings,
+				now,
+			),
+			platformWalletBalance,
+			upcomingSessionLiability,
+		});
+	}
+
+	private sumEffectivePlatformRevenue(
+		bookings: LeanBooking[],
+		refundAmounts: Map<string, number>,
+		range?: DateRange,
+	): number {
 		return roundToTwo(
-			payments.reduce((total, payment) => {
-				const amount = payment.amount / 100;
-				if (payment.transactionOwner === "platform") {
-					return total + amount;
+			bookings.reduce((total, booking) => {
+				if (isCompletedBooking(booking)) {
+					if (
+						range &&
+						(booking.endTime.getTime() < range.start.getTime() ||
+							booking.endTime.getTime() > range.end.getTime())
+					) {
+						return total;
+					}
+
+					return total + getPlatformRevenueAmount(booking);
 				}
 
-				return payment.purpose === "coins" ? total + amount : total;
+				if (isMenteeCancelledBooking(booking)) {
+					if (
+						range &&
+						(booking.updatedAt.getTime() < range.start.getTime() ||
+							booking.updatedAt.getTime() > range.end.getTime())
+					) {
+						return total;
+					}
+
+					return total + getRetainedRefundAmount(booking, refundAmounts);
+				}
+
+				return total;
 			}, 0),
 		);
 	}

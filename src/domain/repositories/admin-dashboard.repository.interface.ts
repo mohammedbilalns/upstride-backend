@@ -37,9 +37,9 @@ export interface AdminDashboardRevenuePointSource {
 }
 
 export interface AdminDashboardRevenueBreakdownSource {
-	platformFees: number;
-	mentorPayouts: number;
-	otherIncome: number;
+	effectiveRevenue: number;
+	platformWalletBalance: number;
+	upcomingSessionLiability: number;
 }
 
 export interface AdminDashboardRevenueAnalyticsSource {

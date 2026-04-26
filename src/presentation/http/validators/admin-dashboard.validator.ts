@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const parseIsoDate = (value: string) => new Date(`${value}T00:00:00.000Z`);
+
 export const AdminDashboardChartQuerySchema = z
 	.object({
 		period: z.enum(["week", "month", "year", "custom"]).default("month"),
@@ -26,7 +28,29 @@ export const AdminDashboardChartQuerySchema = z
 			return;
 		}
 
-		if (value.startDate > value.endDate) {
+		const startDate = parseIsoDate(value.startDate);
+		const endDate = parseIsoDate(value.endDate);
+		const today = new Date();
+		today.setUTCHours(0, 0, 0, 0);
+
+		if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+			ctx.addIssue({
+				code: "custom",
+				message: "Invalid custom date range",
+				path: ["startDate"],
+			});
+			return;
+		}
+
+		if (startDate > today || endDate > today) {
+			ctx.addIssue({
+				code: "custom",
+				message: "Custom date range cannot include future dates",
+				path: ["endDate"],
+			});
+		}
+
+		if (startDate > endDate) {
 			ctx.addIssue({
 				code: "custom",
 				message: "startDate must be before or equal to endDate",

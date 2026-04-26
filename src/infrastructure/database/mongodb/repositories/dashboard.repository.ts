@@ -155,6 +155,7 @@ export class MongoDashboardRepository implements IDashboardRepository {
 					startTime: 1,
 					endTime: 1,
 					status: 1,
+					paymentType: 1,
 					paymentStatus: 1,
 					totalAmount: 1,
 					currency: 1,
