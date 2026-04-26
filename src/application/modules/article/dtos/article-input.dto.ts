@@ -65,6 +65,12 @@ export interface GetArticlesInput {
 	status?: "active" | "blocked";
 }
 
+export interface GetArticleFeedInput {
+	page: number;
+	limit: number;
+	userId: string;
+}
+
 export interface GetArticlesOutput {
 	items: ArticleDto[];
 	total: number;

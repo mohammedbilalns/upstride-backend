@@ -51,9 +51,9 @@ export function computeMentorScore(
 
 export function computeArticleFeed(
 	articles: ArticleForFeed[],
-	userInterests: [],
+	userInterests: string[],
 	limit = 150,
-) {
+): string[] {
 	return articles
 		.map((article) => ({
 			id: article.id,
@@ -62,10 +62,9 @@ export function computeArticleFeed(
 		}))
 		.sort(
 			(a, b) =>
-				(b.score =
-					a.score ||
-					b.createdAt.getTime() - a.createdAt.getTime() ||
-					a.id.localeCompare(b.id)),
+				b.score - a.score ||
+				b.createdAt.getTime() - a.createdAt.getTime() ||
+				a.id.localeCompare(b.id),
 		)
 		.slice(0, limit)
 		.map((item) => item.id);
