@@ -7,5 +7,6 @@ export interface IMentorProfileReadRepository {
 	findFeedCandidates(
 		interests: string[],
 		limit: number,
+		excludeUserId?: string,
 	): Promise<MentorForFeed[]>;
 }

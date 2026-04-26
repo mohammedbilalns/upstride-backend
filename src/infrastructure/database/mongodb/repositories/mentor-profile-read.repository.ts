@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import type { Query } from "mongoose";
+import { Types } from "mongoose";
 import type { MentorProfileDetails } from "../../../../domain/repositories/mentor.repository.types";
 import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { MentorForFeed } from "../../../../shared/utilities/feed-scoring.util";
@@ -46,11 +47,15 @@ export class MongoMentorProfileReadRepository
 	async findFeedCandidates(
 		interests: string[],
 		limit: number,
+		excludeUserId?: string,
 	): Promise<MentorForFeed[]> {
 		const docs = await MentorModel.find({
 			isApproved: true,
 			isUserBlocked: false,
 			areasOfExpertise: { $in: interests },
+			...(excludeUserId && {
+				userId: { $ne: new Types.ObjectId(excludeUserId) },
+			}),
 		})
 			.sort({
 				avgRating: -1,

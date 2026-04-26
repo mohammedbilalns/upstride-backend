@@ -162,6 +162,7 @@ export const TYPES = {
 		RemoveMentorFromList: Symbol.for("RemoveMentorFromListUseCase"),
 		DeleteMentorList: Symbol.for("DeleteMentorListUseCase"),
 		GetMentorsDiscovery: Symbol.for("GetMentorsDiscoveryUseCase"),
+		GetMentorFeed: Symbol.for("GetMentorFeedUseCase"),
 		CreateArticle: Symbol.for("CreateArticleUseCase"),
 		UpdateArticle: Symbol.for("UpdateArticleUseCase"),
 		DeleteArticle: Symbol.for("DeleteArticleUseCase"),
