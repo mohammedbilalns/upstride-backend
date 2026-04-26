@@ -1,6 +1,6 @@
 export type ArticleForFeed = {
 	id: string;
-	interests: string[]; // author's interests
+	interests: string[];
 	views: number;
 	createdAt: Date;
 };
