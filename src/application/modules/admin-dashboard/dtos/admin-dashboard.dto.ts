@@ -72,12 +72,7 @@ export interface AdminDashboardSummaryDto {
 		totalMentors: AdminDashboardMetricDto;
 		totalSessions: AdminDashboardMetricDto;
 		totalRevenue: AdminDashboardMetricDto;
-		activeUsersNow: AdminDashboardMetricDto;
 	};
-	activeUsersTrend: AdminDashboardSparklineDto;
-	userGrowth: AdminDashboardUserGrowthDto;
-	sessionOverview: AdminDashboardSessionOverviewDto;
-	revenueAnalytics: AdminDashboardRevenueAnalyticsDto;
 	topMentors: AdminDashboardTopMentorDto[];
 	topCategories: AdminDashboardTopCategoryDto[];
 	systemHealth: SystemHealthSnapshot;

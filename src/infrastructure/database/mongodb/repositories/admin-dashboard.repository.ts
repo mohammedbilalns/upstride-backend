@@ -19,24 +19,28 @@ import { InterestModel } from "../models/interests.model";
 import { MentorModel } from "../models/mentor.model";
 import { PaymentTransactionModel } from "../models/payment-transactions.model";
 import { PlatformWalletModel } from "../models/platform-wallet.model";
-import { SessionModel } from "../models/session.model";
 import { UserModel } from "../models/user.model";
 import {
+	buildBuckets,
+	type DateRange,
+	getPreviousRange,
+	getRangeFromQuery,
+} from "../utils/admin-dashboard-date-range.util";
+import {
+	buildRefundAmountMap,
+	getPlatformRevenueAmount,
+	getRetainedRefundAmount,
+	isCancelledBooking,
+	isCompletedBooking,
+	isMenteeCancelledBooking,
+	isUpcomingBooking,
+} from "../utils/admin-dashboard-revenue.util";
+import {
 	calculateEffectivePlatformRevenue,
+	roundToTwo,
 	sumUpcomingSessionLiability,
 	toMonetaryBookingAmount,
 } from "../utils/effective-platform-revenue.util";
-
-interface DateRange {
-	start: Date;
-	end: Date;
-}
-
-interface Bucket {
-	label: string;
-	start: Date;
-	end: Date;
-}
 
 type LeanBooking = {
 	_id: string;
@@ -57,234 +61,6 @@ type LeanPayment = {
 	createdAt: Date;
 	providerPaymentId: string;
 };
-
-const IST_TIME_ZONE = "Asia/Kolkata";
-const IST_OFFSET_MINUTES = 330;
-const ACTIVE_WINDOW_MS = 15 * 60 * 1000;
-const ACTIVE_TREND_BUCKET_MS = 5 * 60 * 1000;
-const ACTIVE_TREND_BUCKET_COUNT = 12;
-
-const dayLabelFormatter = new Intl.DateTimeFormat("en-IN", {
-	timeZone: IST_TIME_ZONE,
-	day: "numeric",
-	month: "short",
-});
-
-const monthLabelFormatter = new Intl.DateTimeFormat("en-IN", {
-	timeZone: IST_TIME_ZONE,
-	month: "short",
-});
-
-const roundToTwo = (value: number): number =>
-	Number((Number.isFinite(value) ? value : 0).toFixed(2));
-
-const getIstParts = (date: Date) => {
-	const parts = new Intl.DateTimeFormat("en-CA", {
-		timeZone: IST_TIME_ZONE,
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-	}).formatToParts(date);
-
-	return {
-		year: Number(parts.find((part) => part.type === "year")?.value ?? "0"),
-		month: Number(parts.find((part) => part.type === "month")?.value ?? "0"),
-		day: Number(parts.find((part) => part.type === "day")?.value ?? "0"),
-	};
-};
-
-const getUtcFromIst = (
-	year: number,
-	month: number,
-	day: number,
-	hour = 0,
-	minute = 0,
-	second = 0,
-	millisecond = 0,
-): Date =>
-	new Date(
-		Date.UTC(year, month - 1, day, hour, minute, second, millisecond) -
-			IST_OFFSET_MINUTES * 60 * 1000,
-	);
-
-const getIstDateStart = (date: Date): Date => {
-	const { year, month, day } = getIstParts(date);
-	return getUtcFromIst(year, month, day);
-};
-
-const getIstDateEnd = (date: Date): Date => {
-	const { year, month, day } = getIstParts(date);
-	return getUtcFromIst(year, month, day, 23, 59, 59, 999);
-};
-
-const addIstDays = (date: Date, days: number): Date => {
-	const { year, month, day } = getIstParts(date);
-	return getUtcFromIst(year, month, day + days);
-};
-
-const getRangeFromQuery = (
-	query: AdminDashboardChartQuery,
-	now: Date = new Date(),
-): DateRange => {
-	if (query.period === "custom") {
-		if (!query.startDate || !query.endDate) {
-			throw new Error("Custom range requires startDate and endDate");
-		}
-
-		const [startYear, startMonth, startDay] = query.startDate
-			.split("-")
-			.map(Number);
-		const [endYear, endMonth, endDay] = query.endDate.split("-").map(Number);
-
-		return {
-			start: getUtcFromIst(startYear, startMonth, startDay),
-			end: getUtcFromIst(endYear, endMonth, endDay, 23, 59, 59, 999),
-		};
-	}
-
-	if (query.period === "week") {
-		return {
-			start: addIstDays(now, -6),
-			end: getIstDateEnd(now),
-		};
-	}
-
-	if (query.period === "year") {
-		const { year } = getIstParts(now);
-		return {
-			start: getUtcFromIst(year, 1, 1),
-			end: getIstDateEnd(now),
-		};
-	}
-
-	const { year, month } = getIstParts(now);
-	return {
-		start: getUtcFromIst(year, month, 1),
-		end: getIstDateEnd(now),
-	};
-};
-
-const getPreviousRange = (range: DateRange): DateRange => {
-	const durationMs = range.end.getTime() - range.start.getTime() + 1;
-	return {
-		start: new Date(range.start.getTime() - durationMs),
-		end: new Date(range.start.getTime() - 1),
-	};
-};
-
-const buildBuckets = (
-	query: AdminDashboardChartQuery,
-	range: DateRange,
-): Bucket[] => {
-	if (query.period === "year") {
-		const { year } = getIstParts(range.start);
-		const nowMonth = getIstParts(range.end).month;
-		return Array.from({ length: nowMonth }, (_, index) => {
-			const month = index + 1;
-			const start = getUtcFromIst(year, month, 1);
-			const end =
-				month === nowMonth
-					? range.end
-					: getUtcFromIst(year, month + 1, 0, 23, 59, 59, 999);
-
-			return {
-				label: monthLabelFormatter.format(getUtcFromIst(year, month, 1)),
-				start,
-				end,
-			};
-		});
-	}
-
-	const dayBuckets: Bucket[] = [];
-	let cursor = range.start;
-	while (cursor.getTime() <= range.end.getTime()) {
-		const start = getIstDateStart(cursor);
-		const end = getIstDateEnd(cursor);
-		dayBuckets.push({
-			label: dayLabelFormatter.format(start),
-			start,
-			end: end.getTime() > range.end.getTime() ? range.end : end,
-		});
-		cursor = addIstDays(cursor, 1);
-	}
-
-	if (query.period === "custom" && dayBuckets.length > 31) {
-		const monthBuckets: Bucket[] = [];
-		let monthCursor = range.start;
-
-		while (monthCursor.getTime() <= range.end.getTime()) {
-			const { year, month } = getIstParts(monthCursor);
-			const start = getUtcFromIst(year, month, 1);
-			const nextMonth =
-				month === 12
-					? getUtcFromIst(year + 1, 1, 1)
-					: getUtcFromIst(year, month + 1, 1);
-			const end = new Date(nextMonth.getTime() - 1);
-
-			monthBuckets.push({
-				label: monthLabelFormatter.format(getUtcFromIst(year, month, 1)),
-				start: start.getTime() < range.start.getTime() ? range.start : start,
-				end: end.getTime() > range.end.getTime() ? range.end : end,
-			});
-
-			monthCursor = nextMonth;
-		}
-
-		return monthBuckets;
-	}
-
-	return dayBuckets;
-};
-
-const getPlatformRevenueAmount = (
-	booking: Pick<LeanBooking, "paymentType" | "totalAmount">,
-): number => roundToTwo(toMonetaryBookingAmount(booking) * 0.15);
-
-const isMenteeCancelledBooking = (
-	booking: Pick<LeanBooking, "status" | "paymentStatus">,
-) =>
-	booking.status === "CANCELLED_BY_MENTEE" &&
-	booking.paymentStatus === "COMPLETED";
-
-const buildRefundAmountMap = (payments: LeanPayment[]) =>
-	payments.reduce<Map<string, number>>((map, payment) => {
-		if (!payment.providerPaymentId.startsWith("refund_")) {
-			return map;
-		}
-
-		map.set(
-			payment.providerPaymentId.replace(/^refund_/, ""),
-			Math.abs(payment.amount),
-		);
-		return map;
-	}, new Map<string, number>());
-
-const getRetainedRefundAmount = (
-	booking: Pick<LeanBooking, "_id" | "paymentType" | "totalAmount">,
-	refundAmounts: Map<string, number>,
-) =>
-	roundToTwo(
-		Math.max(
-			0,
-			toMonetaryBookingAmount(booking) -
-				(refundAmounts.get(booking._id) ?? 0) / 100,
-		),
-	);
-
-const isUpcomingBooking = (
-	booking: Pick<LeanBooking, "status" | "paymentStatus" | "endTime">,
-	now: Date,
-) =>
-	booking.endTime.getTime() > now.getTime() &&
-	booking.paymentStatus !== "FAILED" &&
-	["PENDING", "CONFIRMED", "STARTED"].includes(booking.status);
-
-const isCompletedBooking = (
-	booking: Pick<LeanBooking, "status" | "paymentStatus">,
-) => booking.status === "COMPLETED" && booking.paymentStatus === "COMPLETED";
-
-const isCancelledBooking = (booking: Pick<LeanBooking, "status">) =>
-	["CANCELLED_BY_MENTEE", "CANCELLED_BY_MENTOR"].includes(booking.status);
 
 const toMetricSource = (
 	total: number,
@@ -317,12 +93,6 @@ export class MongoAdminDashboardRepository
 			previousMentors,
 			allBookings,
 			rangeBookings,
-			activeUsersNow,
-			activeUsersPrevious,
-			activeUsersTrend,
-			userGrowth,
-			revenueAnalytics,
-			sessionOverview,
 			systemHealth,
 			topMentors,
 			topCategories,
@@ -378,26 +148,6 @@ export class MongoAdminDashboardRepository
 					totalAmount: 1,
 				},
 			).lean<LeanBooking[]>(),
-			SessionModel.countDocuments({
-				revoked: false,
-				expiresAt: { $gt: now },
-				lastUsedAt: {
-					$gte: new Date(now.getTime() - ACTIVE_WINDOW_MS),
-					$lte: now,
-				},
-			}),
-			SessionModel.countDocuments({
-				revoked: false,
-				expiresAt: { $gt: new Date(now.getTime() - ACTIVE_WINDOW_MS) },
-				lastUsedAt: {
-					$gte: new Date(now.getTime() - ACTIVE_WINDOW_MS * 2),
-					$lt: new Date(now.getTime() - ACTIVE_WINDOW_MS),
-				},
-			}),
-			this.getActiveUsersTrend(now),
-			this.getUserGrowth(defaultQuery),
-			this.getRevenueAnalytics(defaultQuery),
-			this.getSessionOverview(),
 			getSystemHealthSnapshot(),
 			this.getTopMentors(currentRange, previousRange),
 			this.getTopCategories(currentRange),
@@ -444,16 +194,7 @@ export class MongoAdminDashboardRepository
 						previousRange,
 					),
 				),
-				activeUsersNow: toMetricSource(
-					activeUsersNow,
-					activeUsersNow,
-					activeUsersPrevious,
-				),
 			},
-			activeUsersTrend,
-			userGrowth,
-			sessionOverview,
-			revenueAnalytics,
 			topMentors,
 			topCategories,
 			systemHealth,
@@ -886,50 +627,5 @@ export class MongoAdminDashboardRepository
 			)
 			.sort((a, b) => b.sessions - a.sessions)
 			.slice(0, 5);
-	}
-
-	private async getActiveUsersTrend(now: Date) {
-		const trendStart = new Date(
-			now.getTime() - ACTIVE_TREND_BUCKET_COUNT * ACTIVE_TREND_BUCKET_MS,
-		);
-
-		const sessions = await SessionModel.find(
-			{
-				revoked: false,
-				expiresAt: { $gt: trendStart },
-				lastUsedAt: { $gte: trendStart, $lte: now },
-			},
-			{ lastUsedAt: 1 },
-		).lean<{ lastUsedAt: Date }[]>();
-
-		const buckets = Array.from(
-			{ length: ACTIVE_TREND_BUCKET_COUNT },
-			(_, index) => {
-				const start = new Date(
-					trendStart.getTime() + index * ACTIVE_TREND_BUCKET_MS,
-				);
-
-				return {
-					label: `${start.getUTCHours().toString().padStart(2, "0")}:${start
-						.getUTCMinutes()
-						.toString()
-						.padStart(2, "0")}`,
-					start,
-					end: new Date(start.getTime() + ACTIVE_TREND_BUCKET_MS),
-				};
-			},
-		);
-
-		return AdminDashboardRepositoryMapper.toSparklineSource({
-			labels: buckets.map((bucket) => bucket.label),
-			values: buckets.map(
-				(bucket) =>
-					sessions.filter(
-						(session) =>
-							session.lastUsedAt.getTime() >= bucket.start.getTime() &&
-							session.lastUsedAt.getTime() < bucket.end.getTime(),
-					).length,
-			),
-		});
 	}
 }

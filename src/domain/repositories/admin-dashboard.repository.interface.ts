@@ -76,12 +76,7 @@ export interface AdminDashboardSummarySource {
 		totalMentors: AdminDashboardMetricSource;
 		totalSessions: AdminDashboardMetricSource;
 		totalRevenue: AdminDashboardMetricSource;
-		activeUsersNow: AdminDashboardMetricSource;
 	};
-	activeUsersTrend: AdminDashboardSparklineSource;
-	userGrowth: AdminDashboardUserGrowthSource;
-	sessionOverview: AdminDashboardSessionOverviewSource;
-	revenueAnalytics: AdminDashboardRevenueAnalyticsSource;
 	topMentors: AdminDashboardTopMentorSource[];
 	topCategories: AdminDashboardTopCategorySource[];
 	systemHealth: SystemHealthSnapshot;

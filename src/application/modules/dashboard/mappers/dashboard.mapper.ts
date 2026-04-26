@@ -179,7 +179,6 @@ export class DashboardMapper {
 							currency: booking.currency,
 						}) satisfies DashboardUpcomingSessionDto,
 				),
-			activityOverview,
 			recentActivity: toRecentActivity(source, source.role),
 			recommendedArticles: source.recentArticles.slice(0, 3).map(toArticleDto),
 		};

@@ -102,18 +102,7 @@ export class AdminDashboardMapper {
 				totalRevenue: AdminDashboardMapper.toMetricDto(
 					source.metrics.totalRevenue,
 				),
-				activeUsersNow: AdminDashboardMapper.toMetricDto(
-					source.metrics.activeUsersNow,
-				),
 			},
-			activeUsersTrend: { ...source.activeUsersTrend },
-			userGrowth: AdminDashboardMapper.toUserGrowthDto(source.userGrowth),
-			sessionOverview: AdminDashboardMapper.toSessionOverviewDto(
-				source.sessionOverview,
-			),
-			revenueAnalytics: AdminDashboardMapper.toRevenueAnalyticsDto(
-				source.revenueAnalytics,
-			),
 			topMentors: source.topMentors.map((mentor) =>
 				AdminDashboardMapper.toTopMentorDto(mentor),
 			),
