@@ -4,7 +4,9 @@ import {
 	pageSchema,
 } from "../../../shared/validators";
 
-export const ReviewBookingParamSchema = buildObjectIdParamSchema("bookingId");
+export const ReviewBookingParamSchema = z.object({
+	bookingId: z.string().uuid("Invalid Id"),
+});
 export type ReviewBookingParam = z.infer<typeof ReviewBookingParamSchema>;
 
 export const ReviewMentorParamSchema = buildObjectIdParamSchema("mentorId");
