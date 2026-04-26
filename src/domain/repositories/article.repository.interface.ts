@@ -1,3 +1,4 @@
+import type { ArticleForFeed } from "../../shared/utilities/feed-scoring.util";
 import type { Article } from "../entities/article.entity";
 import type {
 	CreatableRepository,
@@ -41,4 +42,9 @@ export interface IArticleRepository
 		limit: number,
 		excludeAuthorId?: string,
 	): Promise<{ tag: string; count: number }[]>;
+
+	findFeedCandidates(
+		query: ArticleQuery,
+		limit: number,
+	): Promise<ArticleForFeed[]>;
 }

@@ -33,6 +33,8 @@ export interface MentorDocument {
 	isApproved: boolean;
 	applicationAttempts: number;
 	skippedSessionsCount: number;
+	totalSessions: number;
+	lastSessionAt: Date | null;
 	isRejected: boolean;
 	rejectionReason: string | null;
 	avgRating: number;
@@ -106,6 +108,15 @@ const mentorSchema = new Schema<MentorDocument>(
 			type: Number,
 			default: 0,
 			min: 0,
+		},
+		totalSessions: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+		lastSessionAt: {
+			type: Date,
+			default: null,
 		},
 		rejectionReason: { type: String },
 		isUserBlocked: { type: Boolean, default: false },

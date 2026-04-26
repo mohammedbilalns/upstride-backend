@@ -24,6 +24,7 @@
 		"fix:payment-transaction-indexes": "npx tsx --env-file=.env scripts/fix-payment-transaction-indexes.ts",
 		"prune:old-transactions": "npx tsx --env-file=.env scripts/prune-old-transactions.ts",
 		"backfill:article-author-interest-ids": "npx tsx --env-file=.env scripts/backfill-article-author-interest-ids.ts",
+		"backfill:mentor-session-stats": "npx tsx --env-file=.env scripts/backfill-mentor-session-stats.ts",
 		"migrate:user-preferences-skill-levels": "npx tsx --env-file=.env scripts/migrate-user-preferences-skill-levels.ts",
 		"seed": "npm run seed:interests && npm run seed:professions && npm run seed:skills"
 	},
