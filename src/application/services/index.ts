@@ -1,3 +1,4 @@
+export * from "./feed-cache.service.interface";
 export * from "./id-generator.service.interface";
 export * from "./mail.service.interface";
 export * from "./oauth-identity-provider.service.interface";

@@ -29,6 +29,7 @@ export const TYPES = {
 		MentorNoShow: Symbol.for("MentorNoShow"),
 		WebSocketServer: Symbol.for("WebSocketServer"),
 		PdfReceiptService: Symbol.for("PdfReceiptService"),
+		FeedCacheService: Symbol.for("FeedCacheService"),
 	},
 	WebSockets: {
 		CallHandler: Symbol.for("CallHandler"),
