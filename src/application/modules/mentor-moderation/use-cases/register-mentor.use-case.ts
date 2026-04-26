@@ -64,6 +64,8 @@ export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 			false,
 			applicationAttempts,
 			0,
+			0,
+			null,
 			false,
 			existingMentor?.createdAt || new Date(),
 			new Date(),

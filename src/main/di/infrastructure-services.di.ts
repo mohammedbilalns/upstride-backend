@@ -10,6 +10,7 @@ import type {
 	IWhiteboardCache,
 	IPushNotificationPort as PushNotificationPort,
 } from "../../application/services";
+import { LRUFeedCacheService } from "../../infrastructure/cache/lru-feed-cache.service";
 import { redisClient } from "../../infrastructure/database/redis/redis.connection";
 import { RedisWhiteboardCache } from "../../infrastructure/database/redis/redis-whiteboard.cache";
 import { WebPushAdapter } from "../../infrastructure/notifications/web-push.adapter";
@@ -67,4 +68,9 @@ export const registerInfrastructureServiceBindings = (
 		.inSingletonScope();
 
 	container.bind(TYPES.Databases.Redis).toConstantValue(redisClient);
+
+	container
+		.bind(TYPES.Services.FeedCacheService)
+		.to(LRUFeedCacheService)
+		.inSingletonScope();
 };

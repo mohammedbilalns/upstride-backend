@@ -41,6 +41,8 @@ export class Mentor {
 		public readonly isApproved: boolean,
 		public readonly applicationAttempts: number,
 		public readonly skippedSessionsCount: number,
+		public readonly totalSessions: number,
+		public readonly lastSessionAt: Date | null,
 		public readonly isRejected: boolean,
 		public readonly createdAt: Date,
 		public readonly updatedAt: Date,
@@ -88,6 +90,12 @@ export class Mentor {
 			throw new EntityValidationError(
 				"score",
 				"Skipped sessions count cannot be negative.",
+			);
+		}
+		if (this.totalSessions < 0) {
+			throw new EntityValidationError(
+				"score",
+				"Total sessions count cannot be negative.",
 			);
 		}
 		if (this.areasOfExpertise.length > 2) {

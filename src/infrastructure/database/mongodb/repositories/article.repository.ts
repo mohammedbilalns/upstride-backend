@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { type QueryFilter, Types } from "mongoose";
+import { type Types as MongooseTypes, type QueryFilter, Types } from "mongoose";
 import type { Article } from "../../../../domain/entities/article.entity";
 import type { PaginateParams } from "../../../../domain/repositories";
 import type {
@@ -8,6 +8,7 @@ import type {
 } from "../../../../domain/repositories/article.repository.interface";
 import type { QueryParams } from "../../../../domain/repositories/capabilities";
 import type { PaginatedResult } from "../../../../domain/repositories/capabilities/paginatable.repository.interface";
+import type { ArticleForFeed } from "../../../../shared/utilities/feed-scoring.util";
 import { ArticleMapper } from "../mappers/article.mapper";
 import { type ArticleDocument, ArticleModel } from "../models/article.model";
 import { AbstractMongoRepository } from "./abstract.repository";
@@ -44,11 +45,21 @@ export class MongoArticleRepository
 
 	async updateAuthorSnapshotByAuthorId(
 		authorId: string,
-		snapshot: { name?: string; avatarUrl?: string; isBlocked?: boolean },
+		snapshot: {
+			name?: string;
+			interests?: string[];
+			avatarUrl?: string;
+			isBlocked?: boolean;
+		},
 	): Promise<void> {
 		const update: Record<string, unknown> = {};
 		if (snapshot.name !== undefined) {
 			update["authorSnapshot.name"] = snapshot.name;
+		}
+		if (snapshot.interests !== undefined) {
+			update["authorSnapshot.interestIds"] = snapshot.interests.map(
+				(interestId) => new Types.ObjectId(interestId),
+			);
 		}
 		if (snapshot.avatarUrl !== undefined) {
 			update["authorSnapshot.avatarUrl"] = snapshot.avatarUrl;
@@ -192,5 +203,28 @@ export class MongoArticleRepository
 		}
 
 		return filter;
+	}
+
+	async findFeedCandidates(
+		query: ArticleQuery,
+		limit: number,
+	): Promise<ArticleForFeed[]> {
+		const filter = this._buildFilter(query);
+
+		const docs = await this.model
+			.find(filter)
+			.sort({ createdAt: -1 })
+			.limit(limit)
+			.select("authorSnapshot.interestIds views createdAt")
+			.lean();
+
+		return docs.map((doc) => ({
+			id: doc._id.toString(),
+			interests: (doc.authorSnapshot?.interestIds ?? []).map((interestId) =>
+				(interestId as MongooseTypes.ObjectId).toString(),
+			),
+			views: doc.views,
+			createdAt: doc.createdAt,
+		}));
 	}
 }

@@ -14,4 +14,5 @@ export interface IMentorWriteRepository
 		userId: string,
 		isUserBlocked: boolean,
 	): Promise<void>;
+	recordCompletedSession(mentorId: string, completedAt: Date): Promise<void>;
 }

@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { Booking } from "../../../../domain/entities/booking.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IMentorWriteRepository } from "../../../../domain/repositories/mentor-write.repository.interface";
 import logger from "../../../../shared/logging/logger";
 import { TYPES } from "../../../../shared/types/types";
 import type { MentorNoShowService } from "../services/mentor-no-show.service";
@@ -17,6 +18,8 @@ export class SettleEndedSessionUseCase implements ISettleEndedSessionUseCase {
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.MentorWriteRepository)
+		private readonly _mentorRepository: IMentorWriteRepository,
 		@inject(TYPES.Services.SessionSettlementCalculator)
 		private readonly _settlementCalculator: SessionSettlementCalculatorService,
 		@inject(TYPES.Services.MentorSessionPayout)
@@ -53,6 +56,10 @@ export class SettleEndedSessionUseCase implements ISettleEndedSessionUseCase {
 			await this._bookingRepository.updateById(booking.id, {
 				status: "COMPLETED",
 			});
+			await this._mentorRepository.recordCompletedSession(
+				booking.mentorId,
+				new Date(booking.endTime),
+			);
 		}
 
 		if (mentorJoined) {

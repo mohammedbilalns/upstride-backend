@@ -6,6 +6,7 @@ import type {
 	IDeleteArticleCommentUseCase,
 	IDeleteArticleUseCase,
 	IGetArticleCommentsUseCase,
+	IGetArticleFeedUseCase,
 	IGetArticlesUseCase,
 	IGetArticleTopTagsUseCase,
 	IGetArticleUseCase,
@@ -38,6 +39,8 @@ import type {
 @injectable()
 export class ArticleController {
 	constructor(
+		@inject(TYPES.UseCases.GetArticleFeed)
+		private readonly _getArticleFeedUseCase: IGetArticleFeedUseCase,
 		@inject(TYPES.UseCases.GetArticles)
 		private readonly _getArticlesUseCase: IGetArticlesUseCase,
 		@inject(TYPES.UseCases.GetArticle)
@@ -75,14 +78,23 @@ export class ArticleController {
 
 	getArticles = asyncHandler(
 		async (req: AuthenticatedRequest, res: Response) => {
+			const query = req.validated?.query as ArticlesQuery;
 			const isAdminView =
 				req.user?.role === "ADMIN" || req.user?.role === "SUPER_ADMIN";
 
-			const data = await this._getArticlesUseCase.execute({
-				...(req.validated?.query as ArticlesQuery),
-				viewerUserId: req.user?.id,
-				isAdminView,
-			});
+			const hasFilters = Boolean(query.search || query.interest || query.tag);
+
+			const data = hasFilters
+				? await this._getArticlesUseCase.execute({
+						...query,
+						viewerUserId: req.user?.id,
+						isAdminView,
+					})
+				: await this._getArticleFeedUseCase.execute({
+						page: query.page,
+						limit: query.limit ?? 6,
+						userId: req.user.id,
+					});
 			return sendSuccess(res, HttpStatus.OK, { data });
 		},
 	);

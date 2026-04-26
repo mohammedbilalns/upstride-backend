@@ -5,6 +5,7 @@ import {
 	DeleteArticleCommentUseCase,
 	DeleteArticleUseCase,
 	GetArticleCommentsUseCase,
+	GetArticleFeedUseCase,
 	GetArticlesUseCase,
 	GetArticleTopTagsUseCase,
 	GetArticleUseCase,
@@ -13,6 +14,7 @@ import {
 	type IDeleteArticleCommentUseCase,
 	type IDeleteArticleUseCase,
 	type IGetArticleCommentsUseCase,
+	type IGetArticleFeedUseCase,
 	type IGetArticlesUseCase,
 	type IGetArticleTopTagsUseCase,
 	type IGetArticleUseCase,
@@ -34,6 +36,10 @@ import {
 import { TYPES } from "../../shared/types/types";
 
 export const registerArticleBindings = (container: Container): void => {
+	container
+		.bind<IGetArticleFeedUseCase>(TYPES.UseCases.GetArticleFeed)
+		.to(GetArticleFeedUseCase)
+		.inSingletonScope();
 	container
 		.bind<IGetArticlesUseCase>(TYPES.UseCases.GetArticles)
 		.to(GetArticlesUseCase)

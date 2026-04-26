@@ -1,5 +1,8 @@
 import { inject, injectable } from "inversify";
-import type { IGetMentorsUseCase } from "../../../application/modules/mentor-discovery/use-cases";
+import type {
+	IGetMentorFeedUseCase,
+	IGetMentorsUseCase,
+} from "../../../application/modules/mentor-discovery/use-cases";
 import type {
 	IApproveMentorUseCase,
 	IGetMentorApplicationsUseCase,
@@ -43,6 +46,8 @@ export class MentorController {
 		private readonly _getMentorApplicationsUseCase: IGetMentorApplicationsUseCase,
 		@inject(TYPES.UseCases.GetMentorsDiscovery)
 		private readonly _getMentorsDiscoveryUseCase: IGetMentorsUseCase,
+		@inject(TYPES.UseCases.GetMentorFeed)
+		private readonly _getMentorFeedUseCase: IGetMentorFeedUseCase,
 		@inject(TYPES.UseCases.ApproveMentor)
 		private readonly _approveMentorUseCase: IApproveMentorUseCase,
 		@inject(TYPES.UseCases.RejectMentor)
@@ -61,15 +66,31 @@ export class MentorController {
 	});
 
 	getDiscovery = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const query = req.validated?.query as MentorDiscoveryQuery;
 		const isAdminView =
 			req.user.role === "ADMIN" || req.user.role === "SUPER_ADMIN";
 
-		const result = await this._getMentorsDiscoveryUseCase.execute({
-			limit: 12,
-			...(req.validated?.query as MentorDiscoveryQuery),
-			excludeUserId: req.user.id,
-			isAdminView,
-		});
+		const hasFilters = Boolean(
+			query.search ||
+				query.category ||
+				query.tierName ||
+				query.minExperience !== undefined ||
+				query.maxExperience !== undefined ||
+				query.sort,
+		);
+
+		const result = hasFilters
+			? await this._getMentorsDiscoveryUseCase.execute({
+					limit: 12,
+					...query,
+					excludeUserId: req.user.id,
+					isAdminView,
+				})
+			: await this._getMentorFeedUseCase.execute({
+					page: query.page,
+					limit: 12,
+					userId: req.user.id,
+				});
 
 		return sendSuccess(res, HttpStatus.OK, {
 			message: MentorResponseMessages.FETCH_DISCOVERY_SUCCESS,

@@ -1,3 +1,4 @@
+import type { ArticleForFeed } from "../../shared/utilities/feed-scoring.util";
 import type { Article } from "../entities/article.entity";
 import type {
 	CreatableRepository,
@@ -29,11 +30,21 @@ export interface IArticleRepository
 	findBySlug(slug: string): Promise<Article | null>;
 	updateAuthorSnapshotByAuthorId(
 		authorId: string,
-		snapshot: { name?: string; avatarUrl?: string; isBlocked?: boolean },
+		snapshot: {
+			name?: string;
+			interests?: string[];
+			avatarUrl?: string;
+			isBlocked?: boolean;
+		},
 	): Promise<void>;
 
 	getTopTags(
 		limit: number,
 		excludeAuthorId?: string,
 	): Promise<{ tag: string; count: number }[]>;
+
+	findFeedCandidates(
+		query: ArticleQuery,
+		limit: number,
+	): Promise<ArticleForFeed[]>;
 }

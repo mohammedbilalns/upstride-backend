@@ -29,6 +29,7 @@ export const TYPES = {
 		MentorNoShow: Symbol.for("MentorNoShow"),
 		WebSocketServer: Symbol.for("WebSocketServer"),
 		PdfReceiptService: Symbol.for("PdfReceiptService"),
+		FeedCacheService: Symbol.for("FeedCacheService"),
 	},
 	WebSockets: {
 		CallHandler: Symbol.for("CallHandler"),
@@ -161,6 +162,7 @@ export const TYPES = {
 		RemoveMentorFromList: Symbol.for("RemoveMentorFromListUseCase"),
 		DeleteMentorList: Symbol.for("DeleteMentorListUseCase"),
 		GetMentorsDiscovery: Symbol.for("GetMentorsDiscoveryUseCase"),
+		GetMentorFeed: Symbol.for("GetMentorFeedUseCase"),
 		CreateArticle: Symbol.for("CreateArticleUseCase"),
 		UpdateArticle: Symbol.for("UpdateArticleUseCase"),
 		DeleteArticle: Symbol.for("DeleteArticleUseCase"),
@@ -168,6 +170,7 @@ export const TYPES = {
 		UnblockArticle: Symbol.for("UnblockArticleUseCase"),
 		SubmitArticleAppeal: Symbol.for("SubmitArticleAppealUseCase"),
 		GetArticle: Symbol.for("GetArticleUseCase"),
+		GetArticleFeed: Symbol.for("GetArticleFeedUseCase"),
 		GetArticles: Symbol.for("GetArticlesUseCase"),
 		GetArticleTopTags: Symbol.for("GetArticleTopTagsUseCase"),
 		MarkArticleView: Symbol.for("MarkArticleViewUseCase"),

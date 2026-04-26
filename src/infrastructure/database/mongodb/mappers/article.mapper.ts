@@ -9,6 +9,9 @@ export class ArticleMapper {
 			doc.authorId.toString(),
 			{
 				name: doc.authorSnapshot.name,
+				interests: (doc.authorSnapshot.interestIds ?? []).map((interestId) =>
+					interestId.toString(),
+				),
 				avatarUrl: doc.authorSnapshot.avatarUrl || undefined,
 				isBlocked: doc.authorSnapshot.isBlocked,
 			},
@@ -37,6 +40,9 @@ export class ArticleMapper {
 			authorId: new Types.ObjectId(entity.authorId),
 			authorSnapshot: {
 				name: entity.authorSnapshot.name,
+				interestIds: (entity.authorSnapshot.interests ?? []).map(
+					(interestId) => new Types.ObjectId(interestId),
+				),
 				avatarUrl: entity.authorSnapshot.avatarUrl,
 				isBlocked: entity.authorSnapshot.isBlocked,
 			},

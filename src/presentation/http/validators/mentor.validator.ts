@@ -152,7 +152,7 @@ export const MentorDiscoveryQuerySchema = z
 		tierName: z.string().min(1).optional(),
 		minExperience: z.coerce.number().int().min(0).optional(),
 		maxExperience: z.coerce.number().int().min(0).optional(),
-		sort: z.enum(["rating", "recent"]).optional().default("rating"),
+		sort: z.enum(["rating", "recent"]).optional(),
 	})
 	.refine(
 		(input) =>

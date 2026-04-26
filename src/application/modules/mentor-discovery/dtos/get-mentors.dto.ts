@@ -33,6 +33,12 @@ export interface MentorDiscoveryDto {
 	createdAt: Date;
 }
 
+export interface GetMentorFeedInput {
+	page: number;
+	limit: number;
+	userId: string;
+}
+
 export interface GetMentorsResponse {
 	items: MentorDiscoveryDto[];
 	total: number;

@@ -29,6 +29,7 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 		const profilePictureChanged =
 			input.profilePictureId !== undefined &&
 			input.profilePictureId !== user.profilePictureId;
+		const interestsChanged = input.interests !== undefined;
 
 		if (nameChanged) {
 			updateData.name = input.name;
@@ -54,7 +55,10 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 
 		await this._userRepository.updateById(user.id, updateData);
 
-		if (user.role === "MENTOR" && (nameChanged || profilePictureChanged)) {
+		if (
+			user.role === "MENTOR" &&
+			(nameChanged || profilePictureChanged || interestsChanged)
+		) {
 			const updatedName = nameChanged ? (input.name as string) : user.name;
 			const profilePictureId = profilePictureChanged
 				? (input.profilePictureId as string | null)
@@ -62,11 +66,15 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
 			const avatarUrl = profilePictureId
 				? this._storageService.getPublicUrl(profilePictureId)
 				: "";
+			const interestIds = interestsChanged
+				? (input.interests ?? [])
+				: (user.preferences?.interests ?? []);
 
 			await this._eventBus.publish(
 				new ProfileUpdatedEvent({
 					userId: user.id,
 					name: nameChanged ? updatedName : undefined,
+					interests: interestIds,
 					avatarUrl: profilePictureChanged ? avatarUrl : undefined,
 				}),
 			);
