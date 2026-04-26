@@ -170,6 +170,7 @@ export const TYPES = {
 		UnblockArticle: Symbol.for("UnblockArticleUseCase"),
 		SubmitArticleAppeal: Symbol.for("SubmitArticleAppealUseCase"),
 		GetArticle: Symbol.for("GetArticleUseCase"),
+		GetArticleFeed: Symbol.for("GetArticleFeedUseCase"),
 		GetArticles: Symbol.for("GetArticlesUseCase"),
 		GetArticleTopTags: Symbol.for("GetArticleTopTagsUseCase"),
 		MarkArticleView: Symbol.for("MarkArticleViewUseCase"),

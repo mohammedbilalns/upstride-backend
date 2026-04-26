@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import type { User } from "../../../../domain/entities/user.entity";
 import type { UserDocument } from "../models/user.model";
 
@@ -19,10 +20,22 @@ export class UserMapper {
 			isVerified: doc.isVerified,
 			createdAt: doc.createdAt,
 			updatedAt: doc.updatedAt,
+			preferences: doc.preferences
+				? {
+						interests: (doc.preferences.interests ?? []).map((interestId) =>
+							interestId.toString(),
+						),
+						skills: (doc.preferences.skills ?? []).map((skill) => ({
+							skillId: skill.skillId.toString(),
+						})),
+					}
+				: undefined,
 		};
 	}
 
 	static toDocument(entity: User): Partial<UserDocument> {
+		const preferences = entity.preferences;
+
 		return {
 			name: entity.name,
 			email: entity.email,
@@ -36,6 +49,16 @@ export class UserMapper {
 			role: entity.role,
 			isBlocked: entity.isBlocked,
 			isVerified: entity.isVerified,
+			preferences: preferences
+				? {
+						interests: preferences.interests.map(
+							(interestId) => new Types.ObjectId(interestId),
+						),
+						skills: preferences.skills.map((skill) => ({
+							skillId: new Types.ObjectId(skill.skillId),
+						})),
+					}
+				: undefined,
 		};
 	}
 }

@@ -57,6 +57,7 @@ export class GetMentorFeedUseCase implements IGetMentorFeedUseCase {
 		if (!user) throw new UserNotFoundError();
 
 		const interests = user.preferences?.interests ?? [];
+
 		if (interests.length === 0) {
 			return mapPaginatedResult(
 				emptyPaginatedResult(input.page, input.limit),
@@ -68,18 +69,20 @@ export class GetMentorFeedUseCase implements IGetMentorFeedUseCase {
 		const skip = (input.page - 1) * input.limit;
 
 		let ids = this._feedCacheService.get(key);
-
 		if (!ids) {
 			const candidates =
 				await this._mentorProfileReadRepository.findFeedCandidates(
-					interests,
 					MAX_FEED_CANDIDATES,
+					input.userId,
 				);
+
 			ids = computeMentorFeed(candidates, interests, MAX_FEED_CANDIDATES);
+
 			this._feedCacheService.set(key, ids);
 		}
 
 		const pageIds = ids.slice(skip, skip + input.limit);
+
 		if (pageIds.length === 0) {
 			return {
 				items: [],
@@ -96,13 +99,12 @@ export class GetMentorFeedUseCase implements IGetMentorFeedUseCase {
 			),
 		);
 
+		const visibleProfiles = profiles.filter((profile) =>
+			isVisibleFeedMentor(profile, input.userId),
+		);
+
 		const orderedItems = await Promise.all(
-			reorderByIds(
-				profiles.filter((profile) =>
-					isVisibleFeedMentor(profile, input.userId),
-				),
-				pageIds,
-			).map(async (mentor) => {
+			reorderByIds(visibleProfiles, pageIds).map(async (mentor) => {
 				const dto = MentorDiscoveryMapper.toDto({
 					...mentor,
 					categories: mentor.expertisesDetails,

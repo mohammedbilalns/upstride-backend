@@ -45,14 +45,12 @@ export class MongoMentorProfileReadRepository
 	}
 
 	async findFeedCandidates(
-		interests: string[],
 		limit: number,
 		excludeUserId?: string,
 	): Promise<MentorForFeed[]> {
 		const docs = await MentorModel.find({
 			isApproved: true,
 			isUserBlocked: false,
-			areasOfExpertise: { $in: interests },
 			...(excludeUserId && {
 				userId: { $ne: new Types.ObjectId(excludeUserId) },
 			}),

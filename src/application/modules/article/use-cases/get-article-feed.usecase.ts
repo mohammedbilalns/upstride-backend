@@ -14,7 +14,7 @@ import {
 import { UserNotFoundError } from "../../authentication/errors";
 import type { GetArticleFeedInput, GetArticlesOutput } from "../dtos";
 import { ArticleMapper } from "../mappers/article.mapper";
-import type { IGetArticleFeedUseCase } from "./get-article-feed.use-case";
+import type { IGetArticleFeedUseCase } from "./get-article-feed.use-case.interface";
 
 const MAX_FEED_CANDIDATES = 150;
 
@@ -35,6 +35,7 @@ export class GetArticleFeedUseCase implements IGetArticleFeedUseCase {
 		if (!user) throw new UserNotFoundError();
 
 		const interests = user.preferences?.interests ?? [];
+
 		if (interests.length === 0) {
 			return mapPaginatedResult(
 				emptyPaginatedResult(input.page, input.limit),
@@ -56,11 +57,14 @@ export class GetArticleFeedUseCase implements IGetArticleFeedUseCase {
 				},
 				MAX_FEED_CANDIDATES,
 			);
+
 			ids = computeArticleFeed(candidates, interests, MAX_FEED_CANDIDATES);
+
 			this._feedCacheService.set(key, ids);
 		}
 
 		const pageIds = ids.slice(skip, skip + input.limit);
+
 		if (pageIds.length === 0) {
 			return {
 				items: [],
