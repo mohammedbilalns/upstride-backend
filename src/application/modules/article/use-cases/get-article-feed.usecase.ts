@@ -90,14 +90,10 @@ export class GetArticleFeedUseCase implements IGetArticleFeedUseCase {
 		const orderedItems = await Promise.all(
 			reorderByIds(docs, pageIds).map(async (article) => {
 				const dto = ArticleMapper.toDto(article);
-				if (dto.featuredImageUrl && !dto.featuredImageUrl.startsWith("http")) {
-					try {
-						dto.featuredImageUrl = this._storageService.getPublicUrl(
-							dto.featuredImageId,
-						);
-					} catch (err) {
-						console.error("Failed to sign article featured image URL:", err);
-					}
+				if (dto.featuredImageUrl) {
+					dto.featuredImageUrl = this._storageService.getPublicUrl(
+						dto.featuredImageId,
+					);
 				}
 				return dto;
 			}),
