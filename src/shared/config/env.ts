@@ -1,0 +1,38 @@
+import z from "zod";
+
+const envSchema = z.object({
+	PORT: z.coerce.number().min(1).default(3000),
+	MONGODB_URI: z.string().min(1),
+	REDIS_URI: z.string().min(1),
+	APP_URL: z.string().min(1),
+	CLIENT_URL: z.string().min(1),
+	NODE_ENV: z.enum(["development", "production", "test"]),
+	LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]),
+	LOKI_HOST: z.string().min(1),
+	JWT_ACCESS_SECRET: z.string().min(1),
+	JWT_REFRESH_SECRET: z.string().min(1),
+	JWT_RESET_SECRET: z.string().min(1),
+	JWT_SETUP_SECRET: z.string().min(1),
+	CSRF_SECRET: z.string().min(1),
+	SMTP_HOST: z.string().min(1),
+	SMTP_PORT: z.coerce.number().min(1).default(25),
+	SMTP_USER: z.string().min(1),
+	SMTP_PASS: z.string().min(1),
+	AWS_BUCKET_NAME: z.string().min(1),
+	AWS_ACCESS_KEY_ID: z.string().min(1),
+	AWS_SECRET_ACCESS_KEY: z.string().min(1),
+	AWS_REGION: z.string().min(1),
+	GOOGLE_CLIENT_ID: z.string().min(1),
+	GOOGLE_CLIENT_SECRET: z.string().min(1),
+	LINKEDIN_CLIENT_ID: z.string().min(1),
+	LINKEDIN_CLIENT_SECRET: z.string().min(1),
+	STRIPE_SECRET_KEY: z.string(),
+	STRIPE_WEBHOOK_SECRET: z.string().min(1),
+	STRIPE_SUCCESS_URL: z.string().min(1),
+	STRIPE_CANCEL_URL: z.string().min(1),
+	VAPID_PRIVATE_KEY: z.string().min(1),
+	VAPID_PUBLIC_KEY: z.string().min(1),
+});
+
+const env = envSchema.parse(process.env);
+export default env;

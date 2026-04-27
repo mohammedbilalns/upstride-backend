@@ -1,0 +1,18 @@
+import { inject, injectable } from "inversify";
+import type { IInterestRepository } from "../../../../domain/repositories";
+import { TYPES } from "../../../../shared/types/types";
+import type { DisableInterestInput } from "../dtos/disable-interest.dto";
+import type { IDisableInterestUseCase } from "./disable-interest.use-case.interface";
+
+@injectable()
+export class DisableInterestUseCase implements IDisableInterestUseCase {
+	constructor(
+		@inject(TYPES.Repositories.InterestRepository)
+		private readonly _interestRepository: IInterestRepository,
+	) {}
+
+	async execute(input: DisableInterestInput): Promise<{ resourceId: string }> {
+		await this._interestRepository.disable(input.interestId);
+		return { resourceId: input.interestId };
+	}
+}

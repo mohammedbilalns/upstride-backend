@@ -1,0 +1,18 @@
+import { inject, injectable } from "inversify";
+import type { IProfessionRepository } from "../../../../domain/repositories";
+import { TYPES } from "../../../../shared/types/types";
+import type { EnableProfessionInput } from "../dtos/enable-profession.dto";
+import type { IEnableProfessionUseCase } from "./enable-profession.use-case.interface";
+
+@injectable()
+export class EnableProfessionUseCase implements IEnableProfessionUseCase {
+	constructor(
+		@inject(TYPES.Repositories.ProfessionRepository)
+		private readonly _professionRepository: IProfessionRepository,
+	) {}
+
+	async execute(input: EnableProfessionInput): Promise<{ resourceId: string }> {
+		await this._professionRepository.enable(input.professionId);
+		return { resourceId: input.professionId };
+	}
+}

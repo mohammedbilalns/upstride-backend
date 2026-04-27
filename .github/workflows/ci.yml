@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ] 
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  code-quality:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+        # install pnpm 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.28.2
+
+          # setup node
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25' 
+          cache: 'pnpm' 
+
+          # install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+
+        # Run Biome
+      - name: Run Biome (Lint & Format Check)
+        run: pnpm biome check . --diagnostic-level=error
+
+        # Run TypeScript Type Check
+      - name: TypeScript Type Check
+        run: pnpm type-check

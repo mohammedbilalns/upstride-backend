@@ -1,0 +1,50 @@
+import { inject, injectable } from "inversify";
+import { ResetPasswordOtpPolicy } from "../../../../../domain/policies/reset-password-otp.policy";
+import type { IUserRepository } from "../../../../../domain/repositories";
+import type { IOtpRepository } from "../../../../../domain/repositories/otp.repository.interface";
+import { TYPES } from "../../../../../shared/types/types";
+import type { JobQueuePort } from "../../../../ports/job-queue.port";
+import type { IOtpGenerator } from "../../../../services";
+import type { RequestPasswordResetInput } from "../../dtos";
+import { assertUserCanAuthenticate } from "../helpers/assert-user-can-authenticate";
+import type { IRequestPasswordResetUseCase } from ".";
+
+@injectable()
+export class RequestPasswordResetUseCase
+	implements IRequestPasswordResetUseCase
+{
+	constructor(
+		@inject(TYPES.Repositories.UserRepository)
+		private readonly _userRepository: IUserRepository,
+		@inject(TYPES.Repositories.OtpRepository)
+		private readonly _otpRepository: IOtpRepository,
+		@inject(TYPES.Services.OtpGenerator)
+		private readonly _otpGeneratorService: IOtpGenerator,
+		@inject(TYPES.Services.JobQueue)
+		private readonly _jobQueue: JobQueuePort,
+	) {}
+
+	async execute(input: RequestPasswordResetInput): Promise<void> {
+		const { email } = input;
+		const user = await this._userRepository.findByEmail(email);
+
+		if (user) {
+			if (user.authType !== "LOCAL") {
+				return;
+			}
+
+			assertUserCanAuthenticate(user);
+
+			const policy = new ResetPasswordOtpPolicy();
+			const otp = this._otpGeneratorService.generate(6);
+
+			await Promise.all([
+				this._otpRepository.saveCode(user.id, policy.purpose, otp, policy.ttl),
+				this._jobQueue.enqueue("send-reset-password-otp-email", {
+					to: email,
+					otp,
+				}),
+			]);
+		}
+	}
+}

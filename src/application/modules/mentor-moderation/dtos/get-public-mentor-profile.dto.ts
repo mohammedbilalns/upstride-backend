@@ -1,0 +1,35 @@
+import type { ReviewDto } from "../../review/dtos/review.dto";
+
+export interface PublicMentorProfileDto {
+	id: string;
+	user: {
+		id: string;
+		name: string;
+		avatar?: string;
+	};
+	bio: string;
+	organization: string;
+	currentRole: {
+		id: string;
+		name: string;
+	};
+	personalWebsite: string | null;
+	educationalQualifications: string[];
+	expertises: { id: string; name: string }[];
+	skills: { id: string; name: string; level: string }[];
+	yearsOfExperience: number;
+	avgRating: number;
+	recentReviews: ReviewDto[];
+	reviewsTotal: number;
+}
+
+export interface GetPublicMentorProfileInput {
+	mentorId: string;
+	requesterUserId: string;
+	requesterRole?: string;
+}
+
+export interface GetPublicMentorProfileResponse {
+	profile: PublicMentorProfileDto;
+	isReported?: boolean;
+}

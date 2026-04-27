@@ -1,0 +1,30 @@
+export const CatalogLimits = {
+	MAX_TOTAL_INTERESTS: 120,
+	MAX_SKILLS_PER_INTEREST: 120,
+	MAX_TOTAL_PROFESSIONS: 250,
+} as const;
+
+export const UserPreferencesLimits = {
+	MIN_INTERESTS: 2,
+	MAX_INTERESTS: 5,
+	MIN_SKILLS_PER_INTEREST: 2,
+	MAX_SKILLS_PER_INTEREST: 10,
+} as const;
+
+export const SessionSlotLimits = {
+	MAX_RECURRING_RULE_PER_DAY: 6,
+	MAX_SLOTS_PER_DAY: 6,
+} as const;
+
+export const IST_OFFSET_MINUTES = 330;
+
+export const COIN_VALUE = 2;
+
+export const USER_JOIN_REWARD_COIN_COUNT = 200;
+
+export const MAX_SESSION_PRICE_PER_30_MIN = 2000;
+export const DEFAULT_SESSION_PRICE_PER_30_MIN = 1000;
+
+export const PLATFOM_COMMISSION = {
+	SESSION_PERCENTAGE: 15,
+};

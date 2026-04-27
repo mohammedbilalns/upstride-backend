@@ -1,0 +1,88 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: upstride-redis-dev
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data_dev:/data
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: upstride-backend-dev
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - LOKI_HOST=http://loki:3100
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./.env:/app/.env
+    command: pnpm run dev
+    depends_on:
+      - redis
+      - loki
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: upstride-backend-worker-dev
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - LOKI_HOST=http://loki:3100
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./.env:/app/.env
+    command: pnpm run dev:worker
+    depends_on:
+      - redis
+      - loki
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: upstride-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    command: 
+      - -config.file=/etc/loki/local-config.yaml
+      - -log.level=warn
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: upstride-grafana
+    ports:
+      - "3002:3000" 
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_LOG_LEVEL=error    
+      - GF_LOG_MODE=console
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+volumes:
+  redis_data_dev:
