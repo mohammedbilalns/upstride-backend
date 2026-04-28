@@ -4,62 +4,24 @@ on:
   push:
     branches: ["**"]
   pull_request:
-    branches: ["main", "dev"]
+    branches: ["main"]
 
 jobs:
   code-quality:
-    name: Lint & Type Check
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
         with:
           version: 10.28.2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "25"
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run Biome
-        run: pnpm biome check . --diagnostic-level=error
-
-      - name: TypeScript Type Check
-        run: pnpm type-check
-
-  deploy:
-    name: Deploy to EC2
-    runs-on: ubuntu-latest
-    needs: code-quality
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            echo "Switching to upstride user..."
-
-            sudo -u upstride bash -c '
-              cd /opt/upstride/upstride-backend
-
-              echo "Pulling latest code..."
-              git pull origin main
-
-              echo "Rebuilding containers..."
-              docker compose up -d --build
-
-              echo "Cleaning old images..."
-              docker image prune -f
-            '
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm biome check . --diagnostic-level=error
+      - run: pnpm type-check
