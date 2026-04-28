@@ -13,6 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: upstride-backend:latest
     container_name: upstride-backend
     ports:
       - "8000:8000"
@@ -26,6 +27,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: upstride-backend:latest
     container_name: upstride-backend-worker
     env_file:
       - .env

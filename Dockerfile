@@ -13,7 +13,7 @@ RUN pnpm install --frozen-lockfile
 COPY tsconfig.json ./
 COPY src ./src
 
-RUN pnpm run build
+RUN NODE_OPTIONS="--max-old-space-size=768" pnpm run build
 
 
 
@@ -37,7 +37,7 @@ COPY --chown=app:app package.json pnpm-lock.yaml ./
 
 # Install  production dependencies
 
-RUN pnpm install --prod --frozen-lockfile --ignore-scripts
+COPY --from=builder /app/node_modules ./node_modules
 
 # ensure the user owns the dist files
 COPY --chown=app:app --from=builder /app/dist ./dist
