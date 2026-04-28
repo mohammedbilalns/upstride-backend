@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import compression from "compression";
 //import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -53,7 +54,7 @@ class App {
 	private _setupMiddlewares() {
 		this._app
 			.use(helmet())
-			//	.use(compression())
+			.use(compression())
 			.use(requestLogger)
 			.use(cors(corsOptions))
 			.use(express.json())

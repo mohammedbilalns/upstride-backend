@@ -11,7 +11,7 @@ const csrfCookieName =
 		: "psifi.x-csrf-token";
 
 const csrfCookieOptions = {
-	sameSite: "strict" as const,
+	sameSite: "none" as const,
 	path: "/",
 	secure: env.NODE_ENV === "production",
 	httpOnly: true,
