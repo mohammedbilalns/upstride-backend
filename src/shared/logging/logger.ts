@@ -2,6 +2,8 @@ import pino from "pino";
 import env from "../config/env";
 import { RequestContext } from "../context/request-context";
 
+console.log(env.LOKI_USER);
+
 /**
  * Pino transport pipeline.
  *
@@ -30,6 +32,12 @@ const transport = pino.transport({
 				batching: true,
 				interval: 5,
 				host: env.LOKI_HOST,
+				endpoint: `${env.LOKI_HOST}/loki/api/v1/push`,
+				basicAuth: {
+					username: env.LOKI_USER,
+					password: env.LOKI_PASSWORD,
+				},
+				debugDiagnostics: env.NODE_ENV === "development",
 				labels: { app: "upstride-backend", env: env.NODE_ENV },
 				format: true,
 			},
