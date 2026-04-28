@@ -9,6 +9,8 @@ const envSchema = z.object({
 	NODE_ENV: z.enum(["development", "production", "test"]),
 	LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]),
 	LOKI_HOST: z.string().min(1),
+	LOKI_USER: z.string().min(1),
+	LOKI_PASSWORD: z.string().min(1),
 	JWT_ACCESS_SECRET: z.string().min(1),
 	JWT_REFRESH_SECRET: z.string().min(1),
 	JWT_RESET_SECRET: z.string().min(1),
