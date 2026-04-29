@@ -2,11 +2,23 @@ import fs from "node:fs";
 import path from "node:path";
 
 export class MailRenderer {
-	private static readonly _TEMPLATES_DIR = path.resolve(
-		__dirname,
-		"src/infrastructure/mail/templates/html",
-	);
+	private static readonly _TEMPLATES_DIR = MailRenderer._resolveTemplatesDir();
 	private static _layout: string | null = null;
+
+	private static _resolveTemplatesDir(): string {
+		const candidates = [
+			path.resolve(__dirname, "templates/html"),
+			path.resolve(process.cwd(), "src/infrastructure/mail/templates/html"),
+		];
+
+		for (const candidate of candidates) {
+			if (fs.existsSync(candidate)) {
+				return candidate;
+			}
+		}
+
+		return candidates[0];
+	}
 
 	private static _getLayout(): string {
 		if (!MailRenderer._layout) {
