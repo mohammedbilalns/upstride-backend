@@ -3,7 +3,7 @@ import path from "node:path";
 
 export class MailRenderer {
 	private static readonly _TEMPLATES_DIR = path.resolve(
-		process.cwd(),
+		__dirname,
 		"src/infrastructure/mail/templates/html",
 	);
 	private static _layout: string | null = null;
