@@ -5,6 +5,7 @@ export interface AddSkillInput {
 
 export interface AddSkillOutput {
 	newSkillId: string;
+	name: string;
 	interestId: string;
 	slug: string;
 }

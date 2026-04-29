@@ -50,6 +50,6 @@ export class AddInterestUseCase implements IAddInterestUseCase {
 			new Interest("", name, slug, true, new Date(), new Date()),
 		);
 
-		return { newInterestId: created.id, slug: created.slug };
+		return { name, newInterestId: created.id, slug: created.slug };
 	}
 }

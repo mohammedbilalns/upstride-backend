@@ -3,6 +3,7 @@ export interface AddProfessionInput {
 }
 
 export interface AddProfessionOutput {
+	name: string;
 	newProfessionId: string;
 	slug: string;
 }

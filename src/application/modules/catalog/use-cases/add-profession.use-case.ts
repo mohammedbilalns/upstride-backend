@@ -53,6 +53,6 @@ export class AddProfessionUseCase implements IAddProfessionUseCase {
 			new Profession("", name, slug, true),
 		);
 
-		return { newProfessionId: created.id, slug: created.slug };
+		return { name, newProfessionId: created.id, slug: created.slug };
 	}
 }

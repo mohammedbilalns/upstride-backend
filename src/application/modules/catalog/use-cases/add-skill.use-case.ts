@@ -62,6 +62,7 @@ export class AddSkillUseCase implements IAddSkillUseCase {
 		);
 
 		return {
+			name,
 			newSkillId: created.id,
 			interestId: created.interestId,
 			slug: created.slug,
