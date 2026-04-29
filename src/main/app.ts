@@ -1,6 +1,5 @@
 import { createServer } from "node:http";
 import compression from "compression";
-//import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
@@ -31,6 +30,7 @@ class App {
 
 	constructor() {
 		this._app = express();
+		this._app.set("trust proxy", true);
 		this._server = createServer(this._app);
 		this._setupWebhookRoutes();
 		this._setupMiddlewares();
