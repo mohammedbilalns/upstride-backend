@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IInterestRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import { toTitleCase } from "../../../../shared/utilities/to-title-case.util";
 import type { UpdateInterestInput } from "../dtos/update-catalog.dto";
 import type { IUpdateInterestUseCase } from "./udpate-interest.use-case.interface";
 
@@ -12,7 +13,7 @@ export class UpdateInterestUseCase implements IUpdateInterestUseCase {
 	) {}
 	async execute(input: UpdateInterestInput): Promise<void> {
 		await this._interestRepository.updateById(input.interestId, {
-			name: input.name,
+			name: toTitleCase(input.name),
 		});
 	}
 }

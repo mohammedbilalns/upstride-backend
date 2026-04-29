@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { MentorList } from "../../../../domain/entities/mentor-list.entity";
 import type { IMentorListRepository } from "../../../../domain/repositories/mentor-list.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
+import { toTitleCase } from "../../../../shared/utilities/to-title-case.util";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type {
 	CreateMentorListInput,
@@ -27,7 +28,7 @@ export class CreateMentorListUseCase implements ICreateMentorListUseCase {
 		const list = new MentorList(
 			this._idGenerator.generate(),
 			input.userId,
-			input.name,
+			toTitleCase(input.name),
 			input.description ?? null,
 		);
 

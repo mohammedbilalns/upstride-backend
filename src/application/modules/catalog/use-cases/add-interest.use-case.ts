@@ -3,6 +3,7 @@ import { Interest } from "../../../../domain/entities/interest.entity";
 import type { IInterestRepository } from "../../../../domain/repositories";
 import { CatalogLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
+import { toTitleCase } from "../../../../shared/utilities/to-title-case.util";
 import { createUniqueSlug } from "../../../shared/utilities/slug.util";
 import type {
 	AddInterestInput,
@@ -20,8 +21,7 @@ export class AddInterestUseCase implements IAddInterestUseCase {
 	) {}
 
 	async execute(input: AddInterestInput): Promise<AddInterestOutput> {
-		const name = input.name.trim();
-
+		const name = toTitleCase(input.name);
 		const totalInterests = await this._interestRepository.query({ query: {} });
 		if (totalInterests.length >= CatalogLimits.MAX_TOTAL_INTERESTS) {
 			throw new CatalogLimitExceededError(

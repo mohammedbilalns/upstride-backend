@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { ISkillRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
+import { toTitleCase } from "../../../../shared/utilities/to-title-case.util";
 import type { UpdateSkillInput } from "../dtos/update-catalog.dto";
 import type { IUpdateSkillUseCase } from "./update-skill.use-case.interface";
 
@@ -12,6 +13,8 @@ export class UpdateSkillUseCase implements IUpdateSkillUseCase {
 	) {}
 
 	async execute(input: UpdateSkillInput): Promise<void> {
-		await this._skillRepository.updateById(input.skillId, { name: input.name });
+		await this._skillRepository.updateById(input.skillId, {
+			name: toTitleCase(input.name),
+		});
 	}
 }

@@ -6,6 +6,7 @@ import type {
 } from "../../../../domain/repositories";
 import { CatalogLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
+import { toTitleCase } from "../../../../shared/utilities/to-title-case.util";
 import { createUniqueSlug } from "../../../shared/utilities/slug.util";
 import type { AddSkillInput, AddSkillOutput } from "../dtos/add-skill.dto";
 import { CatalogLimitExceededError } from "../errors/catalog-limit-exceeded.error";
@@ -23,7 +24,7 @@ export class AddSkillUseCase implements IAddSkillUseCase {
 	) {}
 
 	async execute(input: AddSkillInput): Promise<AddSkillOutput> {
-		const name = input.name.trim();
+		const name = toTitleCase(input.name);
 		const interest = await this._interestRepository.findById(input.interestId);
 
 		if (!interest) {

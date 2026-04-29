@@ -3,6 +3,7 @@ import { Profession } from "../../../../domain/entities/profession.entity";
 import type { IProfessionRepository } from "../../../../domain/repositories/profession.repository.interface";
 import { CatalogLimits } from "../../../../shared/constants/app.constants";
 import { TYPES } from "../../../../shared/types/types";
+import { toTitleCase } from "../../../../shared/utilities/to-title-case.util";
 import { createUniqueSlug } from "../../../shared/utilities/slug.util";
 import type {
 	AddProfessionInput,
@@ -20,7 +21,7 @@ export class AddProfessionUseCase implements IAddProfessionUseCase {
 	) {}
 
 	async execute(input: AddProfessionInput): Promise<AddProfessionOutput> {
-		const name = input.name.trim();
+		const name = toTitleCase(input.name);
 
 		const existingByName = await this._professionRepository.query({
 			query: { name },
