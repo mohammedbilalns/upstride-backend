@@ -20,6 +20,7 @@ export interface BookingDocument {
 	notes: string | null;
 	mentorJoinedAt: Date | null;
 	settledAt: Date | null;
+	feedback: string | null;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -56,6 +57,7 @@ const bookingSchema = new Schema<BookingDocument>(
 		notes: { type: String, default: null },
 		mentorJoinedAt: { type: Date, default: null },
 		settledAt: { type: Date, default: null },
+		feedback: { type: String, default: null },
 	},
 	{ timestamps: true },
 );

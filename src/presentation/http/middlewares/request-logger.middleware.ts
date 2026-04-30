@@ -13,18 +13,34 @@ export const requestLogger = (
 
 	res.setHeader("x-request-id", requestId);
 
+	const ip =
+		req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.ip;
+
+	const userAgent = req.headers["user-agent"] || "unknown";
+	const referer = req.headers.referer || "unknown";
+
 	res.on("finish", () => {
 		const duration = Date.now() - start;
 		const { method, originalUrl } = req;
 		const { statusCode } = res;
 
-		const message = `${method} ${originalUrl} ${statusCode} - ${duration}ms`;
+		const logPayload = {
+			requestId,
+			method,
+			url: originalUrl,
+			statusCode,
+			duration: `${duration}ms`,
+			ip,
+			userAgent,
+			referer,
+		};
+
 		if (statusCode >= 500) {
-			logger.error(`[ERROR] ${message}`);
+			logger.error(logPayload, "request_error");
 		} else if (statusCode >= 400) {
-			logger.warn(`[WARN] ${message}`);
+			logger.warn(logPayload, "request_warn");
 		} else {
-			logger.info(`[SUCCESS] ${message}`);
+			logger.info(logPayload, "request_success");
 		}
 	});
 

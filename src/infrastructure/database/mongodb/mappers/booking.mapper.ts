@@ -38,6 +38,7 @@ export class BookingMapper {
 			mentorName,
 			doc.mentorJoinedAt ?? null,
 			doc.settledAt ?? null,
+			doc.feedback ?? null,
 			doc.createdAt,
 			doc.updatedAt,
 		);

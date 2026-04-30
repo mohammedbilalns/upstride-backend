@@ -34,7 +34,8 @@ export class LogoutController {
 		res.clearCookie("refreshToken", {
 			httpOnly: true,
 			secure: env.NODE_ENV === "production",
-			sameSite: "strict",
+			sameSite: env.NODE_ENV === "production" ? "strict" : "lax",
+			path: "/",
 		});
 
 		sendSuccess(res, HttpStatus.OK, {

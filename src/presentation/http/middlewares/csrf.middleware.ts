@@ -9,9 +9,11 @@ const csrfCookieName =
 	env.NODE_ENV === "production"
 		? "__Host-psifi.x-csrf-token"
 		: "psifi.x-csrf-token";
+const csrfSameSite: "none" | "lax" =
+	env.NODE_ENV === "production" ? "none" : "lax";
 
 const csrfCookieOptions = {
-	sameSite: "none" as const,
+	sameSite: csrfSameSite,
 	path: "/",
 	secure: env.NODE_ENV === "production",
 	httpOnly: true,

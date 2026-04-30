@@ -12,6 +12,7 @@ export const RESPONSE_MESSAGES = {
 		CANCELLED: "Booking cancelled successfully",
 		CANCELLED_BY_MENTOR: "Booking cancelled dynamically by mentor",
 		PAYMENT_INITIATED: "Booking payment initiated.",
+		FEEDBACK_UPDATED: "Feedback updated successfully",
 	},
 	DASHBOARD: {
 		FETCHED_SUCCESS: "Dashboard fetched successfully",
