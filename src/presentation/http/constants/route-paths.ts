@@ -205,6 +205,7 @@ export const ROUTES = {
 		RECEIPT: (id: string) => `/${id}/receipt`,
 		USER: "/me",
 		MENTOR: "/mentor/me",
+		FEEDBACK: "/feedback",
 	},
 	DASHBOARD: {
 		BASE: "/dashboard",

@@ -48,9 +48,11 @@ export class TerminateSessionUseCase implements ITerminateSessionUseCase {
 		if (booking.status !== "COMPLETED") {
 			const update: {
 				status: "COMPLETED";
+				feedback?: string;
 				mentorJoinedAt?: Date;
 			} = {
 				status: "COMPLETED",
+				feedback: input.feedback,
 			};
 
 			await Promise.all([
