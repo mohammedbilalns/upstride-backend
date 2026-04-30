@@ -5,4 +5,7 @@ export interface JoinSessionInput {
 
 export interface JoinSessionOutput {
 	roomId: string;
+	otherUserId: string;
+	joinerName: string;
+	joinerRole: string;
 }
