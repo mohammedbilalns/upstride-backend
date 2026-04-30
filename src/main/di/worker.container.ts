@@ -23,7 +23,6 @@ import { registerRepositoryBindings } from "./repositories.di";
 
 const workerContainer = new Container();
 
-console.log("Worker container initialized");
 registerRepositoryBindings(workerContainer);
 registerInfrastructureServiceBindings(workerContainer);
 registerQueueBindings(workerContainer);

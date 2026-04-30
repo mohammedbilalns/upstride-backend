@@ -82,6 +82,18 @@ export class CallHandler {
 					`[CallHandler] Emitted call:user-joined to room ${room} for user ${userId}`,
 				);
 
+				// Notify the other user globally
+				if (result.otherUserId) {
+					socket.to(result.otherUserId).emit("call:incoming", {
+						bookingId: parsedPayload.bookingId,
+						joinerName: result.joinerName,
+						joinerRole: result.joinerRole,
+					});
+					logger.info(
+						`[CallHandler] Emitted call:incoming to user ${result.otherUserId} globally`,
+					);
+				}
+
 				// Provide initial whiteboard state if exists
 				const cachedWhiteboard = await this._whiteboardCache.get(
 					parsedPayload.bookingId,

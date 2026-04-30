@@ -44,7 +44,17 @@ export class JoinSessionUseCase implements IJoinSessionUseCase {
 			}
 		}
 
-		return { roomId: booking.id };
+		const isMentor = this._isHostingMentor(booking.mentorUserId, input.userId);
+		const otherUserId = isMentor ? booking.menteeId : booking.mentorUserId;
+		const joinerName = isMentor ? booking.mentorName : booking.menteeName;
+		const joinerRole = isMentor ? "Mentor" : "Mentee";
+
+		return {
+			roomId: booking.id,
+			otherUserId: otherUserId ?? "",
+			joinerName: joinerName ?? "Participant",
+			joinerRole,
+		};
 	}
 
 	private _isHostingMentor(
