@@ -25,7 +25,7 @@ export class TerminateSessionUseCase implements ITerminateSessionUseCase {
 			throw new BookingNotFoundError();
 		}
 
-		if (!this._isHostingMentor(booking.mentorUserId, input.userId)) {
+		if (booking.mentorUserId !== input.userId) {
 			throw new UnauthorizedError(
 				"You are not authorized to terminate this session",
 			);
@@ -52,24 +52,18 @@ export class TerminateSessionUseCase implements ITerminateSessionUseCase {
 			} = {
 				status: "COMPLETED",
 			};
-			if (!booking.mentorJoinedAt) {
-				update.mentorJoinedAt = now;
-			}
-			await this._bookingRepository.updateById(booking.id, {
-				...update,
-			});
-			await this._mentorRepository.recordCompletedSession(
-				booking.mentorId,
-				new Date(booking.endTime),
-			);
+
+			await Promise.all([
+				this._bookingRepository.updateById(booking.id, {
+					...update,
+				}),
+				this._mentorRepository.recordCompletedSession(
+					booking.mentorId,
+					new Date(booking.endTime),
+				),
+			]);
+
 			logger.info(`Booking ${booking.id} marked as complete on termination.`);
 		}
-	}
-
-	private _isHostingMentor(
-		mentorUserId: string | null,
-		userId: string,
-	): boolean {
-		return mentorUserId === userId;
 	}
 }
