@@ -27,7 +27,7 @@ export class CreateFeedbackUseCase implements ICreateFeedbackUseCase {
 		}
 
 		await this._bookingRepository.updateById(input.bookingId, {
-			feeback: input.feedback,
+			feedback: input.feedback,
 		});
 	}
 }
