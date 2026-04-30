@@ -35,6 +35,7 @@ export class BookingMapper {
 			notes: entity.notes,
 			menteeName: entity.menteeName ?? null,
 			mentorName: entity.mentorName ?? null,
+			feedback: entity.feedback ?? null,
 			review: null,
 			settledAt: entity.settledAt ? entity.settledAt.toISOString() : null,
 			createdAt: entity.createdAt.toISOString(),

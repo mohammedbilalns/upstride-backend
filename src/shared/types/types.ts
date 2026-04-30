@@ -248,6 +248,7 @@ export const TYPES = {
 		UpdateSkill: Symbol.for("UpdateSkillUseCase"),
 		UpdateProfession: Symbol.for("UpdateProfessionUseCase"),
 		UpdateInterest: Symbol.for("UpdateInterestUseCase"),
+		CreateFeedback: Symbol.for("CreateFeedbackUseCase"),
 	},
 	Controllers: {
 		Users: Symbol.for("UserController"),

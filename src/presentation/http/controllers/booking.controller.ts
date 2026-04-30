@@ -8,6 +8,7 @@ import type { IGetBookingDetailsUseCase } from "../../../application/modules/boo
 import type { IGetMentorBookingsUseCase } from "../../../application/modules/booking/use-cases/get-mentor-bookings.use-case.interface";
 import type { IGetUserBookingsUseCase } from "../../../application/modules/booking/use-cases/get-user-bookings.use-case.interface";
 import type { IRepayBookingUseCase } from "../../../application/modules/booking/use-cases/repay-booking.use-case.interface";
+import type { ICreateFeedbackUseCase } from "../../../application/modules/live-call/use-cases/create-feedback.use-case.interface";
 import { HttpStatus } from "../../../shared/constants/http-status-codes";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
@@ -23,6 +24,7 @@ import type {
 	GetAvailableSlotsQuery,
 	RepayBookingParams,
 } from "../validators";
+import type { FeedBackBody } from "../validators/feedback.validator";
 
 @injectable()
 export class BookingController {
@@ -43,6 +45,8 @@ export class BookingController {
 		private readonly _getBookingDetailsUseCase: IGetBookingDetailsUseCase,
 		@inject(TYPES.UseCases.RepayBooking)
 		private readonly _repayBookingUseCase: IRepayBookingUseCase,
+		@inject(TYPES.UseCases.CreateFeedback)
+		private readonly _createFeedbackUseCase: ICreateFeedbackUseCase,
 		@inject(TYPES.UseCases.GenerateReceiptPdf)
 		private readonly _generateReceiptPdfUseCase: IGenerateReceiptPdfUseCase,
 	) {}
@@ -145,6 +149,17 @@ export class BookingController {
 
 		return sendSuccess(res, HttpStatus.OK, {
 			data: result,
+		});
+	});
+
+	feedBackUser = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		await this._createFeedbackUseCase.execute({
+			mentorId: req.user.id,
+			...(req.validated?.body as FeedBackBody),
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: RESPONSE_MESSAGES.BOOKING.FEEDBACK_UPDATED,
 		});
 	});
 

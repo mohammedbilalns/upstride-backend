@@ -59,6 +59,11 @@ export const WhiteBoardPermissionSchema = z.object({
 
 export const TerminateSessionPayloadSchema = z.object({
 	bookingId: bookingIdSchema,
+	feedback: z
+		.string()
+		.min(10, "Feedback must be atleast 10 characters")
+		.max(1000, "Feedback must be less than 1000 characters")
+		.optional(),
 });
 
 export const ChatMessagePayloadSchema = z.object({

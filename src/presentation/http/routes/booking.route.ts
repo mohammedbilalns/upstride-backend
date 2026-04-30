@@ -21,6 +21,7 @@ const bookingController = apiContainer.get<BookingController>(
 );
 
 import { validate } from "../middlewares";
+import { FeedBackBodySchema } from "../validators/feedback.validator";
 
 bookingRouter.get(
 	ROUTES.BOOKINGS.SLOTS(":mentorId"),
@@ -93,6 +94,14 @@ bookingRouter.get(
 	ROUTES.BOOKINGS.RECEIPT(":id"),
 	verifySession,
 	bookingController.generateReceiptPdf,
+);
+
+bookingRouter.post(
+	ROUTES.BOOKINGS.FEEDBACK,
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	validate({ body: FeedBackBodySchema }),
+	bookingController.feedBackUser,
 );
 
 export { bookingRouter };

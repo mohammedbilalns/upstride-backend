@@ -205,11 +205,12 @@ export class CallHandler {
 
 		socket.on(
 			"call:terminate",
-			socketAsyncHandler(async (payload: { bookingId: string }) => {
+			socketAsyncHandler(async (payload) => {
 				const parsedPayload = TerminateSessionPayloadSchema.parse(payload);
 				await this._terminateSessionUseCase.execute({
 					userId,
 					bookingId: parsedPayload.bookingId,
+					feedback: parsedPayload.feedback,
 				});
 
 				socket.emit("call:terminated", {

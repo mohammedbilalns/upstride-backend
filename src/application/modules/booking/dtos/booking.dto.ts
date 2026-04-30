@@ -142,6 +142,7 @@ export interface BookingDto {
 	notes: string | null;
 	menteeName: string | null;
 	mentorName: string | null;
+	feedback: string | null;
 	review: ReviewDto | null;
 	settledAt: string | null;
 	createdAt: string;
