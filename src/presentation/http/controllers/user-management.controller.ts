@@ -3,7 +3,7 @@ import type {
 	IBlockUserUseCase,
 	IGetUsersUseCase,
 	IUnblockUserUseCase,
-} from "../../../application/modules/user-moderation/use-cases";
+} from "../../../application/modules/user-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { UsersResponseMessages } from "../constants";
@@ -15,7 +15,7 @@ import type {
 } from "../validators/users.validator";
 
 @injectable()
-export class UsersController {
+export class UsersManagementController {
 	constructor(
 		@inject(TYPES.UseCases.GetUsers)
 		private _getUsersUseCase: IGetUsersUseCase,

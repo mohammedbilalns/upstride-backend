@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { apiContainer } from "../../../main/di/api.container";
 import { ROUTES } from "../constants";
-import { AdminController } from "../controllers/admin.controller";
+import { AdminManagementController } from "../controllers/admin-management.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	AdminIdParamSchema,
@@ -10,7 +10,7 @@ import {
 } from "../validators/admins.validator";
 
 const router = Router();
-const controller = apiContainer.get(AdminController);
+const controller = apiContainer.get(AdminManagementController);
 
 router.use(verifySession, authorizeRoles(["SUPER_ADMIN"]));
 
