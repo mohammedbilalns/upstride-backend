@@ -64,3 +64,9 @@ export class SessionTooEarlyError extends ConflictError {
 		super(message);
 	}
 }
+
+export class BookingNotConfirmedError extends ConflictError {
+	constructor() {
+		super("Only confirmed bookings can be rescheduled");
+	}
+}

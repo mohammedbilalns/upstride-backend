@@ -85,3 +85,18 @@ export const BookingListQuerySchema = z.object({
 });
 
 export type BookingListQuery = z.infer<typeof BookingListQuerySchema>;
+
+export const RescheduleBookingParamsSchema = z.object({
+	id: BookingIdSchema,
+});
+
+export type RescheduleBookingParams = z.infer<
+	typeof RescheduleBookingParamsSchema
+>;
+
+export const RescheduleBookingBodySchema = z.object({
+	startTime: isoDateTimeStringSchema(),
+	endTime: isoDateTimeStringSchema(),
+});
+
+export type RescheduleBookingBody = z.infer<typeof RescheduleBookingBodySchema>;

@@ -9,6 +9,14 @@ export type JobMap = {
 		menteeId: string;
 		label: string;
 	};
+	"send-reschedule-booking-email": {
+		to: string;
+		mentorName: string;
+		menteeName: string;
+		oldStartTime: string;
+		newStartTime: string;
+		newEndTime: string;
+	};
 };
 
 export interface JobQueuePort {

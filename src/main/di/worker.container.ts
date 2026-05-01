@@ -12,6 +12,7 @@ import {
 	MentorApprovalHandler,
 	NotificationWorkerFactory,
 	RegisterOtpHandler,
+	RescheduleBookingHandler,
 	ResetPasswordOtpHandler,
 	SessionReminderHandler,
 } from "../../infrastructure/queue/workers";
@@ -58,6 +59,10 @@ workerContainer
 workerContainer
 	.bind<BookingSettlementHandler>(TYPES.Workers.BookingSettlementHandler)
 	.to(BookingSettlementHandler)
+	.inSingletonScope();
+workerContainer
+	.bind<RescheduleBookingHandler>(TYPES.Workers.RescheduleBookingHandler)
+	.to(RescheduleBookingHandler)
 	.inSingletonScope();
 workerContainer
 	.bind<SessionSettlementCalculatorService>(

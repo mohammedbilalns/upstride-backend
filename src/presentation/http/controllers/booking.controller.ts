@@ -8,6 +8,7 @@ import type { IGetBookingDetailsUseCase } from "../../../application/modules/boo
 import type { IGetMentorBookingsUseCase } from "../../../application/modules/booking/use-cases/get-mentor-bookings.use-case.interface";
 import type { IGetUserBookingsUseCase } from "../../../application/modules/booking/use-cases/get-user-bookings.use-case.interface";
 import type { IRepayBookingUseCase } from "../../../application/modules/booking/use-cases/repay-booking.use-case.interface";
+import type { IRescheduleBookingUseCase } from "../../../application/modules/booking/use-cases/reschedule-booking.use-case.interface";
 import type { ICreateFeedbackUseCase } from "../../../application/modules/live-call/use-cases/create-feedback.use-case.interface";
 import { HttpStatus } from "../../../shared/constants/http-status-codes";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
@@ -23,6 +24,8 @@ import type {
 	GetAvaialableSlotsParams,
 	GetAvailableSlotsQuery,
 	RepayBookingParams,
+	RescheduleBookingBody,
+	RescheduleBookingParams,
 } from "../validators";
 import type { FeedBackBody } from "../validators/feedback.validator";
 
@@ -45,6 +48,8 @@ export class BookingController {
 		private readonly _getBookingDetailsUseCase: IGetBookingDetailsUseCase,
 		@inject(TYPES.UseCases.RepayBooking)
 		private readonly _repayBookingUseCase: IRepayBookingUseCase,
+		@inject(TYPES.UseCases.RescheduleBooking)
+		private readonly _rescheduleBookingUseCase: IRescheduleBookingUseCase,
 		@inject(TYPES.UseCases.CreateFeedback)
 		private readonly _createFeedbackUseCase: ICreateFeedbackUseCase,
 		@inject(TYPES.UseCases.GenerateReceiptPdf)
@@ -177,5 +182,21 @@ export class BookingController {
 		);
 		res.setHeader("Content-Length", result.pdfBuffer.length.toString());
 		res.send(result.pdfBuffer);
+	});
+
+	rescheduleBooking = asyncHandler(async (req: AuthenticatedRequest, res) => {
+		const bookingId = (req.validated?.params as RescheduleBookingParams).id;
+		const body = req.validated?.body as RescheduleBookingBody;
+
+		await this._rescheduleBookingUseCase.execute({
+			bookingId,
+			menteeId: req.user.id,
+			newStartTime: body.startTime,
+			newEndTime: body.endTime,
+		});
+
+		return sendSuccess(res, HttpStatus.OK, {
+			message: RESPONSE_MESSAGES.BOOKING.BOOKING_RESCHEDULED,
+		});
 	});
 }

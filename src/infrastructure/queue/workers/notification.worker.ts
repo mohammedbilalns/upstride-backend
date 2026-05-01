@@ -9,6 +9,7 @@ import type {
 	ChangePasswordOtpHandler,
 	MentorApprovalHandler,
 	RegisterOtpHandler,
+	RescheduleBookingHandler,
 	ResetPasswordOtpHandler,
 } from "./mail-job.handler";
 import type { IJobHandler } from "./notification.worker.interface";
@@ -33,6 +34,8 @@ export class NotificationWorkerFactory {
 		private readonly _mentorApprovalHandler: MentorApprovalHandler,
 		@inject(TYPES.Workers.SessionReminderHandler)
 		private readonly _sessionReminderHandler: SessionReminderHandler,
+		@inject(TYPES.Workers.RescheduleBookingHandler)
+		private readonly _rescheduleBookingHandler: RescheduleBookingHandler,
 	) {}
 
 	create(): Worker {
@@ -46,6 +49,7 @@ export class NotificationWorkerFactory {
 			"send-change-password-otp-email": this._changePasswordOtpHandler,
 			"send-mentor-approval-email": this._mentorApprovalHandler,
 			"send-session-reminder": this._sessionReminderHandler,
+			"send-reschedule-booking-email": this._rescheduleBookingHandler,
 		};
 
 		const worker = new Worker(

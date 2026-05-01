@@ -24,6 +24,7 @@ export const NotificationEventValues = [
 	"REPORT_STATUS_UPDATED",
 	"ARTICLE_BLOCKED",
 	"ARTICLE_UNBLOCKED",
+	"SESSION_RESCHEDULED",
 ] as const;
 
 export type NotificationEvent = (typeof NotificationEventValues)[number];

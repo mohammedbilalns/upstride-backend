@@ -156,3 +156,10 @@ export interface GetBookingsResponse {
 	limit: number;
 	totalPages: number;
 }
+
+export interface RescheduleBookingInput {
+	bookingId: string;
+	menteeId: string;
+	newStartTime: string;
+	newEndTime: string;
+}

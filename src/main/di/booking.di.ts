@@ -23,6 +23,8 @@ import { RefundSessionAmountUseCase } from "../../application/modules/booking/us
 import type { IRefundSessionAmountUseCase } from "../../application/modules/booking/use-cases/refund-session-amount.use-case.interface";
 import { RepayBookingUseCase } from "../../application/modules/booking/use-cases/repay-booking.use-case";
 import type { IRepayBookingUseCase } from "../../application/modules/booking/use-cases/repay-booking.use-case.interface";
+import { RescheduleBookingUseCase } from "../../application/modules/booking/use-cases/reschedule-booking.use-case";
+import type { IRescheduleBookingUseCase } from "../../application/modules/booking/use-cases/reschedule-booking.use-case.interface";
 import { ScheduleLiveSesionReminderUseCase } from "../../application/modules/booking/use-cases/schedule-live-sesion-reminder.use-case";
 import type { IScheduleLiveSesionReminderUseCase } from "../../application/modules/booking/use-cases/schedule-mentor-reminder.use-case.interface";
 import { ScheduleSessionSettlementUseCase } from "../../application/modules/booking/use-cases/schedule-session-settlement.use-case";
@@ -70,6 +72,10 @@ export const registerBookingBindings = (container: Container): void => {
 	container
 		.bind<IRepayBookingUseCase>(TYPES.UseCases.RepayBooking)
 		.to(RepayBookingUseCase)
+		.inSingletonScope();
+	container
+		.bind<IRescheduleBookingUseCase>(TYPES.UseCases.RescheduleBooking)
+		.to(RescheduleBookingUseCase)
 		.inSingletonScope();
 
 	container
