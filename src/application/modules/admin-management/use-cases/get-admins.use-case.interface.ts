@@ -1,4 +1,4 @@
-import type { GetAdminsInput, GetAdminsResponse } from "../dtos/get-admins.dto";
+import type { GetAdminsInput, GetAdminsResponse } from "../dtos";
 
 export interface IGetAdminsUseCase {
 	execute(input: GetAdminsInput): Promise<GetAdminsResponse>;

@@ -1,4 +1,4 @@
-import type { BlockAdminInput } from "../dtos/block-admin.dto";
+import type { BlockAdminInput } from "../dtos";
 
 export interface IBlockAdminUseCase {
 	execute(input: BlockAdminInput): Promise<void>;

@@ -1,4 +1,4 @@
-import type { UnblockAdminInput } from "../dtos/block-admin.dto";
+import type { UnblockAdminInput } from "../dtos";
 
 export interface IUnblockAdminUseCase {
 	execute(input: UnblockAdminInput): Promise<void>;
