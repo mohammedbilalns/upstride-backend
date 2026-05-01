@@ -12,13 +12,12 @@ import type { ReviewDto } from "../../review/dtos/review.dto";
 export interface GetAvailableSlotsInput {
 	mentorId: string;
 	requesterUserId: string;
-	/** YYYY-MM-DD (UTC) */
 	date: Date;
 }
 
 export interface SlotDto {
-	startTime: string; // ISO string (UTC)
-	endTime: string; // ISO string (UTC)
+	startTime: string;
+	endTime: string;
 	durationMinutes: number;
 	price: number;
 	status: "AVAILABLE" | "BOOKED" | "BOOKED_PENDING";

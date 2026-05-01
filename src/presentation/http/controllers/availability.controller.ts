@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { ICheckAndCreateAvailabilityUseCase } from "../../../application/modules/availability/use-cases/check-and-create-availability.use-case.interface";
 import type { ICheckAndReenableAvailabilityUseCase } from "../../../application/modules/availability/use-cases/check-and-reenable-availability.use-case.interface";
+import type { ICheckAndUpdateAvailabilityUseCase } from "../../../application/modules/availability/use-cases/check-and-update-availability.use-case.interface";
 import type { ICreateAvailabilityUseCase } from "../../../application/modules/availability/use-cases/create-availability.use-case.interface";
 import type { IDeleteAvailabilityUseCase } from "../../../application/modules/availability/use-cases/delete-availability.use-case.interface";
 import type { IGetMentorAvailabilitiesUseCase } from "../../../application/modules/availability/use-cases/get-mentor-availabilities.use-case.interface";
@@ -36,6 +37,8 @@ export class AvailabilityController {
 		private readonly _getMentorAvailabilitiesUseCase: IGetMentorAvailabilitiesUseCase,
 		@inject(TYPES.UseCases.ReenableAvailability)
 		private readonly _reenableAvailabilityUseCase: IReenableAvailabilityUseCase,
+		@inject(TYPES.UseCases.CheckAndUpdateAvailability)
+		private readonly _checkAndUpdateAvailabilityUseCase: ICheckAndUpdateAvailabilityUseCase,
 	) {}
 
 	createAvailability = asyncHandler(async (req: AuthenticatedRequest, res) => {
@@ -83,6 +86,28 @@ export class AvailabilityController {
 			data: result.availabilityId,
 		});
 	});
+
+	checkAndUpdateAvailability = asyncHandler(
+		async (req: AuthenticatedRequest, res) => {
+			const result = await this._checkAndUpdateAvailabilityUseCase.execute({
+				availabilityId: (req.validated?.params as UpdateAvailabilityParams).id,
+				userId: req.user.id,
+				...(req.validated?.body as UpdateAvailabiltyBody),
+			});
+
+			if (result.updated) {
+				return sendSuccess(res, HttpStatus.OK, {
+					message: RESPONSE_MESSAGES.AVAILABILITY.UPDATED,
+					data: result,
+				});
+			}
+
+			return sendSuccess(res, HttpStatus.OK, {
+				message: RESPONSE_MESSAGES.AVAILABILITY.CONFLICT,
+				data: result,
+			});
+		},
+	);
 
 	deleteAvailability = asyncHandler(async (req: AuthenticatedRequest, res) => {
 		await this._deleteAvailabilityUseCase.execute({

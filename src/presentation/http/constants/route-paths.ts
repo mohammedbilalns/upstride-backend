@@ -189,6 +189,7 @@ export const ROUTES = {
 		ROOT: "/",
 		MENTOR: "/mentor/me",
 		CHECK_CREATE: "/check-create",
+		CHECK_UPDATE: (id: string) => `/${id}/check-update`,
 		BY_ID: (id: string) => `/${id}`,
 		REENABLE: (id: string) => `/${id}/reenable`,
 		CHECK_REENABLE: (id: string) => `/${id}/check-reenable`,

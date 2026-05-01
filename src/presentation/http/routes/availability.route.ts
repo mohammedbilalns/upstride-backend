@@ -52,6 +52,17 @@ availabilityRouter.put(
 	availabilityController.updateAvailability,
 );
 
+availabilityRouter.post(
+	ROUTES.AVAILABILITY.CHECK_UPDATE(":id"),
+	verifySession,
+	authorizeRoles(["MENTOR"]),
+	validate({
+		params: UpdateAvailabilityParamsSchema,
+		body: UpdateAvailabilityBodySchema,
+	}),
+	availabilityController.checkAndUpdateAvailability,
+);
+
 availabilityRouter.put(
 	"/reenable/:id",
 	verifySession,

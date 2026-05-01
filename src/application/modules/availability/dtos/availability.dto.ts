@@ -64,6 +64,12 @@ export interface UpdateAvailabilityResponse {
 	availabilityId: string;
 }
 
+export interface CheckAndUpdateAvailabilityResponse {
+	updated: boolean;
+	availability?: AvailabilityDto;
+	conflicts?: ConflictAvailabilitySummary[];
+}
+
 // ──────────────────────────────────────────────
 // Delete
 // ──────────────────────────────────────────────
