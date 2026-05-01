@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { type RedisReply, RedisStore } from "rate-limit-redis";
 import { redisClient } from "../../../infrastructure/database/redis/redis.connection";
 import { HttpStatus } from "../../../shared/constants";
@@ -25,7 +25,7 @@ export function rateLimiter(
 			const keyParts = ["rateLimit"];
 
 			if (strategy.includes("ip")) {
-				keyParts.push(req.ip ?? "unknown");
+				keyParts.push(ipKeyGenerator(req.ip ?? "unknown"));
 			}
 
 			if (strategy.includes("user")) {

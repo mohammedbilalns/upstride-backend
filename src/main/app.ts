@@ -6,6 +6,7 @@ import express, { type Application } from "express";
 import helmet from "helmet";
 import { corsOptions } from "../presentation/http/config";
 import { errorHandler, requestLogger } from "../presentation/http/middlewares";
+import { rateLimiter } from "../presentation/http/middlewares/rate-limiter.middleware";
 import { router as v1Router } from "../presentation/http/routes";
 import { healthRouter } from "../presentation/http/routes/health.route";
 import { stripeWebhookRouter } from "../presentation/http/routes/stripe-webhook.route";
@@ -56,6 +57,7 @@ class App {
 			.use(helmet())
 			.use(compression())
 			.use(requestLogger)
+			.use(rateLimiter(1000, 60, ["ip", "global"]))
 			.use(cors(corsOptions))
 			.use(express.json())
 			.use(express.urlencoded({ extended: true }))
