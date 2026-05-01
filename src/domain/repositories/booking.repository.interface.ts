@@ -28,6 +28,13 @@ export interface IBookingRepository
 		endTime: Date,
 	): Promise<Booking[]>;
 
+	findOverlappingForUser(
+		userId: string,
+		mentorId: string | null,
+		startTime: Date,
+		endTime: Date,
+	): Promise<Booking[]>;
+
 	paginateByMentee(
 		menteeId: string,
 		filter: BookingFilter,

@@ -49,6 +49,27 @@ export class BookingRepository implements IBookingRepository {
 		return docs.map((d) => BookingMapper.toDomain(d));
 	}
 
+	async findOverlappingForUser(
+		userId: string,
+		mentorId: string | null,
+		startTime: Date,
+		endTime: Date,
+	): Promise<Booking[]> {
+		const orConditions: any[] = [{ menteeId: userId }];
+		if (mentorId) {
+			orConditions.push({ mentorId });
+		}
+
+		const docs = await BookingModel.find({
+			$or: orConditions,
+			status: { $in: ["PENDING", "CONFIRMED", "STARTED"] },
+			paymentStatus: { $ne: "FAILED" },
+			startTime: { $lt: endTime },
+			endTime: { $gt: startTime },
+		}).lean();
+		return docs.map((d) => BookingMapper.toDomain(d));
+	}
+
 	async findByMentorIdAndDate(
 		mentorId: string,
 		date: Date,

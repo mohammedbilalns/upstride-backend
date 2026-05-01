@@ -5,6 +5,7 @@ import {
 	PaymentTransaction,
 } from "../../../../domain/entities/payment-transactions.entity";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import type { IPaymentTransactionRepository } from "../../../../domain/repositories/payment-transactions.repository.interface";
 import type { IPlatformWalletRepository } from "../../../../domain/repositories/platform-wallet.repository.interface";
 import logger from "../../../../shared/logging/logger";
@@ -13,6 +14,7 @@ import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { JobQueuePort } from "../../../ports/job-queue.port";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { IScheduleSessionSettlementUseCase } from "../../booking/use-cases/schedule-session-settlement.use-case.interface";
+import { checkBookingConflict } from "../../booking/utils/check-booking-conflict.util";
 import type {
 	ConfirmBookingPaymentParams,
 	IConfirmBookingPaymentService,
@@ -25,6 +27,8 @@ export class ConfirmBookingPaymentService
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Repositories.PaymentTransactionRepository)
 		private readonly _paymentTransactionRepository: IPaymentTransactionRepository,
 		@inject(TYPES.Repositories.PlatformWalletRepository)
@@ -61,6 +65,22 @@ export class ConfirmBookingPaymentService
 			booking.meetingLink && booking.meetingLink !== "Pending"
 				? booking.meetingLink
 				: `${getClientBaseUrl()}/sessions/${booking.id}`;
+
+		const hasMenteeConflict = await checkBookingConflict(
+			booking.menteeId,
+			start,
+			new Date(booking.endTime),
+			this._bookingRepository,
+			this._mentorRepository,
+			booking.id,
+		);
+
+		if (hasMenteeConflict) {
+			logger.warn(
+				{ bookingId, menteeId: booking.menteeId },
+				"Mentee has a conflict during payment confirmation. Marking booking as conflict-potential.",
+			);
+		}
 
 		await this._bookingRepository.updateById(bookingId, {
 			status: "CONFIRMED",
