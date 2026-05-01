@@ -50,6 +50,7 @@ export const TYPES = {
 		MentorApprovalHandler: Symbol.for("MentorApprovalHandler"),
 		SessionReminderHandler: Symbol.for("SessionReminderHandler"),
 		BookingSettlementHandler: Symbol.for("BookingSettlementHandler"),
+		RescheduleBookingHandler: Symbol.for("RescheduleBookingHandler"),
 	},
 	Repositories: {
 		AdminDashboardRepository: Symbol.for("AdminDashboardRepository"),
@@ -205,6 +206,7 @@ export const TYPES = {
 		GetUserBookings: Symbol.for("GetUserBookingsUseCase"),
 		GetMentorBookings: Symbol.for("GetMentorBookingsUseCase"),
 		RepayBooking: Symbol.for("RepayBookingUseCase"),
+		RescheduleBooking: Symbol.for("RescheduleBookingUseCase"),
 		GenerateReceiptPdf: Symbol.for("GenerateReceiptPdfUseCase"),
 		ScheduleSessionSettlement: Symbol.for("ScheduleSessionSettlementUseCase"),
 		SettleEndedSession: Symbol.for("SettleEndedSessionUseCase"),

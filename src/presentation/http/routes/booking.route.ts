@@ -13,6 +13,8 @@ import {
 	GetAvaialableSlotsParamsSchema,
 	GetAvailableSlotsQuerySchema,
 	RepayBookingParamsSchema,
+	RescheduleBookingBodySchema,
+	RescheduleBookingParamsSchema,
 } from "../validators/booking.validator";
 
 const bookingRouter = Router();
@@ -94,6 +96,16 @@ bookingRouter.get(
 	ROUTES.BOOKINGS.RECEIPT(":id"),
 	verifySession,
 	bookingController.generateReceiptPdf,
+);
+
+bookingRouter.patch(
+	ROUTES.BOOKINGS.RESCHEDULE(":id"),
+	verifySession,
+	validate({
+		params: RescheduleBookingParamsSchema,
+		body: RescheduleBookingBodySchema,
+	}),
+	bookingController.rescheduleBooking,
 );
 
 bookingRouter.post(

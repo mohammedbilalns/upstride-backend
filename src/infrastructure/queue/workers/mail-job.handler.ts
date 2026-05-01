@@ -6,6 +6,7 @@ import {
 	ChangePasswordOtpMailTemplate,
 	MentorApprovalMailTemplate,
 	RegisterOtpMailTemplate,
+	RescheduleBookingMailTemplate,
 	ResetPasswordMailTemplate,
 } from "../../mail/templates";
 import type { IJobHandler } from "./notification.worker.interface";
@@ -85,6 +86,33 @@ export class MentorApprovalHandler
 	async handle(data: JobMap["send-mentor-approval-email"]) {
 		const template = new MentorApprovalMailTemplate();
 		const { html, text } = template.render({ name: data.name });
+		await this._mailService.send({
+			to: data.to,
+			subject: template.subject,
+			html,
+			text,
+		});
+	}
+}
+
+@injectable()
+export class RescheduleBookingHandler
+	implements IJobHandler<"send-reschedule-booking-email">
+{
+	constructor(
+		@inject(TYPES.Services.MailService)
+		private readonly _mailService: IMailService,
+	) {}
+
+	async handle(data: JobMap["send-reschedule-booking-email"]) {
+		const template = new RescheduleBookingMailTemplate();
+		const { html, text } = template.render({
+			mentorName: data.mentorName,
+			menteeName: data.menteeName,
+			oldStartTime: data.oldStartTime,
+			newStartTime: data.newStartTime,
+			newEndTime: data.newEndTime,
+		});
 		await this._mailService.send({
 			to: data.to,
 			subject: template.subject,
