@@ -3,7 +3,7 @@ import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
 import { mapPaginatedResult } from "../../../shared/utilities/pagination.util";
 import { buildUserListQuery } from "../../../shared/utilities/user-list.util";
-import type { GetAdminsInput, GetAdminsResponse } from "../dtos/get-admins.dto";
+import type { GetAdminsInput, GetAdminsResponse } from "../dtos";
 import { AdminListMapper } from "../mappers/admin-list.mapper";
 import type { IGetAdminsUseCase } from "./get-admins.use-case.interface";
 

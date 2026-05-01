@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import type { IUserRepository } from "../../../../domain/repositories";
 import { TYPES } from "../../../../shared/types/types";
-import type { UnblockAdminInput } from "../dtos/block-admin.dto";
+import type { UnblockAdminInput } from "../dtos";
 import type { IUnblockAdminUseCase } from "./unblock-admin.use-case.interface";
 
 @injectable()

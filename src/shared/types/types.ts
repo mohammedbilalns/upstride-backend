@@ -192,6 +192,7 @@ export const TYPES = {
 			"CheckAndReenableAvailabilityUseCase",
 		),
 		UpdateAvailability: Symbol.for("UpdateAvailabilityUseCase"),
+		CheckAndUpdateAvailability: Symbol.for("CheckAndUpdateAvailabilityUseCase"),
 		DeleteAvailability: Symbol.for("DeleteAvailabilityUseCase"),
 		ReenableAvailability: Symbol.for("ReenableAvailabilityUseCase"),
 		GetMentorAvailabilities: Symbol.for("GetMentorAvailabilitiesUseCase"),

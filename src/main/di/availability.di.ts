@@ -3,6 +3,8 @@ import { CheckAndCreateAvailabilityUseCase } from "../../application/modules/ava
 import type { ICheckAndCreateAvailabilityUseCase } from "../../application/modules/availability/use-cases/check-and-create-availability.use-case.interface";
 import { CheckAndReenableAvailabilityUseCase } from "../../application/modules/availability/use-cases/check-and-reenable-availability.use-case";
 import type { ICheckAndReenableAvailabilityUseCase } from "../../application/modules/availability/use-cases/check-and-reenable-availability.use-case.interface";
+import { CheckAndUpdateAvailabilityUseCase } from "../../application/modules/availability/use-cases/check-and-update-availability.use-case";
+import type { ICheckAndUpdateAvailabilityUseCase } from "../../application/modules/availability/use-cases/check-and-update-availability.use-case.interface";
 import { CreateAvailabilityUseCase } from "../../application/modules/availability/use-cases/create-availability.use-case";
 import type { ICreateAvailabilityUseCase } from "../../application/modules/availability/use-cases/create-availability.use-case.interface";
 import { DeleteAvailabilityUseCase } from "../../application/modules/availability/use-cases/delete-availability.use-case";
@@ -37,6 +39,12 @@ export const registerAvailabilityBindings = (container: Container): void => {
 	container
 		.bind<IUpdateAvailabilityUseCase>(TYPES.UseCases.UpdateAvailability)
 		.to(UpdateAvailabilityUseCase)
+		.inSingletonScope();
+	container
+		.bind<ICheckAndUpdateAvailabilityUseCase>(
+			TYPES.UseCases.CheckAndUpdateAvailability,
+		)
+		.to(CheckAndUpdateAvailabilityUseCase)
 		.inSingletonScope();
 	container
 		.bind<IDeleteAvailabilityUseCase>(TYPES.UseCases.DeleteAvailability)

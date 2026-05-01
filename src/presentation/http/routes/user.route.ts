@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { apiContainer } from "../../../main/di/api.container";
 import { ROUTES } from "../constants";
-import { UsersController } from "../controllers/users.controller";
+import { UsersManagementController } from "../controllers/user-management.controller";
 import { authorizeRoles, validate, verifySession } from "../middlewares";
 import {
 	BlockUserBodySchema,
@@ -10,7 +10,7 @@ import {
 } from "../validators/users.validator";
 
 const router = Router();
-const controller = apiContainer.get(UsersController);
+const controller = apiContainer.get(UsersManagementController);
 
 router.use(verifySession, authorizeRoles(["ADMIN", "SUPER_ADMIN"]));
 

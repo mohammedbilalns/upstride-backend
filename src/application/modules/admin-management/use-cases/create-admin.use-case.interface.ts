@@ -1,7 +1,4 @@
-import type {
-	CreateAdminInput,
-	CreateAdminOutput,
-} from "../dtos/create-admin.dto";
+import type { CreateAdminInput, CreateAdminOutput } from "../dtos";
 
 export interface ICreateAdminUseCase {
 	execute(input: CreateAdminInput): Promise<CreateAdminOutput>;

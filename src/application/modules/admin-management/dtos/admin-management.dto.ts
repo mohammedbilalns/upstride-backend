@@ -1,3 +1,20 @@
+export interface BlockAdminInput {
+	adminId: string;
+}
+
+export interface UnblockAdminInput {
+	adminId: string;
+}
+
+export interface CreateAdminInput {
+	email: string;
+	password: string;
+}
+
+export interface CreateAdminOutput {
+	newAdminId: string;
+}
+
 export interface GetAdminsInput {
 	page: number;
 	limit: number;

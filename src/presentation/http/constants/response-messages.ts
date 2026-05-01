@@ -141,3 +141,7 @@ export const FileResponseMessages = {
 	PRESIGNED_URL_GENERATED: "Presigned URL generated successfully",
 	DELETED: "File deleted successfully",
 };
+
+export const ReviewResponseMessages = {
+	SUBMITTED_SUCCESS: "Review submitted successfully",
+};

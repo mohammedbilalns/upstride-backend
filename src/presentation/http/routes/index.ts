@@ -1,5 +1,5 @@
-export * from "./admin.route";
 export * from "./admin-dashboard.route";
+export * from "./admin-management.route";
 export * from "./article.route";
 export * from "./auth.route";
 export * from "./availability.route";

@@ -4,7 +4,7 @@ import type {
 	ICreateAdminUseCase,
 	IGetAdminsUseCase,
 	IUnblockAdminUseCase,
-} from "../../../application/modules/admin/use-cases";
+} from "../../../application/modules/admin-management/use-cases";
 import { HttpStatus } from "../../../shared/constants";
 import { TYPES } from "../../../shared/types/types";
 import { AdminsResponseMessages } from "../constants";
@@ -16,7 +16,7 @@ import type {
 } from "../validators/admins.validator";
 
 @injectable()
-export class AdminController {
+export class AdminManagementController {
 	constructor(
 		@inject(TYPES.UseCases.GetAdmins)
 		private _getAdminsUseCase: IGetAdminsUseCase,

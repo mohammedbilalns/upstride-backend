@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ROUTES } from "../constants";
-import { adminsRouter } from "./admin.route";
 import { adminDashboardRouter } from "./admin-dashboard.route";
+import { adminsRouter } from "./admin-management.route";
 import { articleRouter } from "./article.route";
 import { authRouter } from "./auth.route";
 import { availabilityRouter } from "./availability.route";

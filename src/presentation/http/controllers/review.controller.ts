@@ -4,6 +4,7 @@ import type { IGetMentorReviewsUseCase } from "../../../application/modules/revi
 import { HttpStatus } from "../../../shared/constants/http-status-codes";
 import type { AuthenticatedRequest } from "../../../shared/types/authenticated-request.type";
 import { TYPES } from "../../../shared/types/types";
+import { ReviewResponseMessages } from "../constants";
 import { asyncHandler, sendSuccess } from "../helpers";
 import type {
 	CreateReviewBody,
@@ -29,7 +30,7 @@ export class ReviewController {
 		});
 
 		return sendSuccess(res, HttpStatus.CREATED, {
-			message: "Review submitted successfully.",
+			message: ReviewResponseMessages.SUBMITTED_SUCCESS,
 			data: result,
 		});
 	});

@@ -9,10 +9,7 @@ import { TYPES } from "../../../../shared/types/types";
 import { parseNameFromEmail } from "../../../../shared/utilities/parse-name-from-email.util";
 import type { IPasswordService } from "../../../services/password.service.interface";
 import { UserAlreadyExistsError } from "../../authentication/errors/user-already-exists.error";
-import type {
-	CreateAdminInput,
-	CreateAdminOutput,
-} from "../dtos/create-admin.dto";
+import type { CreateAdminInput, CreateAdminOutput } from "../dtos";
 import type { ICreateAdminUseCase } from "./create-admin.use-case.interface";
 
 @injectable()
