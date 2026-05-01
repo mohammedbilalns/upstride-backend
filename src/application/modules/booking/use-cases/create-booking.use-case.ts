@@ -18,6 +18,7 @@ import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { IIdGenerator } from "../../../services/id-generator.service.interface";
 import type { IPaymentService } from "../../../services/payment.service.interface";
 import type { IWalletService } from "../../../services/wallet.service.interface";
+import { ConflictError } from "../../../shared/errors";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
 import type {
 	CreateBookingInput,
@@ -25,6 +26,7 @@ import type {
 } from "../dtos/booking.dto";
 import { SlotNotAvailableError } from "../errors/booking.errors";
 import { calculateBookingAmount } from "../utils/calculate-booking-amount.util";
+import { checkBookingConflict } from "../utils/check-booking-conflict.util";
 import { generateMeetingLink } from "../utils/generate-meeting-link";
 import type { ICreateBookingUseCase } from "./create-booking.use-case.interface";
 import type { IScheduleLiveSesionReminderUseCase } from "./schedule-mentor-reminder.use-case.interface";
@@ -99,6 +101,20 @@ export class CreateBookingUseCase implements ICreateBookingUseCase {
 
 		if (blockingOverlap) {
 			throw new SlotNotAvailableError();
+		}
+
+		const hasMenteeConflict = await checkBookingConflict(
+			input.menteeId,
+			start,
+			end,
+			this._bookingRepository,
+			this._mentorRepository,
+		);
+
+		if (hasMenteeConflict) {
+			throw new ConflictError(
+				"You have another session overlapping with this time",
+			);
 		}
 
 		let paymentStatus: PaymentStatus = "PENDING";

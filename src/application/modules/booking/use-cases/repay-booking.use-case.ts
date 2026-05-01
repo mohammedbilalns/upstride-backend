@@ -1,15 +1,17 @@
 import { inject, injectable } from "inversify";
 import type { IBookingRepository } from "../../../../domain/repositories/booking.repository.interface";
+import type { IMentorProfileReadRepository } from "../../../../domain/repositories/mentor-profile-read.repository.interface";
 import { TYPES } from "../../../../shared/types/types";
 import { getClientBaseUrl } from "../../../../shared/utilities/url.util";
 import type { IPaymentService } from "../../../services/payment.service.interface";
-import { ValidationError } from "../../../shared/errors";
+import { ConflictError, ValidationError } from "../../../shared/errors";
 import { NotFoundError } from "../../../shared/errors/not-found-error";
 import { UnauthorizedError } from "../../authentication/errors";
 import type {
 	RepayBookingInput,
 	RepayBookingResponse,
 } from "../dtos/booking.dto";
+import { checkBookingConflict } from "../utils/check-booking-conflict.util";
 import type { IRepayBookingUseCase } from "./repay-booking.use-case.interface";
 
 @injectable()
@@ -17,6 +19,8 @@ export class RepayBookingUseCase implements IRepayBookingUseCase {
 	constructor(
 		@inject(TYPES.Repositories.BookingRepository)
 		private readonly _bookingRepository: IBookingRepository,
+		@inject(TYPES.Repositories.MentorProfileReadRepository)
+		private readonly _mentorRepository: IMentorProfileReadRepository,
 		@inject(TYPES.Services.PaymentService)
 		private readonly _paymentService: IPaymentService,
 	) {}
@@ -45,6 +49,21 @@ export class RepayBookingUseCase implements IRepayBookingUseCase {
 
 		if (booking.status.startsWith("CANCELLED")) {
 			throw new ValidationError("Cannot repay a cancelled booking");
+		}
+
+		const hasConflict = await checkBookingConflict(
+			booking.menteeId,
+			new Date(booking.startTime),
+			new Date(booking.endTime),
+			this._bookingRepository,
+			this._mentorRepository,
+			booking.id,
+		);
+
+		if (hasConflict) {
+			throw new ConflictError(
+				"You have another session overlapping with this time",
+			);
 		}
 
 		const frontendBaseUrl = getClientBaseUrl();
