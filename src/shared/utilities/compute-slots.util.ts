@@ -14,10 +14,10 @@ export interface SlotWindow {
  * Availability records, excluding windows that overlap existing bookings.
  *
  * Algorithm per Availability window:
- *  1. Walk from startTime to endTime in steps of slotDuration (+ bufferTime).
- *  2. Skip any candidate window that overlaps a breakTime.
- *  3. Skip any candidate window that overlaps an existing confirmed/pending booking.
- *  4. Skip any candidate window that starts in the past.
+ *  Walk from startTime to endTime in steps of slotDuration (+ bufferTime).
+ *  Skip any candidate window that overlaps a breakTime.
+ *  Skip any candidate window that overlaps an existing confirmed booking.
+ *  Skip any candidate window that starts in the past.
  */
 export function computeSlotsForDate(
 	availabilities: Availability[],

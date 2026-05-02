@@ -89,6 +89,7 @@ class App {
 	public listen(port: number) {
 		this._server.listen(port, () => {
 			logger.info(`server started on port: ${port}`);
+			logger.info("Done some changes ");
 		});
 	}
 
