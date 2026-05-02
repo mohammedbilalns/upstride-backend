@@ -11,7 +11,6 @@ import { TYPES } from "../../shared/types/types";
 
 /**
  * Notification queue for processing email and push notification jobs.
- * Workers listen to this queue to handle delivery tasks.
  */
 export const notificationQueue = new Queue(QUEUE_NAMES.NOTIFICATION, {
 	connection: redisClient,
