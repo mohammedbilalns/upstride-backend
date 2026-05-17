@@ -19,9 +19,13 @@ import { apiContainer } from "./di/api.container";
 /**
  * Core application bootstrapper.
  *
+ * Responsibilities:
  * - Initialize Express instance
- * - Attach middlewares and routes
- * - Wrap Express in a native HTTP server
+ * - Configure Security + Perfomance middlewares
+ * - Register HTTP routes
+ * - Attach WebSocket server
+ * - Configure Global error handler
+ * - Handle lifecycle events
  *
  */
 class App {
@@ -31,6 +35,7 @@ class App {
 
 	constructor() {
 		this._app = express();
+		// Trust the X-Forwarded-For header from reverse proxy
 		this._app.set("trust proxy", true);
 		this._server = createServer(this._app);
 		this._setupWebhookRoutes();
@@ -57,6 +62,7 @@ class App {
 			.use(helmet())
 			.use(compression())
 			.use(requestLogger)
+			// max 1000 requests per 60s window, keyed by IP + global counter
 			.use(rateLimiter(1000, 60, ["ip", "global"]))
 			.use(cors(corsOptions))
 			.use(express.json())
@@ -89,7 +95,6 @@ class App {
 	public listen(port: number) {
 		this._server.listen(port, () => {
 			logger.info(`server started on port: ${port}`);
-			logger.info("Done some changes ");
 		});
 	}
 

@@ -50,6 +50,7 @@ const logger = pino(
 		level: env.LOG_LEVEL,
 		timestamp: pino.stdTimeFunctions.epochTime,
 		errorKey: "stack",
+		// Auto-attach requestId from the current async context to every log entry
 		mixin: () => {
 			const requestId = RequestContext.getRequestId();
 			return requestId ? { requestId } : {};
