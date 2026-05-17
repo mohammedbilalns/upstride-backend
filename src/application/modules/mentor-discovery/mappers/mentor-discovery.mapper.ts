@@ -13,6 +13,7 @@ export class MentorDiscoveryMapper {
 			yearsOfExperience: entity.yearsOfExperience,
 			avgRating: entity.avgRating,
 			tierName: entity.tierName,
+			languages: entity.languages,
 			categoryIds: entity.areasOfExpertise,
 			categories: entity.categories,
 			skills: entity.skills,

@@ -24,6 +24,7 @@ export interface MentorDto {
 	resumeId: string;
 	resumeUrl: string | null;
 	educationalQualifications: string[];
+	languages: string[];
 	areasOfExpertise: string[];
 	toolsAndSkills: MentorSkillDto[];
 	experience: MentorExperienceDto[];

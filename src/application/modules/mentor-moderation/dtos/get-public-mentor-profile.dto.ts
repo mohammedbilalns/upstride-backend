@@ -15,6 +15,7 @@ export interface PublicMentorProfileDto {
 	};
 	personalWebsite: string | null;
 	educationalQualifications: string[];
+	languages: string[];
 	expertises: { id: string; name: string }[];
 	skills: { id: string; name: string; level: string }[];
 	yearsOfExperience: number;

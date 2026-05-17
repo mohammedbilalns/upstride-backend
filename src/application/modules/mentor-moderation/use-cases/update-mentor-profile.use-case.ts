@@ -36,6 +36,7 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 		currentRoleId,
 		organization,
 		areasOfExpertise,
+		languages,
 		currentPricePer30Min,
 		bio,
 		educationalQualifications,
@@ -94,6 +95,10 @@ export class UpdateMentorProfileUseCase implements IUpdateMentorProfileUseCase {
 
 		if (bio !== undefined) {
 			updates.bio = bio;
+		}
+
+		if (languages !== undefined) {
+			updates.languages = languages;
 		}
 
 		if (currentPricePer30Min !== undefined) {

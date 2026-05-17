@@ -9,6 +9,7 @@ export interface MentorQuery {
 export interface MentorDiscoveryQuery {
 	search?: string;
 	categoryId?: string;
+	languages?: string[];
 	tierName?: string;
 	excludeUserId?: string;
 	minExperience?: number;

@@ -5,6 +5,7 @@ import {
 	MAX_MENTOR_EXPERIENCE_ITEMS,
 } from "../../../domain/entities/mentor.entity";
 import { SkillLevelValues } from "../../../domain/entities/user.entity";
+import { MentorLanguageCodes } from "../../../shared/constants";
 import {
 	buildObjectIdParamSchema,
 	limitSchema,
@@ -83,6 +84,9 @@ export const RegisterMentorSchema = z.object({
 			MAX_MENTOR_EDUCATION_ITEMS,
 			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
 		),
+	languages: z
+		.array(z.enum(MentorLanguageCodes))
+		.min(1, "At least one language is required"),
 	areasOfExpertise: z
 		.array(z.string().min(1))
 		.min(1, "At least one area of expertise is required")
@@ -116,6 +120,7 @@ export const ResubmitMentorSchema = z.object({
 			`Maximum of ${MAX_MENTOR_EDUCATION_ITEMS} educational qualifications allowed`,
 		)
 		.optional(),
+	languages: z.array(z.enum(MentorLanguageCodes)).min(1).optional(),
 	areasOfExpertise: z
 		.array(z.string().min(1))
 		.min(1, "At least one area of expertise is required")
@@ -149,6 +154,16 @@ export const MentorDiscoveryQuerySchema = z
 		page: pageSchema,
 		search: z.string().trim().min(1).optional(),
 		category: z.string().trim().min(1).optional(),
+		languages: z
+			.union([
+				z.enum(MentorLanguageCodes),
+				z.array(z.enum(MentorLanguageCodes)),
+			])
+			.optional()
+			.transform((value) => {
+				if (!value) return undefined;
+				return Array.isArray(value) ? value : [value];
+			}),
 		tierName: z.string().min(1).optional(),
 		minExperience: z.coerce.number().int().min(0).optional(),
 		maxExperience: z.coerce.number().int().min(0).optional(),
@@ -187,6 +202,10 @@ export const UpdateMentorProfileBodySchema = z.object({
 			MAX_MENTOR_AREAS_OF_EXPERTISE,
 			`Maximum of ${MAX_MENTOR_AREAS_OF_EXPERTISE} areas of interest allowed`,
 		)
+		.optional(),
+	languages: z
+		.array(z.enum(MentorLanguageCodes))
+		.min(1, "Select at least one language")
 		.optional(),
 	currentPricePer30Min: z.number().int().min(100).max(10000).optional(),
 	bio: z.string().trim().min(10).optional(),
