@@ -149,7 +149,7 @@ export type MentorApplicationsQuery = z.infer<
 	typeof MentorApplicationsQuerySchema
 >;
 
-export const MentorDiscoveryQuerySchema = z
+const MentorDiscoveryQueryShape = z
 	.object({
 		page: pageSchema,
 		search: z.string().trim().min(1).optional(),
@@ -179,6 +179,22 @@ export const MentorDiscoveryQuerySchema = z
 			path: ["minExperience"],
 		},
 	);
+
+export const MentorDiscoveryQuerySchema = z.preprocess((value) => {
+	if (!value || typeof value !== "object" || Array.isArray(value)) {
+		return value;
+	}
+
+	const query = value as Record<string, unknown>;
+	if (query.languages !== undefined || query["languages[]"] === undefined) {
+		return query;
+	}
+
+	return {
+		...query,
+		languages: query["languages[]"],
+	};
+}, MentorDiscoveryQueryShape);
 
 export type MentorDiscoveryQuery = z.infer<typeof MentorDiscoveryQuerySchema>;
 
