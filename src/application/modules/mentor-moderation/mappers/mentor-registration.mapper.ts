@@ -25,6 +25,7 @@ export class MentorRegistrationResponseMapper {
 						resumeId: mentor.resumeId,
 						resumeUrl,
 						educationalQualifications: mentor.educationalQualifications,
+						languages: mentor.languages,
 						areasOfExpertise: mentor.areasOfExpertise,
 						toolsAndSkills: mentor.toolsAndSkills.map((ts) => ({
 							skillId: ts.skillId,

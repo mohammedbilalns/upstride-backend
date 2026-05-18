@@ -5,6 +5,7 @@ export interface UpdateMentorProfileInput {
 	currentRoleId?: string;
 	organization?: string;
 	areasOfExpertise?: string[];
+	languages?: string[];
 	currentPricePer30Min?: number;
 	bio?: string;
 	educationalQualifications?: string[];
@@ -32,6 +33,7 @@ export interface UpdateMentorProfileResponse {
 		};
 		personalWebsite: string | null;
 		educationalQualifications: string[];
+		languages: string[];
 		expertises: {
 			id: string;
 			name: string;

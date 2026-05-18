@@ -18,6 +18,7 @@ export interface MentorDocument {
 	personalWebsite?: string;
 	resumeId: string;
 	educationalQualifications: string[];
+	languages: string[];
 	areasOfExpertise: Types.ObjectId[];
 	toolsAndSkills: {
 		skillId: Types.ObjectId;
@@ -61,6 +62,10 @@ const mentorSchema = new Schema<MentorDocument>(
 		personalWebsite: { type: String },
 		resumeId: { type: String, required: true },
 		educationalQualifications: [{ type: String }],
+		languages: {
+			type: [{ type: String }],
+			default: ["en"],
+		},
 		areasOfExpertise: {
 			type: [{ type: Schema.Types.ObjectId, ref: "Interest" }],
 			validate: [

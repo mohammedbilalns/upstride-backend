@@ -19,6 +19,7 @@ export class MentorMapper {
 			doc.personalWebsite || null,
 			doc.resumeId,
 			doc.educationalQualifications,
+			doc.languages ?? ["en"],
 			doc.areasOfExpertise.map((id) => toIdString(id)),
 			doc.toolsAndSkills.map((ts) => ({
 				skillId: toIdString(ts.skillId),
@@ -59,6 +60,7 @@ export class MentorMapper {
 			personalWebsite: entity.personalWebsite ?? undefined,
 			resumeId: entity.resumeId,
 			educationalQualifications: entity.educationalQualifications,
+			languages: entity.languages,
 			areasOfExpertise: entity.areasOfExpertise.map(
 				(id) => new Types.ObjectId(id),
 			),

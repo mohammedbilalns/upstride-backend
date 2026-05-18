@@ -35,6 +35,7 @@ export class Mentor {
 		public readonly personalWebsite: string | null,
 		public readonly resumeId: string,
 		public readonly educationalQualifications: string[],
+		public readonly languages: string[],
 		public readonly areasOfExpertise: string[],
 		public readonly toolsAndSkills: MentorSkill[],
 		public readonly experience: MentorExperience[],

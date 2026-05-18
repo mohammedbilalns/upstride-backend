@@ -22,6 +22,7 @@ export interface RegisterMentorInput {
 	personalWebsite: string;
 	resumeId: string;
 	educationalQualifications: string[];
+	languages: string[];
 	areasOfExpertise: string[];
 	toolsAndSkills: RegisterMentorSkillInput[];
 	experience: RegisterMentorExperienceInput[];

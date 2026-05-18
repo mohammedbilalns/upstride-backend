@@ -32,6 +32,7 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 		const educationalQualifications =
 			input.educationalQualifications ??
 			existingMentor.educationalQualifications;
+		const languages = input.languages ?? existingMentor.languages;
 		const areasOfExpertise =
 			input.areasOfExpertise ?? existingMentor.areasOfExpertise;
 
@@ -49,6 +50,7 @@ export class ResubmitMentorUseCase implements IResubmitMentorUseCase {
 			input.personalWebsite ?? existingMentor.personalWebsite,
 			resumeId,
 			educationalQualifications,
+			languages,
 			areasOfExpertise,
 			input.toolsAndSkills
 				? input.toolsAndSkills.map((ts) => ({

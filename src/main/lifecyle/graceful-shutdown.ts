@@ -21,6 +21,7 @@ export function setupGracefulShutdown(options: {
 		}, options.timeoutMs ?? 10000);
 
 		try {
+			// allSettled so one failing task doesn't block the rest from draining
 			await Promise.allSettled(options.tasks.map((task) => task()));
 			clearTimeout(forceExitTimeout);
 		} catch (error) {

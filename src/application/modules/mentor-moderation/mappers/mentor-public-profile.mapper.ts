@@ -21,6 +21,7 @@ export class MentorPublicProfileMapper {
 			currentRole: profile.currentRoleDetails,
 			personalWebsite: profile.personalWebsite,
 			educationalQualifications: profile.educationalQualifications,
+			languages: profile.languages,
 			expertises: profile.expertisesDetails,
 			skills: profile.skillsDetails.map((skill) => ({
 				id: skill.skillId.id,

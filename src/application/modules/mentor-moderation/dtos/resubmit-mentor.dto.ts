@@ -22,6 +22,7 @@ export interface ResubmitMentorInput {
 	personalWebsite?: string;
 	resumeId?: string;
 	educationalQualifications?: string[];
+	languages?: string[];
 	areasOfExpertise?: string[];
 	toolsAndSkills?: ResubmitMentorSkillInput[];
 	experience?: ResubmitMentorExperienceInput[];

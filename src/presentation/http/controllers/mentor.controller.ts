@@ -73,6 +73,7 @@ export class MentorController {
 		const hasFilters = Boolean(
 			query.search ||
 				query.category ||
+				(query.languages && query.languages.length > 0) ||
 				query.tierName ||
 				query.minExperience !== undefined ||
 				query.maxExperience !== undefined ||

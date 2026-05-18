@@ -49,6 +49,7 @@ export class RegisterMentorUseCase implements IRegisterMentorUseCase {
 			input.personalWebsite,
 			input.resumeId,
 			input.educationalQualifications,
+			input.languages,
 			input.areasOfExpertise,
 			input.toolsAndSkills.map((ts) => ({
 				skillId: ts.skillId,

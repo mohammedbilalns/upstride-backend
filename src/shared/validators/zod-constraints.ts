@@ -9,7 +9,7 @@ const parseDateString = <T>(message: string, map: (date: Date) => T) =>
 				code: "custom",
 				message,
 			});
-			return z.NEVER;
+			return z.NEVER; // halt further parsing on invalid date
 		}
 		return map(date);
 	});
@@ -37,6 +37,7 @@ export const objectIdSchema = z
 		message: "Invalid Id",
 	});
 
+// Builds a zod object schema with a dynamic key name validated as an ObjectId
 export const buildObjectIdParamSchema = <K extends string>(key: K) =>
 	z.object({ [key]: objectIdSchema } as Record<K, typeof objectIdSchema>);
 

@@ -145,6 +145,10 @@ export class MongoMentorListReadRepository
 			filter.areasOfExpertise = new Types.ObjectId(query.categoryId);
 		}
 
+		if (query?.languages?.length) {
+			filter.languages = { $in: query.languages };
+		}
+
 		if (query?.tierName) {
 			filter.tierName = query.tierName;
 		}

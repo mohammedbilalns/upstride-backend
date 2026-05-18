@@ -4,6 +4,11 @@ export interface RequestContextData {
 	requestId: string;
 }
 
+/**
+ * Per-request scoped context via AsyncLocalStorage.
+ * Allows request-scoped data (e.g. requestId) to be accessible across the
+ * async call chain without threading it through every function signature.
+ */
 export class RequestContext {
 	private static _storage = new AsyncLocalStorage<RequestContextData>();
 
