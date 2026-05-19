@@ -1,8 +1,8 @@
 # Upstride Backend
 
-### Powering real-time mentorship, live collaboration, intelligent communication, and knowledge sharing at scale.
+### Backend API powering the [Upstride](https://upstride.bilalnsmuhammed.in) platform for collaboration, learning, and community-driven communication.
 
-Built with **TypeScript**, **Clean Architecture**, **Domain-Driven Design (DDD)**, and **event-driven patterns** for long-term maintainability, modularity, and scale.
+Built with **TypeScript**, **Clean Architecture****, and **event-driven patterns** for long-term maintainability, modularity, and scale.
 
 ---
 
